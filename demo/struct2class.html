@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <title>Struct to Class</title>
+  <style>
+  </style>
+</head>
+<body>
+
+<h1>Struct to Class</h1>
+<textarea id="src" cols=80>
+Person = Struct.new(:name, :age, :address)
+</textarea><br>
+<button id="convert">convert</button>
+
+<div id="bs-console"></div>
+
+<script src="../lib/biwascheme.js">
+(define rexp-define
+  (string->regexp "(\\S+)\\s*=\\s*Struct.new\\s*\\((.*)\\)"))
+(define rexp-member
+  (string->regexp ":(\\w+)"))
+
+(define (parse-member mems)
+  (map (lambda (mem) 
+         (cadr (regexp-exec rexp-member mem)))
+    (string-split mems ",")))
+
+(define (parse-define src)
+  (let1 def (regexp-exec rexp-define src)
+    (if def
+      (let ((klass (cadr def))
+            (mems  (caddr def)))
+        (values klass (parse-member mems)))
+      (unless def (print "error: no match")))))
+
+(define (joint-with ls prefix)
+  (string-join (map (lambda (x) (string-append prefix x)) ls) 
+               ", "))
+
+(add-handler! ($ "convert") "click"
+  (lambda (e)
+    (let1 src (get-content ($ "src"))
+      (call-with-values 
+        (lambda () (parse-define src))
+        (lambda (klass mems)
+          (print "class " klass)
+          (print "  def initialize(" (joint-with mems "") ")")
+          (print "    " (joint-with mems "@") " = " (joint-with mems ""))
+          (print "  end")
+          (print "  attr_accessor " (joint-with mems ":"))
+          (print "end"))))))
+</script>
+
+</body>
+</html>

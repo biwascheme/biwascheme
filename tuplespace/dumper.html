@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <title>BiwaScheme Chat</title>
+</head>
+<body>
+  <div id="bs-console"></div>
+  <div id="test">dump of tuples:</div>
+  <div id="dump" style="border:1px solid black"></div>
+  <input type="button" id="dumper" value="dump">
+
+
+  <script src="../biwascheme.js">
+  (define (dump)
+    (let ((d (ts-dump)))
+      (if d
+        (set-content! (getelem "dump") (write d))
+        #f)))
+
+  (add-handler! ($ "dumper") "click" dump)
+  (add-handler! ($ "test") "click" (lambda (e) (alert 1)))
+  </script>
+
+</body>
+</html>
+<!-- vim:set ft=scheme: -->

@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <title>Hello World</title>
+  <style>
+  h1{ font-size:70px; }
+  li{ font-size:60px}
+  </style>
+</head>
+<body>
+
+<button id="back">←</button>
+<button id="next">→</button>
+<div id="presen"></div>
+
+<div id="bs-console"></div>
+
+<script src="../lib/biwascheme.js">
+(load "presen.scm")
+(define *presen*
+  '#(("自己紹介" 
+      ("yharaです"
+       "y y hara"))
+     ("やろうと思ってたこと"
+      ("修論"))
+     ("やったこと"
+      ("プレゼンツール"
+       "いまつくった"
+       "applyがない"
+       "string-concat"))
+     ("やったこと"
+      ("BiwaSchemeの改良"
+       "mapとかつくった"
+       "ネットワークロード"))
+     ("どう見ても現実逃避です"
+      ("本当にありがとうございました"))
+      ))
+(presen-start)
+</script>
+
+</body>
+</html>

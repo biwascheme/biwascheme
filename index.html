@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<title>BiwaScheme REPL</title>
+<style type="text/css">
+  div#bs-repl{
+    border:1px solid black;
+    padding:1em;
+    width:100%;
+  }
+  div#bs-console{
+    border:1px solid black;
+    padding:1em;
+    margin-top:1em;
+  }
+  div#bs-opecode{
+    border:1px solid black;
+    padding:1em;
+    margin-top:1em;
+  }
+  span.dump_opecode{ color:orange; }
+  span.dump_constant{ color:red; }
+  div.bs-snippet{
+    white-space:pre;
+    cursor:pointer;
+  }
+</style>
+
+</head>
+<body>
+
+  <h1>BiwaScheme</h1>
+
+  <dl>
+  <dt>about</dt><dd><a href="http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme">http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme</a></dd>
+  <dt>unittest</dt><dd><a href="test/spec.html">spec.html</a></dd>
+  </dl>
+
+  <!--<button id="test">foo</button>-->
+
+  <div id="bs-repl">
+    <table><tr><td valign="top">
+      <form>
+        <textarea id="bs-input" rows="10" cols="60"></textarea><br>
+        <div style="float:right;">
+          <span id="time"></span>
+          <input type="button" value="eval" onclick="bs_eval()">
+        </div>
+        <br style="clear:both"/>
+      </form>
+      <div id="bs-console">
+      </div>
+      <div id="bs-opecode">
+      </div>
+    </td>
+    <td valign="top">
+      <div id="bs-sample">
+        <h2>Sample</h2>
+        <ul>
+        <li><div class="bs-snippet">(+ 1 2)</div></li>
+        <li><div class="bs-snippet">(not #t) </div></li>
+        <li><div class="bs-snippet">(boolean=? #t #t #t) </div></li>
+        <li><div class="bs-snippet">;; length by Y combinator 
+(((lambda (f) 
+    ((lambda (proc) (f (lambda (arg) ((proc proc) arg))))
+     (lambda (proc) (f (lambda (arg) ((proc proc) arg))))))
+  (lambda (self)
+    (lambda (ls) 
+      (if (null? ls) 0 (+ 1 (self (cdr ls))))))) 
+ '(1 2 3 4 5))
+        </div></li>
+        <li><div class="bs-snippet">;; length by Y combinator (tail recursive)
+(((lambda (f)
+  ((lambda (proc) (f (lambda (arg1 arg2) ((proc proc) arg1 arg2))))
+     (lambda (proc) (f (lambda (arg1 arg2) ((proc proc) arg1 arg2))))))
+  (lambda (self) 
+    (lambda (ls acc) 
+      (if (null? ls) acc (self (cdr ls) (+ 1 acc))))))
+ '(1 2 3 4 5) 0)
+        </div></li>
+        </ul>
+      </div>
+    </td></tr></table>
+  </div>
+
+<script type="text/javascript" src="lib/prototype.160.js"></script>
+<script type="text/javascript" src="lib/stackbase.js"></script>
+<script type="text/javascript" src="lib/r6rs_lib.js"></script>
+<script type="text/javascript" src="lib/webscheme_lib.js"></script>
+<script type="text/javascript" src="lib/extra_lib.js"></script>
+
+<script type="text/javascript">// <![CDATA[
+function dump(){}
+var biwascheme = new BiwaScheme.Interpreter();
+function bs_eval(){
+  $('bs-console').innerHTML = "";
+  var str = $("bs-input").value;
+
+  try{
+    var opc = biwascheme.compile(str);
+    $('bs-opecode').innerHTML = (new BiwaScheme.Dumper).dump_opc(opc);
+    var before = new Date();
+    biwascheme.evaluate(str, function(result){
+      var after = new Date();
+      $('time').innerHTML = "Time: " + (after-before)/1000 + "sec";
+      puts(BiwaScheme.to_write(result));
+    });
+  }
+  catch(e){
+    puts(e.message);
+    throw(e);
+  }
+  return false;
+}
+$$("div.bs-snippet").each(function(div){
+  Event.observe(div, "click", function(e){
+    $('bs-input').innerHTML = "";
+    $('bs-input').appendChild(document.createTextNode(div.firstChild.data))
+  });
+});
+// ]]></script>
+
+</body>
+</html>
+<!-- vim:set ft=javascript: -->

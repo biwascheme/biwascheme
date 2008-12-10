@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <title>Hello World</title>
+  <style>pre#scheme{ border:1px solid black}</style>
+</head>
+<body>
+
+<textarea id='source' cols='60' rows='10'>
+*------------*
+| say "hello"|
+*------+-----*
+       |
+*------v-----*
+| say "world"|
+*------------*
+</textarea>
+
+  <input type='button' id='go' value='go'>
+  <div id="bs-console"></div>
+
+  <script src="biwascheme.js">
+    (define (zu-parse zu)
+      (http-post "textgraph.cgi" (list (cons "text" zu)
+                                       (cons "format" "sexp"))))
+
+    (define (zu-eval zu)
+      (display (zu-parse zu)))
+
+
+    (set-handler! (getelem "go") "click"
+                  (lambda (e) 
+                    (zu-eval (get-content (getelem "source")))))
+  </script>
+
+<br><br><br><br>
+  <pre id='scheme'>
+    ;; source
+    (define (zu-parse zu)
+      (http-post "textgraph.cgi" (list (cons "text" zu)
+                                       (cons "format" "sexp"))))
+
+    (define (zu-eval zu)
+      (display (zu-parse zu)))
+
+
+    (set-handler! (getelem "go") "click"
+                  (lambda (e) 
+                    (zu-eval (get-content (getelem "source")))))
+  </pre>
+
+</body>
+</html>
+<!-- vim:set ft=scheme: -->

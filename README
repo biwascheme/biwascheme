@@ -1,2 +1,38 @@
-coming soon!!
-http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme
+! BiwaScheme
+
+BiwaScheme is a (yet another) Scheme interpreter written in JavaScript.
+
+official page: http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme
+
+!! Files
+
+!!! Core
+:lib/biwascheme.js:for application(see hello_world.html)
+:lib/stackbase.js:interpreter
+
+!!! Libraries
+:lib/r6rs_lib.js:library (R6RS functions)
+:lib/webscheme_lib.js:library (functions which needs a browser)
+:lib/extra_lib.js:library (other functions)
+:lib/prototype.160.js:see http://prototypejs.org/
+
+!!! Tests
+:index.html:REPL (read-eval-print-loop)
+:test/spec.html:Unit test of the interpreter (requires JSSpec)
+:test/spidermonkey.sh:runner for SpiderMonkey (requires console_test.js)
+:test/console_test.js:runner for CScript
+:test/browser_test.js:runner for browsers (requires console_test.js)
+:test/JSSpec.js:see http://jania.pe.kr/aw/moin.cgi/JSSpec 
+:test/JSSpec.css:
+:test/diff_match_patch.js:
+
+!! Acknowledgements
+
+* Kent Dyvbig, Three implementation models for scheme
+** http://www.cs.indiana.edu/~dyb/pubs/3imp.pdf
+
+!! Contact
+
+ yhara (HARA Yutaka)
+ yhara/at/kmc.gr.jp
+ http://mono.kmc.gr.jp/~yhara/

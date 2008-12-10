@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <title>Biwatter</title>
+  <style>
+  </style>
+</head>
+<body>
+
+<button id="reload">reload</button>
+
+<div id="bs-console"></div>
+
+<script src="../lib/biwascheme.js">
+;; access twitter
+(define (get-timeline type)
+  (json->sexp (receive-jsonp (string-append "http://twitter.com/statuses/" type "_timeline.json"))))
+
+;; class user
+;(define (protected? user)       (cadr (assoc "protected" user)))
+;(define (userid-of user)        (cadr (assoc "id" user)))
+;(define (profile-image-of user) (cadr (assoc "profile_image_url" user)))
+(define (screen-name-of user)   (cadr (assoc "screen_name" user)))
+;(define (location-of user)      (cadr (assoc "location" user)))
+;(define (description-of user)   (cadr (assoc "description" uesr)))
+;(define (name-of user)          (cadr (assoc "name" user)))
+;(define (url-of user)           (cadr (assoc "url" user)))
+
+;; class post 
+;(define (truncated? post) (cadr (assoc "truncated" post)))
+(define (text-of post)    (cadr (assoc "text" post)))
+;(define (postid-of post)  (cadr (assoc "id" post)))
+;(define (source-of post)  (cadr (assoc "source" post)))
+(define (date-of post)    (parse-date (cadr (assoc "created_at" post))))
+(define (user-of post)    (cadr (assoc "user" post)))
+(define (screen-name post) 
+  (screen-name-of (user-of post)))
+
+(define (describe-post post)
+  (print (date->string (date-of post) "~T") 
+         ": "
+         "<" (screen-name post) "> "
+         (text-of post)))
+
+(define (reload-timeline)
+  (element-update! ($ "bs-console") "loading...")
+  (let1 timeline (get-timeline "friends")
+    (element-empty! ($ "bs-console"))
+    (for-each describe-post timeline)))
+
+(add-handler! ($ "reload") "click" reload-timeline)
+(reload-timeline)
+</script>
+
+</body>
+</html>
+<!-- vim: set ft=scheme: -->

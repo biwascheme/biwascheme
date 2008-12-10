@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <title>BiwaScheme TicTacToe</title>
+</head>
+<body>
+
+   <div id="state"> 相手の接続を待っています... </div>
+    <table>
+   <tr><td id="11"></td><td id="12"></td><td id="13"></td></tr>
+   <tr><td id="21"></td><td id="22"></td><td id="23"></td></tr>
+   <tr><td id="31"></td><td id="32"></td><td id="33"></td></tr>
+   </table>
+   <form>
+   <input type="button" id="btn" value="">
+   </form>
+
+
+  <div id="bs-console"></div>
+
+  <script src="../lib/biwascheme.js">
+  ;;; global variables
+  (define *x* 1)
+  (define *y* 1)
+  (define *ox-mine* #f)
+  (define *ox-others* #f)
+  (define *client-id* #f)
+
+  ;;; utilities
+  (define (ox->string ox)
+    (if (eq? ox 'maru) "○" 
+      (if (eq? ox 'batu) "×"
+        (print "error: unknown value: " ox))))
+
+  (define (cell-at x y)
+    ($ (string-append (number->string x) (number->string y))))
+
+  ;;; user interface
+  (define (highlight x y)
+    (set-style! (cell-at x y) "color" "red"))
+
+  (define (unhighlight x y)
+    (set-style! (cell-at x y) "color" ""))
+
+  (define (select-cell x y)
+    (unhighlight *x* *y*)
+    (set! *x* x)
+    (set! *y* y)
+    (highlight x y))
+
+  (define (update-cell x y ox)
+    (set-content! (cell-at x y) (ox->string ox))
+    (select-cell x y))
+
+  (define (update ls)
+    (let ((x (car ls)) (y (cadr ls)))
+      (update-cell (string->number x) (string->number y) *ox-others*)))
+
+  (define (init-board)
+    (define (init-cell x y)
+      (set-content! (cell-at x y) "□")
+      (add-handler! (cell-at x y) "click" (lambda (e) (select-cell x y))))
+    (highlight *x* *y*)
+    (for-each (lambda (x)
+                (for-each (lambda (y) (init-cell x y)) '(1 2 3)))
+              '(1 2 3)))
+
+  ;;; connection
+  (define (submit)
+    (if (string=? "□" (get-content (cell-at *x* *y*)))
+      (begin
+        (update-cell *x* *y* *ox-mine*)
+        (ts-write (list *x* *y* *ox-mine*))
+        #t)
+      (begin
+        (alert "そこは置けません")
+        #f)))
+
+  (define (connect)
+    (js-set! ($ "btn") "value" "?")
+    (ts-write '(connect))
+    (set! *ox-mine* (cadr (ts-take '(connect _))))
+    (print *ox-mine*)
+    (js-set! ($ "btn") "value" (ox->string *ox-mine*))
+    (set! *ox-others* (if (eq? 'maru *ox-mine*) 'batu 'maru)))
+
+  ;;; main
+  (define (main-loop myturn?)
+    (if myturn?
+      (begin
+        (set-content! ($ "state") "あなたの番です")
+        (wait-for ($ "btn") "click")
+        (main-loop (not (submit))))
+      (begin
+        (set-content! ($ "state") "相手の番です")
+        (update (ts-take `(_ _ ,*ox-others*)))
+        (main-loop #t))))
+
+  (ts-init)
+  (init-board)
+  (connect)
+  (main-loop (eq? *ox-mine* 'maru))
+  </script>
+
+</body>
+</html>
+<!-- vim:set ft=scheme: -->

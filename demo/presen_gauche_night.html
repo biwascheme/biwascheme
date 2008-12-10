@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <title>Hello World</title>
+  <style>
+  h1{ font-size:70px; }
+  ul{ font-size:60px}
+	ul input{ font-size:40px; }
+  div#menu{ margin:0px; padding:0px; }
+  div#presen{ margin:0px; padding:0px; }
+  h1{ margin:0px; padding:0px; }
+  div#repl{
+    position: absolute;
+    top: 70%;
+    width: 90%;
+    background: white;
+  }
+  div#repl input{
+    width: 100% 
+  }
+  input#repl-src{ font-size: 60px; }
+  div#repl-dst{ font-size: 60px; }
+  </style>
+</head>
+<body>
+
+<div align="right" id="menu">
+  <button id="head">≪</button>
+  <button id="back">←</button>
+  <span id="num">0</span>
+  <button id="next">→</button>
+  <button id="last">≫</button>
+  <button id="repl-toggle">★</button>
+</div>
+<div id="presen"></div>
+
+<div id="repl">
+    <input value="" id="repl-src"><br>
+    <div id="repl-dst">　</div>
+    <input type="button" id="repl-eval" style="display:;">
+</div>
+<div id="bs-console"></div>
+
+<script src="../lib/biwascheme.js">
+(load "presen.scm")
+(define *presen*
+  '#(("SchemeでAjax & Comet" ("yhara (原 悠)")) 
+     ("自己紹介" 
+      ("yhara (原 悠)"
+       "某湯淺研から来ました"
+       "京大マイコンクラブ"
+       "そろそろ卒業します"))
+     ("内容"
+      ("BiwaSchemeの話"
+       "Scheme on JavaScript"))
+     ("<font color='red'>gauche</font>.night"
+      ("Gaucheのイベントだった！"))
+     ("でもそんなの関係ねえ"
+      ("<small>(Gaucheは最後の方で出てきます)</small>"))
+     ("BiwaSchemeの特徴"
+      ("1. JavaScriptの代わりに使える"
+       "2. 非同期処理の同期化"
+       "3. Cometによる通信(experimental)"))
+     ("1. JavaScriptの代わりに"
+      ("set-content!"
+      "<div id='test'>&lt;div id='test'>&lt;/div></div>"
+      "set-style!"
+      "element-toggle!"
+        ))
+     ("FAQ"
+      ("Q. JavaScriptの○○機能は\n　使えますか？"
+       "A. <font color='red'>(js-eval</font> \"function(){ ... }\"<font color='red'>)</font>"))
+     ("2. 非同期処理の同期化"
+     ("var url = <font color='purple'>\"/a.html\"</font>;
+new Ajax.Request(url, {
+	onSuccess: function(data){
+		print(data); 
+	}
+}"))
+     ("2. 非同期処理の同期化"
+		 ("(let1 data (http-request <font color='purple'>\"/a.html\"</font>)
+	(print data))
+"))
+     ("3. Cometによる通信"
+ 		 ("TupleSpaceを実装してみました"
+ 			"タプル(値の組)を置いたり，検索したり"))
+
+     ("これを使って何ができる？"
+ 		 ("チャットとか"
+ 			"オセロとか"))
+
+		("まとめ"
+		 ("世界一手軽に遊べる\nScheme処理系を目指して"
+		  "キラーアプリ募集中！"
+		  "ぜひ遊んでみてください
+	<input size=12 value='BiwaScheme'><input type='button' value='検索'>"))
+      ))
+(presen-start)
+     ("jsonpはじめました"
+      ("(define url \"http://twitter.com...\")
+
+(let1 json (receive-jsonp url)
+	(print (json->sexp json)))
+"))
+</script>
+
+</body>
+</html>

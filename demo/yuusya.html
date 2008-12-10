@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <title>勇者の憂鬱 BiwaScheme版</title>
+  <style>
+  </style>
+</head>
+<body>
+
+<h1>勇者の憂鬱</h1>
+
+<div id="bs-console"></div>
+<input type="button" value="つづき" id="next-button">
+
+<h2>ソース</h2>
+<pre id="source_view"></pre>
+
+<script src="../lib/biwascheme.js" id="source">
+(set-content! ($ "source_view") (get-content ($ "source")))
+
+(define (階乗 n) (apply * (iota n 1)))
+
+(define (冒険 レベル スキルたち モンスターたち)
+  (print "*-----")
+  (print (car モンスターたち) "を倒した!")
+  (print (階乗 レベル) "の経験値を得た。")
+  (if (= レベル 30)
+    (begin 
+      (print "勇者は、また、レベルが上がった！")
+      (print "勇者は、ふと空しさを覚えた。"))
+    (begin
+      (print "勇者は" レベル "にレベルが上がった!")
+      (print "勇者は、" (car スキルたち) "を覚えた。\n\n")
+      (print "そして、")
+      (print "かくかくしかじかで、山あり谷ありの冒険が続いたが割愛。\n")
+      (wait-for ($ "next-button") "click")
+      (element-clear! ($ "bs-console"))
+      (冒険 (+ レベル 1) (cdr スキルたち) (cdr モンスターたち)))))
+
+(define モンスターたち '("焼きたてパン" "強いシャチホコ" "もんじゃ焼き一年生" "怪人ホタテ男" "ニセ勇者" "逃げ足の早いアレ" "睡魔" "煩悩" "愛らしい子犬の中の人" "恋するスズメバチ" "勇敢なクマンバチ" "信じられない物" "勇者の師匠" "浮遊する鎧" "怪盗ドボン" "闇の招き猫" "誘惑のカスタードクリーム" "しょっぱすぎる籠手" "カレー味の兜" "光沢だけは一流の盾" "若葉マークのモンスター" "新緑の季節" "梅雨時の車両のニオイ" "暑すぎる夏" "新宿らしき何か" "やたら発達したドーナツ" "育ちすぎたクマー" "なごやかな雰囲気" "凍り付いた気配" "忍び寄る恐怖" ))
+(define スキルたち '("お豆腐の買い方" "鉛筆の買い方" "消しゴムの使い方" "メモの取り方" "攻撃に使えないこともない呪文" "裏町の歩き方" "森林浴" "珈琲の味" "しじみのみそ汁の作り方" "回覧板の回し方" "郵便物の投函方法" "立ち話のコツ" "猫の呼び方" "犬の呼び方" "カラスの呼び方" "鳩専用豆鉄砲" "秘密の趣味" "速く走るコツ" "剣の使い方" "斧の使い方" "まきわりで、まっきわりわり" "聖なる祈り" "孤独" "涼しく過ごすコツ" "お洒落のコツ" "卵をふわっと焼く方法" "ごはんの研ぎ方" "油汚れの対応方法" "大人の振るまい" "Suicaの使い方"))
+
+(冒険 1 スキルたち モンスターたち)
+</script>
+
+</body>
+</html>
+<!-- vim: set ft=scheme: -->
