@@ -36,9 +36,12 @@ var dumper = new BiwaScheme.Dumper();
 function dump(hash){
   dumper.dump(hash);
 }
+function show_error(e){
+  puts("Error: "+e.message);
+}
 function ev(str){
   puts(str);
-  var ret = (new BiwaScheme.Interpreter()).evaluate(str);
+  var ret = (new BiwaScheme.Interpreter(show_error)).evaluate(str);
   dumper.dump_move(1);
   return ret;
 }
