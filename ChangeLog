@@ -1,5 +1,8 @@
 2008-12-26  Yutaka HARA  <yhara(at)kmc.gr.jp>
 
+	* lib/extra_lib.js, test/spec.html:
+	new: 'read-from-string'
+
 	* lib/r6rs_lib.js, test/spec.html:
 	change: 'eval' now takes s-expr instead of string
 

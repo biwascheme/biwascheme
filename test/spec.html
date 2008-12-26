@@ -1099,6 +1099,13 @@ describe('browser functions', {
 describe('extra library', {
   'let1' : function(){
     ev("(let1 a (+ 1 2) (* a 3))").should_be(9);
+  },
+
+  'write-to-string': function(){
+    ev("(write-to-string '(+ 1 2))").should_be("(+ 1 2)");
+  },
+  'read-from-string': function(){
+    ew("(read-from-string \"(+ 1 2)\")").should_be("(+ 1 2)");
   }
 });
 
