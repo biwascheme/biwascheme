@@ -1,3 +1,7 @@
 2008-12-26  Yutaka HARA  <yhara(at)kmc.gr.jp>
 
-	* Decided to start writing changelog.
+	* lib/r6rs_lib.js, test/spec.html:
+	change: 'eval' now takes s-expr instead of string
+
+	* ChangeLog:
+	Decided to start writing changelog.
