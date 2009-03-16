@@ -12,7 +12,7 @@ if(typeof(WScript) == 'object'){
   }
   eval("window = {}; navigator = {];");
   eval("function puts(str){ WScript.Echo(str) }");
-  eval(read("../lib/prototype.160.js"));
+  eval(read("../lib/prototype.js"));
   eval(read("../lib/stackbase.js"));
   eval(read("../lib/r6rs_lib.js"));
   eval("function ev(str){ "+

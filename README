@@ -14,7 +14,7 @@ official page: http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme
 :lib/r6rs_lib.js:library (R6RS functions)
 :lib/webscheme_lib.js:library (functions which needs a browser)
 :lib/extra_lib.js:library (other functions)
-:lib/prototype.160.js:see http://prototypejs.org/
+:lib/prototype.js:see http://prototypejs.org/
 
 !!! Tests
 :index.html:REPL (read-eval-print-loop)
