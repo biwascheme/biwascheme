@@ -1111,6 +1111,33 @@ describe('extra library', {
   }
 });
 
+describe('srfi-30 comment syntax', {
+  'simple(1)' : function(){
+    ev("#| abc |# (+ 1 3)").should_be(4);
+  },
+  'simple(2)' : function(){
+    ev("#|abc|# (+ 1 3)").should_be(4);
+  },
+  'simple(3)' : function(){
+    ev("#|abc|#(+ 1 3)").should_be(4);
+  },
+  'simple(4)' : function(){
+    ev("(+ 1 #|abc|# 3)").should_be(4);
+  },
+  'conjunction(symbol)' : function(){
+    ev("(begin (define a 1) #|xxxx|#a)").should_be("1");
+  },
+  'conjunction(symbol and expression)' : function(){
+    ev("#| abc \n\t asdfas xxxx|#(+ 1 3)").should_be(4);
+  },
+  'nested comments' : function(){
+    ev("#| #|abc |# \n\t asdfas xxxx|# (+ 1 3)").should_be(4);
+  },
+  'token in a string' : function() {
+    ev("\"#| abc |#|#\"").should_be("#| abc |#|#");
+  }
+})
+
 // ]]></script>
 </head>
 <body></body>
