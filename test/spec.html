@@ -366,6 +366,12 @@ describe('11.4 Expressions', {
     ev("(let ((x 2) (y 3)) (* x y))").should_be(6);
     ev(" (let ((x 2) (y 3)) (let ((x 7) (z (+ x y))) (* z x)))").should_be(35);
   },
+  'named let' : function(){
+    ev("(let loop ((a 1)(b 3))" +
+       "  (if (= a 0)" +
+       "    b" +
+       "    (loop (- a 1) (- b 1))))").should_be(2);
+  },
   'let*' : function(){
     ev("(let ((x 2) (y 3)) (let* ((x 7) (z (+ x y))) (* z x))) ").should_be(70);
   },
