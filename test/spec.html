@@ -225,6 +225,9 @@ describe('syntax expand', {
   },
   'define-macro' : function(){
     ev("(define-macro (foo x y) `(+ ,x ,y)) (foo 8 9)").should_be(17);
+    ev("(define-macro (bar x . y) `(+ ,x ,@y)) (bar 8 9 10 11)").should_be(38);
+    ev("(define-macro (baz . y) `(+ ,@y)) (baz 8 9 10 11)").should_be(38);
+    ev("(define-macro (bazz . y) `(length ',y)) (bazz 8 9 10 11)").should_be(4);
   }
 })
 
