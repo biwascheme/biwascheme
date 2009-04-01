@@ -1037,6 +1037,13 @@ describe('13 Hashtables', {
     ev("(hashtable? (make-eq-hashtable))").should_be(true);
     ev("(hashtable? '((1 . 2)))").should_be(false);
   },
+  'hashtable-size': function(){
+    ew('(let* ((h (make-eq-hashtable))' +
+       '       (s1 (hashtable-size h))' +
+       '       (s2 (begin (hashtable-set! h "foo" 1)' +
+       '                  (hashtable-size h))))' +
+       '  (list s1 s2))').should_be("(0 1)");
+  },
   'hashtable-set!, hashtable-ref': function(){
     ew('(let ((h (make-eq-hashtable)))' +
        '  (hashtable-set! h "foo" 1)' +
