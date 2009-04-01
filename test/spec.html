@@ -1102,6 +1102,14 @@ describe('browser functions', {
   },
   'js-new' : function(){
     ev('(js-invoke (js-new "Date" 2008 1 1) "getFullYear")').should_be(2008);
+  },
+  'js-null?' : function(){
+    ev('(js-null? (js-eval "null"))').should_be(true);
+    ev('(js-null? 0)').should_be(false);
+  },
+  'js-undefined?' : function(){
+    ev('(js-undefined? (js-eval "undefined"))').should_be(true);
+    ev('(js-undefined? 0)').should_be(false);
   }
 });
 
