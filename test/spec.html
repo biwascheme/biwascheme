@@ -1036,6 +1036,12 @@ describe('13 Hashtables', {
   'make-eq-hashtable, hashtable?': function(){
     ev("(hashtable? (make-eq-hashtable))").should_be(true);
     ev("(hashtable? '((1 . 2)))").should_be(false);
+  },
+  'hashtable-set!, hashtable-ref': function(){
+    ew('(let ((h (make-eq-hashtable)))' +
+       '  (hashtable-set! h "foo" 1)' +
+       '  (list (hashtable-ref h "foo" #f)' +
+       '        (hashtable-ref h "bar" #f)))').should_be("(1 #f)");
   }
 })
 
