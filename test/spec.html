@@ -1049,6 +1049,12 @@ describe('13 Hashtables', {
        '  (hashtable-set! h "foo" 1)' +
        '  (list (hashtable-ref h "foo" #f)' +
        '        (hashtable-ref h "bar" #f)))').should_be("(1 #f)");
+  },
+  'hashtable-delete!': function(){
+    ev('(let ((h (make-eq-hashtable)))' +
+       '  (hashtable-set! h "foo" 1)' +
+       '  (hashtable-delete! h "foo")' +
+       '  (hashtable-ref h "foo" #f))').should_be(false);
   }
 })
 
