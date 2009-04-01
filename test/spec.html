@@ -1035,6 +1035,7 @@ describe('12 syntax-case', {
 describe('13 Hashtables', {
   'make-eq-hashtable, hashtable?': function(){
     ev("(hashtable? (make-eq-hashtable))").should_be(true);
+    ev("(hashtable? (make-eq-hashtable 100))").should_be(true);
     ev("(hashtable? '((1 . 2)))").should_be(false);
   },
   'hashtable-size': function(){
