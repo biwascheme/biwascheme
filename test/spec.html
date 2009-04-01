@@ -1061,6 +1061,16 @@ describe('13 Hashtables', {
        '  (hashtable-set! h "foo" 1)' +
        '  (list (hashtable-contains? h "foo")' +
        '        (hashtable-contains? h "bar")))').should_be("(#t #f)");
+  },
+  'hashtable-keys': function(){
+    ew('(let ((h (make-eq-hashtable)))' +
+       '  (hashtable-set! h "foo" 1)' +
+       '  (hashtable-keys h))').should_be('("foo")');
+  },
+  'hashtable-entries': function(){
+    ew('(let ((h (make-eq-hashtable)))' +
+       '  (hashtable-set! h "foo" 1)' +
+       '  (hashtable-entries h))').should_be('(1)');
   }
 })
 
