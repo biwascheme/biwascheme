@@ -23,8 +23,8 @@ official page: http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme
 :test/console_test.js:runner for CScript
 :test/browser_test.js:runner for browsers (requires console_test.js)
 :test/JSSpec.js:see http://jania.pe.kr/aw/moin.cgi/JSSpec 
-:test/JSSpec.css:
-:test/diff_match_patch.js:
+:test/JSSpec.css:used by JSSpec.js
+:test/diff_match_patch.js:used by JSSpec.js
 
 !! Acknowledgements
 

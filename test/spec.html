@@ -1048,6 +1048,48 @@ describe('12 syntax-case', {
 })
 
 describe('13 Hashtables', {
+  'make-eq-hashtable, hashtable?': function(){
+    ev("(hashtable? (make-eq-hashtable))").should_be(true);
+    ev("(hashtable? (make-eq-hashtable 100))").should_be(true);
+    ev("(hashtable? '((1 . 2)))").should_be(false);
+  },
+  'hashtable-size': function(){
+    ew('(let* ((h (make-eq-hashtable))' +
+       '       (s1 (hashtable-size h))' +
+       '       (s2 (begin (hashtable-set! h "foo" 1)' +
+       '                  (hashtable-size h))))' +
+       '  (list s1 s2))').should_be("(0 1)");
+  },
+  'hashtable-set!, hashtable-ref': function(){
+    ew('(let ((h (make-eq-hashtable)))' +
+       '  (hashtable-set! h "foo" 1)' +
+       '  (list (hashtable-ref h "foo" #f)' +
+       '        (hashtable-ref h "bar" #f)))').should_be("(1 #f)");
+  },
+  'hashtable-delete!': function(){
+    ev('(let ((h (make-eq-hashtable)))' +
+       '  (hashtable-set! h "foo" 1)' +
+       '  (hashtable-delete! h "foo")' +
+       '  (hashtable-ref h "foo" #f))').should_be(false);
+  },
+  'hashtable-contains?': function(){
+    ew('(let ((h (make-eq-hashtable)))' +
+       '  (hashtable-set! h "foo" 1)' +
+       '  (list (hashtable-contains? h "foo")' +
+       '        (hashtable-contains? h "bar")))').should_be("(#t #f)");
+  },
+  'hashtable-keys': function(){
+    ew('(let ((h (make-eq-hashtable)))' +
+       '  (hashtable-set! h "foo" 1)' +
+       '  (hashtable-keys h))').should_be('#("foo")');
+  },
+  'hashtable-entries': function(){
+    ew('(call-with-values' +
+       '  (lambda () (let ((h (make-eq-hashtable)))' +
+       '               (hashtable-set! h "foo" 1)' +
+       '               (hashtable-entries h)))' +
+       '  list)').should_be('(#("foo") #(1))');
+  }
 })
 
 describe('14 Enumerators', {
@@ -1117,6 +1159,14 @@ describe('browser functions', {
   },
   'js-new' : function(){
     ev('(js-invoke (js-new "Date" 2008 1 1) "getFullYear")').should_be(2008);
+  },
+  'js-null?' : function(){
+    ev('(js-null? (js-eval "null"))').should_be(true);
+    ev('(js-null? 0)').should_be(false);
+  },
+  'js-undefined?' : function(){
+    ev('(js-undefined? (js-eval "undefined"))').should_be(true);
+    ev('(js-undefined? 0)').should_be(false);
   }
 });
 
