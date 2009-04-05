@@ -162,6 +162,21 @@ describe('utilities', {
   }
 });
 
+describe('literal', {
+  'number' : function() {
+    ev("0").should_be(0);
+    ev("1").should_be(1);
+  },
+  'string' : function() {
+    ev("\"\"").should_be("");
+    ev("\"a\"").should_be("a");
+  },
+  'bool' : function() {
+    ev("#t").should_be(true);
+    ev("#f").should_be(false);
+  }
+});
+
 describe('basic', {
   'if #f' : function(){
     ev("(if #f 2 5)").should_be(5);
