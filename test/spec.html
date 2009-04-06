@@ -259,12 +259,19 @@ describe('syntaxes', {
   'function define (multiple args)' : function(){
     ev("(define (f x y) x) (f 3 4)").should_be(3);
   },
-//  'function define (optional args)' : function(){
-//    ev("(define (f x y . z) z) (f 3 4 5 6)").inspect().should_be("(5 6)");
-//  },
-//  'function lambda (optional args)' : function(){
-//    ev("((lambda (x y . z) z) '(3 4 5 6))").inspect().should_be("(5 6)");
-//  },
+  'function define (optional args)' : function(){
+    ev("(define (f x y . z) z) (f 3 4 5 6)").should_be("(5 6)");
+  },
+  'function lambda (empty optional args)' : function(){
+    ew("(define (foo x y . z) z) (foo 3 4)").should_be("()");
+  },
+  'function lambda (optional args)' : function(){
+    ev("((lambda (x y . z) z) 3 4 5 6)").should_be("(5 6)");
+    ev("(apply (lambda (x y . z) z) '(3 4 5 6))").should_be("(5 6)");
+  },
+  'function lambda (empty optional args)' : function(){
+    ew("((lambda (x y . z) z) 3 4)").should_be("()");
+  },
   'let' : function(){
     ev("((lambda (a) (let ((x 5) (y 2)) (set! y 1) (- x y a))) 1)").should_be(3);
     ev("(let ((x 2) (y 3)) (* x y))").should_be(6);
