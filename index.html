@@ -116,7 +116,7 @@ function bs_eval(){
 $$("div.bs-snippet").each(function(div){
   Event.observe(div, "click", function(e){
     $('bs-input').innerHTML = "";
-    $('bs-input').appendChild(document.createTextNode(div.firstChild.data))
+    $('bs-input').value = div.firstChild.data;
   });
 });
 // ]]></script>
