@@ -104,6 +104,7 @@ describe('utilities', {
       expect( to_write(undefined) ).should_be("#<undef>");
       expect( to_write([1,2,3]) ).should_be("#(1 2 3)");
       expect( to_write([NaN,Infinity,undefined]) ).should_be("#(+nan.0 +inf.0 #<undef>)");
+      expect( to_write(Char.get("a")) ).should_be("#\\a");
     }
   },
   'to_display' : function(){
@@ -111,6 +112,7 @@ describe('utilities', {
       expect( to_display("asdf") ).should_be("asdf");
       // todo: add test case for Char
       expect( to_display(Sym("a")) ).should_be("a");
+      expect( to_display(Char.get("a")) ).should_be("a");
     }
   },
   'Array#to_list' : function(){
