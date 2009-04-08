@@ -101,9 +101,10 @@ describe('utilities', {
       expect( to_write(Infinity) ).should_be("+inf.0");
       expect( to_write(-Infinity) ).should_be("-inf.0");
       expect( to_write(NaN) ).should_be("+nan.0");
-      expect( to_write(undefined) ).should_be("#<undef>");
+      expect( to_write(undefined) ).should_be("undefined");
+      expect( to_write(undef) ).should_be("#<undef>");
       expect( to_write([1,2,3]) ).should_be("#(1 2 3)");
-      expect( to_write([NaN,Infinity,undefined]) ).should_be("#(+nan.0 +inf.0 #<undef>)");
+      expect( to_write([NaN,Infinity,undef]) ).should_be("#(+nan.0 +inf.0 #<undef>)");
       expect( to_write(Char.get("a")) ).should_be("#\\a");
     }
   },
@@ -157,9 +158,9 @@ describe('utilities', {
       expect( write_ss(Infinity) ).should_be("+inf.0");
       expect( write_ss(-Infinity) ).should_be("-inf.0");
       expect( write_ss(NaN) ).should_be("+nan.0");
-      expect( write_ss(undefined) ).should_be("#<undef>");
+      expect( write_ss(undef) ).should_be("#<undef>");
       expect( write_ss([1,2,3]) ).should_be("#(1 2 3)");
-      expect( write_ss([NaN,Infinity,undefined]) ).should_be("#(+nan.0 +inf.0 #<undef>)");
+      expect( write_ss([NaN,Infinity,undef]) ).should_be("#(+nan.0 +inf.0 #<undef>)");
     }
   }
 });
@@ -1190,7 +1191,7 @@ describe('browser functions', {
     ev('(js-null? 0)').should_be(false);
   },
   'js-undefined?' : function(){
-    ev('(js-undefined? (js-eval "undefined"))').should_be(true);
+    ev('(js-undefined? (js-eval "BiwaScheme.undef"))').should_be(true);
     ev('(js-undefined? 0)').should_be(false);
   }
 });
