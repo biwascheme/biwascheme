@@ -10,7 +10,7 @@ if(typeof(WScript) == 'object'){
     var file = FileSys.OpenTextFile(path ,1); //1=read
     return file.ReadAll();
   }
-  eval("window = {}; navigator = {];");
+  eval("window = {}; navigator = {};");
   eval("function puts(str){ WScript.Echo(str) }");
   eval(read("../lib/prototype.js"));
   eval(read("../lib/stackbase.js"));
