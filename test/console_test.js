@@ -18,7 +18,6 @@ if(typeof(WScript) == 'object'){
   eval("function ev(str){ "+
         "try{ puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }"+
         "catch(e){ puts('(function ev:exception raised) '+e.message); } }");
-  eval("function dump(){}");
 }
 else{
   //for SpiderMonkey 
@@ -26,8 +25,6 @@ else{
     eval("function puts(str){ print(str); }")
   if(typeof(ev) != 'function')
     eval("function ev(str){ puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }");
-  if(typeof(dump) != 'function')
-    eval("function dump(){}"); 
 }
 BiwaScheme.Debug = true;
 
