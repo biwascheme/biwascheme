@@ -1197,7 +1197,7 @@ describe('browser functions', {
     ev('(js-null? 0)').should_be(false);
   },
   'js-undefined?' : function(){
-    ev('(js-undefined? (js-eval "BiwaScheme.undef"))').should_be(true);
+    ev('(js-undefined? (js-eval "undefined"))').should_be(true);
     ev('(js-undefined? 0)').should_be(false);
   }
 });
