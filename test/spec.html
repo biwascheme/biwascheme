@@ -474,6 +474,7 @@ describe('11.6 Procedure predicate' , {
   'procedure?' : function() {
     ev("(procedure? (lambda ()))").should_be(true);
     ev("(procedure? #(lambda ()))").should_be(false);
+    ev("(procedure? car)").should_be(true);
   }  
 })
 
