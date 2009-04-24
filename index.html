@@ -94,6 +94,7 @@
 <script type="text/javascript" src="lib/r6rs_lib.js"></script>
 <script type="text/javascript" src="lib/webscheme_lib.js"></script>
 <script type="text/javascript" src="lib/extra_lib.js"></script>
+<script type="text/javascript" src="lib/dumper.js"></script>
 
 <script type="text/javascript">// <![CDATA[
 var biwascheme = new BiwaScheme.Interpreter();
@@ -103,7 +104,7 @@ function bs_eval(){
 
   try{
     var opc = biwascheme.compile(str);
-    $('bs-opecode').innerHTML = (new BiwaScheme.Dumper).dump_opc(opc);
+    $('bs-opecode').innerHTML = (new BiwaScheme.Dumper()).dump_opc(opc);
     var before = new Date();
     biwascheme.evaluate(str, function(result){
       var after = new Date();
