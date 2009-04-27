@@ -1213,6 +1213,7 @@ describe('extra library', {
   },
   'read-from-string': function(){
     ew("(read-from-string \"(+ 1 2)\")").should_be("(+ 1 2)");
+    ev("(eof-object? (read-from-string \"\"))").should_be(true);
   }
 });
 
