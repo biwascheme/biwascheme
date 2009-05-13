@@ -572,6 +572,9 @@ describe('11.7 Arithmetic', {
     ev('(string->number "+inf.0")').should_be(Infinity)
     ev('(string->number "-inf.0")').should_be(-Infinity)
     ew('(string->number "+nan.0")').should_be("+nan.0")
+  },
+  'complex' : function() {
+    ev('(magnitude (make-rectangular 3 4))').should_be(5)
   }
 })
 
