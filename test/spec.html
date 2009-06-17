@@ -1195,6 +1195,11 @@ describe('browser functions', {
   },
   'js-new' : function(){
     ev('(js-invoke (js-new "Date" 2008 1 1) "getFullYear")').should_be(2008);
+    BiwaScheme.TestForJSNew = function(obj){
+      this.foo = obj["foo"];
+    };
+    var tmp = scm_eval('(js-new "BiwaScheme.TestForJSNew" \'foo (lambda ()))');
+    expect(Object.isFunction(tmp.foo)).should_be(true)
   },
   'js-null?' : function(){
     ev('(js-null? (js-eval "null"))').should_be(true);
