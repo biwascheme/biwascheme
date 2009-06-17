@@ -572,6 +572,9 @@ describe('11.7 Arithmetic', {
     ev('(string->number "+inf.0")').should_be(Infinity)
     ev('(string->number "-inf.0")').should_be(-Infinity)
     ew('(string->number "+nan.0")').should_be("+nan.0")
+  },
+  'complex' : function() {
+    ev('(magnitude (make-rectangular 3 4))').should_be(5)
   }
 })
 
@@ -1213,6 +1216,7 @@ describe('extra library', {
   },
   'read-from-string': function(){
     ew("(read-from-string \"(+ 1 2)\")").should_be("(+ 1 2)");
+    ev("(eof-object? (read-from-string \"\"))").should_be(true);
   }
 });
 
