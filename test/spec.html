@@ -1222,6 +1222,10 @@ describe('extra library', {
   'read-from-string': function(){
     ew("(read-from-string \"(+ 1 2)\")").should_be("(+ 1 2)");
     ev("(eof-object? (read-from-string \"\"))").should_be(true);
+  },
+  'map-with-index': function(){
+    ew("(map-with-index (lambda (i s) (list i s))" +
+       "  '(a b))").should_be("((0 a) (1 b))");
   }
 });
 
