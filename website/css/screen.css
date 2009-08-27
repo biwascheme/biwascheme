@@ -35,8 +35,9 @@ h1 {
 
 #menu {
   float: left;
-  margin-left: -20%;
+  margin-left: -25%;
   padding: 1em;
+  z-index: -1;
 }
 
 /* content */
@@ -44,6 +45,7 @@ h1 {
 #content {
   padding-left: 1em;
   border-left: 5px solid #0cf;
+  z-index: 1;
 }
 
 h2 {
