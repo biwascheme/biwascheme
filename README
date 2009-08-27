@@ -2,7 +2,7 @@
 
 BiwaScheme is a (yet another) Scheme interpreter written in JavaScript.
 
-official page: http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme
+official page: http://www.biwascheme.org/
 
 !! Files
 
@@ -34,5 +34,5 @@ official page: http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme
 !! Contact
 
  yhara (HARA Yutaka)
- yhara/at/kmc.gr.jp
- http://mono.kmc.gr.jp/~yhara/
+ yutaka.hara.gmail.com
+ http://route477.net
