@@ -1,0 +1,287 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>BiwaScheme</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!--<script type="text/javascript" src="/js/something.js" />-->
+    <link href="css/screen.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="header">
+      <h1>
+        BiwaScheme
+        <span id="subtitle">Scheme interpreter for browsers</span>
+      </h1>
+    </div>
+
+    <ul id="menu">
+      <li><a href='index.html'>About</a></li>
+      <li><a href='download.html'>Download</a></li>
+      <li><a href='status.html'>Status</a></li>
+    </ul>
+
+    <div id="content">
+      <h2>Implementation Status</h2>
+      <p>
+        BiwaScheme aims to conform to the latest 
+        specification of the Scheme language,
+        <a href="http://www.r6rs.org/">R6RS</a>.
+      </p>
+      <p>
+        Most of the important features are already supported.
+        The biggest features not implemented are
+        errors and hygenic macros
+        (for now, BiwaScheme has 'define-macro' instead).
+      </p>
+
+      <h3>R6RS Base library</h3>
+      <table>
+        <tr>
+          <td>11.4</td>
+          <td>Expressions</td>
+          <td><em>almost ok</em></td>
+        </tr>
+        <tr>
+          <td>11.5</td>
+          <td>Equivalence predicates</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.6</td>
+          <td>Procedure predicate</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.7.4.1</td>
+          <td>Numerical operations</td>
+          <td><em>almost ok</em></td>
+        </tr>
+        <tr>
+          <td>11.8</td>
+          <td>Booleans</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.9</td>
+          <td>Paris and lists</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.10</td>
+          <td>Symbols</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.11</td>
+          <td>Characters</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.12</td>
+          <td>Strings</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.13</td>
+          <td>Vectors</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.14</td>
+          <td>Errors and violations</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>11.15</td>
+          <td>Control features</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.16</td>
+          <td>Iteration</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>11.17</td>
+          <td>Quasiquotation</td>
+          <td><em>almost ok</em>(except vector quasiquotation)</td>
+        </tr>
+        <tr>
+          <td>11.18</td>
+          <td>Binding constructs for syntactic keywords</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>11.19</td>
+          <td>Macro transformers</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>11.20</td>
+          <td>Tail calls and tail contexts</td>
+          <td>ok?</td>
+        </tr>
+      </table>
+
+      <h3>R6RS Standard Libraries</h3>
+      <table>
+        <tr>
+          <td>1</td>
+          <td>Unicode</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Bytevectors</td>
+          <td>(no plan)</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>List utilities</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Sorting</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Control structures</td>
+          <td><em>partially ok (when, unless)</em></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Records</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Exceptions and conditions</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>I/O</td>
+          <td><em>partially ok (output to 'stdout')</em></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>File system</td>
+          <td>(no plan)</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Command-line access and exit values</td>
+          <td>(no plan)</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Arithmetic</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>syntax-case</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>Hashtables</td>
+          <td><em>almost ok</em></td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>Enumerations</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>Composite library</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>eval</td>
+          <td><em>almost ok (eval)</em></td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>Mutable pairs</td>
+          <td>(no plan)</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>Mutable strings</td>
+          <td>(no plan) # because JavaScript does not provide mutable strings</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>R5RS compatibility</td>
+          <td>(no plan)</td>
+        </tr>
+      </table>
+
+      '(no plan)' means that I have no plan to support it,
+      but does not mean will never include it; 
+      patches are welcome.
+
+      <h3>SRFIs</h3>
+      See <a href='http://srfi.schemers.org/'>
+        http://srfi.schemers.org/
+      </a> for SRFI (Scheme Requests for Implementation).
+      <table>
+        <tr>
+          <td>1</td>
+          <td>list utilities</td>
+          <td>partially (iota)</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>string port</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>string utilities</td>
+          <td>not yet</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>time</td>
+          <td>partially</td>
+        </tr>
+        <tr>
+          <td>27</td>
+          <td>random</td>
+          <td>partially (random-integer)</td>
+        </tr>
+        <tr>
+          <td>30</td>
+          <td>multi-line comment</td>
+          <td><em>ok</em></td>
+        </tr>
+        <tr>
+          <td>38</td>
+          <td>write/ss</td>
+          <td>partially (write/ss)</td>
+        </tr>
+        <tr>
+          <td>43</td>
+          <td>vector</td>
+          <td>partially (vector-append)</td>
+        </tr>
+        <tr>
+          <td>62</td>
+          <td>s-expr comment</td>
+          <td><em>ok</em></td>
+        </tr>
+      </table>
+      <div id="footer">
+        &copy; 2007-2009 Yutaka HARA and the BiwaScheme team
+      </div>
+    </div>
+  </body>
+</html>
+
