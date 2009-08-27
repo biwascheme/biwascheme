@@ -35,19 +35,14 @@
 </head>
 <body>
 
-  <h1>BiwaScheme</h1>
-
-  <dl>
-  <dt>about</dt><dd><a href="http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme">http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme</a></dd>
-  <dt>unittest</dt><dd><a href="test/spec.html">spec.html</a></dd>
-  </dl>
+  <h1><a href='http://www.biwascheme.org/'>BiwaScheme</a> REPL</h1>
 
   <!--<button id="test">foo</button>-->
 
   <div id="bs-repl">
     <table><tr><td valign="top">
       <form>
-        <textarea id="bs-input" rows="10" cols="60"></textarea><br>
+        <textarea id="bs-input" rows="10" cols="60">(print "Hello, world!")</textarea><br>
         <div style="float:right;">
           <span id="time"></span>
           <input type="button" value="eval" onclick="bs_eval()">
