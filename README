@@ -17,7 +17,7 @@ official page: http://mono.kmc.gr.jp/~yhara/w/?BiwaScheme
 :lib/prototype.js:see http://prototypejs.org/
 
 !!! Tests
-:index.html:REPL (read-eval-print-loop)
+:repl.html:REPL (read-eval-print-loop)
 :test/spec.html:Unit test of the interpreter (requires JSSpec)
 :test/spidermonkey.sh:runner for SpiderMonkey (requires console_test.js)
 :test/console_test.js:runner for CScript
