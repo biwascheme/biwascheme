@@ -7,16 +7,59 @@
 <script type="text/javascript" src="diff_match_patch.js"></script>
 <script type="text/javascript" src="JSSpec.js"></script>
 
+<!--
 <script type="text/javascript" src="../lib/prototype.js"></script>
 <script type="text/javascript" src="../lib/stackbase.js"></script>
 <script type="text/javascript" src="../lib/r6rs_lib.js"></script>
 <script type="text/javascript" src="../lib/webscheme_lib.js"></script>
 <script type="text/javascript" src="../lib/extra_lib.js"></script>
+-->
+<script type="text/javascript" src="../build/builtin.js"></script>
+
 
 <div id="div1">div tag sample</div>
 
 <script type="text/javascript">// <![CDATA[
-//utils
+
+var require = function(src, check, proc){
+  var script = document.createElement('script')
+  script.src = src;
+  document.body.appendChild(script);
+
+  var checker = new Function("return !!(" + check + ")");
+
+  if(checker()) proc();
+  else          setTimeout(function(){ checker() ? proc() : setTimeout(arguments.callee, 10); }, 10);
+};
+
+var loader_development = function(proc){
+  var dir = "../src/";
+  require(dir+'prototype.js', 'window.$$', function(){
+  require(dir+'stackbase.js',     'window.BiwaScheme', function(){
+  require(dir+'r6rs_lib.js',      'window.BiwaScheme.CoreEnv["+"]', function(){
+  require(dir+'webscheme_lib.js', 'window.BiwaScheme.CoreEnv["getelem"]', function(){
+  require(dir+'extra_lib.js',     'window.BiwaScheme.CoreEnv["print"]', function(){
+  require(dir+'dumper.js',     'window.BiwaScheme.Dumper', function(){
+  require(dir+'io.js',            'window.JSIO', function(){
+    proc();
+    JSSpec.start_test();
+  })})})})})})});
+};
+
+var loader_production = function(proc){
+  var dir = "../lib/";
+  require(dir+'biwascheme.js',            'window.BiwaScheme', function(){
+    proc();
+    JSSpec.start_test();
+  });
+};
+
+var loader = location.hash.match(/dev/) ? loader_development 
+                                        : loader_production;
+
+loader(function(){
+
+// test main
 function puts(){}
 function scm_eval(str, func){
   return (new BiwaScheme.Interpreter).evaluate(str, func||new Function());
@@ -1297,7 +1340,10 @@ describe('S expression comment(#;)', {
     ew("(list 1 #;#(#;3 #;1 #;2 2) 8)").should_be("(1 8)");
     ew("(list 1 #;#(#;3 #;1 #;2 2 #;(1 2 #;3)) 9)").should_be("(1 9)");
   }
-})
+});
+
+// end loader
+}); 
 
 // ]]></script>
 </head>
