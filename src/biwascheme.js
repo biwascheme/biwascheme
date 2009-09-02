@@ -5,6 +5,7 @@ var BiwaScheme = {
   Version: 0.5,
 
   // load library and execute proc after loading
+  // also used by js-load
   require: function(src, check, proc){
     var script = document.createElement('script')
     script.src = src;
