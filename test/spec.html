@@ -54,8 +54,8 @@ var loader_production = function(proc){
   });
 };
 
-var loader = location.hash.match(/dev/) ? loader_development 
-                                        : loader_production;
+var loader = location.hash.match(/lib/) ? loader_production 
+                                        : loader_development;
 
 loader(function(){
 
