@@ -7,16 +7,6 @@
 <script type="text/javascript" src="diff_match_patch.js"></script>
 <script type="text/javascript" src="JSSpec.js"></script>
 
-<!--
-<script type="text/javascript" src="../lib/prototype.js"></script>
-<script type="text/javascript" src="../lib/stackbase.js"></script>
-<script type="text/javascript" src="../lib/r6rs_lib.js"></script>
-<script type="text/javascript" src="../lib/webscheme_lib.js"></script>
-<script type="text/javascript" src="../lib/extra_lib.js"></script>
--->
-<script type="text/javascript" src="../build/builtin.js"></script>
-
-
 <div id="div1">div tag sample</div>
 
 <script type="text/javascript">// <![CDATA[
@@ -36,9 +26,9 @@ var loader_development = function(proc){
   var dir = "../src/";
   require(dir+'prototype.js', 'window.$$', function(){
   require(dir+'stackbase.js',     'window.BiwaScheme', function(){
-  require(dir+'r6rs_lib.js',      'window.BiwaScheme.CoreEnv["+"]', function(){
-  require(dir+'webscheme_lib.js', 'window.BiwaScheme.CoreEnv["getelem"]', function(){
-  require(dir+'extra_lib.js',     'window.BiwaScheme.CoreEnv["print"]', function(){
+  require(dir+'library/r6rs_lib.js',      'window.BiwaScheme.CoreEnv["+"]', function(){
+  require(dir+'library/webscheme_lib.js', 'window.BiwaScheme.CoreEnv["getelem"]', function(){
+  require(dir+'library/extra_lib.js',     'window.BiwaScheme.CoreEnv["print"]', function(){
   require(dir+'dumper.js',     'window.BiwaScheme.Dumper', function(){
   require(dir+'io.js',            'window.JSIO', function(){
     proc();
