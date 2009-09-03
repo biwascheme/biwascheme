@@ -452,6 +452,21 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
 
   //
+  // srfi-27
+  //
+  define_libfunc("random-integer", 1, 1, function(ar){
+    var n = ar[0];
+    assert_integer(n);
+    if (n < 0)
+      throw new Error("random-integer: the argument must be >= 0");
+    else
+      return Math.floor(Math.random() * ar[0]);
+  });
+  define_libfunc("random-real", 0, 0, function(ar){
+    return Math.random();
+  });
+
+  //
   // srfi-38 (write/ss)
   //
   var user_write_ss = function(ar){

@@ -1278,6 +1278,15 @@ describe('extra library', {
   }
 });
 
+describe('srfi-27 random', {
+  'random-integer' : function(){
+    ev("(integer? (random-integer 3))").should_be(true);
+  },
+  'random-real' : function(){
+    ev("(real? (random-real))").should_be(true);
+  }
+});
+
 describe('srfi-30 comment syntax', {
   'simple(1)' : function(){
     ev("#| abc |# (+ 1 3)").should_be(4);
