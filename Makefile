@@ -5,13 +5,15 @@
 #  #!/bin/sh
 #  java -jar /somewhere/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar $*
 
-FILES = src/prototype.js \
+FILES = src/version.js \
+  src/prototype.js \
   src/stackbase.js \
   src/library/r6rs_lib.js \
   src/library/webscheme_lib.js \
   src/library/extra_lib.js \
   src/dumper.js \
   src/io.js \
+  src/release_initializer.js \
 
 all: build
 
