@@ -540,8 +540,38 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   }
   define_syntax("letrec", expand_letrec_star);
   define_syntax("letrec*", expand_letrec_star);
-  //let-values
+
+  define_syntax("let-values", function(x){
+    // (let-values (((a b) (values 1 2))
+    //               (c d . e) (values 3 4 5))
+    //   (print a b c d e))
+    // -> (call-with-values
+    //      (lambda () (values 1 2))
+    //      (lambda (a b)
+    //        (call-with-values
+    //          (lambda () (values 3 4 5))
+    //          (lambda (c d . e) 
+    //            (print a b c d e)))))
+    var mv_bindings = x.cdr.car;
+    var body = x.cdr.cdr;
+
+    var ret = null;
+
+    mv_bindings.to_array().reverse().each(function(item){
+      var formals = item.car, init = item.cdr.car;
+      ret = new Pair(Sym("call-with-values"),
+              new Pair(new Pair(Sym("lambda"),
+                         new Pair(nil,
+                           new Pair(init, nil))),
+                new Pair(new Pair(Sym("lambda"),
+                           new Pair(formals,
+                             (ret == null ? body
+                                          : new Pair(ret, nil)))), nil)));
+    });
+    return ret;
+  });
   //let*-values
+
   //            11.4.7  Sequencing
   //(begin)
 

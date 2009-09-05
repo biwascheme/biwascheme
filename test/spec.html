@@ -444,23 +444,21 @@ describe('11.4 Expressions', {
   },
   'letrec' : function(){
     ev(" (letrec ((even?  (lambda (n) (if (zero? n) #t (odd? (- n 1))))) (odd?  (lambda (n) (if (zero? n) #f (even? (- n 1)))))) (even? 88))   ").should_be(true);
-  }
+  },
 //  'letrec*' : function(){
 //    ev(" (letrec* ((p (lambda (x) (+ 1 (q (- x 1))))) (q (lambda (y) (if (zero? y) 0 (+ 1 (p (- y 1)))))) (x (p 5)) (y x)) y)").should_be(5);
 //  }
-
-//  //(let-values)
-//(let-values (((a b) (values 1 2))
-//             ((c d) (values 3 4)))
-//  (list a b c d))         ⇒ (1 2 3 4)
-//
-//(let-values (((a b . c) (values 1 2 3 4)))
-//  (list a b c))                    ⇒ (1 2 (3 4))
-//
-//(let ((a 'a) (b 'b) (x 'x) (y 'y))
-//  (let-values (((a b) (values x y))
-//               ((x y) (values a b)))
-//    (list a b x y)))               ⇒ (x y a b)
+  'let-values' : function(){
+    ew("(let-values (((a b) (values 1 2)) " +
+       "             ((c d) (values 3 4)))" +
+       "  (list a b c d))                 ").should_be("(1 2 3 4)");
+    ew("(let-values (((a b . c) (values 1 2 3 4)))" +
+       "  (list a b c))                   ").should_be("(1 2 (3 4))");
+//    ew("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
+//       "  (let-values (((a b) (values x y)) " +
+//       "               ((x y) (values a b)))" +
+//       "    (list a b x y)))                ").should_be("(x y a b)");
+  }
 //
 //  //(let*-values)
 //(let ((a 'a) (b 'b) (x 'x) (y 'y))
