@@ -12,8 +12,8 @@ FILES = src/version.js \
   src/library/webscheme_lib.js \
   src/library/extra_lib.js \
   src/dumper.js \
-  src/io.js \
   src/release_initializer.js \
+#  src/io.js \
 
 all: build
 
