@@ -189,4 +189,4 @@ BiwaScheme.Dumper = Class.create({
 
 BiwaScheme.Dumper.toggle_fold = function(n){
   Element.toggle("fold"+n);
-}
+};
