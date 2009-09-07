@@ -6,25 +6,15 @@
 <link rel="stylesheet" type="text/css" href="JSSpec.css" />
 <script type="text/javascript" src="diff_match_patch.js"></script>
 <script type="text/javascript" src="JSSpec.js"></script>
+<script type="text/javascript" src="../test/unit.js"></script>
+</head>
+<body>
 
 <div id="div1">div tag sample</div>
+<div id="bs-console"></div>
 
 <script type="text/javascript">// <![CDATA[
-
-var require = function(src, check, proc){
-  var script = document.createElement('script')
-  script.src = src;
-  document.body.appendChild(script);
-
-  var checker = new Function("return !!(" + check + ")");
-
-  if(checker()) proc();
-  else          setTimeout(function(){ checker() ? proc() : setTimeout(arguments.callee, 10); }, 10);
-};
-
 var loader_development = function(proc){
-  document.write("<script type='text/javascript'" +
-                        " src='../test/unit.js'><\/script>");
   document.write("<script src='../src/development_loader.js'>" +
     "BiwaScheme.register_tests();" +
     "JSSpec.start_test();" +
@@ -32,19 +22,19 @@ var loader_development = function(proc){
 };
 
 var loader_production = function(proc){
-  var dir = "../lib/";
-  require(dir+'biwascheme.js',            'window.BiwaScheme', function(){
-    proc();
-    JSSpec.start_test();
-  });
+  document.write("<script src='../lib/biwascheme.js'>" +
+    '(js-eval "BiwaScheme.register_tests();' +
+    '          JSSpec.start_test();")' +
+    "<\/script>");
 };
 
-var loader = location.hash.match(/lib/) ? loader_production 
-                                        : loader_development;
-loader();
+if (location.hash.match(/lib/))
+  loader_production();
+else
+  loader_development();
 
 // ]]></script>
-</head>
-<body></body>
+</script>
+</body>
 </html>
 <!-- vim:set ft=javascript: -->
