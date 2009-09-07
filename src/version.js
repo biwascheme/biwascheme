@@ -1,6 +1,6 @@
 var BiwaScheme = BiwaScheme || {};
 
-BiwaScheme.Version = "0.5";
+BiwaScheme.Version = "0.5.3.3";
 
   // FIXME: used by js-load. should be moved
 BiwaScheme.require = function(src, check, proc){
