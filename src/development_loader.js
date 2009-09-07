@@ -57,20 +57,19 @@ var BiwaScheme = BiwaScheme || {};
   })(document);
 
   var src = readAttribute(script, 'src');
-  var dir = src.match(/(.*)development_loader.js/)[1];
+  var dir = src.match(/(.*)src\/development_loader.js/)[1];
 
   var script_tag = function(path){
     return '<script type="text/javascript" src="' +
              path +
            '"><\/script>';
   }
-  var dir = "../";
-  document.write(script_tag(dir+"/src/prototype.js"));
-  document.write(script_tag(dir+"/src/stackbase.js"));
-  document.write(script_tag(dir+"/src/library/r6rs_lib.js"));
-  document.write(script_tag(dir+"/src/library/webscheme_lib.js"));
-  document.write(script_tag(dir+"/src/library/extra_lib.js"));
-  document.write(script_tag(dir+"/src/dumper.js"));
+  document.write(script_tag(dir+"src/prototype.js"));
+  document.write(script_tag(dir+"src/stackbase.js"));
+  document.write(script_tag(dir+"src/library/r6rs_lib.js"));
+  document.write(script_tag(dir+"src/library/webscheme_lib.js"));
+  document.write(script_tag(dir+"src/library/extra_lib.js"));
+  document.write(script_tag(dir+"src/dumper.js"));
   document.write("<script type='text/javascript'>" +
     script.innerHTML +
     "<\/script>");
