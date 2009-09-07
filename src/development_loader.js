@@ -1,15 +1,4 @@
-var BiwaScheme = {
-  require: function(src, check, proc){
-    var script = document.createElement('script')
-    script.src = src;
-    document.body.appendChild(script);
-
-    var checker = new Function("return !!(" + check + ")");
-
-    if(checker()) proc();
-    else          setTimeout(function(){ checker() ? proc() : setTimeout(arguments.callee, 10); }, 10);
-  }
-};
+var BiwaScheme = BiwaScheme || {}; 
 
 (function(){ //local namespace
 
@@ -70,15 +59,19 @@ var BiwaScheme = {
   var src = readAttribute(script, 'src');
   var dir = src.match(/(.*)development_loader.js/)[1];
 
-  var require = BiwaScheme.require;
-
-  require(dir+'prototype.js',             'window.$$', function(){
-  require(dir+'stackbase.js',             'window.BiwaScheme.CoreEnv', function(){
-  require(dir+'library/r6rs_lib.js',      'window.BiwaScheme.CoreEnv["+"]', function(){
-  require(dir+'library/webscheme_lib.js', 'window.BiwaScheme.CoreEnv["getelem"]', function(){
-  require(dir+'library/extra_lib.js',     'window.BiwaScheme.CoreEnv["print"]', function(){
-  require(dir+'dumper.js',                'window.BiwaScheme.Dumper', function(){
-    eval(script.innerHTML);
-  })})})})})});
-
+  var script_tag = function(path){
+    return '<script type="text/javascript" src="' +
+             path +
+           '"><\/script>';
+  }
+  var dir = "../";
+  document.write(script_tag(dir+"/src/prototype.js"));
+  document.write(script_tag(dir+"/src/stackbase.js"));
+  document.write(script_tag(dir+"/src/library/r6rs_lib.js"));
+  document.write(script_tag(dir+"/src/library/webscheme_lib.js"));
+  document.write(script_tag(dir+"/src/library/extra_lib.js"));
+  document.write(script_tag(dir+"/src/dumper.js"));
+  document.write("<script type='text/javascript'>" +
+    script.innerHTML +
+    "<\/script>");
 })();
