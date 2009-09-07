@@ -28,8 +28,20 @@ else{
 }
 BiwaScheme.Debug = true;
 
-p(ev("(case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else 'consonant))"));
-p("hoge");
+p(    ev("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
+       "  (let-values (((a b) (values x y)) " +
+       "               ((x y) (values a b)))" +
+       "    (list a b x y)))                "))
+
+//p(    ev("(let-values (((a b) (values 1 2)) " +
+//       "             ((c d) (values 3 4)))" +
+//       "  (list a b c d))                 "))
+
+//p(ev("(let-values (((a b) (values 1 2))) (print a b))"));
+//p(ev("(macroexpand-1 '(let-values (((a b) (values 1 2))) (print a b)))"));
+
+//p(ev("(case (car '(c d)) ((a e i o u) 'vowel) ((w y) 'semivowel) (else 'consonant))"));
+//p("hoge");
 
     //p(ev("(define (compose f g) (lambda (args) (f (apply g args)))) ((compose sqrt *) 12 75)"));
 //p(ev("(apply vector? '(#(1 2)))"));
