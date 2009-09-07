@@ -462,7 +462,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var js_func = ar.shift();
     assert_function(js_func);
 
-    return js_func.apply(js_func, ar);
+    var receiver = null;
+    return js_func.apply(receiver, ar);
   });
   // (js-invoke (js-new "Date") "getTime")
   define_libfunc_raw("js-invoke", 2, null, function(ar){
