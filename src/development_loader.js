@@ -66,6 +66,17 @@ var BiwaScheme = BiwaScheme || {};
   }
   document.write(script_tag(dir+"src/prototype.js"));
   document.write(script_tag(dir+"src/stackbase.js"));
+  document.write(script_tag(dir+"src/system/set.js"));
+  document.write(script_tag(dir+"src/system/write.js"));
+  document.write(script_tag(dir+"src/system/pair.js"));
+  document.write(script_tag(dir+"src/system/value.js"));
+  document.write(script_tag(dir+"src/system/symbol.js"));
+  document.write(script_tag(dir+"src/system/char.js"));
+  document.write(script_tag(dir+"src/system/port.js"));
+  document.write(script_tag(dir+"src/system/syntax.js"));
+  document.write(script_tag(dir+"src/system/parser.js"));
+  document.write(script_tag(dir+"src/system/compiler.js"));
+  document.write(script_tag(dir+"src/system/interpreter.js"));
   document.write(script_tag(dir+"src/library/r6rs_lib.js"));
   document.write(script_tag(dir+"src/library/webscheme_lib.js"));
   document.write(script_tag(dir+"src/library/extra_lib.js"));

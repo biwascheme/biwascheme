@@ -8,6 +8,17 @@
 FILES = src/version.js \
   src/prototype.js \
   src/stackbase.js \
+  src/system/set.js \
+  src/system/write.js \
+  src/system/pair.js \
+  src/system/value.js \
+  src/system/symbol.js \
+  src/system/char.js \
+  src/system/port.js \
+  src/system/syntax.js \
+  src/system/parser.js \
+  src/system/compiler.js \
+  src/system/interpreter.js \
   src/library/r6rs_lib.js \
   src/library/webscheme_lib.js \
   src/library/extra_lib.js \
