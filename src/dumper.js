@@ -6,6 +6,16 @@ with(BiwaScheme) {
 BiwaScheme.Dumper = Class.create({
   initialize: function(dumparea){
     this.dumparea = dumparea || $("dumparea");
+    this.reset();
+  },
+
+  reset: function(){
+    $(this.dumparea).update("");
+    this.n_folds = 0;
+    this.closures = [];
+    this.n_dumps = 0;
+    this.cur = -1;
+    this.is_folded = true;
   },
 
   is_opc: function(obj){
@@ -46,7 +56,6 @@ BiwaScheme.Dumper = Class.create({
   },
 
   fold_limit: 20,
-  n_folds:  0,
   add_fold: function(s){
     var lines = s.split(/<br>/gmi);
 
@@ -95,7 +104,6 @@ BiwaScheme.Dumper = Class.create({
     return "#<Object{"+a.join(",")+"}>";
   },
 
-  closures: [],
   dump_closure: function(cls){
     if(cls.length == 0) return "[]";
 
@@ -127,7 +135,6 @@ BiwaScheme.Dumper = Class.create({
     }
   },
 
-  n_dumps: 0,
   dump: function(obj){
     var dumpitem = document.createElement("div"); 
     var s = "";
@@ -161,7 +168,6 @@ BiwaScheme.Dumper = Class.create({
     this.n_dumps++;
   },
 
-  cur: -1,
   dump_move: function(dir){
     if(0 <= this.cur && this.cur < this.n_dumps)
       Element.hide($("dump"+this.cur));
@@ -172,7 +178,6 @@ BiwaScheme.Dumper = Class.create({
     Element.show($("dump"+this.cur));
   },
 
-  is_folded: true,
   dump_toggle_fold: function(){
     if(this.is_folded){ //open all
       for(var i=0; i<this.n_dumps; i++)
