@@ -32,8 +32,8 @@
             (a :href "status.html" "Status") ")")
         (li "Functions for web application (Ajax, DOM manipulation, etc.)")
         (li "Calling JavaScript functions from Scheme")
-        (li "Comprehensive " (a :href "repos/test/spec.html"
-                                "unit test")))
+        (li "Comprehensive " (link-to "unit test" "repos/test/spec.html"))
+        (li "Tiny " (link-to "interpreter debugger" "repos/test/tracer.html")))
 
       (h2 "Contact")
 
