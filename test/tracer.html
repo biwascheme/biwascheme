@@ -35,6 +35,7 @@ BiwaScheme.Interpreter.dumper = dumper;
 function eval_it(){
   var show_error = function(e){
     puts("Error: "+e.message);
+    throw e;
   };
   dumper.reset();
   var src = $("bs-input").value;
