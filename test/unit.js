@@ -1209,6 +1209,9 @@ describe('extra library', {
   'let1' : function(){
     ev("(let1 a (+ 1 2) (* a 3))").should_be(9);
   },
+  'identity': function(){
+    ev("(identity 1)").should_be(1);
+  },
 
   'write-to-string': function(){
     ev("(write-to-string '(+ 1 2))").should_be("(+ 1 2)");

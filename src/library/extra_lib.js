@@ -57,16 +57,23 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //from Gauche
   //
 
+  define_libfunc("identity", 1, 1, function(ar){
+    return ar[0];
+  });
+
   // string
+  
   define_libfunc("string-concat", 1, 1, function(ar){
     assert_pair(ar[0]);
     return ar[0].to_array().join("");
   })
+
   define_libfunc("string-split", 2, 2, function(ar){
     assert_string(ar[0]);
     assert_string(ar[1]);
     return ar[0].split(ar[1]).to_list();
   })
+
   define_libfunc("string-join", 1, 2, function(ar){
     assert_pair(ar[0]);
     var delim = ""
