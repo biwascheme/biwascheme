@@ -150,10 +150,14 @@ BiwaScheme.define_libfunc = function(fname, min, max, func, is_raw){
     }
     else{
       if (result === undefined){
-        throw new BiwaScheme.Bug("library function "+fname+" returned undefined");
+        throw new BiwaScheme.Bug("library function " + 
+                                 "`" + fname + "'" +
+                                 " returned JavaScript's undefined");
       }
       else if (result === null){
-        throw new BiwaScheme.Bug("library function "+fname+" returned null");
+        throw new BiwaScheme.Bug("library function " +
+                                 "`" + fname + "'" + 
+                                 " returned JavaScript's null");
       }
       else {
         return result;
