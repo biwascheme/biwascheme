@@ -1245,6 +1245,21 @@ describe('srfi-1 list', {
   }
 });
 
+describe('srfi-6 string ports', {
+  'open-input-string' : function(){
+    ev('(port? (open-input-string "hello"))').should_be(true);
+    ew('(read (open-input-string "1"))').should_be(1);
+  },
+  'open-output-string' : function(){
+    ev("(port? (open-output-string))").should_be(true);
+  },
+  'get-output-string' : function(){
+    ev('(let1 s (open-output-string) \
+          (display "hello" s) \
+          (get-output-string s))').should_be("hello");
+  }
+});
+
 describe('srfi-27 random', {
   'random-integer' : function(){
     ev("(integer? (random-integer 3))").should_be(true);

@@ -63,10 +63,12 @@ BiwaScheme.Port.StringOutput = Class.create(BiwaScheme.Port, {
   }
 });
 BiwaScheme.Port.StringInput = Class.create(BiwaScheme.Port, {
-  initialize: function($super){
+  initialize: function($super, str){
+    this.str = str;
     $super(true, false);
   },
   get_string: function(after){
+    return after(this.str);
   }
 });
 BiwaScheme.Port.current_input  = new BiwaScheme.Port.BrowserInput();
