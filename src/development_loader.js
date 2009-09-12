@@ -77,6 +77,7 @@ var BiwaScheme = BiwaScheme || {};
   document.write(script_tag(dir+"src/system/parser.js"));
   document.write(script_tag(dir+"src/system/compiler.js"));
   document.write(script_tag(dir+"src/system/interpreter.js"));
+  document.write(script_tag(dir+"src/library/infra.js"));
   document.write(script_tag(dir+"src/library/r6rs_lib.js"));
   document.write(script_tag(dir+"src/library/webscheme_lib.js"));
   document.write(script_tag(dir+"src/library/extra_lib.js"));

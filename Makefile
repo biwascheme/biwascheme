@@ -19,6 +19,7 @@ FILES = src/version.js \
   src/system/parser.js \
   src/system/compiler.js \
   src/system/interpreter.js \
+  src/library/infra.js \
   src/library/r6rs_lib.js \
   src/library/webscheme_lib.js \
   src/library/extra_lib.js \
