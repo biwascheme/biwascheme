@@ -1223,6 +1223,12 @@ describe('extra library', {
   'map-with-index': function(){
     ew("(map-with-index (lambda (i s) (list i s))" +
        "  '(a b))").should_be("((0 a) (1 b))");
+  },
+  'port-closed?': function(){
+    ew("(let* ((port (open-output-string)) \
+               (before (port-closed? port))) \
+          (close-port port) \
+          (cons before (port-closed? port)))").should_be("(#f . #t)");
   }
 });
 

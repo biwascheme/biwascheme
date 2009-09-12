@@ -213,6 +213,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_string(ar[0]);
     return Interpreter.read(ar[0]);
   });
+  define_libfunc("port-closed?", 1, 1, function(ar){
+    assert_port(ar[0]);
+    return !(ar[0].is_open);
+  });
   
   // syntax
   
