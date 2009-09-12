@@ -5,12 +5,15 @@ with(BiwaScheme) {
 
 BiwaScheme.Dumper = Class.create({
   initialize: function(dumparea){
-    this.dumparea = dumparea || $("dumparea");
+    this.dumparea = dumparea || $("dumparea") || null;;
     this.reset();
   },
 
   reset: function(){
-    $(this.dumparea).update("");
+    if(this.dumparea){
+      // Note: this is for repl.html (needs refactoring..)
+      $(this.dumparea).update("");
+    }
     this.n_folds = 0;
     this.closures = [];
     this.n_dumps = 0;
