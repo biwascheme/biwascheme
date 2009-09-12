@@ -16,7 +16,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return BiwaScheme.inspect_objs(ar);
   });
   define_libfunc("inspect!", 1, null, function(ar){
-    return puts(BiwaScheme.inspect_objs(ar));
+    puts(BiwaScheme.inspect_objs(ar));
+    return BiwaScheme.undef;
   });
 
   //
