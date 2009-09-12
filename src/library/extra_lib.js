@@ -57,6 +57,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //from Gauche
   //
 
+  // string
   define_libfunc("string-concat", 1, 1, function(ar){
     assert_pair(ar[0]);
     return ar[0].to_array().join("");
@@ -75,6 +76,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     }
     return ar[0].to_array().join(delim);
   })
+  
+  // lists
 
   define_libfunc("intersperse", 2, 2, function(ar){
     var item = ar[0], ls = ar[1];
@@ -105,6 +108,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       finish: function(){ return results.to_list(); }
     });
   });
+  
+  // macros
 
   //(define-macro (foo x) body ...)
   //(define-macro foo lambda)
@@ -184,6 +189,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("macroexpand-1", 1, 1, function(ar){
     return macroexpand_1(ar[0]);
   });
+  
+  // i/o
 
   define_libfunc("print", 1, null, function(ar){
     ar.map(function(item){
@@ -192,6 +199,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     puts(""); //newline
     return BiwaScheme.undef;
   })
+  define_libfunc("write-to-string", 1, 1, function(ar){
+    return to_write(ar[0]);
+  });
+  define_libfunc("read-from-string", 1, 1, function(ar){
+    assert_string(ar[0]);
+    return Interpreter.read(ar[0]);
+  });
+  
+  // syntax
+  
   define_syntax("let1", function(x){
     //(let1 vari expr body ...) 
     //=> ((lambda (var) body ...) expr)
@@ -205,14 +222,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
              new Pair(expr, nil));
   })
 
-  define_libfunc("write-to-string", 1, 1, function(ar){
-    return to_write(ar[0]);
-  });
-  define_libfunc("read-from-string", 1, 1, function(ar){
-    assert_string(ar[0]);
-    return Interpreter.read(ar[0]);
-  });
-  
   //
   // Regular Expression
   //
