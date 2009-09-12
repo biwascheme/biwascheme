@@ -1,3 +1,7 @@
+//
+// test/unit.js - unit tests of BiwaScheme
+//
+
 var BiwaScheme = BiwaScheme || {};
 
 BiwaScheme.register_tests = function(){
@@ -1216,6 +1220,13 @@ describe('extra library', {
   'map-with-index': function(){
     ew("(map-with-index (lambda (i s) (list i s))" +
        "  '(a b))").should_be("((0 a) (1 b))");
+  }
+});
+
+describe('srfi-1 list', {
+  'iota' : function(){
+    ew("(iota 3)").should_be("(0 1 2)");
+    ew("(iota 3 1)").should_be("(1 2 3)");
   }
 });
 

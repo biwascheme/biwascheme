@@ -24,6 +24,7 @@ FILES = src/version.js \
   src/library/r6rs_lib.js \
   src/library/webscheme_lib.js \
   src/library/extra_lib.js \
+  src/library/srfi.js \
   src/dumper.js \
   src/release_initializer.js \
 #  src/io.js \
