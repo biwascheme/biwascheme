@@ -10,7 +10,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         return obj.inspect();
       else
         return Object.inspect($H(obj));
-    }).join(" ");
+    }).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
     return BiwaScheme.inspect_objs(ar);
