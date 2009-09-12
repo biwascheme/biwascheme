@@ -20,6 +20,8 @@ FILES = src/version.js \
   src/system/syntax.js \
   src/system/parser.js \
   src/system/compiler.js \
+  src/system/pause.js \
+  src/system/call.js \
   src/system/interpreter.js \
   src/library/infra.js \
   src/library/r6rs_lib.js \
