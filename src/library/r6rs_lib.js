@@ -1696,8 +1696,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(string->bytevector string transcoder)    procedure
 //
   //            8.2.5  End-of-file object
-  //8.3 (eof-object)    procedure 
-  //8.3 (eof-object? obj)    procedure 
+  //-> 8.3 (eof-object)    procedure 
+  //-> 8.3 (eof-object? obj)    procedure 
 
   //            8.2.6  Input and output ports
   define_libfunc("port?", 1, 1, function(ar){
@@ -1722,7 +1722,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     ar[0].close();
     return BiwaScheme.undef;
   })
-//(call-with-port port proc)    procedure
+  //(call-with-port port proc)    procedure
+  define_libfunc("call-with-port", 2, 2, function(ar){
+    var port = ar[0], proc = ar[1];
+    assert_port(port);
+    assert_closure(proc);
+
+    return new Call(proc, [port], function(ar){
+      // Automatically close the port 
+      port.close();
+      return ar[0]; // TODO: values
+    });
+  });
 
   //            8.2.7  Input ports
   //8.3 (input-port? obj)    procedure 

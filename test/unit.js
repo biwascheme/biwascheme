@@ -1058,6 +1058,12 @@ describe('7 Exceptions and conditions', {
 })
 
 describe('8 I/O', {
+  'call-with-port' : function(){
+    ev("(port-closed? \
+          (call-with-port \
+            (open-output-string) \
+            (lambda (port) port)))").should_be(true); 
+  },
   'eof-object' : function(){
     ev("(eqv? (eof-object) (eof-object))").should_be(true); 
     ev("(eq? (eof-object) (eof-object))").should_be(true);
