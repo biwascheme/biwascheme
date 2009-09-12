@@ -266,7 +266,7 @@ var assert_date = make_simple_assert("date", function(obj){
 });
 
 var assert_hashtable = make_simple_assert("hashtable", function(obj){
-  return obj instanceof Hash;
+  return obj instanceof BiwaScheme.Hashtable;
 });
 
 var assert_function = make_simple_assert("JavaScript function", function(obj){

@@ -1115,16 +1115,18 @@ describe('13 Hashtables', {
        '        (hashtable-contains? h "bar")))').should_be("(#t #f)");
   },
   'hashtable-keys': function(){
-    ew('(let ((h (make-eq-hashtable)))' +
-       '  (hashtable-set! h "foo" 1)' +
-       '  (hashtable-keys h))').should_be('#("foo")');
+    ew("(let ((h (make-eq-hashtable))) \
+          (hashtable-set! h 'foo 1) \
+          (hashtable-set! h 'bar 2) \
+          (hashtable-keys h))").should_be("#(foo bar)");
   },
   'hashtable-entries': function(){
-    ew('(call-with-values' +
-       '  (lambda () (let ((h (make-eq-hashtable)))' +
-       '               (hashtable-set! h "foo" 1)' +
-       '               (hashtable-entries h)))' +
-       '  list)').should_be('(#("foo") #(1))');
+    ew("(call-with-values \
+          (lambda () (let ((h (make-eq-hashtable))) \
+                       (hashtable-set! h 'foo 1) \
+                       (hashtable-set! h 'bar 2) \
+                       (hashtable-entries h))) \
+          list)").should_be("(#(foo bar) #(1 2))");
   }
 })
 
