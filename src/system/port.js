@@ -3,12 +3,14 @@
 //
 BiwaScheme.Port = Class.create({
   initialize: function(is_in, is_out){
+    this.is_open = true;
     this.is_binary = false; //??
     this.is_input = is_in;
     this.is_output = is_out;
   },
   close: function(){
     // close port
+    this.is_open = false;
   },
   inspect: function(){
     return "#<Port>";
