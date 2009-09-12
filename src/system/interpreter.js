@@ -336,20 +336,32 @@ BiwaScheme.Interpreter = Class.create({
           f = s;
           c = a;
         }
-        else if(func instanceof Function){
+        else if(func instanceof Function){ // Apply JavaScript function
+          // load arguments from stack
           var args = [];
           for(var i=0; i<n_args; i++) 
             args.push(this.index(s, i));
 
+          // invoke the function
           var result = func(args, this);
+          
+          // shortcut: when the proc of Call is not a closure..
+          // Note: this is (really) used by hashtable-*.
+          while ((result instanceof BiwaScheme.Call) &&
+                 Object.isFunction(result.proc)){
+            result = result.after([result.proc(result.args, this)]);
+          }
 
           if(result instanceof BiwaScheme.Pause){
+            // it requested the interpreter to suspend
             var pause = result;
             pause.set_state(this, ["return"], f, c, s);
             pause.ready();
             return pause;
           }
           else if(result instanceof BiwaScheme.Call){
+            // it requested the interpreter to call a scheme closure
+
             //   [frame,
             //     [constant... (args)
             //     [constant, proc
@@ -381,11 +393,13 @@ BiwaScheme.Interpreter = Class.create({
                 call_after]
           }
           else{
+            // the JavaScript function returned a normal value
             a = result;
             x = ["return"];
           }
         }
         else{
+          // unknown function type
           throw new Error(Object.inspect(func) + " is not a function");
         }
         break;
