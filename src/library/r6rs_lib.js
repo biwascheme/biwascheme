@@ -1880,6 +1880,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("write", 1, 2, function(ar){
     var port = ar[1] || Port.current_output;
+    assert_port(port);
     port.put_string(to_write(ar[0]));
     return BiwaScheme.undef;
   });
