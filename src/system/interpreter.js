@@ -62,6 +62,14 @@ BiwaScheme.Call = Class.create({
       // just return result which closure returned
       return ar[0];
     };
+  },
+
+  inspect: function(){
+    return "#<Call args=" + this.args.inspect() + ">";
+  },
+
+  to_write: function(){
+    return "#<Call>";
   }
 })
 
