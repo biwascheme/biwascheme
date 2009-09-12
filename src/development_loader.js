@@ -72,6 +72,7 @@ var BiwaScheme = BiwaScheme || {};
   document.write(script_tag(dir+"src/system/value.js"));
   document.write(script_tag(dir+"src/system/symbol.js"));
   document.write(script_tag(dir+"src/system/char.js"));
+  document.write(script_tag(dir+"src/system/number.js"));
   document.write(script_tag(dir+"src/system/port.js"));
   document.write(script_tag(dir+"src/system/syntax.js"));
   document.write(script_tag(dir+"src/system/parser.js"));

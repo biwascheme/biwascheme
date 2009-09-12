@@ -6,41 +6,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   /* --------------------------------------- namespace webscheme */ 
 
   ///
-  /// Classes
-  ///
-  
-  BiwaScheme.Complex = Class.create({
-    initialize: function(real, imag){
-      this.real = real;
-      this.imag = imag;
-    },
-    magnitude: function(){
-      return Math.sqrt(this.real * this.real + this.imag * this.imag);
-    },
-    angle: function(){
-      return Math.acos(this.real / this.magnitude());
-    }
-  })
-  BiwaScheme.Complex.from_polar = function(r, theta){
-    var real = r * Math.cos(theta);
-    var imag = r * Math.sin(theta);
-    return new Complex(real, imag);
-  }
-  BiwaScheme.Complex.assure = function(num){
-    if(num instanceof Complex)
-      return num
-    else
-      return new Complex(num, 0);
-  }
-
-  BiwaScheme.Rational = Class.create({
-    initialize: function(numerator, denominator){
-      this.numerator = numerator;
-      this.denominator = denominator;
-    }
-  })
-  
-  ///
   /// R6RS Base library
   ///
   

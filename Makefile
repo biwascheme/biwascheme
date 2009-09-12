@@ -14,6 +14,7 @@ FILES = src/version.js \
   src/system/value.js \
   src/system/symbol.js \
   src/system/char.js \
+  src/system/number.js \
   src/system/port.js \
   src/system/syntax.js \
   src/system/parser.js \
