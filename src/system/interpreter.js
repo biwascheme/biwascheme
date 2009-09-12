@@ -31,6 +31,29 @@ BiwaScheme.Pause = Class.create({
   }
 });
 
+///
+/// Call
+///
+// The class Call is used to invoke scheme closure from 
+// library functions.
+//
+// Call#initialize takes three arguments: proc, args and after.
+//   * proc is the scheme closure to invoke.
+//   * args is an Array (not list!) of arguments for the invocation.
+//   * after is a javascript function which is invoked when 
+//     returned from the proc.
+//
+//     after takes two arguments: ar and intp.
+//       * ar is an Array which contains the result of the invocation.
+//       * intp is an Interpreter which is running.
+//
+//     If after returns another Call object, another invocation
+//     happens. If after returns a normal value, it is the value
+//     of the library function.
+//
+// example:
+//   return new Call(proc, [x, y], function(ar){ ar[0] });
+//
 BiwaScheme.Call = Class.create({
   initialize: function(proc, args, after){
     this.proc = proc;
