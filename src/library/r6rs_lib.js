@@ -1861,10 +1861,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 //(read-char)    procedure 
 //(peek-char)    procedure 
-  define_libfunc("read", 0, 0, function(ar){
-    return Port.current_input.get_string(function(str){
+  define_libfunc("read", 0, 1, function(ar){
+    var port = ar[0] || Port.current_input;
+    assert_port(port);
+
+    return port.get_string(function(str){
 	    return Interpreter.read(str);
-    })
+    });
   })
 
   // write-char [1,2]
