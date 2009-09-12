@@ -28,25 +28,6 @@ with(BiwaScheme) {
   //
   // srfi-6 & Gauche (string port)
   // 
-  BiwaScheme.Port.StringOutput = Class.create(Port, {
-    initialize: function($super){
-      this.buffer = [];
-      $super(false, true);
-    },
-    put_string: function(str){
-      this.buffer.push(str);
-    },
-    output_string: function(str){
-      return this.buffer.join("");
-    }
-  });
-  BiwaScheme.Port.StringInput = Class.create(Port, {
-    initialize: function($super){
-      $super(true, false);
-    },
-    get_string: function(after){
-    }
-  });
   define_libfunc("open-input-string", 1, 1, function(ar){
     assert_string(ar[0]);
     return new Port.StringInput(ar[0]);

@@ -46,6 +46,29 @@ BiwaScheme.Port.DefaultOutput = Class.create(BiwaScheme.Port, {
     puts(str, true);
   }
 })
+
+//
+// string ports (srfi-6)
+//
+BiwaScheme.Port.StringOutput = Class.create(BiwaScheme.Port, {
+  initialize: function($super){
+    this.buffer = [];
+    $super(false, true);
+  },
+  put_string: function(str){
+    this.buffer.push(str);
+  },
+  output_string: function(str){
+    return this.buffer.join("");
+  }
+});
+BiwaScheme.Port.StringInput = Class.create(BiwaScheme.Port, {
+  initialize: function($super){
+    $super(true, false);
+  },
+  get_string: function(after){
+  }
+});
 BiwaScheme.Port.current_input  = new BiwaScheme.Port.BrowserInput();
 BiwaScheme.Port.current_output = new BiwaScheme.Port.DefaultOutput();
 BiwaScheme.Port.current_error  = new BiwaScheme.Port.DefaultOutput();
