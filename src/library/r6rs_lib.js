@@ -295,11 +295,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //        
   //        11.5  Equivalence predicates
   //
+  BiwaScheme.eq = function(a, b){
+    return a === b;
+  };
+  BiwaScheme.eqv = function(a, b){
+    return a == b && (typeof(a) == typeof(b));
+  };
+  
   define_libfunc("eqv?", 2, 2, function(ar){
-    return ar[0] == ar[1] && (typeof(ar[0]) == typeof(ar[1]));
+    return BiwaScheme.eqv(ar[0], ar[1]);
   })
   define_libfunc("eq?", 2, 2, function(ar){
-    return ar[0] === ar[1];
+    return BiwaScheme.eq(ar[0], ar[1]);
   })
   define_libfunc("equal?", 2, 2, function(ar){
     //TODO: must terminate for cyclic objects
