@@ -193,58 +193,82 @@ var make_assert = function(check){
 }
 var make_simple_assert = function(type, test){
   return make_assert(function(fname, obj){
-    if(!test(obj))
-      throw new BiwaScheme.Error(fname + ": " + type + " required, but got " + to_write(obj));
+    if(!test(obj)){
+      throw new BiwaScheme.Error(fname + ": " +
+                                 type + " required, but got " +
+                                 BiwaScheme.to_write(obj));
+    }
   })
 }
+
 var assert_number = make_simple_assert("number", function(obj){
   return typeof(obj) == 'number' || (obj instanceof BiwaScheme.Complex);
-})
+});
+
 var assert_integer = make_simple_assert("integer", function(obj){
   return typeof(obj) == 'number' && (obj % 1 == 0)
-})
+});
+
 var assert_real = make_simple_assert("real number", function(obj){
   return typeof(obj) == 'number';
 });
+
 var assert_symbol = make_simple_assert("symbol", function(obj){
   return obj instanceof BiwaScheme.Symbol;
-})
+});
+
 var assert_string = make_simple_assert("string", function(obj){
   return typeof(obj) == 'string';
-})
+});
+
 var assert_vector = make_simple_assert("vector", function(obj){
   return (obj instanceof Array) && (obj.closure_p !== true);
-})
+});
+
 var assert_pair = make_simple_assert("pair", function(obj){
   return obj instanceof BiwaScheme.Pair;
-})
+});
+
 var assert_char = make_simple_assert("character", function(obj){
   return obj instanceof BiwaScheme.Char;
-})
+});
+
 var assert_port = make_simple_assert("port", function(obj){
   return obj instanceof BiwaScheme.Port;
-})
+});
+
 var assert_date = make_simple_assert("date", function(obj){
   return obj instanceof Date;
-})
+});
+
 var assert_hashtable = make_simple_assert("hashtable", function(obj){
   return obj instanceof Hash;
-})
+});
+
 var assert_function = make_simple_assert("JavaScript function", function(obj){
   return (obj instanceof Function) || (typeof obj == 'function');
-})
+});
+
 var assert_closure = make_simple_assert("scheme function", function(obj){
   return (obj instanceof Array) && (obj.closure_p === true);
-})
-var assert_between = make_assert(function(fname, obj, from, to){
-  if( typeof(obj) != 'number' || obj != Math.round(obj) )
-    throw new BiwaScheme.Error(fname + ": " + "number required, but got " + to_write(obj));
+});
 
-  if( obj < from || to < obj )
-    throw new BiwaScheme.Error(fname + ": " + "number must be between " + 
-                    from + " and " + to + ", but got " + to_write(obj));
-})
+var assert_between = make_assert(function(fname, obj, from, to){
+  if( typeof(obj) != 'number' || obj != Math.round(obj) ){
+    throw new BiwaScheme.Error(fname + ": " +
+                               "number required, but got " +
+                               BiwaScheme.to_write(obj));
+  }
+
+  if( obj < from || to < obj ){
+    throw new BiwaScheme.Error(fname + ": " + 
+                               "number must be between " + 
+                               from + " and " + to + ", but got " +
+                               BiwaScheme.to_write(obj));
+  }
+});
+
 var assert = make_assert(function(fname, test){
-})
+});
 
 
