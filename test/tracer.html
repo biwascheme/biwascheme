@@ -16,15 +16,13 @@ td.dump_stknum{ color:gold; }
 <body>
 <h1><a href='http://www.biwascheme.org/'>BiwaScheme</a> tracer</h1>
 <textarea id="bs-input" rows="10" cols="60">1</textarea><br>
-<form>
 <input type=button value="eval" onclick="eval_it()">
+<div id='bs-console'>
+</div>
 <input type=button value="&lt;" onclick="dumper.dump_move(-1)">
 <input type=button value="&gt;" onclick="dumper.dump_move(1)">
 <input type=button value="all" onclick="dumper.dump_toggle_fold()">
-</form>
 <div id='dumparea'>
-</div>
-<div id='bs-console'>
 </div>
 
 <script type="text/javascript" src="../src/development_loader.js">
@@ -38,6 +36,7 @@ function eval_it(){
     throw e;
   };
   dumper.reset();
+  $("bs-console").update("");
   var src = $("bs-input").value;
   puts(src);
   puts(";=> " + BiwaScheme.to_write((new BiwaScheme.Interpreter(show_error)).evaluate(src)));
