@@ -126,12 +126,21 @@ var assert_hashtable = make_simple_assert("hashtable", function(obj){
   return obj instanceof BiwaScheme.Hashtable;
 });
 
+var assert_mutable_hashtable = make_simple_assert("hashtable", function(obj){
+  return (obj instanceof BiwaScheme.Hashtable) && obj.mutable;
+});
+
 var assert_function = make_simple_assert("JavaScript function", function(obj){
   return (obj instanceof Function) || (typeof obj == 'function');
 });
 
 var assert_closure = make_simple_assert("scheme function", function(obj){
   return (obj instanceof Array) && (obj.closure_p === true);
+});
+
+var assert_applicable = make_simple_assert("scheme/js function", function(obj){
+  return (obj instanceof Function) || (typeof obj == 'function') ||
+         ((obj instanceof Array) && (obj.closure_p === true));
 });
 
 var assert_between = make_assert(function(fname, obj, from, to){

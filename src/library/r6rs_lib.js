@@ -2067,8 +2067,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   //(make-eqv-hashtable)    procedure 
   //(make-eqv-hashtable k)    procedure 
+  define_libfunc("make-eqv-hashtable", 0, 1, function(ar){
+    return new Hashtable(Hashtable.eqv_hash, Hashtable.eqv_equiv);
+  });
   //(make-hashtable hash-function equiv)    procedure 
   //(make-hashtable hash-function equiv k)    procedure
+  define_libfunc("make-hashtable", 2, 3, function(ar){
+    assert_applicable(ar[0]);
+    assert_applicable(ar[1]);
+    return new Hashtable(ar[0], ar[1]);
+  });
 
   //13.2  Procedures
   // (hashtable? hash)
@@ -2082,10 +2090,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   //
-  // process_hash: the key of the magic :-)
+  // find_hash_pair: the key of the magic :-)
   // takes two callback functions i.e, on_found and on_not_found
   //
-  BiwaScheme.process_hash = function(hash, key, callbacks){
+  BiwaScheme.find_hash_pair = function(hash, key, callbacks){
     // invoke hash proc 
     return new Call(hash.hash_proc, [key], function(ar){
       var hashed = ar[0];
@@ -2118,7 +2126,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var hash = ar[0], key = ar[1], ifnone = ar[2];
     assert_hashtable(hash);
 
-    return BiwaScheme.process_hash(hash, key, {
+    return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair){
         return pair[1];
       },
@@ -2133,7 +2141,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var hash = ar[0], key = ar[1], value = ar[2];
     assert_hashtable(hash);
 
-    return BiwaScheme.process_hash(hash, key, {
+    return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair){
         pair[1] = value;
         return BiwaScheme.undef;
@@ -2150,7 +2158,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var hash = ar[0], key = ar[1];
     assert_hashtable(hash);
 
-    return BiwaScheme.process_hash(hash, key, {
+    return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair, hashed){
         hash.remove_pair(hashed, pair);
         return BiwaScheme.undef;
@@ -2166,7 +2174,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var hash = ar[0], key = ar[1];
     assert_hashtable(hash);
 
-    return BiwaScheme.process_hash(hash, key, {
+    return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair){
         return true;
       },
@@ -2176,11 +2184,45 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
   });
 
-//(hashtable-update! hashtable key proc default)    procedure 
-//(hashtable-copy hashtable)    procedure 
-//(hashtable-copy hashtable mutable)    procedure 
-//(hashtable-clear! hashtable)    procedure 
-//(hashtable-clear! hashtable k)    procedure 
+  //(hashtable-update! hashtable key proc default)    procedure 
+  define_libfunc("hashtable-update!", 4, 4, function(ar){
+    var hash = ar[0], key = ar[1], proc = ar[2], ifnone = ar[3];
+    assert_hashtable(hash);
+    assert_applicable(proc);
+
+    return BiwaScheme.find_hash_pair(hash, key, {
+      on_found: function(pair, hashed){
+        // invoke proc and get new value
+        return new Call(proc, [pair[1]], function(ar){
+          // replace the value
+          pair[1] = ar[0];
+          return BiwaScheme.undef;
+        });
+      },
+      on_not_found: function(hashed){
+        // invoke proc and get new value
+        return new Call(proc, [ifnone], function(ar){
+          // create new pair
+          hash.add_pair(hashed, key, ar[0]);
+          return BiwaScheme.undef;
+        });
+      }
+    });
+  });
+  //(hashtable-copy hashtable)    procedure 
+  //(hashtable-copy hashtable mutable)    procedure 
+  define_libfunc("hashtable-copy", 0, 1, function(ar){
+    var mutable = ar[1] || false;
+    assert_hashtable(ar[0]);
+    return ar[0].create_copy(mutable);
+  });
+  //(hashtable-clear! hashtable)    procedure 
+  //(hashtable-clear! hashtable k)    procedure 
+  define_libfunc("hashtable-clear!", 0, 1, function(ar){
+    assert_hashtable(ar[0]);
+    ar[0].clear();
+    return BiwaScheme.undef;
+  });
   //(hashtable-keys hash)  ; => vector
   define_libfunc("hashtable-keys", 1, 1, function(ar){
     assert_hashtable(ar[0]);
@@ -2193,21 +2235,41 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   //13.3  Inspection
+  
   //(hashtable-equivalence-function hashtable)    procedure 
-  //  h.equiv_proc
+  define_libfunc("hashtable-equivalence-function", 1, 1, function(ar){
+    assert_hashtable(ar[0]);
+    return ar[0].equiv_proc;
+  });
   //(hashtable-hash-function hashtable)    procedure 
-  //  h.hash_proc
+  define_libfunc("hashtable-hash-function", 1, 1, function(ar){
+    assert_hashtable(ar[0]);
+    return ar[0].hash_proc;
+  });
   //(hashtable-mutable? hashtable)    procedure 
+  define_libfunc("hashtable-mutable?", 1, 1, function(ar){
+    assert_hashtable(ar[0]);
+    return ar[0].mutable;
+  });
 
   //13.4  Hash functions
+
   //(equal-hash obj)    procedure 
-  //  //pending?
+  define_libfunc("equal-hash", 0, 0, function(ar){
+    return Hashtable.equal_hash;
+  });
   //(string-hash string)    procedure
-  //  should use JavaScript's hash func
+  define_libfunc("string-hash", 0, 0, function(ar){
+    return Hashtable.string_hash;
+  });
   //(string-ci-hash string)    procedure
-  //  downcase?
+  define_libfunc("string-ci-hash", 0, 0, function(ar){
+    return Hashtable.string_ci_hash;
+  });
   //(symbol-hash symbol)    procedure
-  //  .name?
+  define_libfunc("symbol-hash", 0, 0, function(ar){
+    return Hashtable.symbol_hash;
+  });
 
   //
   // Chapter 14 Enumerators

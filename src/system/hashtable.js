@@ -7,13 +7,17 @@
 // so some hacks are needed.
 
 BiwaScheme.Hashtable = Class.create({
-  initialize: function(_hash_proc, _equiv_proc){
-    this.mutable = true;
+  initialize: function(_hash_proc, _equiv_proc, immutable){
+    this.mutable = !immutable;
 
     this.hash_proc = _hash_proc;
     this.equiv_proc = _equiv_proc;
 
     // Hash (hashed) => (array of (key and value))
+    this.pairs_of = new Hash();
+  },
+
+  clear: function(){
     this.pairs_of = new Hash();
   },
 
@@ -41,6 +45,20 @@ BiwaScheme.Hashtable = Class.create({
     else {
       pairs.splice(i, 1); //remove 1 element from i-th index
     }
+  },
+
+  create_copy: function(mutable){
+    var copy = new BiwaScheme.Hashtable(this.hash_proc, this.equiv_proc,
+                                        mutable);
+    // clone the pairs to copy
+    this.pairs_of.each(function(hashed_and_pairs){
+      var cloned = hashed_and_pairs[1].map(function(pair){
+        return pair.clone();
+      });
+      copy.pairs_of.set(hashed_and_pairs[0], cloned);
+    });
+
+    return copy;
   },
 
   size: function(){

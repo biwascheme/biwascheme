@@ -6,16 +6,20 @@ var BiwaScheme = BiwaScheme || {};
 
 BiwaScheme.register_tests = function(){
 
+var on_error = function(e){
+  throw e;
+}
+
 // test main
 function puts(){}
 function scm_eval(str, func){
-  return (new BiwaScheme.Interpreter).evaluate(str, func||new Function());
+  return (new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function());
 }
 function ev(str, func){
-  return expect((new BiwaScheme.Interpreter).evaluate(str, func||new Function()));
+  return expect((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function()));
 }
 function ew(str, func){
-  return expect(BiwaScheme.to_write((new BiwaScheme.Interpreter).evaluate(str, func||new Function())));
+  return expect(BiwaScheme.to_write((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function())));
 }
 
 var Set = BiwaScheme.Set;
@@ -1089,6 +1093,17 @@ describe('13 Hashtables', {
     ev("(hashtable? (make-eq-hashtable 100))").should_be(true);
     ev("(hashtable? '((1 . 2)))").should_be(false);
   },
+  'make-eqv-hashtable': function(){
+    ev("(hashtable? (make-eqv-hashtable))").should_be(true);
+    ev("(hashtable? (make-eqv-hashtable 100))").should_be(true);
+  },
+  'make-hashtable': function(){
+    ev("(hashtable? (make-hashtable equal-hash equal?))").should_be(true);
+    ev("(hashtable? (make-hashtable equal-hash equal? 100))").should_be(true);
+    ev("(let1 h (make-hashtable equal-hash equal?) \
+          (hashtable-set! h '(a b) 1) \
+          (hashtable-ref h '(a b) #f))").should_be(1);
+  },
   'hashtable-size': function(){
     ew('(let* ((h (make-eq-hashtable))' +
        '       (s1 (hashtable-size h))' +
@@ -1114,6 +1129,25 @@ describe('13 Hashtables', {
        '  (list (hashtable-contains? h "foo")' +
        '        (hashtable-contains? h "bar")))').should_be("(#t #f)");
   },
+  'hashtable-update!': function(){
+    ev("(let ((h (make-eq-hashtable))) \
+          (hashtable-update! h 'foo identity 1) \
+          (hashtable-update! h 'foo identity 2) \
+          (hashtable-ref h 'foo #f))").should_be(1);
+  },
+  'hashtable-copy': function(){
+    ev("(let ((h (make-eq-hashtable))) \
+          (hashtable-set! h 'foo 1) \
+          (let ((h2 (hashtable-copy h))) \
+            (hashtable-set! h 'foo 2) \
+            (hashtable-ref h2 'foo #f)))").should_be(1);
+  },
+  'hashtable-clear!': function(){
+    ev("(let ((h (make-eq-hashtable))) \
+          (hashtable-set! h 'foo 1) \
+          (hashtable-clear! h) \
+          (hashtable-size h))").should_be(0);
+  },
   'hashtable-keys': function(){
     ew("(let ((h (make-eq-hashtable))) \
           (hashtable-set! h 'foo 1) \
@@ -1127,7 +1161,22 @@ describe('13 Hashtables', {
                        (hashtable-set! h 'bar 2) \
                        (hashtable-entries h))) \
           list)").should_be("(#(foo bar) #(1 2))");
+  },
+  'hashtable-equivalence-function': function(){
+    ev("(let* ((h (make-hashtable equal-hash equal?)) \
+               (f (hashtable-equivalence-function h))) \
+          (eq? f equal?))").should_be(true);
+  },
+  'hashtable-hash-function': function(){
+    ev("(let* ((h (make-hashtable equal-hash equal?)) \
+               (f (hashtable-hash-function h))) \
+          (eq? f equal-hash))").should_be(true);
   }
+  //hashtable-mutable?
+  //equal-hash
+  //string-hash
+  //string-ci-hash
+  //symbol-hash
 })
 
 describe('14 Enumerators', {
