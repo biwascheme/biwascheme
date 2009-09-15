@@ -13,31 +13,27 @@ function p(/*args*/){
   puts("p> "+$A(arguments).map(Object.inspect).join(" "));
 }
 
-if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
-  /* --------------------------------------- namespace webscheme */ 
+//
+// variables
+//
+BiwaScheme.TopEnv = {};
+BiwaScheme.CoreEnv = {};
 
-  //
-  // variables
-  //
-  BiwaScheme.TopEnv = {};
-  BiwaScheme.CoreEnv = {};
+//
+// Classes
+//
 
-  //
-  // Classes
-  //
+BiwaScheme.Error = Class.create({
+  initialize: function(msg){
+    this.message = "Error: "+msg;
+  },
+  toString: function(){
+    return this.message;
+  }
+});
 
-  BiwaScheme.Error = Class.create({
-    initialize: function(msg){
-      this.message = "Error: "+msg;
-    },
-    toString: function(){
-      return this.message;
-    }
-  });
-
-  BiwaScheme.Bug = Class.create(Object.extend(new Error(), {
-    initialize: function(msg){
-      this.message = "[BUG] "+msg;
-    }
-  }));
-}
+BiwaScheme.Bug = Class.create(Object.extend(new BiwaScheme.Error(), {
+  initialize: function(msg){
+    this.message = "[BUG] "+msg;
+  }
+}));
