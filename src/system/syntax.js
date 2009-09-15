@@ -8,7 +8,8 @@ BiwaScheme.Syntax = Class.create({
   },
   transform: function(x){
     if (!this.func){
-      throw new Bug("sorry, syntax "+this.sname+" is a pseudo syntax now");
+      throw new BiwaScheme.Bug("sorry, syntax "+this.sname+
+                               " is a pseudo syntax now");
     }
     return this.func(x);
   },

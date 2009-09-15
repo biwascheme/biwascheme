@@ -36,7 +36,7 @@ BiwaScheme.Hashtable = Class.create({
     var pairs = this.pairs_of.get(hashed);
     var i = pairs.indexOf(pair);
     if (i == -1){
-      throw new Bug("Hashtable#remove_pair: pair not found!");
+      throw new BiwaScheme.Bug("Hashtable#remove_pair: pair not found!");
     }
     else {
       pairs.splice(i, 1); //remove 1 element from i-th index

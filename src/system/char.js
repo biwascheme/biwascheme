@@ -21,7 +21,8 @@ BiwaScheme.Char = Class.create({
 BiwaScheme.Chars = {};
 BiwaScheme.Char.get = function(c) {
   if(typeof(c) != "string") {
-    throw new Bug("Char.get: " + Object.inspect(c) + " is not a string");
+    throw new BiwaScheme.Bug("Char.get: " +
+                             Object.inspect(c) + " is not a string");
   }
   if( BiwaScheme.Chars[c] === undefined )
     return new BiwaScheme.Char(c);

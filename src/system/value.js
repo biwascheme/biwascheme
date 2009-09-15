@@ -20,7 +20,7 @@ BiwaScheme.inner_of_nil = new Object();
 BiwaScheme.inner_of_nil.inspect = function(){
   // Note: should raise error when car of nil is referenced,
   // not when printed
-  throw new Error("cannot take car/cdr of '() in Scheme");
+  throw new BiwaScheme.Error("cannot take car/cdr of '() in Scheme");
 };
 BiwaScheme.nil = new BiwaScheme.Pair(BiwaScheme.inner_of_nil, 
                           BiwaScheme.inner_of_nil);

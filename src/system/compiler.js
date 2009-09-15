@@ -50,7 +50,7 @@ BiwaScheme.Compiler = Class.create({
       var sym = x.name;
       return return_global(sym);
     }
-    //throw new Error("undefined symbol `" + sym + "'");
+    //throw new BiwaScheme.Error("undefined symbol `" + sym + "'");
   },
 
   //generate boxing code (intersection of sets & vars)
@@ -136,7 +136,7 @@ BiwaScheme.Compiler = Class.create({
     }
 
     if(ret == null)
-      throw new Bug("find_sets() exited in unusual way");
+      throw new BiwaScheme.Bug("find_sets() exited in unusual way");
     else
       return ret;
   },
@@ -209,7 +209,7 @@ BiwaScheme.Compiler = Class.create({
     //p("find_free "+x.inspect()+" / "+b.inspect()+" => "+ret.inspect());
 
     if(ret == null)
-      throw new Bug("find_free() exited in unusual way");
+      throw new BiwaScheme.Bug("find_free() exited in unusual way");
     else
       return ret;
   },
@@ -302,7 +302,7 @@ BiwaScheme.Compiler = Class.create({
           }
           //error
           else{                          
-            throw new Error("compile: define needs a leftbol or pair: got "+left);
+            throw new BiwaScheme.Error("compile: define needs a leftbol or pair: got "+left);
           }
           break;
         case BiwaScheme.Sym("begin"):
@@ -396,7 +396,7 @@ BiwaScheme.Compiler = Class.create({
     //p(ret);
     //dump(new Hash({"ret":ret, "x":x, "e":e, "s":s, "next":next, "stack":[]}));
 //      if(ret == null)
-//        throw new Bug("compile() exited in unusual way");
+//        throw new BiwaScheme.Bug("compile() exited in unusual way");
 //      else
 //        return ret;
   },

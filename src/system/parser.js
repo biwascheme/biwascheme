@@ -35,7 +35,7 @@
             if ( /(.*\|#)/.test(t) ) {
               in_srfi_30_comment--;
               if (in_srfi_30_comment < 0) {
-                throw new Error("Found an extra comment terminator: `|#'")
+                throw new BiwaScheme.Error("Found an extra comment terminator: `|#'")
               }
               // Push back the rest substring to input stream.
               return t.substring(RegExp.$1.length, t.length);
@@ -62,7 +62,7 @@
 
       r = this.getObject();
       if (r == BiwaScheme.Parser.EOS)
-        throw new Error("Readable object not found after S exression comment");
+        throw new BiwaScheme.Error("Readable object not found after S exression comment");
 
       r = this.getObject();
       return r;
@@ -112,7 +112,7 @@
       while( this.tokens[ this.i ] == '#;' ) {
         this.i++;
         if ((this.getObject() == BiwaScheme.Parser.EOS) || (this.i >= this.tokens.length))
-          throw new Error(err_msg);  
+          throw new BiwaScheme.Error(err_msg);  
       }
     }, 
 

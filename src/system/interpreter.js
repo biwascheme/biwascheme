@@ -153,7 +153,7 @@ BiwaScheme.Interpreter = Class.create({
         else if(BiwaScheme.CoreEnv.hasOwnProperty(sym))
           var val = BiwaScheme.CoreEnv[sym];
         else
-          throw new Error("execute: unbound symbol: "+Object.inspect(sym));
+          throw new BiwaScheme.Error("execute: unbound symbol: "+Object.inspect(sym));
 
         a = val;
         break;
@@ -183,7 +183,7 @@ BiwaScheme.Interpreter = Class.create({
         var name=x[1], x=x[2];
         if(!BiwaScheme.TopEnv.hasOwnProperty(name) &&
            !BiwaScheme.CoreEnv.hasOwnProperty(name))
-          throw new Error("global variable '"+name+"' is not defined");
+          throw new BiwaScheme.Error("global variable '"+name+"' is not defined");
         
         BiwaScheme.TopEnv[name] = a;
         a = BiwaScheme.undef;
@@ -328,7 +328,7 @@ BiwaScheme.Interpreter = Class.create({
         }
         else{
           // unknown function type
-          throw new Error(Object.inspect(func) + " is not a function");
+          throw new BiwaScheme.Error(Object.inspect(func) + " is not a function");
         }
         break;
       case "return":
@@ -340,12 +340,12 @@ BiwaScheme.Interpreter = Class.create({
         s = ss-3-1;
         break;
       default:
-        throw new Bug("unknown opecode type: "+x[0]);
+        throw new BiwaScheme.Bug("unknown opecode type: "+x[0]);
       }
     }
 
 //      if(ret === null)
-//        throw new Bug("interpreter exited in unusual way");
+//        throw new BiwaScheme.Bug("interpreter exited in unusual way");
 //      else
 //        return ret;
     return a
