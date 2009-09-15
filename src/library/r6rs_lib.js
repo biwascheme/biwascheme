@@ -2211,8 +2211,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   //(hashtable-copy hashtable)    procedure 
   //(hashtable-copy hashtable mutable)    procedure 
-  define_libfunc("hashtable-copy", 0, 1, function(ar){
-    var mutable = ar[1] || false;
+  define_libfunc("hashtable-copy", 1, 2, function(ar){
+    var mutable = (ar[1]===undefined) ? false : !!ar[1];
     assert_hashtable(ar[0]);
     return ar[0].create_copy(mutable);
   });

@@ -1171,8 +1171,17 @@ describe('13 Hashtables', {
     ev("(let* ((h (make-hashtable equal-hash equal?)) \
                (f (hashtable-hash-function h))) \
           (eq? f equal-hash))").should_be(true);
-  }
+  },
   //hashtable-mutable?
+  'hashtable-mutable?': function(){
+    ev("(hashtable-mutable? (make-eq-hashtable))").should_be(true);
+    ev("(hashtable-mutable? \
+          (hashtable-copy (make-eq-hashtable) #t))").should_be(true);
+    ev("(hashtable-mutable? \
+          (hashtable-copy (make-eq-hashtable) #f))").should_be(false);
+    ev("(hashtable-mutable? \
+          (hashtable-copy (make-eq-hashtable)))").should_be(false);
+  }
   //equal-hash
   //string-hash
   //string-ci-hash

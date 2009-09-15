@@ -7,8 +7,9 @@
 // so some hacks are needed.
 
 BiwaScheme.Hashtable = Class.create({
-  initialize: function(_hash_proc, _equiv_proc, immutable){
-    this.mutable = !immutable;
+  initialize: function(_hash_proc, _equiv_proc, mutable){
+    this.mutable = (mutable === undefined) ? true :
+                   mutable ? true : false;
 
     this.hash_proc = _hash_proc;
     this.equiv_proc = _equiv_proc;
