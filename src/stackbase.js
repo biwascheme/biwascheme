@@ -20,7 +20,7 @@ BiwaScheme.TopEnv = {};
 BiwaScheme.CoreEnv = {};
 
 //
-// Classes
+// Errors (temporary?)
 //
 
 BiwaScheme.Error = Class.create({
@@ -35,5 +35,12 @@ BiwaScheme.Error = Class.create({
 BiwaScheme.Bug = Class.create(Object.extend(new BiwaScheme.Error(), {
   initialize: function(msg){
     this.message = "[BUG] "+msg;
+  }
+}));
+
+// currently used by "raise"
+BiwaScheme.UserError = Class.create(Object.extend(new BiwaScheme.Error(), {
+  initialize: function(msg){
+    this.message = msg;
   }
 }));
