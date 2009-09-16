@@ -1197,7 +1197,6 @@ describe('13 Hashtables', {
                (f (hashtable-hash-function h))) \
           (eq? f equal-hash))").should_be(true);
   },
-  //hashtable-mutable?
   'hashtable-mutable?': function(){
     ev("(hashtable-mutable? (make-eq-hashtable))").should_be(true);
     ev("(hashtable-mutable? \
@@ -1212,8 +1211,12 @@ describe('13 Hashtables', {
           (hashtable-set! h "abc" 1) \
           (hashtable-ref h "abc" #f))').should_be(1);
   },
-  //string-ci-hash
-  'symbol--hash': function(){
+  'string-ci-hash': function(){
+    ev('(let1 h (make-hashtable string-ci-hash string-ci=?) \
+          (hashtable-set! h "abc" 1) \
+          (hashtable-ref h "ABC" #f))').should_be(true);
+  },
+  'symbol-hash': function(){
     ev("(let1 h (make-hashtable symbol-hash symbol=?) \
           (hashtable-set! h 'abc 1) \
           (hashtable-ref h 'abc #f))").should_be(1);
