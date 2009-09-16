@@ -1663,7 +1663,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
 //(with-exception-handler handler thunk)    procedure
 //(guard (<variable>    syntax
-//(raise obj)    procedure 
+  //(raise obj)    procedure 
+  define_libfunc("raise", 1, 1, function(ar){
+    throw new BiwaScheme.UserError(BiwaScheme.to_write(ar[0]));
+  });
 //(raise-continuable obj)    procedure
 //
 //&condition    condition type
