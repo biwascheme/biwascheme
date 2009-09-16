@@ -1313,17 +1313,48 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //
 //(char-general-category char)    procedure 
 
-//(string-upcase string)    procedure 
-//(string-downcase string)    procedure 
+  //(string-upcase string)    procedure 
+  define_libfunc("string-upcase", 1, 1, function(ar){
+    assert_string(ar[0]);
+    return ar[0].toUpperCase();
+  });
+  //(string-downcase string)    procedure 
+  define_libfunc("string-downcase", 1, 1, function(ar){
+    assert_string(ar[0]);
+    return ar[0].toLowerCase();
+  });
 //(string-titlecase string)    procedure 
 //(string-foldcase string)    procedure
-//
-//(string-ci=? string1 string2 string3 ...)    procedure 
-//(string-ci<? string1 string2 string3 ...)    procedure 
-//(string-ci>? string1 string2 string3 ...)    procedure 
-//(string-ci<=? string1 string2 string3 ...)    procedure 
-//(string-ci>=? string1 string2 string3 ...)    procedure 
-//
+
+  BiwaScheme.make_string_ci_function = function(compare){
+    return function(ar){
+      assert_string(ar[0]);
+      var str = ar[0].toUpperCase();
+
+      for(var i=1; i<ar.length; i++){
+        assert_string(ar[i]);
+        if (!compare(str, ar[i].toUpperCase()))
+          return false;
+      }
+      return true;
+    }
+  };
+  //(string-ci=? string1 string2 string3 ...)    procedure 
+  define_libfunc("string-ci=?", 2, null, 
+    make_string_ci_function(function(a, b){ return a == b; }));
+  //(string-ci<? string1 string2 string3 ...)    procedure 
+  define_libfunc("string-ci<?", 2, null, 
+    make_string_ci_function(function(a, b){ return a < b; }));
+  //(string-ci>? string1 string2 string3 ...)    procedure 
+  define_libfunc("string-ci>?", 2, null, 
+    make_string_ci_function(function(a, b){ return a > b; }));
+  //(string-ci<=? string1 string2 string3 ...)    procedure 
+  define_libfunc("string-ci<=?", 2, null, 
+    make_string_ci_function(function(a, b){ return a <= b; }));
+  //(string-ci>=? string1 string2 string3 ...)    procedure 
+  define_libfunc("string-ci>=?", 2, null, 
+    make_string_ci_function(function(a, b){ return a >= b; }));
+
 //(string-normalize-nfd string)    procedure 
 //(string-normalize-nfkd string)    procedure 
 //(string-normalize-nfc string)    procedure 

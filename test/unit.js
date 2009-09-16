@@ -1,6 +1,8 @@
 //
 // test/unit.js - unit tests of BiwaScheme
 //
+// このファイルはUTF-8です
+// This file is utf-8
 
 var BiwaScheme = BiwaScheme || {};
 
@@ -939,7 +941,30 @@ describe('11.19  Macro transformers', {
 ///
 
 describe('1 Unicode', {
-})
+  'string-upcase' : function(){
+    ev('(string-upcase "Hi")').should_be("HI");
+    //ev('(string-upcase "χαoς")').should_be("XAOΣ");
+    //ev('(string-upcase "Straße")').should_be("STRASSE");
+  },
+  'string-downcase' : function(){
+    ev('(string-downcase "Hi")').should_be("hi");
+  },
+  'string-ci=?' : function(){
+    ev('(string-ci=? "Hi" "hi")').should_be(true);
+  },
+  'string-ci<?' : function(){
+    ev('(string-ci<? "a" "B")').should_be(true);
+  },
+  'string-ci>?' : function(){
+    ev('(string-ci>? "B" "a")').should_be(true);
+  },
+  'string-ci<=?' : function(){
+    ev('(string-ci<=? "a" "B")').should_be(true);
+  },
+  'string-ci>=?' : function(){
+    ev('(string-ci>=? "B" "a")').should_be(true);
+  }
+});
 
 describe('2 Bytevectors', {
 })
