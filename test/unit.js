@@ -1097,7 +1097,7 @@ describe('13 Hashtables', {
     ev("(hashtable? (make-eqv-hashtable))").should_be(true);
     ev("(hashtable? (make-eqv-hashtable 100))").should_be(true);
   },
-  'make-hashtable': function(){
+  'make-hashtable, equal-hash': function(){
     ev("(hashtable? (make-hashtable equal-hash equal?))").should_be(true);
     ev("(hashtable? (make-hashtable equal-hash equal? 100))").should_be(true);
     ev("(let1 h (make-hashtable equal-hash equal?) \
@@ -1181,11 +1181,18 @@ describe('13 Hashtables', {
           (hashtable-copy (make-eq-hashtable) #f))").should_be(false);
     ev("(hashtable-mutable? \
           (hashtable-copy (make-eq-hashtable)))").should_be(false);
-  }
-  //equal-hash
-  //string-hash
+  },
+  'string-hash': function(){
+    ev('(let1 h (make-hashtable string-hash string=?) \
+          (hashtable-set! h "abc" 1) \
+          (hashtable-ref h "abc" #f))').should_be(1);
+  },
   //string-ci-hash
-  //symbol-hash
+  'symbol--hash': function(){
+    ev("(let1 h (make-hashtable symbol-hash symbol=?) \
+          (hashtable-set! h 'abc 1) \
+          (hashtable-ref h 'abc #f))").should_be(1);
+  },
 })
 
 describe('14 Enumerators', {
