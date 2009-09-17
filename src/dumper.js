@@ -149,7 +149,13 @@ BiwaScheme.Dumper = Class.create({
     var s = "";
     if(obj instanceof Hash){
       s += "<table>"
-      s += "<tr><td colspan='4'>#"+this.n_dumps+"</td></tr>"
+
+      // header
+      s += "<tr><td colspan='4'>" + 
+           "<a href='#' id='dump_" + this.n_dumps + "_header'>" +
+           "#"+this.n_dumps+"</a></td></tr>";
+
+      // registers
       obj.each(function(pair){
         if(pair.key!="x" && pair.key != "stack"){
           var value = (pair.key=="c" ? this.dump_closure(pair.value) 
@@ -162,6 +168,8 @@ BiwaScheme.Dumper = Class.create({
            (this.is_opc(obj.get("x")) ? this.dump_opc(obj.get("x")) 
                                       : this.dump_obj(obj.get("x"))) +
            "</td>";
+
+      // stack
       s += "<td style='border-left: 1px solid black'>stack:</td><td>" +
            this.dump_stack(obj.get("stack"), obj.get("s")) +
            "</td></tr>";
@@ -173,8 +181,25 @@ BiwaScheme.Dumper = Class.create({
     dumpitem.id = "dump" + this.n_dumps;
     dumpitem.innerHTML = s;
     this.dumparea.appendChild(dumpitem);
+    (function(n){
+      $("dump_"+this.n_dumps+"_header").observe("click", function(){
+        this.dump_move_to(n);
+        this.dump_fold();
+      }.bind(this));
+    }.bind(this))(this.n_dumps);
     Element.hide(dumpitem);
     this.n_dumps++;
+  },
+
+  //
+  // UI
+  //
+  dump_move_to: function(n){
+    if (0 <= n && n <= this.n_dumps){
+      Element.hide($("dump"+this.cur));
+      this.cur = n;
+      Element.show($("dump"+this.cur));
+    }
   },
 
   dump_move: function(dir){
@@ -187,16 +212,25 @@ BiwaScheme.Dumper = Class.create({
     Element.show($("dump"+this.cur));
   },
 
+  dump_fold: function(){
+    for(var i=0; i<this.n_dumps; i++)
+      if(i!=this.cur) Element.hide($("dump"+i));
+
+    this.is_folded = true;
+  },
+
+  dump_unfold: function(){
+    for(var i=0; i<this.n_dumps; i++)
+      Element.show($("dump"+i));
+
+    this.is_folded = false;
+  },
+
   dump_toggle_fold: function(){
-    if(this.is_folded){ //open all
-      for(var i=0; i<this.n_dumps; i++)
-        Element.show($("dump"+i));
-    }
-    else{            //close all
-      for(var i=0; i<this.n_dumps; i++)
-        if(i!=this.cur) Element.hide($("dump"+i));
-    }
-    this.is_folded = (!this.is_folded);
+    if(this.is_folded)
+      this.dump_unfold();
+    else
+      this.dump_fold();
   }
 })
 } // with(BiwaScheme);
