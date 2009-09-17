@@ -81,4 +81,14 @@ BiwaScheme.List = function(){
   return $A(arguments).to_list();
 };
 
+// Converts an array to a (proper) list.
+// Example:
+//   [1,2,3].to_list()      //=> (1 2 3)
+Array.prototype.to_list = function(){
+  var list = BiwaScheme.nil;
+  for(var i=this.length-1; i>=0; i--){
+    list = new BiwaScheme.Pair(this[i], list);
+  }
+  return list;
+}
 

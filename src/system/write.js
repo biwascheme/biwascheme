@@ -35,13 +35,6 @@ Array.prototype.to_write = function(){
   }
   return '#(' + a.join(" ") + ')';
 }
-Array.prototype.to_list = function(){
-  var list = BiwaScheme.nil;
-  for(var i=this.length-1; i>=0; i--){
-    list = new BiwaScheme.Pair(this[i], list);
-  }
-  return list;
-}
 //  Array.prototype.memq = function(x){
 //    for(var i=this.length-1; i>=0; i--){
 //      if(this[i] === x)
