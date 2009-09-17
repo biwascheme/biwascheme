@@ -56,6 +56,30 @@ BiwaScheme.Pair = Class.create({
     return o;
   },
 
+  // Returns an array which contains the resuls of calling func
+  // with the car's as an argument.
+  // If the receiver is not a proper list, the last cdr is ignored.
+  // The receiver must not be a cyclic list.
+  map: function(func){
+    var ary = [];
+    for(var o = this; BiwaScheme.isPair(o); o = o.cdr){
+      ary.push(func(o.car));
+    }
+    return ary;
+  },
+
+  // Destructively concat the given list to the receiver.
+  // The receiver must be a proper list.
+  // Returns the receiver.
+  concat: function(list){
+    var o = this;
+    while(o instanceof BiwaScheme.Pair && o.cdr != BiwaScheme.nil){
+      o = o.cdr;
+    }
+    o.cdr = list;
+    return this;
+  },
+
   // returns human-redable string of pair
   inspect: function(conv){
     conv || (conv = Object.inspect);
@@ -92,3 +116,7 @@ Array.prototype.to_list = function(){
   return list;
 }
 
+// Return true if obj is a Pair (note that nil is not a pair in scheme)
+BiwaScheme.isPair = function(obj){
+  return (obj instanceof BiwaScheme.Pair) && (obj !== BiwaScheme.nil);
+};
