@@ -83,9 +83,13 @@ BiwaScheme.Hashtable = Class.create({
   },
 
   _apply_pair: function(func){
-    return this.pairs_of.values().map(function(pairs){
-      return pairs.map(func);
-    }).flatten();
+    var a = [];
+    this.pairs_of.values().each(function(pairs){
+      pairs.each(function(pair){
+        a.push(func(pair));
+      });
+    });
+    return a;
   },
 
   to_write: function(){

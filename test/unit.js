@@ -1206,9 +1206,9 @@ describe('13 Hashtables', {
     ew("(call-with-values \
           (lambda () (let ((h (make-eq-hashtable))) \
                        (hashtable-set! h 'foo 1) \
-                       (hashtable-set! h 'bar 2) \
+                       (hashtable-set! h 'bar #(2 3)) \
                        (hashtable-entries h))) \
-          list)").should_be("(#(foo bar) #(1 2))");
+          list)").should_be("(#(foo bar) #(1 #(2 3)))");
   },
   'hashtable-equivalence-function': function(){
     ev("(let* ((h (make-hashtable equal-hash equal?)) \
