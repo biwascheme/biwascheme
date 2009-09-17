@@ -82,18 +82,24 @@ BiwaScheme.Dumper = Class.create({
   dump_stack: function(stk, size){
     if(stk === null || stk === undefined) return Object.inspect(stk)
     var s = "<table>";
-    for(var i=stk.length-1; i >= 0; i--){
-      if(i < size){
-        s += "<tr><td class='dump_stknum'>[" + i + "]</td>" +
-             "<td>" + this.dump_obj(stk[i]).truncate(this.stack_max_len) +
-             "</td></tr>";
-      }
-      else{
-        s += "<tr><td class='dump_dead'>[" + i + "]</td>" +
-             "<td class='dump_dead'>" + 
-             this.dump_obj(stk[i]).truncate(this.stack_max_len) +
-             "</td></tr>";
-      }
+
+    // show the 'physical' stack top
+    if (stk.length == 0){
+      s += "<tr><td class='dump_dead'>(stack is empty)</td></tr>";
+    }
+    else if (size < stk.length){
+      var l = stk.length - 1;
+      s += "<tr><td class='dump_dead'>[" + l + "]</td>" +
+           "<td class='dump_dead'>" + 
+           this.dump_obj(stk[l]).truncate(this.stack_max_len) +
+           "</td></tr>";
+    }
+
+    // show the element in the stack
+    for(var i=size-1; i >= 0; i--){
+      s += "<tr><td class='dump_stknum'>[" + i + "]</td>" +
+           "<td>" + this.dump_obj(stk[i]).truncate(this.stack_max_len) +
+           "</td></tr>";
     }
     return s + "</table>";
   },
