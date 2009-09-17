@@ -1610,7 +1610,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
              new Pair(test,
                new Pair(new Pair(Sym("begin"), body),
                  new Pair(BiwaScheme.undef, nil))));
-  })
+  });
+
   define_syntax("unless", function(x){
     //(unless test body ...) 
     //=> (if (not test) (begin body ...) #<undef>)
@@ -1620,8 +1621,57 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
              new Pair(new Pair(Sym("not"), new Pair(test, nil)),
                new Pair(new Pair(Sym("begin"), body),
                  new Pair(BiwaScheme.undef, nil))));
-  })
-//(do ((<variable1> <init1> <step1>)    syntax 
+  });
+
+  define_syntax("do", function(x){
+    //(do ((var1 init1 step1)
+    //     (var2 init2 step2) ...)
+    //    (test expr1 expr2 ...)
+    //  body1 body2 ...)
+    //=> (let loop` ((var1 init1) (var2 init2) ...)
+    //     (if test 
+    //       (begin expr1 expr2 ...)
+    //       (begin body1 body2 ...
+    //              (loop` step1 step2 ...)))))
+
+    // parse arguments
+    if(!BiwaScheme.isPair(x.cdr))
+      throw new Error("do: no variables of do");
+    var varsc = x.cdr.car;
+    if(!BiwaScheme.isPair(varsc))
+      throw new Error("do: variables must be given as a list");
+    if(!BiwaScheme.isPair(x.cdr.cdr))
+      throw new Error("do: no resulting form of do");
+    var resultc = x.cdr.cdr.car;
+    var bodyc = x.cdr.cdr.cdr;
+
+    // construct subforms
+    var loop = BiwaScheme.gensym();
+
+    var init_vars = varsc.map(function(var_def){
+      var a = var_def.to_array();
+      return List(a[0], a[1]);
+    }).to_list();
+
+    var test = resultc.car;
+    var result_exprs = new Pair(Sym("begin"), resultc.cdr);
+
+    var next_loop = new Pair(loop, varsc.map(function(var_def){
+      var a = var_def.to_array();
+      return a[2] || a[0];
+    }).to_list());
+    var body_exprs = new Pair(Sym("begin"), bodyc).concat(List(next_loop));
+
+    // combine subforms 
+    return List(Sym("let"), 
+                loop,
+                init_vars,
+                List(Sym("if"),
+                     test,
+                     result_exprs,
+                     body_exprs));
+  });
+
 //(case-lambda <case-lambda clause> ...)    syntax
 
   //

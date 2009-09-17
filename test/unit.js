@@ -1077,6 +1077,16 @@ describe('5 Control structures', {
   'unless' : function(){
     ew("(unless (> 3 2) 99)").should_be("#<undef>");
     ev("(unless (< 3 2) 99)").should_be(99);
+  },
+  'do' : function(){
+    ev("(do ((vec (make-vector 5)) \
+             (i 0 (+ i 1))) \
+            ((= i 5) vec) \
+          (vector-set! vec i i))").should_be([0, 1, 2, 3, 4]);
+    ev("(let ((x '(1 3 5 7 9))) \
+          (do ((x x (cdr x)) \
+               (sum 0 (+ sum (car x)))) \
+              ((null? x) sum)))").should_be(25);
   }
 })
 
