@@ -1067,6 +1067,19 @@ describe('3 List utilities', {
 })
 
 describe('4 Sorting', {
+  'list-sort': function(){
+    ew("(list-sort '(1 3 4 2 5))").should_be("(1 2 3 4 5)");
+  },
+  'vector-sort': function(){
+    ew("(let* ((v '#(1 3 2)) \
+               (vv (vector-sort v))) \
+          (cons v vv))").should_be("(#(1 3 2) . #(1 2 3))");
+  },
+  'vector-sort!': function(){
+    ew("(let* ((v '#(1 3 2)) \
+               (ret (vector-sort! v))) \
+          (cons v ret))").should_be("(#(1 2 3) . #<undef>)");
+  }
 })
 
 describe('5 Control structures', {

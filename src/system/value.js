@@ -25,6 +25,7 @@ BiwaScheme.inner_of_nil.inspect = function(){
 BiwaScheme.nil = new BiwaScheme.Pair(BiwaScheme.inner_of_nil, 
                           BiwaScheme.inner_of_nil);
 BiwaScheme.nil.toString = function(){ return "nil"; }
+BiwaScheme.nil.to_array = function(){ return [] };
 
 //
 // #<undef> (The undefined value)
