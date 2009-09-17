@@ -2,11 +2,6 @@
 // types.js - type predicators
 //
 
-// Return true if obj is a Pair (note that nil is not a pair in scheme)
-BiwaScheme.isPair = function(obj){
-  return (obj instanceof BiwaScheme.Pair) && (obj !== BiwaScheme.nil);
-};
-
 BiwaScheme.isNil = function(obj){
   return (obj === BiwaScheme.nil);
 };
@@ -19,8 +14,27 @@ BiwaScheme.isChar = function(obj){
   return (obj instanceof BiwaScheme.Char);
 };
 
+BiwaScheme.isSymbol = function(obj){
+  return (obj instanceof BiwaScheme.Symbol);
+};
+
 BiwaScheme.isPort = function(obj){
   return (obj instanceof BiwaScheme.Port);
+};
+
+// Note: '() is not a pair in scheme
+BiwaScheme.isPair = function(obj){
+  return (obj instanceof BiwaScheme.Pair) && (obj !== BiwaScheme.nil);
+};
+
+// Note: isList returns true for '()
+BiwaScheme.isList = function(obj){
+  return (obj instanceof BiwaScheme.Pair);
+  // should check it is proper and not cyclic..
+};
+
+BiwaScheme.isVector = function(obj){
+  return (obj instanceof Array) && (obj.closure_p !== true);
 };
 
 BiwaScheme.isHashtable = function(obj){
@@ -28,5 +42,9 @@ BiwaScheme.isHashtable = function(obj){
 };
 
 BiwaScheme.isMutableHashtable = function(obj){
-  return (obj instanceof BiwaScheme.Hashtable) && obj.is_mutable;
+  return (obj instanceof BiwaScheme.Hashtable) && obj.mutable;
+};
+
+BiwaScheme.isClosure = function(obj){
+  return (obj instanceof Array) && (obj.closure_p === true);
 };

@@ -799,7 +799,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return l;
   });
   define_libfunc("length", 1, 1, function(ar){
-    assert_pair(ar[0]);
+    assert_list(ar[0]);
 
     var n = 0;
     for(var o=ar[0]; o!=nil; o=o.cdr)
@@ -1379,7 +1379,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("for-all", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    lists.each(function(ls){ assert_pair(ls) });
+    lists.each(function(ls){ assert_list(ls) });
 
     var last = true; //holds last result which proc returns
     return Call.multi_foreach(lists, {
@@ -1396,7 +1396,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("exists", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    lists.each(function(ls){ assert_pair(ls) });
+    lists.each(function(ls){ assert_list(ls) });
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 

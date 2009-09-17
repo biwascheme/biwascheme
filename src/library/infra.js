@@ -94,55 +94,6 @@ var assert_real = make_simple_assert("real number", function(obj){
   return typeof(obj) == 'number';
 });
 
-var assert_symbol = make_simple_assert("symbol", function(obj){
-  return obj instanceof BiwaScheme.Symbol;
-});
-
-var assert_string = make_simple_assert("string", function(obj){
-  return typeof(obj) == 'string';
-});
-
-var assert_vector = make_simple_assert("vector", function(obj){
-  return (obj instanceof Array) && (obj.closure_p !== true);
-});
-
-var assert_pair = make_simple_assert("pair", function(obj){
-  return obj instanceof BiwaScheme.Pair;
-});
-
-var assert_char = make_simple_assert("character", function(obj){
-  return obj instanceof BiwaScheme.Char;
-});
-
-var assert_port = make_simple_assert("port", function(obj){
-  return obj instanceof BiwaScheme.Port;
-});
-
-var assert_date = make_simple_assert("date", function(obj){
-  return obj instanceof Date;
-});
-
-var assert_hashtable = make_simple_assert("hashtable", function(obj){
-  return obj instanceof BiwaScheme.Hashtable;
-});
-
-var assert_mutable_hashtable = make_simple_assert("hashtable", function(obj){
-  return (obj instanceof BiwaScheme.Hashtable) && obj.mutable;
-});
-
-var assert_function = make_simple_assert("JavaScript function", function(obj){
-  return (obj instanceof Function) || (typeof obj == 'function');
-});
-
-var assert_closure = make_simple_assert("scheme function", function(obj){
-  return (obj instanceof Array) && (obj.closure_p === true);
-});
-
-var assert_applicable = make_simple_assert("scheme/js function", function(obj){
-  return (obj instanceof Function) || (typeof obj == 'function') ||
-         ((obj instanceof Array) && (obj.closure_p === true));
-});
-
 var assert_between = make_assert(function(fname, obj, from, to){
   if( typeof(obj) != 'number' || obj != Math.round(obj) ){
     throw new BiwaScheme.Error(fname + ": " +
@@ -156,6 +107,34 @@ var assert_between = make_assert(function(fname, obj, from, to){
                                from + " and " + to + ", but got " +
                                BiwaScheme.to_write(obj));
   }
+});
+
+var assert_string = make_simple_assert("string", Object.isString);
+
+var assert_char = make_simple_assert("character", BiwaScheme.isChar);
+var assert_symbol = make_simple_assert("symbol", BiwaScheme.isSymbol);
+var assert_port = make_simple_assert("port", BiwaScheme.isPort);
+var assert_pair = make_simple_assert("pair", BiwaScheme.isPair);
+var assert_list = make_simple_assert("list", BiwaScheme.isList);
+var assert_vector = make_simple_assert("vector", BiwaScheme.isVector);
+
+var assert_hashtable = make_simple_assert("hashtable",
+                                          BiwaScheme.isHashtable);
+var assert_mutable_hashtable = make_simple_assert("mutable hashtable", 
+                                            BiwaScheme.isMutableHashtable);
+
+var assert_function = make_simple_assert("JavaScript function", 
+                                         Object.isFunction);
+var assert_closure = make_simple_assert("scheme function", 
+                                        BiwaScheme.isClosure);
+var assert_applicable = make_simple_assert("scheme/js function", function(obj){
+  return BiwaScheme.isClosure(obj) || Object.isFunction(obj);
+});
+
+var assert_date = make_simple_assert("date", function(obj){
+  // FIXME: this is not accurate (about cross-frame issue)
+  // https://prototype.lighthouseapp.com/projects/8886/tickets/443
+  return obj instanceof Date;
 });
 
 var assert = make_assert(function(fname, test){
