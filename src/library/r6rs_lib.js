@@ -846,7 +846,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("map", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_pair(ls) });
+    lists.each(function(ls){ assert_list(ls) });
 
     var a = [];
     return Call.multi_foreach(lists, {
@@ -872,7 +872,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("for-each", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_pair(ls) });
+    lists.each(function(ls){ assert_list(ls) });
 
     return Call.multi_foreach(lists, {
       call: function(xs){ 
@@ -1038,7 +1038,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return chars.to_list();
   })
   define_libfunc("list->string", 1, 1, function(ar){
-    assert_pair(ar[0]);
+    assert_list(ar[0]);
     return ar[0].to_array().map(function(c){ return c.value; }).join("");
   })
   define_libfunc("string-for-each", 2, null, function(ar){
@@ -1098,7 +1098,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0].to_list();
   })
   define_libfunc("list->vector", 1, 1, function(ar){
-    assert_pair(ar[0]);
+    assert_list(ar[0]);
     return ar[0].to_array();
   })
   define_libfunc("vector-fill!", 2, 2, function(ar){
@@ -1369,7 +1369,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   define_libfunc("find", 2, 2, function(ar){
     var proc = ar[0], ls = ar[1];
-    assert_pair(ls);
+    assert_list(ls);
     return Call.foreach(ls, {
       call: function(x){ return new Call(proc, [x.car]) },
       result: function(res, x){ if(res) return x.car; },
@@ -1410,7 +1410,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("filter", 2, 2, function(ar){
     var proc = ar[0], ls = ar[1];
-    assert_pair(ls);
+    assert_list(ls);
 
     var a = [];
     return Call.foreach(ls, {
@@ -1431,7 +1431,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("partition", 2, 2, function(ar){
     var proc = ar[0], ls = ar[1];
-    assert_pair(ls);
+    assert_list(ls);
 
     var t = [], f = [];
     return Call.foreach(ls, {
@@ -1447,7 +1447,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("fold-left", 3, null, function(ar){
     var proc = ar.shift(), accum = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_pair(ls) });
+    lists.each(function(ls){ assert_list(ls) });
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
@@ -1463,7 +1463,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var proc = ar.shift(), accum = ar.shift();
     var lists = ar.map(function(ls){
       // reverse each list
-      assert_pair(ls);
+      assert_list(ls);
       return ls.to_array().reverse().to_list();
     })
 
@@ -1479,7 +1479,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("remp", 2, 2, function(ar){
     var proc = ar[0], ls = ar[1];
-    assert_pair(ls);
+    assert_list(ls);
 
     var ret = [];
     return Call.foreach(ls, {
@@ -1491,7 +1491,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   var make_remover = function(key){
     return function(ar){ 
       var obj = ar[0], ls = ar[1];
-      assert_pair(ls);
+      assert_list(ls);
 
       var ret = [];
       return Call.foreach(ls, {
@@ -1509,7 +1509,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("memp", 2, 2, function(ar){
     var proc = ar[0], ls = ar[1];
-    assert_pair(ls);
+    assert_list(ls);
 
     var ret = [];
     return Call.foreach(ls, {
@@ -1521,7 +1521,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   var make_finder = function(key){
     return function(ar){ 
       var obj = ar[0], ls = ar[1];
-      assert_pair(ls);
+      assert_list(ls);
 
       var ret = [];
       return Call.foreach(ls, {
@@ -1539,7 +1539,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   
   define_libfunc("assp", 2, 2, function(ar){
     var proc = ar[0], als = ar[1];
-    assert_pair(als);
+    assert_list(als);
 
     var ret = [];
     return Call.foreach(als, {
@@ -1556,7 +1556,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   var make_assoc = function(key){
     return function(ar){ 
       var obj = ar[0], ls = ar[1];
-      assert_pair(ls);
+      assert_list(ls);
 
       var ret = [];
       return Call.foreach(ls, {

@@ -65,7 +65,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // string
   
   define_libfunc("string-concat", 1, 1, function(ar){
-    assert_pair(ar[0]);
+    assert_list(ar[0]);
     return ar[0].to_array().join("");
   })
 
@@ -76,7 +76,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
 
   define_libfunc("string-join", 1, 2, function(ar){
-    assert_pair(ar[0]);
+    assert_list(ar[0]);
     var delim = ""
     if(ar[1]){
       assert_string(ar[1]);
@@ -89,7 +89,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("intersperse", 2, 2, function(ar){
     var item = ar[0], ls = ar[1];
-    assert_pair(ls);
+    assert_list(ls);
 
     var ret = [];
     ls.to_array().reverse().each(function(x){
@@ -102,7 +102,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("map-with-index", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_pair(ls) });
+    lists.each(function(ls){ assert_list(ls) });
 
     var results = [], i = 0;
     return Call.multi_foreach(lists, {

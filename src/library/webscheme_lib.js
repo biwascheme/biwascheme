@@ -582,7 +582,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var path = ar[0];
     assert_string(path);
     var alist = ar[1];
-    assert_pair(alist);
+    assert_list(alist);
     var h = {};
 
     alist.foreach(function(item){
