@@ -1696,7 +1696,26 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
                      body_exprs));
   });
 
-//(case-lambda <case-lambda clause> ...)    syntax
+  //(case-lambda <case-lambda clause> ...)    syntax
+  define_syntax("case-lambda", function(x){
+    // (case-lambda (() body0 ...)
+    //              ((a) body1 ...)
+    //              ((a b . cc) body2 ...)
+    //              (rest bodyn ...))
+    //=> (lambda args`
+    //     (let1 len` (length args`)
+    //       (if (= len` (length '()))
+    //         ((lambda () body0 ...) args`)
+    //         (if (= len` (length '(a)))
+    //           ((lambda (a) body1 ...) args`)
+    //           (if (>= len` (length '(a b)))
+    //             ((lambda (a b . cc) body2 ...) args`)
+    //             ((lambda rest bodyn ...) args`)
+//    var len = BiwaScheme.gensym();
+//    if(!BiwaScheme.isPair(x.cdr))
+//      throw new Error("do: no variables of do");
+
+  });
 
   //
   // Chapter 6 Records
