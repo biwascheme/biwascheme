@@ -18,6 +18,7 @@ FILES = src/version.js \
   src/system/port.js \
   src/system/hashtable.js \
   src/system/syntax.js \
+  src/system/types.js \
   src/system/parser.js \
   src/system/compiler.js \
   src/system/pause.js \

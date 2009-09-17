@@ -115,8 +115,3 @@ Array.prototype.to_list = function(){
   }
   return list;
 }
-
-// Return true if obj is a Pair (note that nil is not a pair in scheme)
-BiwaScheme.isPair = function(obj){
-  return (obj instanceof BiwaScheme.Pair) && (obj !== BiwaScheme.nil);
-};
