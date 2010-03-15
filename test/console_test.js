@@ -1,37 +1,10 @@
 //
 // test code (also used by browser_test.html)
 //
-
-if(typeof(WScript) == 'object'){
-  //for cscript.exe(WSH)
-  var FileSys = new ActiveXObject("Scripting.FileSystemObject");
-
-  function read(path){
-    var file = FileSys.OpenTextFile(path ,1); //1=read
-    return file.ReadAll();
-  }
-  eval("window = {}; navigator = {};");
-  eval("function puts(str){ WScript.Echo(str) }");
-  eval(read("../lib/prototype.js"));
-  eval(read("../lib/stackbase.js"));
-  eval(read("../lib/r6rs_lib.js"));
-  eval("function ev(str){ "+
-        "try{ puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }"+
-        "catch(e){ puts('(function ev:exception raised) '+e.message); } }");
-}
-else{
-  //for SpiderMonkey 
-  if(typeof(puts) != 'function')
-    eval("function puts(str){ print(str); }")
-  if(typeof(ev) != 'function')
-    eval("function ev(str){ puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }");
-}
-BiwaScheme.Debug = true;
-
 p(    ev("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
-       "  (let-values (((a b) (values x y)) " +
-       "               ((x y) (values a b)))" +
-       "    (list a b x y)))                "))
+      "  (let-values (((a b) (values x y)) " +
+      "               ((x y) (values a b)))" +
+      "    (list a b x y)))                "))
 
 //p(    ev("(let-values (((a b) (values 1 2)) " +
 //       "             ((c d) (values 3 4)))" +

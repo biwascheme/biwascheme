@@ -3,14 +3,16 @@
 //
 
 // default definition of puts: should be overriden for console interpreters
+
+if (typeof(Console) === 'undefined') {
+
+}
+
 function puts(str, no_newline){
-  var text = (str + (no_newline ? "" : "\n")).escapeHTML();
-  var span = document.createElement("span");
-  span.innerHTML = text.replace(/\n/g,"<br>").replace(/ /g,"&nbsp;");
-  $('bs-console').insert(span);
+    Console.puts(str, no_newline)
 }
 function p(/*args*/){
-  puts("p> "+$A(arguments).map(Object.inspect).join(" "));
+    Console.p.apply(this, arguments)
 }
 
 //

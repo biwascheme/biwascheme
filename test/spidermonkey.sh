@@ -1,3 +1,5 @@
 #!/bin/sh
 # kick test with SpiderMonkey
-js -f ../lib/prototype.js -f ../lib/stackbase.js -f ../lib/r6rs_lib.js -f ../lib/console_test.js
+js -f ../src/console/console-spidermonkey.js \
+   -f ../lib/console_biwascheme.js \
+   -f ./console_test.js
