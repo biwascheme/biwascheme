@@ -35,6 +35,16 @@
         (li "Comprehensive " (link-to "unit test" "repos/test/spec.html"))
         (li "Tiny " (link-to "interpreter debugger" "repos/test/tracer.html")))
 
+      (h2 "Links")
+
+      (ul
+        (li
+          (a :href "http://www.r6rs.org/" "R6RS")
+          " (" (a :href "http://www.r6rs.org/final/html/r6rs/r6rs-Z-H-2.html#node_toc_start"
+                 "Language") " / "
+               (a :href "http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-1.html#node_toc_start"
+                 "Library") ")" ))
+
       (h2 "Contact")
 
       (p "see " (link-to "Development" "development.html")
