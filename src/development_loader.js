@@ -64,6 +64,7 @@ var BiwaScheme = BiwaScheme || {};
              path +
            '"><\/script>';
   }
+  document.write(script_tag(dir+"src/version.js"));
   document.write(script_tag(dir+"src/console/web-console.js"));
   document.write(script_tag(dir+"src/prototype.js"));
   document.write(script_tag(dir+"src/stackbase.js"));

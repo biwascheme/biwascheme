@@ -5,9 +5,8 @@
 #  #!/bin/sh
 #  java -jar /somewhere/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar $*
 
-FILES = \
+FILES0 = \
   src/console/web-console.js \
-  src/version.js \
   src/prototype.js \
   src/stackbase.js \
   src/system/set.js \
@@ -35,8 +34,7 @@ FILES = \
   src/release_initializer.js \
 #  src/io.js \
 
-CONSOLE_FILES =					\
-  src/version.js				\
+CONSOLE_FILES0 =					\
   src/prototype.js				\
   src/stackbase.js				\
   src/system/set.js				\
@@ -64,9 +62,17 @@ CONSOLE_FILES =					\
   $(NULL)
 
 
+VERSION_FILE_IN =  src/version.js.in
+VERSION_FILE    =  src/version.js 
+FILES           =  $(VERSION_FILE) $(FILES0)
+CONSOLE_FILES   =  $(VERSION_FILE) $(CONSOLE_FILES0)
+
 all: build
 
 build: lib/biwascheme.js lib/console_biwascheme.js
+
+$(VERSION_FILE): $(VERSION_FILE_IN) $(FILES0) $(CONSOLE_FILES0) Makefile
+	sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" < $< > $@
 
 lib/biwascheme.js: $(FILES) Makefile
 	cat $(FILES) > __merged.js

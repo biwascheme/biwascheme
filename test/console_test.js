@@ -1,6 +1,7 @@
 //
 // test code (also used by browser_test.html)
 //
+p("BiwaScheme" + " version " + BiwaScheme.Version + ".git" + BiwaScheme.GitCommit)
 p(    ev("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
       "  (let-values (((a b) (values x y)) " +
       "               ((x y) (values a b)))" +
