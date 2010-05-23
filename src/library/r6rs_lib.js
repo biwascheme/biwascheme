@@ -258,15 +258,57 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_syntax("letrec", expand_letrec_star);
   define_syntax("letrec*", expand_letrec_star);
 
-  define_syntax("let-values", function(x){
+  define_syntax("let-values", function(x) {
     // (let-values (((a b) (values 1 2))
-    //               (c d . e) (values 3 4 5))
+    //               ((c d . e) (values 3 4 a)))
+    //              (print a b c d e))
+    // =>
+    // (let ((#<gensym1> (lambda () (values 1 2)))
+    //       (#<gensym2> (lambda () (values 3 4 a))))
+    //   (let*-values (((a b) #<gensym1>)
+    //                 ((c d . e) #<gensym2>))
+    //                 (print a b c d e)))
+      var mv_bindings = x.cdr.car;
+      var body = x.cdr.cdr;
+      var ret = null;
+      
+      var let_bindings = nil;
+      var let_star_values_bindings = nil;
+      mv_bindings.to_array().reverse().each(function (item) {
+	  var init = item.cdr.car;
+	  var tmpsym = BiwaScheme.gensym()
+	  var binding = new Pair(tmpsym, 
+				 new Pair(
+					  new Pair(Sym("lambda"), new Pair(nil, 
+									   new Pair(init, nil))),
+					  nil));
+	  let_bindings = new Pair(binding, let_bindings);
+	  
+	  var formals = item.car;
+	  let_star_values_bindings = new Pair(new Pair (formals, new Pair(new Pair(tmpsym, nil), nil)),
+					      let_star_values_bindings);
+      });
+
+      var let_star_values = new Pair(Sym("let*-values"),
+				     new Pair(let_star_values_bindings,
+					      body));
+      ret = new Pair(Sym("let"), 
+		     new Pair(let_bindings,
+			      new Pair (let_star_values, nil)));
+      return ret;
+      
+  });
+
+  //let*-values
+  define_syntax("let*-values", function(x){
+    // (let*-values (((a b) (values 1 2))
+    //               ((c d . e) (values 3 4 a)))
     //   (print a b c d e))
     // -> (call-with-values
     //      (lambda () (values 1 2))
     //      (lambda (a b)
     //        (call-with-values
-    //          (lambda () (values 3 4 5))
+    //          (lambda () (values 3 4 a))
     //          (lambda (c d . e) 
     //            (print a b c d e)))))
     var mv_bindings = x.cdr.car;
@@ -287,8 +329,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
     return ret;
   });
-  //let*-values
-
   //            11.4.7  Sequencing
   //(begin)
 

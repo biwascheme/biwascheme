@@ -417,17 +417,17 @@ describe('11.4 Expressions', {
        "  (list a b c d))                 ").should_be("(1 2 3 4)");
     ew("(let-values (((a b . c) (values 1 2 3 4)))" +
        "  (list a b c))                   ").should_be("(1 2 (3 4))");
-//    ew("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
-//       "  (let-values (((a b) (values x y)) " +
-//       "               ((x y) (values a b)))" +
-//       "    (list a b x y)))                ").should_be("(x y a b)");
+    ew("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
+       "  (let-values (((a b) (values x y)) " +
+       "               ((x y) (values a b)))" +
+       "    (list a b x y)))                ").should_be("(x y a b)");
+  },
+  'let*-values' : function() {
+      ew("(let ((a 'a) (b 'b) (x 'x) (y 'y)) "+
+	 "   (let*-values (((a b) (values x y))"+
+	 "                 ((x y) (values a b)))"+
+	 "      (list a b x y))").should_be("(x y x y)");
   }
-//
-//  //(let*-values)
-//(let ((a 'a) (b 'b) (x 'x) (y 'y))
-//  (let*-values (((a b) (values x y))
-//                ((x y) (values a b)))
-//    (list a b x y)))          ⇒ (x y x y)
 //  //(begin)
 //(define x 0)
 //
