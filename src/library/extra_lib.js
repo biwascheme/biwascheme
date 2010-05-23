@@ -197,6 +197,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("macroexpand-1", 1, 1, function(ar){
     return macroexpand_1(ar[0]);
   });
+
+  define_libfunc("gensym", 0, 0, function(ar){
+    return BiwaScheme.gensym();
+  });
   
   // i/o
 

@@ -1336,6 +1336,10 @@ describe('extra library', {
   'identity': function(){
     ev("(identity 1)").should_be(1);
   },
+  'gensym': function(){
+    ev("(symbol? (gensym))").should_be(true);
+    ev("(eq? (gensym) (gensym))").should_be(false);
+  },
 
   'write-to-string': function(){
     ev("(write-to-string '(+ 1 2))").should_be("(+ 1 2)");
