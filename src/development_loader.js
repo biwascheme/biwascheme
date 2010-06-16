@@ -44,17 +44,21 @@ var BiwaScheme = BiwaScheme || {};
   }
 
   // Find the script tag
-  var script = (function(e){ 
-    if(e.id == '_firebugConsole'){
-      return arguments.callee(document.body);
-    }
-    else if(e.nodeName.toLowerCase() == 'script'){
+  var find_script_tag = function(e){
+    if(e.nodeName.toLowerCase() == 'script'){
       return e;
     }
-    else{
-      return arguments.callee(e.lastChild);
+    else if(e.id == '_firebugConsole'){
+      if(e.previousSibling.nodeName.toLowerCase() == 'script')
+        return e.previousSibling;
+      else
+        console.error("BiwaScheme could not find the script tag... please use firebug 1.5.0")
     }
-  })(document);
+    else{
+      return find_script_tag(e.lastChild);
+    }
+  };
+  var script = find_script_tag(document);
 
   var src = readAttribute(script, 'src');
   var dir = src.match(/(.*)src\/development_loader.js/)[1];
