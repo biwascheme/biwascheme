@@ -60,7 +60,7 @@
   #/^\/ts\/init/
   (lambda (req)
     (inc! *max-id*)
-    (print-log 4 #`"new ts connection: id ,|*max-id*|")
+    (log-debug #`"new ts connection: id ,|*max-id*|")
     (write-to-string (list *max-id* *count*)))) ;;temp
 
 (define (get-sexp req)
@@ -72,7 +72,7 @@
   #/^\/ts\/write\?/
   (lambda (req)
     (let1 sexp (get-sexp req)
-      (print-log 4 sexp)
+      (log-debug sexp)
       (tuplespace-write *ts* sexp)
       (write-to-string sexp))))
 
@@ -80,7 +80,7 @@
 (sack-add-routing *sack*
   #/^\/ts\/dump/
   (lambda (req)
-    ;(print-log 4 (tuplespace-dump *ts*))
+    ;(log-debug (tuplespace-dump *ts*))
     (tuplespace-dump *ts*)))
 
 ; ts-readp

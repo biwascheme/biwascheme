@@ -14,7 +14,7 @@
   (use util.list) ; assoc-ref
   (use www.cgi) ; cgi-parse-parameters, etc
   (export 
-    <sack> after-of print-log
+    <sack> after-of log-debug log-info log-connection log-error
     sack-query-ref
     sack-new sack-start! sack-add-routing
     ;; for test
@@ -64,6 +64,11 @@
   (if (>= log-level level)
     (log-format (format "~,,,,50a~%" obj))))
 
+(define (log-error obj) (print-log 1 obj))
+(define (log-connection obj) (print-log 2 obj))
+(define (log-info obj) (print-log 3 obj))
+(define (log-debug obj) (print-log 4 obj))
+
 ;;;
 ;;; dispatch
 ;;;
@@ -76,7 +81,7 @@
   (let1 path (ref req 'path)
     (let1 item (find (lambda (x) (rxmatch (car x) path))
                      (ref *sack* 'routing))
-      (print-log LOG_DBG item)
+      (log-debug item)
       (let ((rexp (car item))
             (proc (cdr item)))
         (slot-set! req 'after (rxmatch-after (rxmatch rexp path)))
@@ -108,7 +113,7 @@
 ;;;
 
 (define (httpd-send-responce text port)
-  (print-log LOG_CON "200 OK")
+  (log-connection "200 OK")
   (display 
     (string-append 
       #`"HTTP/1.0 200 OK\r\nServer: ,|server-name|\r\n"
@@ -121,14 +126,14 @@
   (flush port))
 
 (define (httpd-parse-request req-line)
-  (print-log LOG_DBG (string-tokenize req-line))
+  (log-debug (string-tokenize req-line))
   (match (string-tokenize req-line)
          ((method path protocol)
           (make <http-request> :method method :path path :protocol protocol) )
          ((method path)
           (make <http-request> :method method :path path))
          ((method)
-          (print-log LOG_ERR #`"400 Bad Request (path unspecified)"))))
+          (log-error #`"400 Bad Request (path unspecified)"))))
                 
 (define (httpd-recieve cs)
   (thread-start!
@@ -155,7 +160,7 @@
                       (httpd-send cs res)
                       (loop res))))
                 (rescue e 
-                        (print-log LOG_ERR #`"My handler: ,(slot-ref e 'message)")
+                        (log-error #`"My handler: ,(slot-ref e 'message)")
                         (print (ref e 'message))
                         (report-error e))))
             (lambda ()
@@ -165,19 +170,19 @@
 (define (httpd-send cs res)
   (let1 out (socket-output-port cs)
     (httpd-send-responce res out)
-    (print-log LOG_DBG "connection end.")))
+    (log-debug "connection end.")))
 
 (define (httpd-main nport)
   (let1 ss (make-server-socket 'inet nport :reuse-addr? #t)
     (while #t
       (try (begin 
-             (print-log LOG_DBG "Waiting for a client")
+             (log-debug "Waiting for a client")
              (let1 cs (socket-accept ss)
-               (print-log LOG_DBG "A Client accepted")
+               (log-debug "A Client accepted")
                (httpd-recieve cs))
-             (print-log LOG_DBG "One reqest pushed"))
+             (log-debug "One reqest pushed"))
            (rescue e
-             (print-log LOG_ERR #`"My handler: ,(slot-ref e 'message)")
+             (log-error #`"My handler: ,(slot-ref e 'message)")
              (print (ref e 'message))
              (report-error e))))))
 
@@ -186,13 +191,13 @@
 	      ((eq?      log-path 'default) #t); log to current error port
 	      ((string=? log-path "syslog") 'syslog)
 	      (else                         log-path)))
-  (print-log LOG_CON #`"server started with port ,|nport|")
+  (log-connection #`"server started with port ,|nport|")
 
   (try (begin
          (set-signal-handler!  SIGPIPE 
-           (lambda (n) (print-log LOG_ERR #`"Catched signal ,|n|")))
+           (lambda (n) (log-error #`"Catched signal ,|n|")))
           (set-signal-handler!  SIGINT
-            (lambda (n) (print-log LOG_ERR #`"Received SIGINT") (exit 0))))
+            (lambda (n) (log-error #`"Received SIGINT") (exit 0))))
        (rescue e #f))
 
 
