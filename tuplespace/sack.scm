@@ -47,7 +47,7 @@
 ;;; settings
 ;;;
 
-(define server-name "Gauche-CometServ/0.01")
+(define server-name "BiwaTuples/0.0.2")
 (define document-root "/home/www/htdocs/")
 (define log-level 4)
 
