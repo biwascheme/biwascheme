@@ -78,7 +78,7 @@
   }
 
   // Start user's program
-  if (!script) {
+  if (script) {
     var intp = new BiwaScheme.Interpreter(onError);
     try{
       intp.evaluate(script.innerHTML, Prototype.emptyFunction);
