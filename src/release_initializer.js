@@ -1,5 +1,5 @@
 //
-// release_initializer.js - read user's program and eval it
+// release_initializer.js - read user's program and eval it (if it exists)
 //
 // This file is put on the end the lib/biwascheme.js.
 //
@@ -48,7 +48,10 @@
 
   // Find the script tag
   var find_script_tag = function(e){
-    if(e.nodeName.toLowerCase() == 'script'){
+    if (e == null) {
+	return e;
+    }
+    else if(e.nodeName.toLowerCase() == 'script'){
       return e;
     }
     else if(e.id == '_firebugConsole'){
@@ -75,11 +78,13 @@
   }
 
   // Start user's program
-  var intp = new BiwaScheme.Interpreter(onError);
-  try{
-    intp.evaluate(script.innerHTML, Prototype.emptyFunction);
-  }
-  catch(e){
-    onError(e);
+  if (!script) {
+    var intp = new BiwaScheme.Interpreter(onError);
+    try{
+      intp.evaluate(script.innerHTML, Prototype.emptyFunction);
+    }
+    catch(e){
+      onError(e);
+    }
   }
 })();
