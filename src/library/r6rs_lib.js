@@ -739,7 +739,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       case "+inf.0": return Infinity;
       case "-inf.0": return -Infinity;
       case "+nan.0": return NaN;
-      default:       return parseInt(s, radix);
+      default:       if(/[eE.]/.match(s))
+                       return parseFloat(s);
+                     else
+                       return parseInt(s, radix);
+
     }
   })
 

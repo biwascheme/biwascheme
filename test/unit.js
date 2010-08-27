@@ -567,7 +567,8 @@ describe('11.7 Arithmetic', {
   'string->number' : function(){
     ev('(string->number "100")').should_be(100)
     ev('(string->number "100" 16)').should_be(256)
-    //ew('(string->number "1e2"').should_be("100.0") TODO
+    ev('(string->number "1.2"').should_be(1.2)
+    ew('(string->number "1e2"').should_be("100") //FIXME: should be '100.0', specifically...
     //ev('(string->number "0/0")').should_be(false) TODO
     ev('(string->number "+inf.0")').should_be(Infinity)
     ev('(string->number "-inf.0")').should_be(-Infinity)
