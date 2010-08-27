@@ -72,7 +72,7 @@ all: build
 build: lib/biwascheme.js lib/console_biwascheme.js
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(FILES0) $(CONSOLE_FILES0) Makefile
-	sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" < $< > $@
+	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
 lib/biwascheme.js: $(FILES) Makefile
 	cat $(FILES) > __merged.js
