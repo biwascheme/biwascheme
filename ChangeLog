@@ -1,10 +1,12 @@
-2008-12-26  Yutaka HARA  <yhara(at)kmc.gr.jp>
+NEXT VERSION:
 
-	* lib/extra_lib.js, test/spec.html:
-	new: 'read-from-string'
+	* 
 
-	* lib/r6rs_lib.js, test/spec.html:
-	change: 'eval' now takes s-expr instead of string
+2010-08-27  v0.5.4.2
 
-	* ChangeLog:
-	Decided to start writing changelog.
+  * fix: (let-values)
+	* fix: (acos)
+	* new: (gensym) returns random symbol
+	* new: (string->number) parses flonum
+	* new: BiwaScheme.GitCommit
+			note: now sed is needed to compile biwascheme.js
