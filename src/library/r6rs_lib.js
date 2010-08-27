@@ -667,7 +667,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("acos", 1, 1, function(ar){
     assert_number(ar[0]);
-    return Math.asos(ar[0]);
+    return Math.acos(ar[0]);
   })
   define_libfunc("atan", 1, 2, function(ar){
     assert_number(ar[0]);
