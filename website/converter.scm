@@ -1,4 +1,5 @@
 #!/usr/bin/env gosh
+; usage: gosh converter.scm .
 ; needs Gauche
 (use text.html-lite)
 (use text.tree)

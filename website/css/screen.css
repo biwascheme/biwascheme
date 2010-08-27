@@ -25,6 +25,10 @@ em {
 h1 {
   padding-left: 1em;
 }
+h1 a{
+  color: black;
+  text-decoration: none;
+}
 
 #subtitle {
   font-size: 50%;
@@ -35,9 +39,13 @@ h1 {
 
 #menu {
   float: left;
-  margin-left: -25%;
+  margin-left: -150px;
   padding: 1em;
   z-index: -1;
+}
+#menu img{
+  border: none;
+  margin-left: -40px;
 }
 
 /* content */

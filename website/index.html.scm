@@ -45,6 +45,19 @@
                (a :href "http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-1.html#node_toc_start"
                  "Library") ")" ))
 
+      (h2 "Licence")
+
+      (ul
+        (li "BiwaScheme: "
+            (link-to "MIT License"
+                     "http://github.com/yhara/biwascheme/blob/master/MIT-LICENSE.txt"))
+        (li "BiwaScheme Logo"
+            " (by " (link-to "Jakub Jankiewicz" "http://jcubic.pl/") "): "
+            (link-to "Creative Commons Attribution 3.0"
+                     "http://creativecommons.org/licenses/by/3.0/")
+        ))
+
+
       (h2 "Contact")
 
       (p "see " (link-to "Development" "development.html")
