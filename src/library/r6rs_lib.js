@@ -728,7 +728,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("number->string", 1, 3, function(ar){
     var z = ar[0], radix = ar[1], precision = ar[2];
     if(precision)
-      throw new Bug("number->string: presition is not yet implemented");
+      throw new Bug("number->string: precision is not yet implemented");
     
     radix = radix || 10;  //TODO: check radix is 2, 8, 10, or 16.
     return z.toString(radix);
