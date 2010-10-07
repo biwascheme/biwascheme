@@ -58,7 +58,7 @@
       if(e.previousSibling.nodeName.toLowerCase() == 'script')
         return e.previousSibling;
       else
-        console.error("BiwaScheme could not find the script tag... please use firebug 1.5.0")
+        console.warn("BiwaScheme could not find the script tag... please use firebug 1.5.0")
     }
     else{
       return find_script_tag(e.lastChild);
