@@ -29,8 +29,10 @@ BiwaScheme.isPair = function(obj){
 
 // Note: isList returns true for '()
 BiwaScheme.isList = function(obj){
-  return (obj instanceof BiwaScheme.Pair);
-  // should check it is proper and not cyclic..
+    if(obj === BiwaScheme.nil) return true; // null base case
+    if(!(obj instanceof BiwaScheme.Pair)) return false;
+    return BiwaScheme.isList(obj.cdr);
+  //TODO: should check if it is not cyclic..
 };
 
 BiwaScheme.isVector = function(obj){
