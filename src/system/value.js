@@ -16,16 +16,15 @@ BiwaScheme.Values = Class.create({
 // Nil
 // javascript representation of empty list( '() )
 //
-BiwaScheme.inner_of_nil = new Object();
-BiwaScheme.inner_of_nil.inspect = function(){
-  // Note: should raise error when car of nil is referenced,
-  // not when printed
-  throw new BiwaScheme.Error("cannot take car/cdr of '() in Scheme");
-};
-BiwaScheme.nil = new BiwaScheme.Pair(BiwaScheme.inner_of_nil, 
-                          BiwaScheme.inner_of_nil);
-BiwaScheme.nil.toString = function(){ return "nil"; }
-BiwaScheme.nil.to_array = function(){ return [] };
+BiwaScheme.Nil = Class.create({
+  toString: function() { return "nil"; },
+  to_array: function() { return []; },
+  length: function() { return 0; }
+});
+
+BiwaScheme.nil = new BiwaScheme.Nil();
+console.log("blah blah blah");
+console.log("BiwaScheme.nil is now " + BiwaScheme.nil);
 
 //
 // #<undef> (The undefined value)
