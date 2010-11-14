@@ -645,6 +645,8 @@ describe('11.9 Pairs and lists', {
   },
   'list' : function(){
     ew("(list 'a (+ 3 4) 'c)").should_be("(a 7 c)");
+  },
+  'list: empty list' : function(){
     ew("(list)").should_be("()");
   },
   'length' : function(){
