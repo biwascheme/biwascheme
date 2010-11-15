@@ -16,15 +16,11 @@ BiwaScheme.Values = Class.create({
 // Nil
 // javascript representation of empty list( '() )
 //
-BiwaScheme.Nil = Class.create({
+BiwaScheme.nil = {
   toString: function() { return "nil"; },
   to_array: function() { return []; },
   length: function() { return 0; }
-});
-
-BiwaScheme.nil = new BiwaScheme.Nil();
-console.log("blah blah blah");
-console.log("BiwaScheme.nil is now " + BiwaScheme.nil);
+};
 
 //
 // #<undef> (The undefined value)

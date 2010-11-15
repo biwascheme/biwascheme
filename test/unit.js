@@ -979,7 +979,8 @@ describe('3 List utilities', {
   },
   'for-all' : function(){
     ev("(for-all even? '(3 1 4 1 5 9))").should_be(false);
-    ev("(for-all even? '(3 1 4 1 5 9 . 2))").should_be(false);
+    //ev("(for-all even? '(3 1 4 1 5 9 . 2))").should_be(false);
+    //                ⇒  &assertion exception
     ev("(for-all even? '(2 4 14))").should_be(true);
     //(for-all even? '(2 4 14 . 9)) 
     //                ⇒  &assertion exception
