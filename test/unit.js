@@ -1106,6 +1106,8 @@ describe('5 Control structures', {
 
 describe('6 Records', {
   // 6.2  Records: Syntactic layer
+
+  // 6.3  Records: Procedural layer
   'make-record-type-descriptor': function(){
     ev("(make-record-type-descriptor 'point #f #f #f #f \
           #((mutable x) (mutable y) (immutable c)))"); 
@@ -1132,11 +1134,23 @@ describe('6 Records', {
                (cd  (make-record-constructor-descriptor rtd #f #f)) \
                (pred (record-predicate rtd))) \
           (procedure? pred))").should_be(true);
-  }
-
-  // 6.3  Records: Procedural layer
+  },
 
   // 6.4  Records: Inspection
+  "record?": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c)))) \
+               (cd  (make-record-constructor-descriptor rtd #f #f)) \
+               (obj ((record-constructor cd) 1 2 3))) \
+          (record? obj))").should_be(true);
+  },
+  "record-rtd": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c)))) \
+               (cd  (make-record-constructor-descriptor rtd #f #f)) \
+               (obj ((record-constructor cd) 1 2 3))) \
+          (eq? (record-rtd obj) rtd))").should_be(true);
+  }
 })
 
 describe('7 Exceptions and conditions', {

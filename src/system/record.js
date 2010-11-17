@@ -3,6 +3,8 @@
 //
 BiwaScheme.Record = Class.create({
   initialize: function(rtd, values){
+    assert_record_td(rtd, "new Record");
+
     this.rtd = rtd;
     this.fields = values;
   },
@@ -148,7 +150,8 @@ BiwaScheme.Record.CD = Class.create({
   },
 
   record_constructor: function(){
-    var arg_for_protocol = (this.parent_cd ? this._make_n() : this._make_p());
+    var arg_for_protocol = (this.parent_cd ? this._make_n()
+                                           : this._make_p()).bind(this);
 
     return new BiwaScheme.Call(this.protocol, [arg_for_protocol], function(ar){
       assert_procedure(ar[0], "record_constructor");
