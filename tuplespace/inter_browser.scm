@@ -154,11 +154,12 @@
   (lambda (req)
     ;; find client and wait for tuple
     (let* ((cid (sack-query-ref req "cid"))
-           (client (find-client cid))
-           (result (wait-tuple client)))
-      (let ((tuple (car result))
-            (ticket (cdr result)))
-        (write-to-string (cons ticket tuple))))))
+           (client (find-client cid)))
+      (if client
+        (match (wait-tuple client)
+          ((tuple . ticket)
+           (write-to-string (cons ticket tuple))))
+        "#f"))))
 
 ; ts-read, ts-take
 (define last-ticket 200)
@@ -178,12 +179,14 @@
         (ts-method (assoc-ref *ts-methods* method)))
     (let* ((cid (sack-query-ref req "cid"))
            (client (find-client cid)))
-      ;; register request
-      (ts-method *ts* query
-                 (lambda (tuple)
-                   (notify-tuple client (cons tuple ticket))))
-    ;; just return ticket to client
-    ticket)))
+      (if client
+        (begin
+          ;; register request
+          (ts-method *ts* query
+                     (lambda (tuple)
+                       (notify-tuple client (cons tuple ticket))))
+          ticket)
+        "#f"))))
 
 (sack-add-routing *sack*
   #/^\/ts\/read\?/
