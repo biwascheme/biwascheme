@@ -338,6 +338,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   BiwaScheme.eq = function(a, b){
     return a === b;
   };
+   // TODO: Records (etc.)
   BiwaScheme.eqv = function(a, b){
     return a == b && (typeof(a) == typeof(b));
   };
@@ -1764,36 +1765,257 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // Chapter 6 Records
   //
+  // 6.2 Records: Syntactic layer
 //eqv, eq
 //(define-record-type <name spec> <record clause>*)    syntax 
-//fields    auxiliary syntax 
-//mutable    auxiliary syntax 
-//immutable    auxiliary syntax 
-//parent    auxiliary syntax 
-//protocol    auxiliary syntax 
-//sealed    auxiliary syntax 
-//opaque    auxiliary syntax 
-//nongenerative    auxiliary syntax 
-//parent-rtd    auxiliary syntax
-//
+  define_syntax("define-record-type", function(x){
+    // (define-record-type <name spec> <record clause>*)
+    var name_spec = x.cdr.car;
+    var record_clauses = x.cdr.cdr;
+
+    var record_name = null;
+    var constructor_name = null;
+    var predicate_name = null;
+    // <name spec>: either
+    // - <record name> eg: point
+    // - (<record name> <constructor name> <predicate name>) 
+    //   eg: (point make-point point?)
+    
+    // Default values for rtd:
+    var sealed = false;
+    var opaque = false;
+    var nongenerative = false;
+    var uid = null;
+    var parent_rtd = null;
+    var parent_cd = null;
+    var fields = [];
+
+    // <record clause>:
+    record_clauses.to_list().each(function(clause){
+      switch(clause.car){
+        // - (fields <field spec>*) where <field spec> is either
+        // -   <field name>
+        // -   (immutable <field name>)
+        // -   (immutable <field name> <accessor name>)
+        // -   (mutable <field name>)
+        // -   (mutable <field name> <accessor name> <mutator name>)
+        // - (parent <name>)
+        case Sym("parent"):
+          break;
+        // - (protocol <expr>)
+        case Sym("protocol"):
+          break;
+        // - (sealed <bool>)
+        case Sym("sealed"):
+          sealed = !!clause.cdr.car;
+          break;
+        // - (opaque <bool>)
+        case Sym("opaque"):
+          opaque = !!clause.cdr.car;
+          break;
+        // - (nongenerative <uid>?)
+        case Sym("nongenerative"):
+          nongenerative = true;
+          uid = clause.cdr.car;
+          break;
+        // - (parent-rtd <rtd> <cd>)
+        case Sym("parent-rtd"):
+          parent_rtd = clause.cdr.car;
+          parent_cd = clause.cdr.cdr.car;
+          break;
+        default:
+          throw new BiwaScheme.Error("define-record-type: unknown clause `"+
+                                     BiwaScheme.to_write(clause.car)+"'");
+      }
+    });
+
+    return BiwaScheme.build_list(
+      [Sym("begin"),
+        [Sym("define"), Sym(record_name), record_def],
+        [Sym("define"), Sym(constructor_name), 
+          [Sym("record-predicate"), [Sym("record-rtd"), Sym(record_name)]]],
+        [Sym("define"), Sym(predicate_name),
+          [Sym("record-predicate"), [Sym("record-rtd"), Sym(record_name)]]],
+        ] + accessor_defs + mutator_defs
+    );
+  });
+//(record-type-descriptor <record name>)    syntax 
+  define_syntax("record-type-descriptor", function(x){
+    return BiwaScheme.build_list(
+      [Sym("record-type-descriptor+"), x.cdr.car]
+    );
+  });
+  define_libfunc("record-type-descriptor+", 1, 1, function(ar){
+    assert_symbol(ar[0]);
+    var type = BiwaScheme.Record.get_type(ar[0].name);
+    if(type)
+      return type.rtd;
+    else
+      throw new Error("record-type-descriptor: unknown record type "+ 
+                                               ar[0].name);
+  });
+//(record-constructor-descriptor <record name>)    syntax 
+  define_syntax("record-constructor-descriptor", function(x){
+    return BiwaScheme.build_list(
+      [Sym("record-constructor-descriptor+"), x.cdr.car]
+    );
+  });
+  define_libfunc("record-constructor-descriptor+", 1, 1, function(ar){
+    assert_symbol(ar[0]);
+    var type = BiwaScheme.Record.get_type(ar[0].name);
+    if(type)
+      return type.cd;
+    else
+      throw new Error("record-constructor-descriptor: unknown record type "+ 
+                                                      ar[0].name);
+  });
+
+  // 6.3  Records: Procedural layer
 //(make-record-type-descriptor name    procedure
+  define_libfunc("make-record-type-descriptor", 6, 6, function(ar){
+    var name = ar[0], parent_rtd = ar[1], uid = ar[2],
+        sealed = ar[3], opaque = ar[4], fields = ar[5];
+    
+    assert_symbol(name);
+    name = name.name;
+    if(parent_rtd){
+      assert_record_td(parent_rtd);
+    }
+    if(uid){
+      assert_symbol(uid);
+      uid = uid.name;
+    }
+    sealed = !!sealed;
+    opaque = !!opaque;
+    assert_vector(fields);
+    fields = fields.map(function(list){
+      assert_symbol(list.car);
+      assert_symbol(list.cdr.car);
+      return [list.cdr.car.name, (list.car == Sym("mutable"))]
+    });
+
+    return new BiwaScheme.Record.RTD(name, parent_rtd, uid,
+                                     sealed, opaque, fields);
+  });
 //(record-type-descriptor? obj)    procedure 
+  define_libfunc("record-type-descriptor?", 1, 1, function(ar){
+    return (ar[0] instanceof BiwaScheme.Record.RTD);
+  });
 //(make-record-constructor-descriptor rtd    procedure 
+  define_libfunc("make-record-constructor-descriptor", 3, 3, function(ar){
+    var rtd = ar[0], parent_cd = ar[1], protocol = ar[2];
+
+    assert_record_td(rtd);
+    if(parent_cd) assert_record_cd(parent_cd);
+    if(protocol) assert_procedure(protocol);
+
+    return new BiwaScheme.Record.CD(rtd, parent_cd, protocol);
+  });
 //(record-constructor constructor-descriptor)    procedure
+  define_libfunc("record-constructor", 1, 1, function(ar){
+    var cd = ar[0];
+    assert_record_cd(cd);
+
+    return cd.record_constructor();
+  });
 //(record-predicate rtd)    procedure
+  define_libfunc("record-predicate", 1, 1, function(ar){
+    var rtd = ar[0];
+    assert_record_td(rtd);
+
+    return function(args){
+      var obj = args[0];
+
+      return (obj instanceof BiwaScheme.Record) &&
+             (obj.rtd == rtd);
+    };
+  });
 //(record-accessor rtd k)    procedure 
+  define_libfunc("record-accessor", 2, 2, function(ar){
+    var rtd = ar[0], k = ar[1];
+    assert_record_td(rtd);
+    assert_integer(k);
+
+    return function(args){
+      var record = args[0];
+      assert_record(record);
+      assert(record.rtd == rtd,
+            "(record-accessor): "+BiwaScheme.to_write(record)+
+            " is not a "+rtd.name);
+
+      return record.get(k);
+    };
+  });
 //(record-mutator rtd k)    procedure
-//
+  define_libfunc("record-mutator", 2, 2, function(ar){
+    var rtd = ar[0], k = ar[1];
+    assert_record_td(rtd);
+    assert_integer(k);
+
+    return function(args){
+      var record = args[0], val = args[1];
+      assert_record(record);
+      assert(record.rtd == rtd,
+            "(record-mutator): "+BiwaScheme.to_write(record)+
+            " is not a "+rtd.name);
+      assert(!record.rtd.sealed,
+            "(record-mutator): "+rtd.name+" is sealed (can't mutate)");
+
+      record.set(k, val);
+    };
+  });
+
+  // 6.4  Records: Inspection
 //(record? obj)    procedure
+  define_libfunc("record?", 1, 1, function(ar){
+    return (ar[0] instanceof BiwaScheme.Record);
+  });
 //(record-rtd record)    procedure
+  define_libfunc("record-rtd", 1, 1, function(ar){
+    assert_record(ar[0]);
+    return ar[0].rtd;
+  });
 //(record-type-name rtd)    procedure
+  define_libfunc("record-type-name", 1, 1, function(ar){
+    assert_record_td(ar[0]);
+    return ar[0].name;
+  });
 //(record-type-parent rtd)    procedure
+  define_libfunc("record-type-parent", 1, 1, function(ar){
+    assert_record_td(ar[0]);
+    return ar[0].name;
+  });
 //(record-type-uid rtd)    procedure 
+  define_libfunc("record-type-uid", 1, 1, function(ar){
+    assert_record_td(ar[0]);
+    return ar[0].uid;
+  });
 //(record-type-generative? rtd)    procedure 
+  define_libfunc("record-type-generative?", 1, 1, function(ar){
+    assert_record_td(ar[0]);
+    return ar[0].generative;
+  });
 //(record-type-sealed? rtd)    procedure
+  define_libfunc("record-type-sealed?", 1, 1, function(ar){
+    assert_record_td(ar[0]);
+    return ar[0].sealed;
+  });
 //(record-type-opaque? rtd)    procedure
+  define_libfunc("record-type-opaque?", 1, 1, function(ar){
+    assert_record_td(ar[0]);
+    return ar[0].opaque;
+  });
 //(record-type-field-names rtd)    procedure
+  define_libfunc("record-type-field-names", 1, 1, function(ar){
+    assert_record_td(ar[0]);
+    return ar[0].field_names;
+  });
 //(record-field-mutable? rtd k)    procedure 
+  define_libfunc("record-field-mutable?", 2, 2, function(ar){
+    assert_record_td(ar[0]);
+    assert_integer(ar[1]);
+    return ar[0].field_mutabilities[ar[1]];
+  });
 
   //
   // Chapter 7 Exceptions and conditions
@@ -2244,8 +2466,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //(make-hashtable hash-function equiv)    procedure 
   //(make-hashtable hash-function equiv k)    procedure
   define_libfunc("make-hashtable", 2, 3, function(ar){
-    assert_applicable(ar[0]);
-    assert_applicable(ar[1]);
+    assert_procedure(ar[0]);
+    assert_procedure(ar[1]);
     return new Hashtable(ar[0], ar[1]);
   });
 
@@ -2359,7 +2581,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("hashtable-update!", 4, 4, function(ar){
     var hash = ar[0], key = ar[1], proc = ar[2], ifnone = ar[3];
     assert_hashtable(hash);
-    assert_applicable(proc);
+    assert_procedure(proc);
 
     return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair, hashed){

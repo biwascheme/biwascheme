@@ -123,11 +123,18 @@ var assert_hashtable = make_simple_assert("hashtable",
 var assert_mutable_hashtable = make_simple_assert("mutable hashtable", 
                                             BiwaScheme.isMutableHashtable);
 
+var assert_record = make_simple_assert("record",
+                                          BiwaScheme.isRecord);
+var assert_record_td = make_simple_assert("record type descriptor",
+                                          BiwaScheme.isRecordTD);
+var assert_record_cd = make_simple_assert("record constructor descriptor",
+                                          BiwaScheme.isRecordCD);
+
 var assert_function = make_simple_assert("JavaScript function", 
                                          Object.isFunction);
 var assert_closure = make_simple_assert("scheme function", 
                                         BiwaScheme.isClosure);
-var assert_applicable = make_simple_assert("scheme/js function", function(obj){
+var assert_procedure = make_simple_assert("scheme/js function", function(obj){
   return BiwaScheme.isClosure(obj) || Object.isFunction(obj);
 });
 
@@ -136,6 +143,14 @@ var assert_date = make_simple_assert("date", function(obj){
   // https://prototype.lighthouseapp.com/projects/8886/tickets/443
   return obj instanceof Date;
 });
+
+//var assert_instance_of = make_assert(function(fname, type, obj, klass){
+//  if(!(obj instanceof klass)){
+//    throw new BiwaScheme.Error(fname + ": " +
+//                               type + " required, but got " +
+//                               BiwaScheme.to_write(obj));
+//  }
+//});
 
 var assert = make_assert(function(fname, test){
 });
