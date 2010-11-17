@@ -1136,6 +1136,24 @@ describe('6 Records', {
                (pred (record-predicate rtd))) \
           (pred obj))").should_be(true);
   },
+  "record-accessor": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c)))) \
+               (cd  (make-record-constructor-descriptor rtd #f #f)) \
+               (obj ((record-constructor cd) 1 2 3)) \
+               (x-of (record-accessor rtd 0))) \
+          (x-of obj))").should_be(1);
+  },
+  "record-mutator": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c)))) \
+               (cd  (make-record-constructor-descriptor rtd #f #f)) \
+               (obj ((record-constructor cd) 1 2 3)) \
+               (x-of (record-accessor rtd 0)) \
+               (set-x! (record-mutator rtd 0))) \
+          (set-x! obj 4) \
+          (x-of obj))").should_be(4);
+  },
 
   // 6.4  Records: Inspection
   "record?": function(){
