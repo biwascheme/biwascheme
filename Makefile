@@ -17,6 +17,7 @@ FILES0 = \
   src/system/char.js \
   src/system/number.js \
   src/system/port.js \
+  src/system/record.js \
   src/system/hashtable.js \
   src/system/syntax.js \
   src/system/types.js \
