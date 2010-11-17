@@ -1,8 +1,8 @@
 //
 // test/unit.js - unit tests of BiwaScheme
 //
-// このファイルはUTF-8です
 // This file is utf-8
+// このファイルはUTF-8です
 
 var BiwaScheme = BiwaScheme || {};
 
@@ -1105,6 +1105,31 @@ describe('5 Control structures', {
 })
 
 describe('6 Records', {
+  // 6.2  Records: Syntactic layer
+  'make-record-type-descriptor': function(){
+    ev("(make-record-type-descriptor 'point #f #f #f #f \
+          #((mutable x) (mutable y) (immutable c)))"); 
+  },
+  'record-type-descriptor?': function(){
+    ev("(let1 rtd (make-record-type-descriptor 'point #f #f #f #f \
+                    #((mutable x) (mutable y) (immutable c))) \
+          (record-type-descriptor? rtd))").should_be(true);
+  },
+  "make-record-constructor-descriptor": function(){
+    ev("(let1 rtd (make-record-type-descriptor 'point #f #f #f #f \
+                    #((mutable x) (mutable y) (immutable c))) \
+          (make-record-constructor-descriptor rtd #f #f))");
+  },
+  "make-record-constructor-descriptor": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c)))) \
+               (cd  (make-record-constructor-descriptor rtd #f #f))) \
+          (procedure? (record-constructor cd)))").should_be(true);
+  },
+
+  // 6.3  Records: Procedural layer
+
+  // 6.4  Records: Inspection
 })
 
 describe('7 Exceptions and conditions', {
