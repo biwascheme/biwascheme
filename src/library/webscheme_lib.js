@@ -725,10 +725,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var loop = function(){
         this.ajax(path, function(str){
           var result = Interpreter.read(str);
-          var ticket = result.car, tuple  = result.cdr;
+          if (result){
+            var ticket = result.car, tuple  = result.cdr;
 
-          this.notify(ticket, tuple);
-          loop();
+            this.notify(ticket, tuple);
+            loop();
+          }
         }.bind(this));
       }.bind(this);
       loop();
