@@ -1132,8 +1132,9 @@ describe('6 Records', {
     ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
                       #((mutable x) (mutable y) (immutable c)))) \
                (cd  (make-record-constructor-descriptor rtd #f #f)) \
+               (obj ((record-constructor cd) 1 2 3)) \
                (pred (record-predicate rtd))) \
-          (procedure? pred))").should_be(true);
+          (pred obj))").should_be(true);
   },
 
   // 6.4  Records: Inspection
