@@ -1165,6 +1165,32 @@ describe('6 Records', {
     ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
                       #((mutable x) (mutable y) (immutable c))))) \
           (symbol? (record-type-uid rtd)))").should_be(true);
+  },
+  "record-type-generative?": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c))))) \
+          (record-type-generative? rtd))").should_be(true);
+  },
+  "record-type-sealed?": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c))))) \
+          (record-type-sealed? rtd))").should_be(false);
+  },
+  "record-type-opaque?": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c))))) \
+          (record-type-sealed? rtd))").should_be(false);
+  },
+  "record-type-field-names": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c))))) \
+          (record-type-field-names rtd))").should_be(["x","y","c"]);
+  },
+  "record-field-mutable?": function(){
+    ew("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c))))) \
+          (list (record-field-mutable? rtd 0) \
+                (record-field-mutable? rtd 2)))").should_be("(#t #f)");
   }
 })
 
