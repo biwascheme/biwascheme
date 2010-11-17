@@ -48,3 +48,9 @@ BiwaScheme.isMutableHashtable = function(obj){
 BiwaScheme.isClosure = function(obj){
   return (obj instanceof Array) && (obj.closure_p === true);
 };
+
+// procedure: Scheme closure or JavaScript function
+// valid argument for anywhere function is expected
+BiwaScheme.isProcedure = function(obj){
+  return BiwaScheme.isClosure(obj) || Object.isFunction(obj);
+};
