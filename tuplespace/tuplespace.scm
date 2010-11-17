@@ -71,7 +71,6 @@
          => (lambda (sym) (error #`"unsafe query: ,sym")))
         (else
           (let1 matcher `(match ',value (,query #t) (_ #f))
-            ;(print matcher)
             (eval matcher (current-module))))))
 
 (define-method tuplespace-add-waiter ((ts <tuplespace>) query type notifier)
@@ -109,7 +108,7 @@
 
 (define-method tuplespace-write ((ts <tuplespace>) value)
   (let1 value ((filter-of ts) value)
-    (when *debug* (print (ref ts 'tuples) " <- write " value))
+    (when *debug* (print "write " value "; " (ref ts 'tuples)))
     (slot-set! ts 'tuples 
                (cons value (ref ts 'tuples)))
     (notify-waiters value ts)
@@ -152,7 +151,7 @@
   (tuplespace-async ts query 'take
     (lambda (result)
       (remove-tuple! ts result)
-      (when *debug* (print (ref ts 'tuples) " -> took " result))
+      (when *debug* (print "took " result "; " (ref ts 'tuples)))
       (notifier result))))
 
 (define-method tuplespace-take ((ts <tuplespace>) query)
