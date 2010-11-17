@@ -103,8 +103,11 @@
 ;;
 
 (define *clients* (make-hash-table)) ;; hash from client-id to <client>
-(define (find-client cid)
-  (hash-table-get *clients* (string->number cid)))
+
+(define (find-client cid-str)
+  (let1 cid (string->number cid-str)
+    (and (hash-table-exists? *clients* cid)
+      (hash-table-get *clients* cid))))
 
 (define-class <client> () ; () = no super class
   ((mutex :accessor mutex-of
