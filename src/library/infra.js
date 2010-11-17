@@ -73,9 +73,9 @@ var make_assert = function(check){
   }
 }
 var make_simple_assert = function(type, test){
-  return make_assert(function(fname, obj){
+  return make_assert(function(fname, obj, opt_from){
     if(!test(obj)){
-      throw new BiwaScheme.Error(fname + ": " +
+      throw new BiwaScheme.Error((fname || "("+opt_from+")") + ": " +
                                  type + " required, but got " +
                                  BiwaScheme.to_write(obj));
     }
