@@ -1155,6 +1155,16 @@ describe('6 Records', {
     ew("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
                       #((mutable x) (mutable y) (immutable c))))) \
           (record-type-name rtd))").should_be("point");
+  },
+  "record-type-parent": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c))))) \
+          (record-type-parent rtd))").should_be(false);
+  },
+  "record-type-uid": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c))))) \
+          (symbol? (record-type-uid rtd)))").should_be(true);
   }
 })
 

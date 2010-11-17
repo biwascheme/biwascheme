@@ -1877,13 +1877,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         sealed = ar[3], opaque = ar[4], fields = ar[5];
     
     assert_symbol(name);
-    if(parent_rtd){
-      assert_record_td(parent_rtd);
-    }
-    if(uid){
-      assert_symbol(uid);
-      uid = uid.name;
-    }
+    if(parent_rtd) assert_record_td(parent_rtd);
+    if(uid) assert_symbol(uid);
     sealed = !!sealed;
     opaque = !!opaque;
     assert_vector(fields);
