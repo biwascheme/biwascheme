@@ -35,7 +35,7 @@ BiwaScheme.Record.get_type = function(name){
 // Record type descriptor
 BiwaScheme.Record.RTD = Class.create({
   initialize: function(name, parent_rtd, uid, sealed, opaque, fields){
-    this.name = name;
+    this.name = name; //Symbol (not string!)
     this.parent_rtd = parent_rtd;
     this.is_base_type = !parent_rtd;
     if(uid){

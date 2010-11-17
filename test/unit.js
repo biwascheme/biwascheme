@@ -1150,6 +1150,11 @@ describe('6 Records', {
                (cd  (make-record-constructor-descriptor rtd #f #f)) \
                (obj ((record-constructor cd) 1 2 3))) \
           (eq? (record-rtd obj) rtd))").should_be(true);
+  },
+  "record-type-name": function(){
+    ew("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c))))) \
+          (record-type-name rtd))").should_be("point");
   }
 })
 

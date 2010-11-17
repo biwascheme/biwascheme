@@ -1877,7 +1877,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         sealed = ar[3], opaque = ar[4], fields = ar[5];
     
     assert_symbol(name);
-    name = name.name;
     if(parent_rtd){
       assert_record_td(parent_rtd);
     }
@@ -1983,7 +1982,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(record-type-parent rtd)    procedure
   define_libfunc("record-type-parent", 1, 1, function(ar){
     assert_record_td(ar[0]);
-    return ar[0].name;
+    return ar[0].parent_rtd;
   });
 //(record-type-uid rtd)    procedure 
   define_libfunc("record-type-uid", 1, 1, function(ar){
