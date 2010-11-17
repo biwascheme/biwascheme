@@ -1120,7 +1120,7 @@ describe('6 Records', {
                     #((mutable x) (mutable y) (immutable c))) \
           (make-record-constructor-descriptor rtd #f #f))");
   },
-  "make-record-constructor-descriptor": function(){
+  "record-constructor": function(){
     ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
                       #((mutable x) (mutable y) (immutable c)))) \
                (cd  (make-record-constructor-descriptor rtd #f #f))) \

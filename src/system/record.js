@@ -104,7 +104,7 @@ BiwaScheme.Record.CD = Class.create({
       // called with `n' as an argument
       return function(ar){
         var n = ar[0];
-        assert_procedure(n);
+        assert_procedure(n, "_default_protocol/n");
 
         // this is the ctor; will be named as make-*
         // all the values are given as `ar'
@@ -118,7 +118,7 @@ BiwaScheme.Record.CD = Class.create({
           // call n with (a b x y)
           return new BiwaScheme.Call(n, ancestor_values, function(ar){
             var p = ar[0];
-            assert_procedure(p);
+            assert_procedure(p, "_default_protocol/p");
 
             // call p with (s t)
             return new BiwaScheme.Call(p, my_values, function(ar){
@@ -137,7 +137,7 @@ BiwaScheme.Record.CD = Class.create({
       
       // called with `p' as an argument
       return function(ar){
-        assert_procedure(ar[0]);
+        assert_procedure(ar[0], "_default_protocol/base");
         return ar[0];
       };
     }
@@ -150,8 +150,8 @@ BiwaScheme.Record.CD = Class.create({
   record_constructor: function(){
     var arg_for_protocol = (this.parent_cd ? this._make_n() : this._make_p());
 
-    return new BiwaScheme.Call(this.protocol, arg_for_protocol, function(ar){
-      assert_procedure(ar[0]);
+    return new BiwaScheme.Call(this.protocol, [arg_for_protocol], function(ar){
+      assert_procedure(ar[0], "record_constructor");
       return ar[0];
     });
   },
@@ -175,7 +175,7 @@ BiwaScheme.Record.CD = Class.create({
         return function(args_for_p){
           var n = parent_cd._make_n([args_for_p[0] + children_values]);
           return new BiwaScheme.Call(parent_cd.protocol, [n], function(ar){
-            assert_procedure(ar[0]);
+            assert_procedure(ar[0], "_make_n");
             return new BiwaScheme.Call(ar[0], args_for_n, function(ar){
               assert_record(ar[0]);
               return ar[0];
