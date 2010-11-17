@@ -12,7 +12,7 @@ BiwaScheme.Record = Class.create({
   set: function(k, v){
     this.fields[k] = v;
   },
-  inspect: function(){
+  toString: function(){
     return "#<Record "+this.rtd.name+">";
   }
 });
@@ -55,8 +55,8 @@ BiwaScheme.Record.RTD = Class.create({
     var n = (BiwaScheme.Record.RTD.last_uid++);
     return "__record_td_uid_"+n;
   },
-  inspect: function(){
-    return "#<RecordTD>";
+  toString: function(){
+    return "#<RecordTD "+name+">";
   }
 });
 BiwaScheme.Record.RTD.last_uid = 0;
@@ -143,8 +143,8 @@ BiwaScheme.Record.CD = Class.create({
     }
   },
 
-  inspect: function(){
-    return "#<RecordCD>";
+  toString: function(){
+    return "#<RecordCD "+this.rtd.name+">";
   },
 
   record_constructor: function(){
@@ -157,8 +157,7 @@ BiwaScheme.Record.CD = Class.create({
   },
   // Create the function `p' which is given to the protocol.
   _make_p: function(){
-    return function(my_values){
-      var values = my_values + children_values;
+    return function(values){
       return new BiwaScheme.Record(this.rtd, values);
       // TODO: check argc 
     };
@@ -185,7 +184,11 @@ BiwaScheme.Record.CD = Class.create({
       };
     }
     else{
-      return this._make_p();
+      return function(my_values){
+        var values = my_values + children_values;
+        return new BiwaScheme.Record(this.rtd, values);
+        // TODO: check argc 
+      };
     }
   }
 });

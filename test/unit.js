@@ -1126,6 +1126,13 @@ describe('6 Records', {
                (cd  (make-record-constructor-descriptor rtd #f #f))) \
           (procedure? (record-constructor cd)))").should_be(true);
   },
+  "record-predicate": function(){
+    ev("(let* ((rtd (make-record-type-descriptor 'point #f #f #f #f \
+                      #((mutable x) (mutable y) (immutable c)))) \
+               (cd  (make-record-constructor-descriptor rtd #f #f)) \
+               (pred (record-predicate rtd))) \
+          (procedure? pred))").should_be(true);
+  }
 
   // 6.3  Records: Procedural layer
 

@@ -1927,7 +1927,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var obj = args[0];
 
       return (obj instanceof BiwaScheme.Record) &&
-             (obj.rtd == rtd);
+             (obj.rtd === rtd);
     };
   });
 //(record-accessor rtd k)    procedure 
