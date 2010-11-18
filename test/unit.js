@@ -1106,6 +1106,14 @@ describe('5 Control structures', {
 
 describe('6 Records', {
   // 6.2  Records: Syntactic layer
+//(define-record-type <name spec> <record clause>*)    syntax 
+  'define-record-type': function(){
+    ev("(define-record-type 'point \
+          (fields x y)) \
+        (point-x (make-point 1 2))").should_be(1);
+  },
+//(record-type-descriptor <record name>)    syntax 
+//(record-constructor-descriptor <record name>)    syntax 
 
   // 6.3  Records: Procedural layer
   'make-record-type-descriptor': function(){
