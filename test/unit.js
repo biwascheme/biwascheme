@@ -114,6 +114,22 @@ describe('utilities', {
   'Array#to_list' : function(){
     expect( [1,2,3].to_list().to_write() ).should_be("(1 2 3)");
   },
+  'List()' : function(){
+    with(BiwaScheme){
+      expect( List(1,2,3) instanceof Pair ).should_be(true);
+      expect( List(1,2,3).to_write() ).should_be("(1 2 3)");
+    }
+  },
+  'build_list' : function(){
+    with(BiwaScheme){
+      expect( build_list([1,2,3]) instanceof Pair ).should_be(true);
+      expect( build_list([1,2,3]).to_write() ).should_be("(1 2 3)");
+      expect( build_list([1,2,[3,4]]).to_write() ).should_be("(1 2 (3 4))");
+      expect( build_list(
+        [Sym("define"), Sym("x"), [Sym("+"), 1, 2]]
+      ).to_write() ).should_be("(define x (+ 1 2))");
+    }
+  },
   'reduce_cyclic_info' : function(){
     with(BiwaScheme){
       var known = [1,2,3,4], used = [false,true,false,true];

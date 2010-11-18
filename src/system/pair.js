@@ -101,13 +101,25 @@ BiwaScheme.Pair = Class.create({
     return this.inspect(BiwaScheme.to_write);
   }
 });
+// TODO: remove this and rename build_list to List()
 BiwaScheme.List = function(){
   return $A(arguments).to_list();
 };
 
-// Converts an array to a (proper) list.
+// Converts a nested arrays to a list.
 // Example:
-//   [1,2,3].to_list()      //=> (1 2 3)
+//   BiwaScheme.build_list([1, 2, [3, 4]]) ;=> (1 2 (3 4))
+BiwaScheme.build_list = function(ary){
+  var list = BiwaScheme.nil;
+  for(var i=ary.length-1; i>=0; i--){
+    var obj = Object.isArray(ary[i]) ? BiwaScheme.build_list(ary[i])
+                                     : ary[i];
+    list = new BiwaScheme.Pair(obj, list);
+  }
+  return list;
+};
+
+// TODO: make this obsolete (extending core classes are not good)
 Array.prototype.to_list = function(){
   var list = BiwaScheme.nil;
   for(var i=this.length-1; i>=0; i--){
