@@ -2,15 +2,27 @@
 // test code (also used by browser_test.html)
 //
 p("BiwaScheme" + " version " + BiwaScheme.Version + ".git" + BiwaScheme.GitCommit)
-p(    ev("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
-      "  (let-values (((a b) (values x y)) " +
-      "               ((x y) (values a b)))" +
-      "    (list a b x y)))                "))
-p(    ev("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
-      "  (let*-values (((a b) (values x y)) " +
-      "               ((x y) (values a b)))" +
-      "    (list a b x y)))                "))
+//p(ev("(macroexpand-1 '(define-record-type point (fields xx)))").to_write());
+//p(ev("(define-record-type point (fields xx))"));
+//p(ev("(make-point 1)"));
 
+ev("(define __rtd (make-record-type-descriptor (quote point) #f #f #f #f #((immutable xx)))) \
+(define __cd (make-record-constructor-descriptor __rtd #f #f))\
+(_define-record-type (quote point) __rtd __cd)");
+ev(" (define make-point (record-constructor (_record-constructor-descriptor 'point)))");
+ev(" (define point? (record-predicate (record-type-descriptor point))) (define point-xx (record-accessor (record-type-descriptor point) 0))");
+
+
+
+//p(    ev("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
+//      "  (let-values (((a b) (values x y)) " +
+//      "               ((x y) (values a b)))" +
+//      "    (list a b x y)))                "))
+//p(    ev("(let ((a 'a) (b 'b) (x 'x) (y 'y))  " +
+//      "  (let*-values (((a b) (values x y)) " +
+//      "               ((x y) (values a b)))" +
+//      "    (list a b x y)))                "))
+//
 //p(    ev("(let-values (((a b) (values 1 2)) " +
 //       "             ((c d) (values 3 4)))" +
 //       "  (list a b c d))                 "))

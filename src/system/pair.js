@@ -112,8 +112,10 @@ BiwaScheme.List = function(){
 BiwaScheme.build_list = function(ary){
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
-    var obj = Object.isArray(ary[i]) ? BiwaScheme.build_list(ary[i])
-                                     : ary[i];
+    var obj = ary[i];
+    if(Object.isArray(obj) && !obj.is_vector){
+      obj = BiwaScheme.build_list(obj);
+    }
     list = new BiwaScheme.Pair(obj, list);
   }
   return list;

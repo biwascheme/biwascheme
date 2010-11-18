@@ -33,7 +33,7 @@ function show_error(e){
   puts("Error: "+e.message);
 }
 function ev(str){
-  puts(str);
+  puts("ev> "+str);
   var ret = (new BiwaScheme.Interpreter(show_error)).evaluate(str);
   dumper.dump_move(1);
   return ret;

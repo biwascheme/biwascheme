@@ -1124,7 +1124,7 @@ describe('6 Records', {
   // 6.2  Records: Syntactic layer
 //(define-record-type <name spec> <record clause>*)    syntax 
   'define-record-type': function(){
-    ev("(define-record-type 'point \
+    ev("(define-record-type point \
           (fields x y)) \
         (point-x (make-point 1 2))").should_be(1);
   },

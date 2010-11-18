@@ -1773,37 +1773,93 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var name_spec = x.cdr.car;
     var record_clauses = x.cdr.cdr;
 
-    var record_name = null;
-    var constructor_name = null;
-    var predicate_name = null;
+    // 1. parse name spec
     // <name spec>: either
     // - <record name> eg: point
     // - (<record name> <constructor name> <predicate name>) 
     //   eg: (point make-point point?)
+    if(BiwaScheme.isSymbol(name_spec)){
+      var record_name = name_spec;
+      var constructor_name = Sym("make-"+name_spec.name);
+      var predicate_name = Sym(name_spec.name+"?");
+    }
+    else{
+      assert_list(name_spec);
+      var record_name = name_spec.car;
+      var constructor_name = name_spec.cdr.car;
+      var predicate_name = name_spec.cdr.cdr.car;
+      assert_symbol(record_name);
+      assert_symbol(constructor_name);
+      assert_symbol(predicate_name);
+    }
     
-    // Default values for rtd:
+    // 2. parse record clauses
     var sealed = false;
     var opaque = false;
     var nongenerative = false;
-    var uid = null;
-    var parent_rtd = null;
-    var parent_cd = null;
+    var uid = false;
+    var parent_name;
+    var parent_rtd = false;
+    var parent_cd = false;
+    var protocol = false;
     var fields = [];
 
     // <record clause>:
-    record_clauses.to_list().each(function(clause){
+    record_clauses.to_array().each(function(clause){
       switch(clause.car){
-        // - (fields <field spec>*) where <field spec> is either
-        // -   <field name>
-        // -   (immutable <field name>)
-        // -   (immutable <field name> <accessor name>)
-        // -   (mutable <field name>)
-        // -   (mutable <field name> <accessor name> <mutator name>)
+        // - (fields <field spec>*)
+        case Sym("fields"):
+          fields = clause.cdr.to_array().map(function(field_spec, idx){
+            if(BiwaScheme.isSymbol(field_spec)){
+              // - <field name>
+              return {name: field_spec, idx: idx, mutable: false,
+                      accessor_name: null, mutator_name: null};
+            }
+            else{
+              assert_list(field_spec);
+              assert_symbol(field_spec.car);
+              switch(field_spec.car){
+                case Sym("immutable"):
+                  // - (immutable <field name>)
+                  // - (immutable <field name> <accessor name>)
+                  var field_name = field_spec.cdr.car;
+                  assert_symbol(field_name);
+
+                  if(BiwaScheme.isNil(field_spec.cdr.cdr))
+                    return {name: field_name, idx: idx, mutable: false};
+                  else
+                    return {name: field_name, idx: idx, mutable: false,
+                            accessor_name: field_spec.cdr.cdr.car};
+                  break;
+
+                case Sym("mutable"):
+                  // - (mutable <field name>)
+                  // - (mutable <field name> <accessor name> <mutator name>)
+                  var field_name = field_spec.cdr.car;
+                  assert_symbol(field_name);
+
+                  if(BiwaScheme.isNil(field_spec.cdr.cdr))
+                    return {name: field_name, idx: idx, mutable: true}
+                  else
+                    return {name: field_name, idx: idx, mutable: true,
+                            accessor_name: field_spec.cdr.cdr.car,
+                            mutator_name: field_spec.cdr.cdr.cdr.car};
+                  break;
+                default:
+                  throw new Error("define-record-type: field definition "+
+                              "must start with `immutable' or 'mutable'");
+              }
+            }
+          });
+          break;
         // - (parent <name>)
         case Sym("parent"):
+          parent_name = clause.cdr.car;
+          assert_symbol(parent_name);
           break;
         // - (protocol <expr>)
         case Sym("protocol"):
+          protocol = clause.cdr.car;
           break;
         // - (sealed <bool>)
         case Sym("sealed"):
@@ -1829,45 +1885,99 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       }
     });
 
+    if(parent_name){
+      parent_rtd = [Sym("record-type-descriptor"), parent_name];
+      parent_cd  = [Sym("record-constructor-descriptor"), parent_name];
+    }
+
+    // 3. build the definitions
+    // Note: In this implementation, rtd and cd are not bound to symbols.
+    // They are referenced through record name by record-type-descriptor
+    // and record-constructor-descriptor. These relation are stored in
+    // the hash BiwaScheme.Record._DefinedTypes.
+    var rtd = [Sym("record-type-descriptor"), record_name];
+    var cd  = [Sym("record-constructor-descriptor"), record_name];
+
+    // registration
+    var rtd_fields = fields.map(function(field){
+      return BiwaScheme.build_list(
+        [Sym(field.mutable ? "mutable" : "immutable"), field.name]
+      );
+    });
+    rtd_fields.is_vector = true; //tell build_list not to convert
+    var rtd_def = [Sym("make-record-type-descriptor"),
+                    [Sym("quote"), record_name], parent_rtd, uid,
+                    sealed, opaque, rtd_fields];
+    var cd_def = [Sym("make-record-constructor-descriptor"),
+                    Sym("__rtd"), parent_cd, protocol];
+    var registration =
+      [Sym("let*"), [[Sym("__rtd"), rtd_def],
+                    [Sym("__cd"), cd_def]],
+        [Sym("_define-record-type"),
+          [Sym("quote"), record_name], Sym("__rtd"), Sym("__cd")]];
+
+    // accessors
+    var accessor_defs = fields.map(function(field){
+      var name = field.accessor_name ||
+                   Sym(record_name.name+"-"+field.name.name);
+
+      return [Sym("define"), name, [Sym("record-accessor"), rtd, field.idx]];
+    });
+
+    // mutators
+    var mutator_defs = fields.findAll(function(field){
+      return field.mutable;
+    }).map(function(field){
+      var name = field.mutator_name ||
+                   Sym("set-"+record_name.name+"-"+field.name.name+"!");
+
+      return [Sym("define"), name, [Sym("record-mutator"), rtd, field.idx]];
+    });
+
+    // wrap the definitions with `begin'
     return BiwaScheme.build_list(
       [Sym("begin"),
-        [Sym("define"), Sym(record_name), record_def],
-        [Sym("define"), Sym(constructor_name), 
-          [Sym("record-predicate"), [Sym("record-rtd"), Sym(record_name)]]],
-        [Sym("define"), Sym(predicate_name),
-          [Sym("record-predicate"), [Sym("record-rtd"), Sym(record_name)]]],
-        ] + accessor_defs + mutator_defs
+        registration,
+        [Sym("define"), constructor_name, [Sym("record-constructor"), cd]],
+        [Sym("define"), predicate_name, [Sym("record-predicate"), rtd]],
+        ].concat(accessor_defs).
+          concat(mutator_defs)
     );
+  });
+  define_libfunc("_define-record-type", 3, 3, function(ar){
+    assert_symbol(ar[0]);
+    assert_record_td(ar[1]);
+    assert_record_cd(ar[2]);
+    BiwaScheme.Record.define_type(ar[0].name, ar[1], ar[2]);
+    return BiwaScheme.undef;
   });
 //(record-type-descriptor <record name>)    syntax 
   define_syntax("record-type-descriptor", function(x){
     return BiwaScheme.build_list(
-      [Sym("record-type-descriptor+"), x.cdr.car]
+      [Sym("_record-type-descriptor"), [Sym("quote"), x.cdr.car]]
     );
   });
-  define_libfunc("record-type-descriptor+", 1, 1, function(ar){
+  define_libfunc("_record-type-descriptor", 1, 1, function(ar){
     assert_symbol(ar[0]);
     var type = BiwaScheme.Record.get_type(ar[0].name);
     if(type)
       return type.rtd;
     else
-      throw new Error("record-type-descriptor: unknown record type "+ 
-                                               ar[0].name);
+      throw new Error("record-type-descriptor: unknown record type "+ar[0].name);
   });
 //(record-constructor-descriptor <record name>)    syntax 
   define_syntax("record-constructor-descriptor", function(x){
     return BiwaScheme.build_list(
-      [Sym("record-constructor-descriptor+"), x.cdr.car]
+      [Sym("_record-constructor-descriptor"), [Sym("quote"), x.cdr.car]]
     );
   });
-  define_libfunc("record-constructor-descriptor+", 1, 1, function(ar){
+  define_libfunc("_record-constructor-descriptor", 1, 1, function(ar){
     assert_symbol(ar[0]);
     var type = BiwaScheme.Record.get_type(ar[0].name);
     if(type)
       return type.cd;
     else
-      throw new Error("record-constructor-descriptor: unknown record type "+ 
-                                                      ar[0].name);
+      throw new Error("record-constructor-descriptor: unknown record type "+ar[0].name);
   });
 
   // 6.3  Records: Procedural layer
@@ -1882,11 +1992,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     sealed = !!sealed;
     opaque = !!opaque;
     assert_vector(fields);
-    fields = fields.map(function(list){
-      assert_symbol(list.car);
-      assert_symbol(list.cdr.car);
-      return [list.cdr.car.name, (list.car == Sym("mutable"))]
-    });
+    for(var i=0; i<fields.length; i++){
+      var list = fields[i];
+      assert_symbol(list.car, "mutability");
+      assert_symbol(list.cdr.car, "field name");
+      fields[i] = [list.cdr.car.name, (list.car == Sym("mutable"))];
+    };
 
     return new BiwaScheme.Record.RTD(name, parent_rtd, uid,
                                      sealed, opaque, fields);

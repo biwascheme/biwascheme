@@ -7,8 +7,8 @@
 //
 BiwaScheme.check_arity = function(len, min, max){
   var fname = arguments.callee.caller
-                ? arguments.callee.caller.fname 
-                : "";
+                ? arguments.callee.caller.fname
+                : "(?)";
   if(len < min){
     if(max && max == min)
       throw new BiwaScheme.Error(fname+": wrong number of arguments (expected: "+min+" got: "+len+")");
@@ -73,9 +73,10 @@ var make_assert = function(check){
   }
 }
 var make_simple_assert = function(type, test){
-  return make_assert(function(fname, obj, opt_from){
+  return make_assert(function(fname, obj, opt){
+    option = opt ? ("("+opt+")") : ""
     if(!test(obj)){
-      throw new BiwaScheme.Error((fname || "("+opt_from+")") + ": " +
+      throw new BiwaScheme.Error(fname + option + ": " +
                                  type + " required, but got " +
                                  BiwaScheme.to_write(obj));
     }

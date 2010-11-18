@@ -25,11 +25,11 @@ BiwaScheme.isRecord = function(o){
 // Record types
 BiwaScheme.Record._DefinedTypes = new Hash();
 
-BiwaScheme.Record.define_type = function(name, rtd, cd){
-  BiwaScheme.Record._DefinedTypes.set(name, {rtd: rtd, cd: cd});
+BiwaScheme.Record.define_type = function(name_str, rtd, cd){
+  return BiwaScheme.Record._DefinedTypes.set(name_str, {rtd: rtd, cd: cd});
 };
-BiwaScheme.Record.get_type = function(name){
-  BiwaScheme.Record._DefinedTypes.get(name);
+BiwaScheme.Record.get_type = function(name_str){
+  return BiwaScheme.Record._DefinedTypes.get(name_str);
 };
 
 // Record type descriptor

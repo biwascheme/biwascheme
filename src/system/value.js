@@ -29,6 +29,7 @@ BiwaScheme.nil.to_array = function(){ return [] };
 
 //
 // #<undef> (The undefined value)
+// also used as #<unspecified> values
 //
 BiwaScheme.undef = new Object();
 BiwaScheme.undef.toString = function(){ return "#<undef>"; }
