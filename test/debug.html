@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div#bs-console{ border:1px solid black }
+div#dumparea{ border:1px solid black }
+div#dumparea div{ border-bottom: 1px solid black; margin:0 }
+span.dump_opecode{ color:orange; }
+span.dump_env{ color:goldenrod; }
+span.dump_stackframe{ color:cornflowerblue; }
+span.dump_closure{ color:limegreen; }
+span.dump_constant{ color:limegreen; }
+td.dump_dead{ color:lightgray; }
+td.dump_stknum{ color:gold; }
+</style>
+</head>
+<body>
+<form>
+<input type=button value="&lt;" onclick="BiwaScheme.Interpreter.dumper.dump_move(-1)">
+<input type=button value="&gt;" onclick="BiwaScheme.Interpreter.dumper.dump_move(1)">
+<input type=button value="all" onclick="BiwaScheme.Interpreter.dumper.dump_toggle_fold()">
+</form>
+<div id='dumparea'>
+</div>
+
+<pre id="code">
+
+(define rtd2d (make-record-type-descriptor 'point2d #f #f #f #f #((immutable x) (immutable y))))
+(define cd2d (make-record-constructor-descriptor rtd2d #f #f))
+
+(define rtd3d (make-record-type-descriptor 'point3d rtd2d #f #f #f #((immutable c))))
+(define cd3d (make-record-constructor-descriptor rtd3d cd2d #f))
+
+(define make-point3d (record-constructor cd3d))
+(print (make-point3d 1 2 3))
+
+</pre>
+
+<div id='bs-console'>
+</div>
+<script type="text/javascript" src="../src/development_loader.js">
+BiwaScheme.Interpreter.dumper = new BiwaScheme.Dumper();
+var code = $("code").innerHTML;
+var ret = (new BiwaScheme.Interpreter(function(e){
+    puts(e.message);
+    throw e;
+  })).evaluate(code);
+//BiwaScheme.Interpreter.dumper.dump_move(1);
+//
+//function ev(str){
+//  puts("ev> "+str);
+//  var ret = (new BiwaScheme.Interpreter(show_error)).evaluate(str);
+//  dumper.dump_move(1);
+//  return ret;
+//}
+</script>
+</body>
+</html>
+<!-- vim:set ft=javascript: -->

@@ -1,6 +1,7 @@
 //
 // Record
 //
+BiwaScheme.debug = function(){}; //console.debug;
 BiwaScheme.Record = Class.create({
   initialize: function(rtd, values){
     assert_record_td(rtd, "new Record");
@@ -15,7 +16,8 @@ BiwaScheme.Record = Class.create({
     this.fields[k] = v;
   },
   toString: function(){
-    return "#<Record "+this.rtd.name+">";
+    var contents = BiwaScheme.to_write(this.fields);
+    return "#<Record "+this.rtd.name+" "+contents+">";
   }
 });
 BiwaScheme.isRecord = function(o){
@@ -74,12 +76,15 @@ BiwaScheme.Record.CD = Class.create({
     this.rtd = rtd;
     this.parent_cd = parent_cd;
     if(protocol){
-      this.protocol = protocol;
       this.has_custom_protocol = true;
+      this.protocol = protocol;
     }
     else{
-      this.protocol = this._default_protocol();
       this.has_custom_protocol = false;
+      if(rtd.parent_rtd)
+        this.protocol = this._default_protocol_for_derived_types();
+      else
+        this.protocol = this._default_protocol_for_base_types();
     }
   },
 
@@ -97,53 +102,51 @@ BiwaScheme.Record.CD = Class.create({
       throw new Error("Record.CD.new: protocol must be specified when parent_cd has a custom protocol");
   },
   
-  _default_protocol: function(){
-    if(this.parent_cd){
-      // Default protocol for derived types:
-      // (lambda (n) 
-      //   (lambda (a b x y s t)
-      //     ((n a b x y) s t))) 
+  _default_protocol_for_base_types: function(){
+    // (lambda (p) p)
+    // called with `p' as an argument
+    return function(ar){
+      var p = ar[0];
+      assert_procedure(p, "_default_protocol/base");
+      return p;
+    };
+  },
 
-      // called with `n' as an argument
-      return function(ar){
-        var n = ar[0];
-        assert_procedure(n, "_default_protocol/n");
+  _default_protocol_for_derived_types: function(){
+    // (lambda (n) 
+    //   (lambda (a b x y s t)
+    //     (let1 p (n a b x y) (p s t))))
+    // called with `n' as an argument
+    var rtd = this.rtd;
+    return function(ar){
+      var n = ar[0];
+      assert_procedure(n, "_default_protocol/n");
 
-        // this is the ctor; will be named as make-*
-        // all the values are given as `ar'
-        return function(ar){
-          var my_argc = this.rtd.field_names.length;
-          var ancestor_argc = ar.length - my_argc;
+      var ctor = function(args){
+        var my_argc = rtd.field_names.length;
+        var ancestor_argc = args.length - my_argc;
 
-          var ancestor_values = ar.slice(ancestor_argc);
-          var my_values       = ar.slice(0, ancestor_argc);
+        var ancestor_values = args.slice(0, ancestor_argc);
+        var my_values       = args.slice(ancestor_argc);
+        BiwaScheme.debug($H({ctor_args: args}).inspect());
 
-          // call n with (a b x y)
-          return new BiwaScheme.Call(n, ancestor_values, function(ar){
-            var p = ar[0];
-            assert_procedure(p, "_default_protocol/p");
+        // (n a b x y) => p
+        return new BiwaScheme.Call(n, ancestor_values, function(ar){
+          var p = ar[0];
+          assert_procedure(p, "_default_protocol/p");
+          BiwaScheme.debug($H({ctor_p_my: my_values, ancestor_values: ancestor_values}).inspect());
 
-            // call p with (s t)
-            return new BiwaScheme.Call(p, my_values, function(ar){
-              assert_record(ar[0]);
+          // (p s t) => record
+          return new BiwaScheme.Call(p, my_values, function(ar){
+            var record = ar[0];
+            assert_record(record, "_default_protocol/result");
 
-              // return the new born record
-              return ar[0];
-            });
+            return record;
           });
-        };
+        });
       };
-    }
-    else{
-      // Default protocol for base types:
-      // (lambda (p) p)
-      
-      // called with `p' as an argument
-      return function(ar){
-        assert_procedure(ar[0], "_default_protocol/base");
-        return ar[0];
-      };
-    }
+      return ctor;
+    };
   },
 
   toString: function(){
@@ -151,14 +154,16 @@ BiwaScheme.Record.CD = Class.create({
   },
 
   record_constructor: function(){
-    var arg_for_protocol = (this.parent_cd ? this._make_n()
+    var arg_for_protocol = (this.parent_cd ? this._make_n([], this.rtd)
                                            : this._make_p()).bind(this);
 
     return new BiwaScheme.Call(this.protocol, [arg_for_protocol], function(ar){
-      assert_procedure(ar[0], "record_constructor");
-      return ar[0];
+      var ctor = ar[0];
+      assert_procedure(ctor, "record_constructor");
+      return ctor;
     });
   },
+
   // Create the function `p' which is given to the protocol.
   _make_p: function(){
     return function(values){
@@ -166,33 +171,48 @@ BiwaScheme.Record.CD = Class.create({
       // TODO: check argc 
     };
   },
+
   // Create the function `n' which is given to the protocol.
-  // Used only when the rtd is a derived type
-  _make_n: function(children_values){
+  // When creating an instance of a derived type,
+  // _make_n is called for each ancestor rtd's.
+  _make_n: function(children_values, rtd){
     var parent_cd = this.parent_cd;
 
     if(parent_cd){
       // called from protocol (n)
-      return function(args_for_n){
+      var n = function(args_for_n){
+        BiwaScheme.debug($H({maken_n: args_for_n}).inspect());
+
         // called from protocol (p)
-        return function(args_for_p){
-          var n = parent_cd._make_n([args_for_p[0] + children_values]);
-          return new BiwaScheme.Call(parent_cd.protocol, [n], function(ar){
-            assert_procedure(ar[0], "_make_n");
-            return new BiwaScheme.Call(ar[0], args_for_n, function(ar){
-              assert_record(ar[0]);
-              return ar[0];
+        var p = function(args_for_p){
+          var values = [].concat(args_for_p[0]).concat(children_values)
+          var parent_n = parent_cd._make_n(values, rtd);
+          BiwaScheme.debug($H({maken_p: args_for_p}).inspect());
+
+          return new BiwaScheme.Call(parent_cd.protocol, [parent_n], function(ar){
+            var ctor = ar[0];
+            assert_procedure(ctor, "_make_n");
+
+            return new BiwaScheme.Call(ctor, args_for_n, function(ar){
+              var record = ar[0];
+              assert_record(record);
+              BiwaScheme.debug($H({maken2_ar: ar}).inspect());
+              return record;
             });
           });
         };
+        return p;
       };
+      return n;
     }
     else{
-      return function(my_values){
-        var values = my_values + children_values;
-        return new BiwaScheme.Record(this.rtd, values);
+      var n = function(my_values){
+        var values = my_values.concat(children_values);
+        BiwaScheme.debug($H({base_n: values}).inspect());
+        return new BiwaScheme.Record(rtd, values);
         // TODO: check argc 
       };
+      return n;
     }
   }
 });

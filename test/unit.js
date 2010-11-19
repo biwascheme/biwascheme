@@ -1125,10 +1125,19 @@ describe('6 Records', {
 //(define-record-type <name spec> <record clause>*)    syntax 
   'define-record-type': function(){
     ew("(define-record-type point \
-          (fields x (mutable y get-y set-y) (immutable c))) \
+          (fields x \
+                  (mutable y get-y set-y) \
+                  (immutable c get-c set-c))) \
         (list \
           (point-x (make-point 1 2)) \
           (get-y (make-point 1 2)))").should_be("(1 2)");
+  },
+  'define-record-type (parent)': function(){
+    ev("(define-record-type point2d (fields x y)) \
+        (define-record-type point3d \
+          (parent point2d) \
+          (fields c)) \
+        (point3d-x (make-point3d 1 2 3))").should_be(1);
   },
 //(record-type-descriptor <record name>)    syntax 
   'record-type-descriptor': function(){
