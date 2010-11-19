@@ -273,13 +273,6 @@ BiwaScheme.Interpreter = Class.create({
           // invoke the function
           var result = func(args, this);
           
-          // shortcut: when the proc of Call is not a closure..
-          // Note: this is (really) used by hashtable-*.
-          while ((result instanceof BiwaScheme.Call) &&
-                 Object.isFunction(result.proc)){
-            result = result.after([result.proc(result.args, this)]);
-          }
-
           if(result instanceof BiwaScheme.Pause){
             // it requested the interpreter to suspend
             var pause = result;
