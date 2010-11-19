@@ -1133,11 +1133,13 @@ describe('6 Records', {
           (get-y (make-point 1 2)))").should_be("(1 2)");
   },
   'define-record-type (parent)': function(){
-    ev("(define-record-type point2d (fields x y)) \
+    ew("(define-record-type point2d (fields x y)) \
         (define-record-type point3d \
           (parent point2d) \
           (fields c)) \
-        (point3d-x (make-point3d 1 2 3))").should_be(1);
+        (list \
+          (point2d-x (make-point3d 1 2 3)) \
+          (point3d-c (make-point3d 1 2 3))").should_be("(1 3)");
   },
 //(record-type-descriptor <record name>)    syntax 
   'record-type-descriptor': function(){

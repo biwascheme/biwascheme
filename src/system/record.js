@@ -53,8 +53,9 @@ BiwaScheme.Record.RTD = Class.create({
     this.sealed = !!sealed;
     this.opaque = !!opaque;
 
-    this.field_names =        fields.map(function(field){ return field[0]; });
-    this.field_mutabilities = fields.map(function(field){ return field[1]; });
+    this.fields = fields.map(function(field){
+      return {name: field[0], mutable: !!field[1]};
+    });
   },
   _generate_new_uid: function(){
     var n = (BiwaScheme.Record.RTD.last_uid++);
@@ -123,7 +124,7 @@ BiwaScheme.Record.CD = Class.create({
       assert_procedure(n, "_default_protocol/n");
 
       var ctor = function(args){
-        var my_argc = rtd.field_names.length;
+        var my_argc = rtd.fields.length;
         var ancestor_argc = args.length - my_argc;
 
         var ancestor_values = args.slice(0, ancestor_argc);

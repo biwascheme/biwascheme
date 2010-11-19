@@ -1916,7 +1916,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         [Sym("_define-record-type"),
           [Sym("quote"), record_name], Sym("__rtd"), Sym("__cd")]];
 
-    // accessors
+    // accessors and mutators
     var accessor_defs = fields.map(function(field){
       var name = field.accessor_name ||
                    Sym(record_name.name+"-"+field.name.name);
@@ -1924,7 +1924,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return [Sym("define"), name, [Sym("record-accessor"), rtd, field.idx]];
     });
 
-    // mutators
     var mutator_defs = fields.findAll(function(field){
       return field.mutable;
     }).map(function(field){
@@ -2040,6 +2039,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var rtd = ar[0], k = ar[1];
     assert_record_td(rtd);
     assert_integer(k);
+    for(var _rtd = rtd.parent_rtd; _rtd; _rtd = _rtd.parent_rtd)
+      k += _rtd.fields.length;
 
     return function(args){
       var record = args[0];
@@ -2056,6 +2057,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var rtd = ar[0], k = ar[1];
     assert_record_td(rtd);
     assert_integer(k);
+    for(var _rtd = rtd.parent_rtd; _rtd; _rtd = _rtd.parent_rtd)
+      k += _rtd.fields.length;
 
     return function(args){
       var record = args[0], val = args[1];
@@ -2113,13 +2116,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(record-type-field-names rtd)    procedure
   define_libfunc("record-type-field-names", 1, 1, function(ar){
     assert_record_td(ar[0]);
-    return ar[0].field_names;
+    return ar[0].fields.map(function(field){ return field.name; });
   });
 //(record-field-mutable? rtd k)    procedure 
   define_libfunc("record-field-mutable?", 2, 2, function(ar){
+    var rtd = ar[0], k = ar[1];
     assert_record_td(ar[0]);
-    assert_integer(ar[1]);
-    return ar[0].field_mutabilities[ar[1]];
+    assert_integer(k);
+
+    for(var _rtd = rtd.parent_rtd; _rtd; _rtd = _rtd.parent_rtd)
+      k += _rtd.fields.length;
+
+    return ar[0].fields[k].mutable;
   });
 
   //
