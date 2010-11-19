@@ -1124,12 +1124,25 @@ describe('6 Records', {
   // 6.2  Records: Syntactic layer
 //(define-record-type <name spec> <record clause>*)    syntax 
   'define-record-type': function(){
-    ev("(define-record-type point \
-          (fields x y)) \
-        (point-x (make-point 1 2))").should_be(1);
+    ew("(define-record-type point \
+          (fields x (mutable y get-y set-y) (immutable c))) \
+        (list \
+          (point-x (make-point 1 2)) \
+          (get-y (make-point 1 2)))").should_be("(1 2)");
   },
 //(record-type-descriptor <record name>)    syntax 
+  'record-type-descriptor': function(){
+    ev("(define-record-type point) \
+        (record-type-descriptor? \
+          (record-type-descriptor point))").should_be(true);
+  },
 //(record-constructor-descriptor <record name>)    syntax 
+  'record-type-descriptor': function(){
+    ev("(define-record-type point) \
+        (procedure? \
+          (record-constructor \
+            (record-constructor-descriptor point)))").should_be(true);
+  },
 
   // 6.3  Records: Procedural layer
   'make-record-type-descriptor': function(){
