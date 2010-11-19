@@ -36,6 +36,10 @@ BiwaScheme.Call = Class.create({
     return "#<Call args=" + this.args.inspect() + ">";
   },
 
+  toString: function(){
+    return "#<Call>";
+  },
+
   to_write: function(){
     return "#<Call>";
   }
