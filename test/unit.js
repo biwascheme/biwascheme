@@ -1124,13 +1124,14 @@ describe('6 Records', {
   // 6.2  Records: Syntactic layer
 //(define-record-type <name spec> <record clause>*)    syntax 
   'define-record-type': function(){
-    ew("(define-record-type point \
+    ew("(define-record-type (point new-point is-point) \
           (fields x \
                   (mutable y get-y set-y) \
                   (immutable c get-c set-c))) \
         (list \
-          (point-x (make-point 1 2)) \
-          (get-y (make-point 1 2)))").should_be("(1 2)");
+          (is-point (new-point 1 2)) \
+          (point-x (new-point 1 2)) \
+          (get-y (new-point 1 2)))").should_be("(#t 1 2)");
   },
   'define-record-type (parent)': function(){
     ew("(define-record-type point2d (fields x y)) \
