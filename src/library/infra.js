@@ -153,7 +153,10 @@ var assert_date = make_simple_assert("date", function(obj){
 //  }
 //});
 
-var assert = make_assert(function(fname, test){
+var assert = make_assert(function(fname, success, message){
+  if(!success){
+    throw new BiwaScheme.Error(fname+": "+message);
+  }
 });
 
 

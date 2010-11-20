@@ -1145,6 +1145,23 @@ describe('6 Records', {
           (point2d-x (make-point3d 1 2 3)) \
           (point3d-c (make-point3d 1 2 3))").should_be("(1 3)");
   },
+  'define-record-type (protocol)': function(){
+    ev("(define-record-type rect (fields w h)) \
+        (define-record-type square \
+          (parent rect) \
+          (protocol (lambda (n) (lambda (l) ((n l l)))))) \
+        (rect-h (make-square 1))").should_be(1);
+  },
+  'define-record-type (sealed)': function(){
+    ew("(define-record-type foo) \
+        (define-record-type bar (sealed #f)) \
+        (define-record-type baz (sealed #t)) \
+        (list \
+          (record-type-sealed? (record-type-descriptor foo)) \
+          (record-type-sealed? (record-type-descriptor bar)) \
+          (record-type-sealed? (record-type-descriptor baz)))"
+      ).should_be("(#f #f #t)");
+  },
 //(record-type-descriptor <record name>)    syntax 
   'record-type-descriptor': function(){
     ev("(define-record-type point) \

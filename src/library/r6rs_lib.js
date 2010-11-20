@@ -2045,7 +2045,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return function(args){
       var record = args[0];
       assert_record(record);
-      assert(record.rtd == rtd,
+
+      var descendant = false;
+      for(var _rtd = record.rtd; _rtd; _rtd = _rtd.parent_rtd){
+        if(_rtd == rtd) descendant = true;
+      }
+      assert(descendant,
             "(record-accessor): "+BiwaScheme.to_write(record)+
             " is not a "+rtd.name);
 
@@ -2063,7 +2068,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return function(args){
       var record = args[0], val = args[1];
       assert_record(record);
-      assert(record.rtd == rtd,
+      assert(record.rtd === rtd,
             "(record-mutator): "+BiwaScheme.to_write(record)+
             " is not a "+rtd.name);
       assert(!record.rtd.sealed,
