@@ -59,7 +59,6 @@ BiwaScheme.to_write = function(obj){
     switch(obj){
       case true: return "#t";
       case false: return "#f";
-      case BiwaScheme.nil: return "()";
       case Infinity: return "+inf.0";
       case -Infinity: return "-inf.0";
     }

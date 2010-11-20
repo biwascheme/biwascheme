@@ -18,6 +18,7 @@ BiwaScheme.Values = Class.create({
 //
 BiwaScheme.nil = {
   toString: function() { return "nil"; },
+  to_write: function() { return "()"; },
   to_array: function() { return []; },
   length: function() { return 0; }
 };
