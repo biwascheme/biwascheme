@@ -115,6 +115,7 @@ BiwaScheme.Iterator = {
       case (typeof(obj) == "string"):
         return new this.ForString(obj);
       case (obj instanceof BiwaScheme.Pair):
+      case (obj === BiwaScheme.nil):
         return new this.ForList(obj);
       default:
         throw new BiwaScheme.Bug("Iterator.of: unknown class: "+Object.inspect(obj));

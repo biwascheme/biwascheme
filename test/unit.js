@@ -661,6 +661,8 @@ describe('11.9 Pairs and lists', {
   },
   'list' : function(){
     ew("(list 'a (+ 3 4) 'c)").should_be("(a 7 c)");
+  },
+  'list: empty list' : function(){
     ew("(list)").should_be("()");
   },
   'length' : function(){
@@ -993,7 +995,8 @@ describe('3 List utilities', {
   },
   'for-all' : function(){
     ev("(for-all even? '(3 1 4 1 5 9))").should_be(false);
-    ev("(for-all even? '(3 1 4 1 5 9 . 2))").should_be(false);
+    //ev("(for-all even? '(3 1 4 1 5 9 . 2))").should_be(false);
+    //                ⇒  &assertion exception
     ev("(for-all even? '(2 4 14))").should_be(true);
     //(for-all even? '(2 4 14 . 9)) 
     //                ⇒  &assertion exception

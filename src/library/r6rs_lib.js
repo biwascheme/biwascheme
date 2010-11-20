@@ -188,7 +188,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("let: need a pair for bindings: got "+to_write(binds));
 
     var vars = nil, vals = nil;
-    for(var p=binds; p instanceof Pair && p!=nil; p=p.cdr){
+    for(var p=binds; p instanceof Pair; p=p.cdr){
       vars = new Pair(p.car.car, vars);
       vals = new Pair(p.car.cdr.car, vals);
     }
@@ -769,28 +769,28 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //        11.9  Pairs and lists
 
   define_libfunc("pair?", 1, 1, function(ar){
-    return (ar[0] instanceof Pair && ar[0] != nil) ? true : false;
+    return (ar[0] instanceof Pair) ? true : false;
   });
   define_libfunc("cons", 2, 2, function(ar){
     return new Pair(ar[0], ar[1]);
   });
   define_libfunc("car", 1, 1, function(ar){
     //should raise &assertion for '()...
-    if(!ar[0] instanceof Pair) throw new Error("cannot take car of " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply car on " + ar[0]);
     return ar[0].car;
   });
   define_libfunc("cdr", 1, 1, function(ar){
     //should raise &assertion for '()...
-    if(!ar[0] instanceof Pair) throw new Error("cannot take cdr of " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply cdr on " + ar[0]);
     return ar[0].cdr;
   });
   define_libfunc("set-car!", 2, 2, function(ar){
-    if(!ar[0] instanceof Pair) throw new Error("cannot take set-car! of " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply set-car! on " + ar[0]);
     ar[0].car = ar[1];
     return BiwaScheme.undef;
   });
   define_libfunc("set-cdr!", 2, 2, function(ar){
-    if(!ar[0] instanceof Pair) throw new Error("cannot take set-cdr! of " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply set-cdr! on " + ar[0]);
     ar[0].cdr = ar[1];
     return BiwaScheme.undef;
   });
@@ -830,6 +830,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("list?", 1, 1, function(ar){
     var contents = [];
     for(var o=ar[0]; o != nil; o=o.cdr){
+      if(o == nil) return true;
       if(!(o instanceof Pair)) return false;
       if(contents.find(function(item){ return item === o.car}))
         return false; //cyclic
@@ -845,7 +846,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("length", 1, 1, function(ar){
     assert_list(ar[0]);
-
     var n = 0;
     for(var o=ar[0]; o!=nil; o=o.cdr)
       n++;

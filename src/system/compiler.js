@@ -63,7 +63,7 @@ BiwaScheme.Compiler = Class.create({
     var vars = vars;
     var n = 0;
     var a = [];
-    while(vars instanceof BiwaScheme.Pair && vars != BiwaScheme.nil){
+    while(vars instanceof BiwaScheme.Pair){
       if(sets.member(vars.car))
         a.push(n);
       n++;
@@ -124,7 +124,7 @@ BiwaScheme.Compiler = Class.create({
         break;
       default:
         var set = new BiwaScheme.Set();
-        for(var p=x; p instanceof BiwaScheme.Pair && p != BiwaScheme.nil; p=p.cdr){
+        for(var p=x; p instanceof BiwaScheme.Pair; p=p.cdr){
           set = set.set_union(this.find_sets(p.car, v));
         }
         ret = set;
@@ -196,7 +196,7 @@ BiwaScheme.Compiler = Class.create({
         break;
       default:
         var set = new BiwaScheme.Set();
-        for(var p=x; p instanceof BiwaScheme.Pair && p != BiwaScheme.nil; p=p.cdr){
+        for(var p=x; p instanceof BiwaScheme.Pair; p=p.cdr){
           set = set.set_union(this.find_free(p.car, b, f));
         }
         ret = set;
@@ -216,7 +216,7 @@ BiwaScheme.Compiler = Class.create({
 
   find_dot_pos: function(x){
     var idx = 0;
-    for (; x instanceof BiwaScheme.Pair && x != BiwaScheme.nil; x = x.cdr, ++idx)
+    for (; x instanceof BiwaScheme.Pair; x = x.cdr, ++idx)
       ;
     if (x != BiwaScheme.nil) {
       return idx;
@@ -226,8 +226,8 @@ BiwaScheme.Compiler = Class.create({
   },
 
   last_pair: function(x){
-    if (x instanceof BiwaScheme.Pair && x != BiwaScheme.nil){
-      for (; x.cdr instanceof BiwaScheme.Pair && x.cdr != BiwaScheme.nil; x = x.cdr)
+    if (x instanceof BiwaScheme.Pair){
+      for (; x.cdr instanceof BiwaScheme.Pair; x = x.cdr)
         ;
     }
     return x;
@@ -237,7 +237,7 @@ BiwaScheme.Compiler = Class.create({
   dotted2proper: function(ls){
     var nreverse = function(ls){
       var res = BiwaScheme.nil;
-      for (; ls instanceof BiwaScheme.Pair && ls != BiwaScheme.nil; ){
+      for (; ls instanceof BiwaScheme.Pair; ){
         var d = ls.cdr;
         ls.cdr = res;
         res = ls;
@@ -247,7 +247,7 @@ BiwaScheme.Compiler = Class.create({
     }
     var copy_list = function(ls){
       var res = BiwaScheme.nil;
-      for (; ls instanceof BiwaScheme.Pair && ls != BiwaScheme.nil; ls = ls.cdr){
+      for (; ls instanceof BiwaScheme.Pair; ls = ls.cdr){
         res = new BiwaScheme.Pair(ls.car, res);
       }
       return nreverse(res);
@@ -255,7 +255,7 @@ BiwaScheme.Compiler = Class.create({
 
     if (ls instanceof BiwaScheme.Pair) {
       var last = this.last_pair(ls);
-      if (last instanceof BiwaScheme.Pair && last.cdr == BiwaScheme.nil){
+      if (last instanceof BiwaScheme.Pair && last.cdr === BiwaScheme.nil){
         return ls;
       } else {
         var copied = copy_list(ls);
@@ -307,7 +307,7 @@ BiwaScheme.Compiler = Class.create({
           break;
         case BiwaScheme.Sym("begin"):
           var a = [];
-          for(var p=x.cdr; p instanceof BiwaScheme.Pair && p!=BiwaScheme.nil; p=p.cdr)
+          for(var p=x.cdr; p instanceof BiwaScheme.Pair; p=p.cdr)
             a.push(p.car);
 
           //compile each expression (in reverse order)
@@ -382,7 +382,7 @@ BiwaScheme.Compiler = Class.create({
 
           // VM will push the number of arguments to the stack.
           c = this.compile(args.length(), e, s, f, ["argument", c]);
-          for(var p=args; p instanceof BiwaScheme.Pair && p!=BiwaScheme.nil; p=p.cdr){
+          for(var p=args; p instanceof BiwaScheme.Pair; p=p.cdr){
             c = this.compile(p.car, e, s, f, ["argument", c]);
           }
           return this.is_tail(next) ? c : ["frame", c, next];
