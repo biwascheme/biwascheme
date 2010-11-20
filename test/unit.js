@@ -1171,6 +1171,14 @@ describe('6 Records', {
           // (record-rtd (make-foo)) => &assertion
       ).should_be("(#f #f)");
   },
+  'define-record-type (parent-rtd)': function(){
+    ev("(define-record-type point2d (fields x y)) \
+        (define-record-type point3d \
+          (fields z) \
+          (parent-rtd (record-type-descriptor point2d) \
+                      (record-constructor-descriptor point2d))) \
+        (point2d-x (make-point3d 1 2 3))").should_be(1);
+  },
 //(record-type-descriptor <record name>)    syntax 
   'record-type-descriptor': function(){
     ev("(define-record-type point) \
