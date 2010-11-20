@@ -1162,6 +1162,15 @@ describe('6 Records', {
           (record-type-sealed? (record-type-descriptor baz)))"
       ).should_be("(#f #f #t)");
   },
+  'define-record-type (opaque)': function(){
+    ew("(define-record-type foo (opaque #t)) \
+        (define-record-type bar (parent foo)) \
+        (list \
+          (record? (make-foo)) \
+          (record? (make-bar)))"
+          // (record-rtd (make-foo)) => &assertion
+      ).should_be("(#f #f)");
+  },
 //(record-type-descriptor <record name>)    syntax 
   'record-type-descriptor': function(){
     ev("(define-record-type point) \

@@ -51,7 +51,7 @@ BiwaScheme.Record.RTD = Class.create({
     }
 
     this.sealed = !!sealed;
-    this.opaque = !!opaque;
+    this.opaque = parent_rtd.opaque || (!!opaque);
 
     this.fields = fields.map(function(field){
       return {name: field[0], mutable: !!field[1]};

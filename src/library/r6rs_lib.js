@@ -2081,7 +2081,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // 6.4  Records: Inspection
 //(record? obj)    procedure
   define_libfunc("record?", 1, 1, function(ar){
-    return (ar[0] instanceof BiwaScheme.Record);
+    var obj = ar[0];
+    if(BiwaScheme.isRecord(obj)){
+      if(obj.rtd.opaque)
+        return false; // opaque records pretend as if it is not a record.
+      else
+        return true;
+    }
+    else
+      return false;
   });
 //(record-rtd record)    procedure
   define_libfunc("record-rtd", 1, 1, function(ar){
