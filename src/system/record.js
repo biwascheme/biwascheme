@@ -1,7 +1,6 @@
 //
 // Record
 //
-BiwaScheme.debug = function(){}; //console.debug;
 BiwaScheme.Record = Class.create({
   initialize: function(rtd, values){
     assert_record_td(rtd, "new Record");
@@ -130,13 +129,11 @@ BiwaScheme.Record.CD = Class.create({
 
         var ancestor_values = args.slice(0, ancestor_argc);
         var my_values       = args.slice(ancestor_argc);
-        BiwaScheme.debug($H({ctor_args: args}).inspect());
 
         // (n a b x y) => p
         return new BiwaScheme.Call(n, ancestor_values, function(ar){
           var p = ar[0];
           assert_procedure(p, "_default_protocol/p");
-          BiwaScheme.debug($H({ctor_p_my: my_values, ancestor_values: ancestor_values}).inspect());
 
           // (p s t) => record
           return new BiwaScheme.Call(p, my_values, function(ar){
@@ -183,13 +180,11 @@ BiwaScheme.Record.CD = Class.create({
     if(parent_cd){
       // called from protocol (n)
       var n = function(args_for_n){
-        BiwaScheme.debug($H({maken_n: args_for_n}).inspect());
 
         // called from protocol (p)
         var p = function(args_for_p){
           var values = [].concat(args_for_p[0]).concat(children_values)
           var parent_n = parent_cd._make_n(values, rtd);
-          BiwaScheme.debug($H({maken_p: args_for_p}).inspect());
 
           return new BiwaScheme.Call(parent_cd.protocol, [parent_n], function(ar){
             var ctor = ar[0];
@@ -198,7 +193,6 @@ BiwaScheme.Record.CD = Class.create({
             return new BiwaScheme.Call(ctor, args_for_n, function(ar){
               var record = ar[0];
               assert_record(record);
-              BiwaScheme.debug($H({maken2_ar: ar}).inspect());
               return record;
             });
           });
@@ -210,7 +204,6 @@ BiwaScheme.Record.CD = Class.create({
     else{
       var n = function(my_values){
         var values = my_values.concat(children_values);
-        BiwaScheme.debug($H({base_n: values}).inspect());
         return new BiwaScheme.Record(rtd, values);
         // TODO: check argc 
       };
