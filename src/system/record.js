@@ -66,6 +66,7 @@ BiwaScheme.Record.RTD = Class.create({
   }
 });
 BiwaScheme.Record.RTD.last_uid = 0;
+BiwaScheme.Record.RTD.NongenerativeRecords = new Hash();
 BiwaScheme.isRecordTD = function(o){
   return (o instanceof BiwaScheme.Record.RTD);
 };

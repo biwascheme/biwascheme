@@ -1198,6 +1198,12 @@ describe('6 Records', {
     ev("(make-record-type-descriptor 'point #f #f #f #f \
           #((mutable x) (mutable y) (immutable c)))"); 
   },
+  'make-record-type-descriptor (nongenerative)': function(){
+    ev("(eq? (make-record-type-descriptor 'point #f 'point-type #f #f \
+               #((mutable x) (mutable y))) \
+             (make-record-type-descriptor 'point #f 'point-type #f #f \
+               #((mutable x) (mutable y))))").should_be(true);
+  },
   'record-type-descriptor?': function(){
     ev("(let1 rtd (make-record-type-descriptor 'point #f #f #f #f \
                     #((mutable x) (mutable y) (immutable c))) \

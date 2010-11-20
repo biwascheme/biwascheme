@@ -1987,7 +1987,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     
     assert_symbol(name);
     if(parent_rtd) assert_record_td(parent_rtd);
-    if(uid) assert_symbol(uid);
+    if(uid){
+      assert_symbol(uid);
+      var _rtd = BiwaScheme.Record.RTD.NongenerativeRecords.get(uid.name);
+      if(_rtd){
+        // the record type is already defined.
+        return _rtd;
+        // should check equality of other arguments..
+      }
+    }
     sealed = !!sealed;
     opaque = !!opaque;
     assert_vector(fields);
@@ -1998,8 +2006,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       fields[i] = [list.cdr.car.name, (list.car == Sym("mutable"))];
     };
 
-    return new BiwaScheme.Record.RTD(name, parent_rtd, uid,
+    var rtd = new BiwaScheme.Record.RTD(name, parent_rtd, uid,
                                      sealed, opaque, fields);
+    if(uid)
+      BiwaScheme.Record.RTD.NongenerativeRecords.set(uid.name, rtd);
+
+    return rtd;
   });
 //(record-type-descriptor? obj)    procedure 
   define_libfunc("record-type-descriptor?", 1, 1, function(ar){
