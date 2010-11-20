@@ -24,7 +24,7 @@ BiwaScheme.isPort = function(obj){
 
 // Note: '() is not a pair in scheme
 BiwaScheme.isPair = function(obj){
-  return (obj instanceof BiwaScheme.Pair) && (obj !== BiwaScheme.nil);
+  return (obj instanceof BiwaScheme.Pair);
 };
 
 // Note: isList returns true for '()

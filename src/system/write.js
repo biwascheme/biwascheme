@@ -112,7 +112,7 @@ BiwaScheme.to_write_ss = function(obj, cyclic, appeared, array_mode){
     }
   }
 
-  if(obj instanceof BiwaScheme.Pair && obj != BiwaScheme.nil){
+  if(obj instanceof BiwaScheme.Pair){
     var a = [];
     a.push(BiwaScheme.to_write_ss(obj.car, cyclic, appeared, array_mode));
     for(var o=obj.cdr; o != BiwaScheme.nil; o=o.cdr){
