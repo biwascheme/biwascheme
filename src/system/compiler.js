@@ -283,6 +283,10 @@ BiwaScheme.Compiler = Class.create({
       else if(x instanceof BiwaScheme.Pair){
         switch(x.first()){
         case BiwaScheme.Sym("define"):
+          // error-checking: should have only 3 things
+          if(x.length() != 3)
+              throw new BiwaScheme.Error("Invalid define: "+x.to_write());
+
           var left = x.cdr.car;
           var exp  = x.cdr.cdr;
           
@@ -317,11 +321,17 @@ BiwaScheme.Compiler = Class.create({
           }
           return c;
         case BiwaScheme.Sym("quote"):
+          if(x.length() < 2)
+              throw new BiwaScheme.Error("Invalid quote: "+x.to_write());
+
           var obj=x.second();
           return ["constant", obj, next];
         case BiwaScheme.Sym("lambda"):
           // x = '(lambda (x y) x y)
           // x = '(lambda vars x y)
+          if(x.length() < 3)
+              throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
+
           var vars = x.cdr.car;
           var body = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr); //tenuki
 
@@ -342,6 +352,9 @@ BiwaScheme.Compiler = Class.create({
                            dotpos];
           return this.collect_free(free, e, do_close);
         case BiwaScheme.Sym("if"):
+          if(x.length() < 3 || x.length() > 4)
+              throw new BiwaScheme.Error("Invalid if: "+x.to_write());
+
           var testc=x.second(), thenc=x.third(), elsec=x.fourth();
           var thenc = this.compile(thenc, e, s, f, next);
           var elsec = this.compile(elsec, e, s, f, next);
@@ -349,6 +362,10 @@ BiwaScheme.Compiler = Class.create({
           next = ["test", thenc, elsec];
           break;
         case BiwaScheme.Sym("set!"):
+          // error-checking: should have only 3 things
+          if(x.length() != 3)
+              throw new BiwaScheme.Error("Invalid set!: "+x.to_write());
+
           var v=x.second(), x=x.third();
           var do_assign = this.compile_lookup(v, e,
             function(n){ return ["assign-local", n, next]; },
