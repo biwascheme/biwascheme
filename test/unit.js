@@ -489,8 +489,12 @@ describe('11.5 Equivalence predicates', {
 
 describe('11.6 Procedure predicate' , {
   'procedure?' : function() {
-    ev("(procedure? (lambda ()))").should_be(true);
-    ev("(procedure? #(lambda ()))").should_be(false);
+    ev("(procedure? (lambda () 5))").should_be(true);
+    try {
+        ev("(procedure? (lambda ()))");
+        expect(this).should_fail("Invalid lambda syntax accepted");
+    } catch (e) { if(!(e instanceof BiwaScheme.Error)) throw e }
+    ev("(procedure? '(lambda ()))").should_be(false);
     ev("(procedure? car)").should_be(true);
     ev("(procedure? if)").should_be(false);
     ev("(procedure? define-macro)").should_be(false);
@@ -1515,7 +1519,7 @@ describe('browser functions', {
     BiwaScheme.TestForJSNew = function(obj){
       this.foo = obj["foo"];
     };
-    var tmp = scm_eval('(js-new "BiwaScheme.TestForJSNew" \'foo (lambda ()))');
+    var tmp = scm_eval('(js-new "BiwaScheme.TestForJSNew" \'foo (lambda () 4))');
     expect(Object.isFunction(tmp.foo)).should_be(true)
   },
   'js-null?' : function(){
