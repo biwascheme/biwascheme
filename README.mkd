@@ -1,0 +1,85 @@
+BiwaScheme
+==========
+
+BiwaScheme is a Scheme interpreter written in JavaScript.
+
+Demos
+-----
+
+see [http://www.biwascheme.org/](http://www.biwascheme.org/)
+
+Download
+========
+
+* [http://www.biwascheme.org/repos/lib/biwascheme.js](http://www.biwascheme.org/repos/lib/biwascheme.js) (release version)
+
+How to use
+==========
+
+Just load biwascheme.js and write Scheme code.
+
+    <!DOCTYPE html>
+    <html>
+    <body>
+    
+    <div id="bs-console"></div>
+    
+    <script src="biwascheme.js">
+    (display "hello, world!")
+    </script>
+    
+    </body>
+    </html>
+
+Files
+=====
+
+* lib/biwascheme.js : The latest release version
+* demo/
+  * Demos
+* src/
+  * system/
+    * Source code of the interpreter
+  * library/
+    * Built-in library functions
+* test/
+  * Unit tests
+* tuplespace/
+  * (experimental) TupleSpace implemented in Scheme
+* website/
+  * HTMLs and CSS of www.biwascheme.org
+
+Building biwascheme.js
+----------------------
+
+Make compiles src/\*.js into lib/biwascheme.js.
+
+    $ make
+
+Prerequisites:
+
+* make
+* sed
+* Java (to run YUI Compressor)
+
+License
+=======
+
+MIT-LICENSE
+
+Acknowledgements
+================
+
+* Kent Dyvbig, Three implementation models for scheme
+  * http://www.cs.indiana.edu/~dyb/pubs/3imp.pdf
+
+* jsScheme
+  * http://alex.ability.ru/scheme.html (inavailable)
+
+* YUI Compressor (bin/yuicompressor-2.4.2.jar)
+  * http://developer.yahoo.com/yui/compressor/
+
+Contact
+=======
+
+https://github.com/yhara/biwascheme
