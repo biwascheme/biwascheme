@@ -1,6 +1,22 @@
 (html-doctype)
 (html
-  (convert-file "_head.html.scm")
+  (head
+    (title "BiwaScheme : Scheme interpreter for browsers")
+    (meta :http-equiv "Content-Type"
+          :content "text/html; charset=utf-8" )
+    (link :href "css/screen.css" :rel "stylesheet" :type "text/css")
+
+    (link :href "css/jquery.terminal.css" :rel "stylesheet" :type "text/css")
+    (script :src "js/jquery-1.4.4.min.js" :type "text/javascript"
+            "jQuery.noConflict();")
+    (script :src "js/jquery.mousewheel.min.js" :type "text/javascript")
+    (script :src "js/jquery.timers.min.js" :type "text/javascript")
+    (script :src "js/jquery.cookie.min.js" :type "text/javascript")
+    (script :src "js/jquery.terminal-0.2.3.min.js" :type "text/javascript")
+
+    (script :src "repos/lib/biwascheme.js" :type "text/javascript")
+    (script :src "js/biwascheme_terminal.js" :type "text/javascript"))
+
   (body
     (convert-file "_header.html.scm")
 
@@ -8,15 +24,34 @@
       (h2 "About")
       (p "BiwaScheme is a Scheme interpreter written in JavaScript.")
 
+      (h2 "Try it now")
+      (div :id "term")
+
+      (h2 "Download")
+
+      (ul
+        (li
+          (link-to "biwascheme.js"
+                   "repos/lib/biwascheme.js")
+          " (version " (span :id "ver" "--") ")"))
+
+      (script :type "text/javascript"
+              "jQuery('#ver').html(BiwaScheme.Version)")
+
+      (p
+        (link-to "Older versions"
+                 "http://github.com/yhara/biwascheme/downloads")
+        " and the "
+
+        (link-to "latest version"
+                 "http://github.com/yhara/biwascheme")
+        " are on github.")
+
       (h2 "Example")
-      (pre "<font color='purple'>&lt;script src=\"lib/biwascheme.js\"&gt;</font>
+      (pre "<font color='purple'>&lt;script src=\"biwascheme.js\"&gt;</font>
 <font color='purple'>(</font><font color=blue>display</font> <font color=red>\"hello, world!\"</font><font color='purple'>)</font>
 <font color='purple'>&lt;/script&gt;</font>")
       
-      (p "Try it now: "
-         (a :href "repos/repl.html"
-            "BiwaScheme REPL"))
-
       (h2 "Demo")
       (ul
         (link-list '(("repos/repl.html"
