@@ -7,7 +7,8 @@
     (link :href "css/screen.css" :rel "stylesheet" :type "text/css")
 
     (link :href "css/jquery.terminal.css" :rel "stylesheet" :type "text/css")
-    (script :src "js/jquery-1.4.4.min.js" :type "text/javascript"
+    (script :src "js/jquery-1.4.4.min.js" :type "text/javascript")
+    (script :type "text/javascript"
             "jQuery.noConflict();")
     (script :src "js/jquery.mousewheel.min.js" :type "text/javascript")
     (script :src "js/jquery.timers.min.js" :type "text/javascript")
