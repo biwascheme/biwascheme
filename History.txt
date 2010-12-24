@@ -1,4 +1,4 @@
-2010-12-25  v0.5.5
+2010-12-25  v0.5.5.1
 
 	* new: R6RS Records
   * bug fixes

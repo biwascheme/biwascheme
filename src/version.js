@@ -1,6 +1,6 @@
 var BiwaScheme = BiwaScheme || {};
 
-BiwaScheme.Version = "0.5.5";
+BiwaScheme.Version = "0.5.5.1";
 BiwaScheme.GitCommit = "a7952b0d1296d1c906486e460b34b0df728b0229";
 
   // FIXME: used by js-load. should be moved
