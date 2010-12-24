@@ -96,6 +96,7 @@
   (case (length args)
     ((2)
      (for-each convert-file!
-               (directory-list (cadr args) :filter html-scm?)))
+               (directory-list (cadr args) :filter html-scm?))
+     0)
     (else
       (print "usage: converter.scm dir"))))
