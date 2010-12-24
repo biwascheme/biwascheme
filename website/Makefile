@@ -1,0 +1,2 @@
+all:
+	gosh ./converter.scm .
