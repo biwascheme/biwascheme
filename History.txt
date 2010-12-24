@@ -1,6 +1,7 @@
-NEXT VERSION:
+2010-12-25  v0.5.5
 
-	* 
+	* new: R6RS Records
+  * bug fixes
 
 2010-08-27  v0.5.4.2
 
