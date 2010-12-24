@@ -23,6 +23,8 @@
                       . "REPL")
                      ("repos/demo/pictlang.html"
                       . "SICP's picture language")
+                     ("http://lambda.bugyo.tk/cdr/hockey/"
+                      . "Hockey (pong-like game)")
                      ("http://lambda.bugyo.tk/cdr/dobon/"
                       . "Dobon (a card game)"))))
 
