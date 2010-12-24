@@ -1,0 +1,44 @@
+.terminal, .cmd {
+    background-color: #000;
+    color: #aaa;
+}
+.terminal .cmd .clipboard {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.01;
+}
+.terminal {
+    padding: 10px;
+    position: relative;
+}
+.cmd {
+    padding: 0;
+    margin: 0;
+}
+.terminal .terminal-output div {
+    display: block;
+}
+.terminal, .terminal .terminal-output, .terminal .terminal-output div, .terminal .terminal-output div div, .cmd, .terminal .cmd span, .terminal .cmd div {
+    font-family: monospace;
+    color: #aaa;
+    background-color: #000;
+    font-size: 12px;
+}
+.terminal .cmd span {
+    float: left;
+}
+.terminal .cmd span.inverted {
+    background-color: #aaa;
+    color: #000;
+}
+.terminal .terminal-output div.error, .terminal .terminal-output div.error div {
+    color: red;
+}
+.tilda {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1100;
+}
