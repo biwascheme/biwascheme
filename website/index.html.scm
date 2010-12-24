@@ -30,8 +30,14 @@
       (ul
         (li "Most syntax/base library of R6RS (see "
             (a :href "status.html" "Status") ")")
+        (li "Support for"
+            (a :title "Wikipedia article about Lisp Macros"
+               :href "http://en.wikipedia.org/wiki/Macro_%28computer_science%29#Lisp_macros"
+               "Lisp Macros")
+            " and Quasiquotation")
         (li "Functions for web application (Ajax, DOM manipulation, etc.)")
-        (li "Calling JavaScript functions from Scheme")
+        (li "Calling JavaScript functions from Scheme and Scheme from JavaScript")
+        (li "Extending scheme interpreter in Javascipt")
         (li "Comprehensive " (link-to "unit test" "repos/test/spec.html"))
         (li "Tiny " (link-to "interpreter debugger" "repos/test/tracer.html")))
 
@@ -64,10 +70,7 @@
          " for ITS and mailing lists.")
 
       (p "Yutaka HARA (yutaka.hara.gmail.com)" (br)
-         (link-to "http://route477.net/"))
-
-      (p (link-to "日本語の情報はこちら"
-                  "http://route477.net/w/?BiwaScheme"))
+         (link-to "http://twitter.com/#!/yhara_en"))
 
       (convert-file "_footer.html.scm")
 
