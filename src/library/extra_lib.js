@@ -116,6 +116,48 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       finish: function(){ return results.to_list(); }
     });
   });
+
+  // sorting
+  
+  // These functions takes a Scheme proc and sort the given
+  // list or vector using the proc as the compare function.
+  //
+  // Limitations:
+  //  - you should not use Ajax or sleep inside the proc
+  //  - you cannot access to the free variables outside the proc
+  //
+  // (list-sort/comp proc list)
+  // (vector-sort/comp proc vector)
+  // (vector-sort/comp! proc vector)
+
+  // utility function. takes a JS Array and a Scheme procedure,
+  // returns sorted array
+  var sort_with_comp = function(ary, proc){
+    return ary.sort(function(a, b){
+        var intp2 = new BiwaScheme.Interpreter();
+        return intp2.invoke_closure(proc, [a, b]);
+      });
+  };
+
+  define_libfunc("list-sort/comp", 1, 2, function(ar){
+    assert_procedure(ar[0]);
+    assert_list(ar[1]);
+
+    return sort_with_comp(ar[1].to_array(), ar[0]).to_list();
+  });
+  define_libfunc("vector-sort/comp", 1, 2, function(ar){
+    assert_procedure(ar[0]);
+    assert_vector(ar[1]);
+
+    return sort_with_comp(ar[1].clone(), ar[0]);
+  });
+  define_libfunc("vector-sort/comp!", 1, 2, function(ar){
+    assert_procedure(ar[0]);
+    assert_vector(ar[1]);
+
+    sort_with_comp(ar[1], ar[0]);
+    return BiwaScheme.undef;
+  });
   
   // macros
 

@@ -1639,7 +1639,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // Chapter 4 Sorting
   //
-  //(list-sort proc list)    procedure 
+  // NOTE: compare function is not supported yet.
+  // it is partially implemented as list-sort/comp
+  // (see extra_lib.js).
+  // TODO: implement some sorting algorithm in CPS
+  // so that setTimeout in compare procedures work well
+  //
+  //(list-sort list)
   define_libfunc("list-sort", 1, 2, function(ar){
     if(ar[1]){
       throw new Bug("list-sort: cannot take compare proc now");
@@ -1651,7 +1657,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //(vector-sort proc vector)    procedure
   define_libfunc("vector-sort", 1, 2, function(ar){
     if(ar[1]){
-      throw new Bug("list-sort: cannot take compare proc now");
+      throw new Bug("vector-sort: cannot take compare proc now");
     }
     assert_vector(ar[0]);
     return ar[0].clone().sort();
@@ -1660,7 +1666,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //(vector-sort! proc vector)    procedure 
   define_libfunc("vector-sort!", 1, 2, function(ar){
     if(ar[1]){
-      throw new Bug("list-sort: cannot take compare proc now");
+      throw new Bug("vector-sort!: cannot take compare proc now");
     }
     assert_vector(ar[0]);
     ar[0].sort();

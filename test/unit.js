@@ -1555,6 +1555,21 @@ describe('extra library', {
     ew("(map-with-index (lambda (i s) (list i s))" +
        "  '(a b))").should_be("((0 a) (1 b))");
   },
+
+  'list-sort/comp': function(){
+    ew("(list-sort/comp (lambda (a b) (- b a)) \
+          '(1 3 4 2 5))").should_be("(5 4 3 2 1)");
+  },
+  'vector-sort/comp': function(){
+    ew("(vector-sort/comp (lambda (a b) (- b a)) \
+          #(1 3 4 2 5))").should_be("#(5 4 3 2 1)");
+  },
+  'vector-sort/comp!': function(){
+    ew("(let1 v #(1 3 4 2 5) \
+          (vector-sort/comp! (lambda (a b) (- b a)) v) \
+          v)").should_be("#(5 4 3 2 1)");
+  },
+
   'port-closed?': function(){
     ew("(let* ((port (open-output-string)) \
                (before (port-closed? port))) \
