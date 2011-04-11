@@ -283,16 +283,35 @@ BiwaScheme.Compiler = Class.create({
       else if(x instanceof BiwaScheme.Pair){
         switch(x.first()){
         case BiwaScheme.Sym("define"):
-          // error-checking: should have only 3 things
-          if(x.length() != 3)
-              throw new BiwaScheme.Error("Invalid define: "+x.to_write());
+          // (define) ; => error
+          // (define x 1 2) ; => error
+          // x = (define <variable> <expression>)        : defines a variable
+          // x = (define <variable>)                     : defines a variable with unspecified value
+          // x = (define (<variable> <formals>) <body>)  : defines a function
+          // x = (define (<variable> . <formal>) <body>) : defines a function with arbitary numbers of args
+
+          if(x.length() == 1) { // i.e. (define)
+            throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
+          }
 
           var left = x.cdr.car;
           var exp  = x.cdr.cdr;
           
           //define variable
           if(left instanceof BiwaScheme.Symbol){    
-            x = exp.car;
+            if (exp === BiwaScheme.nil) {
+              // eg. (define a)
+              x = BiwaScheme.undef;
+            }
+            else {
+              if (exp.cdr !== BiwaScheme.nil) {
+                // eg. (define a 1 2)
+                throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
+              }
+              // eg. (define a 1)
+              x = exp.car;
+            }
+
             BiwaScheme.TopEnv[left.name] = BiwaScheme.undef;
             next = ["assign-global", left.name, next]; //should raise for improper list?
           }
@@ -309,6 +328,7 @@ BiwaScheme.Compiler = Class.create({
             throw new BiwaScheme.Error("compile: define needs a leftbol or pair: got "+left);
           }
           break;
+
         case BiwaScheme.Sym("begin"):
           var a = [];
           for(var p=x.cdr; p instanceof BiwaScheme.Pair; p=p.cdr)
@@ -320,12 +340,14 @@ BiwaScheme.Compiler = Class.create({
             c = this.compile(a[i], e, s, f, c);
           }
           return c;
+
         case BiwaScheme.Sym("quote"):
           if(x.length() < 2)
               throw new BiwaScheme.Error("Invalid quote: "+x.to_write());
 
           var obj=x.second();
           return ["constant", obj, next];
+
         case BiwaScheme.Sym("lambda"):
           // x = '(lambda (x y) x y)
           // x = '(lambda vars x y)
@@ -351,6 +373,7 @@ BiwaScheme.Compiler = Class.create({
                            next,
                            dotpos];
           return this.collect_free(free, e, do_close);
+
         case BiwaScheme.Sym("if"):
           if(x.length() < 3 || x.length() > 4)
               throw new BiwaScheme.Error("Invalid if: "+x.to_write());
@@ -361,6 +384,7 @@ BiwaScheme.Compiler = Class.create({
           x    = testc;
           next = ["test", thenc, elsec];
           break;
+
         case BiwaScheme.Sym("set!"):
           // error-checking: should have only 3 things
           if(x.length() != 3)
@@ -374,6 +398,7 @@ BiwaScheme.Compiler = Class.create({
           );
           next = do_assign;
           break;
+
         case BiwaScheme.Sym("call/cc"): 
           var x=x.second();
           var c = ["conti", 
@@ -386,6 +411,7 @@ BiwaScheme.Compiler = Class.create({
                                             : ["apply"]))]]]];
                   //note: proc for call/cc takes 1 argument (= ["apply", 1])
           return this.is_tail(next) ? c : ["frame", c, next];
+
         default: 
           //apply 
           //x = (func 1 2) 
