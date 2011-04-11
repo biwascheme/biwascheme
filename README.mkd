@@ -79,6 +79,9 @@ Acknowledgements
 * YUI Compressor (bin/yuicompressor-2.4.2.jar)
   * http://developer.yahoo.com/yui/compressor/
 
+* ExplorerCanvas (demo/excanvas.js)
+  * http://excanvas.sourceforge.net/
+
 Contact
 =======
 
