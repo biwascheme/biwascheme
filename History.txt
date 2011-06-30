@@ -1,13 +1,18 @@
+2011-06-30  v0.5.5.2
+
+  * new: list-sort/comp
+  * fix: functions with multiple body exprs did not work
+
 2010-12-25  v0.5.5.1
 
-	* new: R6RS Records
+  * new: R6RS Records
   * bug fixes
 
 2010-08-27  v0.5.4.2
 
   * fix: (let-values)
-	* fix: (acos)
-	* new: (gensym) returns random symbol
-	* new: (string->number) parses flonum
-	* new: BiwaScheme.GitCommit
-			note: now sed is needed to compile biwascheme.js
+  * fix: (acos)
+  * new: (gensym) returns random symbol
+  * new: (string->number) parses flonum
+  * new: BiwaScheme.GitCommit
+    note: now sed is needed to compile biwascheme.js
