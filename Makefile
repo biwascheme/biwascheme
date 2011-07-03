@@ -67,7 +67,7 @@ CONSOLE_FILES   =  $(VERSION_FILE) $(CONSOLE_FILES0)
 
 all: build
 
-build: lib/biwascheme.js lib/console_biwascheme.js
+build: lib/biwascheme.js lib/console_biwascheme.js bin/biwas
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(FILES0) $(CONSOLE_FILES0) Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
@@ -82,4 +82,12 @@ lib/console_biwascheme.js: $(CONSOLE_FILES) Makefile
 	cat $(CONSOLE_FILES) > __merged.js
 	java -jar bin/yuicompressor-2.4.2.jar __merged.js -o $@
 	rm __merged.js
+	@echo "Wrote " $@
+
+bin/biwas: src/console/node-console.js lib/console_biwascheme.js src/node_main.js
+	echo '#!/usr/bin/env node' > $@
+	cat src/console/node-console.js >> $@
+	cat lib/console_biwascheme.js >> $@
+	cat src/node_main.js >> $@
+	chmod +x $@
 	@echo "Wrote " $@
