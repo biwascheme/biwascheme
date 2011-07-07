@@ -20,7 +20,10 @@ function Options(argv){
 }
 var opts = new Options(process.argv.slice(2));
 
-var intp = new BiwaScheme.Interpreter();
+var intp = new BiwaScheme.Interpreter(function(e){
+  sys.puts(Object.inspect(e));
+  process.exit(1);
+});
 
 if(opts.args.size() >= 1){
   var src = fs.readFileSync(opts.args[0], 'utf8');
