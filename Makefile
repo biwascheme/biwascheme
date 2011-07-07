@@ -70,7 +70,7 @@ all: build
 
 build: lib/biwascheme.js lib/console_biwascheme.js bin/biwas
 
-$(VERSION_FILE): $(VERSION_FILE_IN) $(FILES0) $(CONSOLE_FILES0) Makefile
+$(VERSION_FILE): $(VERSION_FILE_IN) $(FILES0) $(CONSOLE_FILES0) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
 lib/biwascheme.js: $(FILES) Makefile
