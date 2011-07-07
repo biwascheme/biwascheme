@@ -3,6 +3,8 @@ BiwaScheme
 
 BiwaScheme is a Scheme interpreter written in JavaScript.
 
+Works with web browsers and Node.js.
+
 Demos
 -----
 
@@ -30,6 +32,17 @@ Just load biwascheme.js and write Scheme code.
     
     </body>
     </html>
+
+How to use with node.js
+-----------------------
+
+1. $ npm install optparse
+2. create a file a.scm:
+
+    (display "Hello, world!")
+    (newline)
+
+3. $ node bin/biwas a.scm
 
 Files
 =====

@@ -1,3 +1,7 @@
+2011-07-07  v0.5.6
+
+  * new: Node.js support! (try 'node bin/biwas a.scm')
+
 2011-06-30  v0.5.5.2
 
   * new: list-sort/comp
