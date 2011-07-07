@@ -304,6 +304,17 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
   })
 
+  _require = function(src, check, proc){
+    var script = document.createElement('script')
+    script.src = src;
+    document.body.appendChild(script);
+
+    var checker = new Function("return !!(" + check + ")");
+
+    if(checker()) proc();
+    else          setTimeout(function(){ checker() ? proc() : setTimeout(arguments.callee, 10); }, 10);
+  };
+
   // (js-load "lib/foo.js" "Foo")
   define_libfunc("js-load", 2, 2, function(ar){
     var path = ar[0];
@@ -312,7 +323,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_string(check);
 
     return new BiwaScheme.Pause(function(pause){
-      BiwaScheme.require(path, "window." + check, function(){
+      _require(path, "window." + check, function(){
         pause.resume(BiwaScheme.undef);
       });
     });
