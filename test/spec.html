@@ -28,10 +28,14 @@ var loader_production = function(proc){
     "<\/script>");
 };
 
-if (location.hash.match(/lib/))
+if (location.hash.match(/lib/)){
+  if(console) console.log("starting tests for lib/biwascheme.js");
   loader_production();
-else
+}
+else{
+  if(console) console.log("starting tests for src/*.js");
   loader_development();
+}
 
 // ]]></script>
 </body>
