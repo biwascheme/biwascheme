@@ -1,0 +1,13 @@
+{
+    "name": "biwascheme",
+    "description": "A practical Scheme interpreter written in JavaScript",
+    "version": "0.5.6",
+    "author": "Yutaka HARA <yutaka.hara@gmail.com>",
+    "homepage": "http://www.biwascheme.org/",
+    "keywords": ["scheme", "lisp", "interpreter", "repl", "biwa"],
+    "repository":{
+        "type": "git",
+        "url": "https://github.com/yhara/biwascheme.git"
+    },
+    "main": "./lib/biwascheme.js"
+}
