@@ -54,7 +54,7 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
     // clone the pairs to copy
     this.pairs_of.each(function(hashed_and_pairs){
       var cloned = hashed_and_pairs[1].map(function(pair){
-        return pair.clone();
+        return underscore.clone(pair);
       });
       copy.pairs_of.set(hashed_and_pairs[0], cloned);
     });

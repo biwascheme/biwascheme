@@ -14,8 +14,8 @@ BiwaScheme.Set = BiwaScheme.Class.create({
     if(this.arr.length != other.arr.length)
       return false;
 
-    var a1 = this.arr.clone();
-    var a2 = other.arr.clone();
+    var a1 = underscore.clone(this.arr);
+    var a2 = underscore.clone(other.arr);
     a1.sort();
     a2.sort();
     for(var i=0; i<this.arr.length; i++){
@@ -25,13 +25,13 @@ BiwaScheme.Set = BiwaScheme.Class.create({
   },
   set_cons : function(item){
     var o = new BiwaScheme.Set(item);
-    o.arr = this.arr.clone();
+    o.arr = underscore.clone(this.arr);
     o.arr.push(item);
     return o;
   },
   set_union : function(/*args*/){
     var o = new BiwaScheme.Set();
-    o.arr = this.arr.clone();
+    o.arr = underscore.clone(this.arr);
 
     for(var k=0; k<arguments.length; k++){
       var s2 = arguments[k];

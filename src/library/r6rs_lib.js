@@ -1660,7 +1660,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Bug("vector-sort: cannot take compare proc now");
     }
     assert_vector(ar[0]);
-    return ar[0].clone().sort();
+      return underscore.clone(ar[0]).sort();
   });
 
   //(vector-sort! proc vector)    procedure 

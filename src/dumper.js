@@ -125,7 +125,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       this.closures.push(cls);
     }
 
-    var c = cls.clone ? cls.clone() : [c];
+    var c = underscore.clone(cls);
     var body = c.shift();
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",

@@ -149,7 +149,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_procedure(ar[0]);
     assert_vector(ar[1]);
 
-    return sort_with_comp(ar[1].clone(), ar[0]);
+    return sort_with_comp(underscore.clone(ar[1]), ar[0]);
   });
   define_libfunc("vector-sort/comp!", 1, 2, function(ar){
     assert_procedure(ar[0]);
