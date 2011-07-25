@@ -1995,7 +1995,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if(parent_rtd) assert_record_td(parent_rtd);
     if(uid){
       assert_symbol(uid);
-      var _rtd = BiwaScheme.Record.RTD.NongenerativeRecords.get(uid.name);
+      var _rtd = BiwaScheme.Record.RTD.NongenerativeRecords[uid.name];
       if(_rtd){
         // the record type is already defined.
         return _rtd;
@@ -2015,7 +2015,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var rtd = new BiwaScheme.Record.RTD(name, parent_rtd, uid,
                                      sealed, opaque, fields);
     if(uid)
-      BiwaScheme.Record.RTD.NongenerativeRecords.set(uid.name, rtd);
+      BiwaScheme.Record.RTD.NongenerativeRecords[uid.name] = rtd;
 
     return rtd;
   });

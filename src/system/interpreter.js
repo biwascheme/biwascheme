@@ -6,7 +6,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
   initialize: function(on_error){
     this.stack = [] //(make-vector 1000)
     this.on_error = on_error || function(e){};
-    this.after_evaluate = Prototype.emptyFunction;
+    this.after_evaluate = function(){};
   },
 
   inspect: function(){

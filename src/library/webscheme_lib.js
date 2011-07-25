@@ -556,7 +556,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var on_error = intp.on_error;
     return function(/*args*/){
       var intp = new Interpreter(on_error);
-      intp.invoke_closure(proc, $A(arguments));
+      intp.invoke_closure(proc, underscore.toArray(arguments));
     };
   };
   define_libfunc("js-closure", 1, 1, function(ar, intp){

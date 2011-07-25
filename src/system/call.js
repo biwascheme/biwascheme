@@ -152,8 +152,8 @@ BiwaScheme.Iterator = {
 
 BiwaScheme.Call.default_callbacks = {
   call: function(x){ return new BiwaScheme.Call(this.proc, [x]) },
-  result: Prototype.emptyFunction,
-  finish: Prototype.emptyFunction
+  result: function(){},
+  finish: function(){}
 }
 BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
   is_multi || (is_multi = false);

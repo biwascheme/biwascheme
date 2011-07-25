@@ -34,15 +34,15 @@ BiwaScheme.Error = BiwaScheme.Class.create({
   }
 });
 
-BiwaScheme.Bug = BiwaScheme.Class.create(Object.extend(new BiwaScheme.Error(), {
+BiwaScheme.Bug = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
   initialize: function(msg){
     this.message = "[BUG] "+msg;
   }
-}));
+});
 
 // currently used by "raise"
-BiwaScheme.UserError = BiwaScheme.Class.create(Object.extend(new BiwaScheme.Error(), {
+BiwaScheme.UserError = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
   initialize: function(msg){
     this.message = msg;
   }
-}));
+});

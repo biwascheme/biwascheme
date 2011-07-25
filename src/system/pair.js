@@ -103,7 +103,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 });
 // TODO: remove this and rename build_list to List()
 BiwaScheme.List = function(){
-  return $A(arguments).to_list();
+  return underscore.toArray(arguments).to_list();
 };
 
 // Converts a nested arrays to a list.

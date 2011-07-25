@@ -13,5 +13,5 @@ Console.puts = function(str, no_newline) {
 }
 
 Console.p = function (/*ARGS*/){
-    Console.puts("p> "+$A(arguments).map(Object.inspect).join(" "));
+    Console.puts("p> "+underscore.toArray(arguments).map(Object.inspect).join(" "));
 }

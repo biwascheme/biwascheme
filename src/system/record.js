@@ -24,13 +24,13 @@ BiwaScheme.isRecord = function(o){
 };
 
 // Record types
-BiwaScheme.Record._DefinedTypes = new Hash();
+BiwaScheme.Record._DefinedTypes = {};
 
 BiwaScheme.Record.define_type = function(name_str, rtd, cd){
-  return BiwaScheme.Record._DefinedTypes.set(name_str, {rtd: rtd, cd: cd});
+  return BiwaScheme.Record._DefinedTypes[name_str] = {rtd: rtd, cd: cd};
 };
 BiwaScheme.Record.get_type = function(name_str){
-  return BiwaScheme.Record._DefinedTypes.get(name_str);
+  return BiwaScheme.Record._DefinedTypes[name_str];
 };
 
 // Record type descriptor
@@ -65,7 +65,7 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   }
 });
 BiwaScheme.Record.RTD.last_uid = 0;
-BiwaScheme.Record.RTD.NongenerativeRecords = new Hash();
+BiwaScheme.Record.RTD.NongenerativeRecords = {};
 BiwaScheme.isRecordTD = function(o){
   return (o instanceof BiwaScheme.Record.RTD);
 };

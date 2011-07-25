@@ -81,7 +81,7 @@
   if (script) {
     var intp = new BiwaScheme.Interpreter(onError);
     try{
-      intp.evaluate(script.innerHTML, Prototype.emptyFunction);
+      intp.evaluate(script.innerHTML, function(){});
     }
     catch(e){
       onError(e);

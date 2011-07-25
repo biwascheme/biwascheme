@@ -69,10 +69,10 @@ var BiwaScheme = BiwaScheme || {};
            '"><\/script>';
   }
   document.write(script_tag(dir+"src/version.js"));
-  document.write(script_tag(dir+"src/console/web-console.js"));
   document.write(script_tag(dir+"src/prototype.js"));
   document.write(script_tag(dir+"src/underscore.js"));
   document.write(script_tag(dir+"src/rename_underscore.js"));
+  document.write(script_tag(dir+"src/console/web-console.js"));
   document.write(script_tag(dir+"src/system/class.js"));
   document.write(script_tag(dir+"src/stackbase.js"));
   document.write(script_tag(dir+"src/system/set.js"));
