@@ -33,8 +33,8 @@ Just load biwascheme.js and write Scheme code.
     </body>
     </html>
 
-How to use with node.js
------------------------
+How to use with node.js to run a biwa script
+--------------------------------------------
 
 1. $ npm install optparse
 2. create a file a.scm:
@@ -43,6 +43,22 @@ How to use with node.js
     (newline)
 
 3. $ node bin/biwas a.scm
+
+How to use from inside node.js as a module
+------------------------------------------
+
+1. $ npm install biwascheme
+2. create a file a.scm:
+
+    (display "Hello, world!")
+    (newline)
+
+3. create a file server.js:
+
+    var BiwaScheme = require("biwascheme").BiwaScheme;
+    BiwaScheme.run("a.scm");
+
+4. $ node server.js
 
 Files
 =====

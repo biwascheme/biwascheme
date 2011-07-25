@@ -94,7 +94,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("element-write-attribute", 3, 3, function(ar){
     assert_string(ar[1]);
-    return $(ar[0]).readAttribute(ar[1], ar[2]);
+    return $(ar[0]).writeAttribute(ar[1], ar[2]);
   });
   define_libfunc("element-height", 1, 1, function(ar){
     return $(ar[0]).getHeight();

@@ -21,7 +21,7 @@ function Options(argv){
 var opts = new Options(process.argv.slice(2));
 
 var intp = new BiwaScheme.Interpreter(function(e){
-  sys.puts(Object.inspect(e));
+  sys.puts(e.stack);
   process.exit(1);
 });
 

@@ -68,7 +68,7 @@ CONSOLE_FILES   =  $(VERSION_FILE) $(CONSOLE_FILES0)
 
 all: build
 
-build: lib/biwascheme.js lib/console_biwascheme.js bin/biwas
+build: lib/biwascheme.js lib/console_biwascheme.js bin/biwas biwa_node_module/biwascheme/lib/biwascheme.js
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(FILES0) $(CONSOLE_FILES0) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
@@ -91,4 +91,10 @@ bin/biwas: src/console/node-console.js lib/console_biwascheme.js src/node_main.j
 	cat lib/console_biwascheme.js >> $@
 	cat src/node_main.js >> $@
 	chmod +x $@
+	@echo "Wrote " $@
+
+biwa_node_module/biwascheme/lib/biwascheme.js: src/server/node_module_preamble.js lib/console_biwascheme.js src/server/node_module_postamble.js
+	cat src/server/node_module_preamble.js >> $@
+	cat lib/console_biwascheme.js >> $@
+	cat src/server/node_module_postamble.js >> $@
 	@echo "Wrote " $@
