@@ -3,7 +3,7 @@
 //
 with(BiwaScheme) {
 
-BiwaScheme.Dumper = Class.create({
+BiwaScheme.Dumper = BiwaScheme.Class.create({
   initialize: function(dumparea){
     this.dumparea = dumparea || $("dumparea") || null;;
     this.reset();

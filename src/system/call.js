@@ -22,7 +22,7 @@
 // example:
 //   return new Call(proc, [x, y], function(ar){ ar[0] });
 //
-BiwaScheme.Call = Class.create({
+BiwaScheme.Call = BiwaScheme.Class.create({
   initialize: function(proc, args, after){
     this.proc = proc;
     this.args = args;
@@ -49,7 +49,7 @@ BiwaScheme.Call = Class.create({
 // Iterator - external iterator for Call.foreach
 //
 BiwaScheme.Iterator = {
-  ForArray: Class.create({
+  ForArray: BiwaScheme.Class.create({
     initialize: function(arr){
       this.arr = arr;
       this.i = 0;
@@ -61,7 +61,7 @@ BiwaScheme.Iterator = {
       return this.arr[this.i++];
     }
   }),
-  ForString: Class.create({
+  ForString: BiwaScheme.Class.create({
     initialize: function(str){
       this.str = str;
       this.i = 0;
@@ -73,7 +73,7 @@ BiwaScheme.Iterator = {
       return BiwaScheme.Char.get(this.str.charAt(this.i++));
     }
   }),
-  ForList: Class.create({
+  ForList: BiwaScheme.Class.create({
     initialize: function(ls){
       this.ls = ls;
     },
@@ -87,7 +87,7 @@ BiwaScheme.Iterator = {
       return pair;
     }
   }),
-  ForMulti: Class.create({
+  ForMulti: BiwaScheme.Class.create({
     initialize: function(objs){
       this.objs = objs;
       this.size = objs.length;

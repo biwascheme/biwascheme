@@ -25,7 +25,7 @@ BiwaScheme.CoreEnv = {};
 // Errors (temporary?)
 //
 
-BiwaScheme.Error = Class.create({
+BiwaScheme.Error = BiwaScheme.Class.create({
   initialize: function(msg){
     this.message = "Error: "+msg;
   },
@@ -34,14 +34,14 @@ BiwaScheme.Error = Class.create({
   }
 });
 
-BiwaScheme.Bug = Class.create(Object.extend(new BiwaScheme.Error(), {
+BiwaScheme.Bug = BiwaScheme.Class.create(Object.extend(new BiwaScheme.Error(), {
   initialize: function(msg){
     this.message = "[BUG] "+msg;
   }
 }));
 
 // currently used by "raise"
-BiwaScheme.UserError = Class.create(Object.extend(new BiwaScheme.Error(), {
+BiwaScheme.UserError = BiwaScheme.Class.create(Object.extend(new BiwaScheme.Error(), {
   initialize: function(msg){
     this.message = msg;
   }

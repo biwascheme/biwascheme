@@ -1,7 +1,7 @@
 //
 // Syntax
 //
-BiwaScheme.Syntax = Class.create({
+BiwaScheme.Syntax = BiwaScheme.Class.create({
   initialize: function(sname, func){
     this.sname = sname;
     this.func = func;

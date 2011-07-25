@@ -2,7 +2,7 @@
 /// Compiler
 ///
 
-BiwaScheme.Compiler = Class.create({
+BiwaScheme.Compiler = BiwaScheme.Class.create({
   initialize: function(){
   },
 

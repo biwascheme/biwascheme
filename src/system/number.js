@@ -2,7 +2,7 @@
 // number.js - Complex and Rational
 //
 
-BiwaScheme.Complex = Class.create({
+BiwaScheme.Complex = BiwaScheme.Class.create({
   initialize: function(real, imag){
     this.real = real;
     this.imag = imag;
@@ -26,7 +26,7 @@ BiwaScheme.Complex.assure = function(num){
     return new BiwaScheme.Complex(num, 0);
 }
 
-BiwaScheme.Rational = Class.create({
+BiwaScheme.Rational = BiwaScheme.Class.create({
   initialize: function(numerator, denominator){
     this.numerator = numerator;
     this.denominator = denominator;

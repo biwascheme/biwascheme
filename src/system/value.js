@@ -1,7 +1,7 @@
 //
 // Values
 //
-BiwaScheme.Values = Class.create({
+BiwaScheme.Values = BiwaScheme.Class.create({
   initialize: function(values){
     this.content = values;
   },

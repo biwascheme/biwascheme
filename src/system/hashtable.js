@@ -6,7 +6,7 @@
 //  * R6RS hashtable needs its own hash function
 // so some hacks are needed.
 
-BiwaScheme.Hashtable = Class.create({
+BiwaScheme.Hashtable = BiwaScheme.Class.create({
   initialize: function(_hash_proc, _equiv_proc, mutable){
     this.mutable = (mutable === undefined) ? true :
                    mutable ? true : false;

@@ -1,7 +1,7 @@
 //
 // Record
 //
-BiwaScheme.Record = Class.create({
+BiwaScheme.Record = BiwaScheme.Class.create({
   initialize: function(rtd, values){
     assert_record_td(rtd, "new Record");
 
@@ -34,7 +34,7 @@ BiwaScheme.Record.get_type = function(name_str){
 };
 
 // Record type descriptor
-BiwaScheme.Record.RTD = Class.create({
+BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   //                   Symbol RTD        Symbol Bool  Bool    Array
   initialize: function(name, parent_rtd, uid, sealed, opaque, fields){
     this.name = name;
@@ -71,7 +71,7 @@ BiwaScheme.isRecordTD = function(o){
 };
 
 // Record constructor descriptor
-BiwaScheme.Record.CD = Class.create({
+BiwaScheme.Record.CD = BiwaScheme.Class.create({
   initialize: function(rtd, parent_cd, protocol){
     this._check(rtd, parent_cd, protocol);
     this.rtd = rtd;

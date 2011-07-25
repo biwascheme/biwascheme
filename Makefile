@@ -5,6 +5,9 @@
 FILES0 = \
   src/console/web-console.js \
   src/prototype.js \
+  src/underscore.js \
+  src/rename_underscore.js \
+  src/system/class.js \
   src/stackbase.js \
   src/system/set.js \
   src/system/write.js \
@@ -34,6 +37,9 @@ FILES0 = \
 
 CONSOLE_FILES0 =					\
   src/prototype.js				\
+  src/underscore.js \
+  src/rename_underscore.js \
+  src/system/class.js \
   src/stackbase.js				\
   src/system/set.js				\
   src/system/write.js				\

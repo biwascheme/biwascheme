@@ -2,7 +2,7 @@
 // Set - set of string
 // contents must be string (or at least sortable)
 //
-BiwaScheme.Set = Class.create({
+BiwaScheme.Set = BiwaScheme.Class.create({
   initialize : function(/*args*/){
     this.arr = [];
     var i;

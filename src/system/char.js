@@ -2,7 +2,7 @@
 // Char
 //
 
-BiwaScheme.Char = Class.create({
+BiwaScheme.Char = BiwaScheme.Class.create({
   initialize: function(c){
     BiwaScheme.Chars[ this.value = c ] = this;
   },

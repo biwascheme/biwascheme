@@ -3,7 +3,7 @@
 // cons cell
 //
 
-BiwaScheme.Pair = Class.create({
+BiwaScheme.Pair = BiwaScheme.Class.create({
   initialize: function(car, cdr){
     this.car = car;
     this.cdr = cdr;

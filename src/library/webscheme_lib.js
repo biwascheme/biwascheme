@@ -651,7 +651,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // tuple space
   //
-  BiwaScheme.TupleSpaceClient = Class.create({
+  BiwaScheme.TupleSpaceClient = BiwaScheme.Class.create({
     initialize: function(server_path){
       this.server_path = server_path; //must end with '/'
     },

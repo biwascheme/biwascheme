@@ -2,7 +2,7 @@
 // Symbol
 //
 
-BiwaScheme.Symbol = Class.create({
+BiwaScheme.Symbol = BiwaScheme.Class.create({
   initialize: function(str){
     this.name = str;
     BiwaScheme.Symbols[ str ] = this;

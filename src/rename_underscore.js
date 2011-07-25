@@ -1,0 +1,1 @@
+this["underscore"] = this["_"]
