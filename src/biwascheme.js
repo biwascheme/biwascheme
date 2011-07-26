@@ -87,7 +87,7 @@ var BiwaScheme = {
       puts(e.message); 
       if($("biwascheme-debugger")){
         var dumper = new BiwaScheme.Dumper($("biwascheme-debugger"));
-        dumper.dump(new Hash(state));
+        dumper.dump(state);
         dumper.dump_move(1);
       }
       throw(e);

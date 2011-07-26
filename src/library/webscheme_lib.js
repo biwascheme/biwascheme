@@ -604,7 +604,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return new BiwaScheme.Pause(function(pause){
       new Ajax.Request(path, {
         method: 'post',
-        postBody: $H(h).toQueryString(),
+        postBody: h.toQueryString(),
         onSuccess: function(transport) {
           pause.resume(transport.responseText)
         }

@@ -117,12 +117,12 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
       return;
 
     if (dumper) {
-      var state = new Hash({"a":a, 
-                            "f":f, 
-                            "c":c, 
-                            "s":s, 
-                            "x":x, 
-                            "stack":this.stack});
+      state = {"a":a,
+               "f":f,
+               "c":c,
+               "s":s,
+               "x":x,
+               "stack":this.stack};
       dumper.dump(state);
     }
   },

@@ -147,7 +147,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
   dump: function(obj){
     var dumpitem = document.createElement("div"); 
     var s = "";
-    if(obj instanceof Hash){
+    if(obj instanceof Object){
       s += "<table>"
 
       // header

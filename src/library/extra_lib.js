@@ -5,12 +5,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0].escapeHTML();
   });
   BiwaScheme.inspect_objs = function(objs){
-    return underscore.map(objs, function(obj){
-      if(obj.inspect)
-        return obj.inspect();
-      else
-        return BiwaScheme.inspect($H(obj));
-    }).join(", ");
+    return underscore.map(objs, BiwaScheme.inspect).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
     return BiwaScheme.inspect_objs(ar);
