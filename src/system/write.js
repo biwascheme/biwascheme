@@ -9,7 +9,7 @@
 //  }
 Function.prototype.to_write = function() {
   return "#<Function "+(this.fname ? this.fname :
-                        this.toSource ? this.toSource().truncate(40) :
+                        this.toSource ? underscore.truncate(this.toSource(), 40) :
                         "")+">";
 }
 String.prototype.to_write = function(){

@@ -5,14 +5,14 @@ with(BiwaScheme) {
 
 BiwaScheme.Dumper = BiwaScheme.Class.create({
   initialize: function(dumparea){
-    this.dumparea = dumparea || $("dumparea") || null;;
+    this.dumparea = dumparea || $("#dumparea") || null;;
     this.reset();
   },
 
   reset: function(){
     if(this.dumparea){
       // Note: this is for repl.html (needs refactoring..)
-      $(this.dumparea).update("");
+      $(this.dumparea).html("");
     }
     this.n_folds = 0;
     this.closures = [];
@@ -91,14 +91,14 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       var l = stk.length - 1;
       s += "<tr><td class='dump_dead'>[" + l + "]</td>" +
            "<td class='dump_dead'>" + 
-           this.dump_obj(stk[l]).truncate(this.stack_max_len) +
+           underscore.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
            "</td></tr>";
     }
 
     // show the element in the stack
     for(var i=size-1; i >= 0; i--){
       s += "<tr><td class='dump_stknum'>[" + i + "]</td>" +
-           "<td>" + this.dump_obj(stk[i]).truncate(this.stack_max_len) +
+           "<td>" + underscore.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
            "</td></tr>";
     }
     return s + "</table>";
@@ -130,7 +130,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",
       this.dump_obj(c), " <span class='dump_closure'>body :</span> ",
-      this.dump_obj(body).truncate(100)
+      underscore.truncate(this.dump_obj(body), 100)
     ].join("");
   },
 
@@ -140,7 +140,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     else{
       var s = write_ss(obj, true); //true=Array mode
       if(s == "[object Object]") s = this.dump_object(obj);
-      return s.escapeHTML();
+      return underscore.escapeHTML(s);
     }
   },
 
@@ -176,7 +176,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       s += "</table>";
     }
     else{
-      s = BiwaScheme.inspect(obj).escapeHTML() + "<br>\n";
+      s = underscore.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
     }
     dumpitem.id = "dump" + this.n_dumps;
     dumpitem.innerHTML = s;

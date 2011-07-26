@@ -10,10 +10,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // element
   //
   define_libfunc("element-clear!", 1, 1, function(ar){
-    return $(ar[0]).update();
+    return $(ar[0]).empty();
   });
   define_libfunc("element-empty!", 1, 1, function(ar){
-    return $(ar[0]).update();
+    return $(ar[0]).empty();
   });
 
   define_libfunc("element-visible?", 1, 1, function(ar){
@@ -32,7 +32,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return $(ar[0]).remove("");
   })
   define_libfunc("element-update!", 2, 2, function(ar){
-    return $(ar[0]).update(ar[1]);
+    return $(ar[0]).html(ar[1]);
   })
   define_libfunc("element-replace!", 2, 2, function(ar){
     return $(ar[0]).replace(ar[1]);
@@ -268,14 +268,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     };
     if(BiwaScheme.tree_all(ar[0], string_or_symbol)){
       var div = new Element("div");
-      div.update( create_elements_by_string(ar[0]) );
+      div.html( create_elements_by_string(ar[0]) );
       return div.firstChild;
     }
     else
       return nil //create_elements_by_dom(ar[0]);
   });
   define_libfunc("element-content", 1, 1, function(ar){
-    return ar[0].value || (ar[0].innerHTML).unescapeHTML();
+    return ar[0].value || underscore.escapeHTML(ar[0].innerHTML);
   });
 
   //
@@ -359,7 +359,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return BiwaScheme.undef;
   });
   define_libfunc("get-content", 1, 1, function(ar){
-    return ar[0].value || (ar[0].innerHTML).unescapeHTML();
+    return ar[0].value || underscore.unescapeHTML(ar[0].innerHTML);
   });
 
   //
@@ -408,7 +408,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("dom-remove-children!", 1, 1, function(ar){
     puts("warning: dom-remove-children! is obsolete. use element-empty! instead");
-    $(ar[0]).update("");
+    $(ar[0]).empty();
     return BiwaScheme.undef;
   });
   define_libfunc("dom-create-element", 1, 1, function(ar){

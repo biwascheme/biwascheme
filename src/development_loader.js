@@ -69,6 +69,7 @@ var BiwaScheme = BiwaScheme || {};
            '"><\/script>';
   }
   document.write(script_tag(dir+"src/version.js"));
+  document.write(script_tag(dir+"src/jquery.js"));
   document.write(script_tag(dir+"src/underscore.js"));
   document.write(script_tag(dir+"src/underscore.string.js"));
   document.write(script_tag(dir+"src/rename_underscore.js"));

@@ -1,17 +1,17 @@
 Console = {}
 
 Console.puts = function(str, no_newline) {
-    var console;
-    var text
-    console = $('bs-console');
-    if (console) {
-	text = (str + (no_newline ? "" : "\n")).escapeHTML();
-	span = document.createElement("span");
-	span.innerHTML = text.replace(/\n/g,"<br>").replace(/ /g,"&nbsp;");
-	console.insert(span);
-    }
+  var console;
+  var text;
+  console = $("#bs-console");
+  if (console) {
+	text = underscore.escapeHTML(str + (no_newline ? "" : "\n"));
+	var span = $("<span>");
+	span.html(text.replace(/\n/g,"<br>").replace(/ /g,"&nbsp;"));
+	console.append(span);
+  }
 }
 
 Console.p = function (/*ARGS*/){
-    Console.puts("p> "+underscore.map(underscore.toArray(arguments), BiwaScheme.inspect).join(" "));
+  Console.puts("p> "+underscore.map(underscore.toArray(arguments), BiwaScheme.inspect).join(" "));
 }

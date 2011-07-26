@@ -2,7 +2,7 @@
 if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("html-escape", 1, 1, function(ar){
     assert_string(ar[0]);
-    return ar[0].escapeHTML();
+    return underscore.escapeHTML(ar[0]);
   });
   BiwaScheme.inspect_objs = function(objs){
     return underscore.map(objs, BiwaScheme.inspect).join(", ");
