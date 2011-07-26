@@ -157,7 +157,7 @@ BiwaScheme.Call.default_callbacks = {
 }
 BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
   is_multi || (is_multi = false);
-  ["call", "result", "finish"].each(function(key){
+  underscore.each(["call", "result", "finish"], function(key){
     if(!callbacks[key])
       callbacks[key] = BiwaScheme.Call.default_callbacks[key];
   })

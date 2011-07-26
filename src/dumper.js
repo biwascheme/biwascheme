@@ -156,7 +156,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
-      obj.each(function(pair){
+      underscore.each(obj, function(pair){
         if(pair.key!="x" && pair.key != "stack"){
           var value = (pair.key=="c" ? this.dump_closure(pair.value) 
                                      : this.dump_obj(pair.value))

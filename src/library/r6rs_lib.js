@@ -31,7 +31,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     // TODO: assert that clauses is a proper list
 
     var ret = null;
-    clauses.to_array().reverse().each(function(clause){
+    underscore.each(clauses.to_array().reverse(), function(clause){
       if(!(clause instanceof Pair)){
         throw new Error("bad clause in cond: " + to_write_ss(clause));
       }
@@ -113,7 +113,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var clauses = x.cdr.cdr;
 
       var ret = undefined;
-      clauses.to_array().reverse().each(function(clause){
+      underscore.each(clauses.to_array().reverse(), function(clause){
         if(clause.car === Sym("else")){
           // pattern 0: (else expr ...)
           //  -> (begin expr ...)
@@ -226,7 +226,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("let*: need a pair for bindings: got "+to_write(binds));
 
     var ret = null;
-    binds.to_array().reverse().each(function(bind){
+    underscore.each(binds.to_array().reverse(), function(bind){
       ret = new Pair(Sym("let"), 
                new Pair(new Pair(bind, nil),
                  ret == null ? body : new Pair(ret, nil)));
@@ -241,12 +241,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("letrec*: need a pair for bindings: got "+to_write(binds));
 
     var ret = body;
-    binds.to_array().reverse().each(function(bind){
+    underscore.each(binds.to_array().reverse(), function(bind){
       ret = new Pair(new Pair(Sym("set!"), bind),
               ret);
     })
     var letbody = nil;
-    binds.to_array().reverse().each(function(bind){
+    underscore.each(binds.to_array().reverse(), function(bind){
       letbody = new Pair(new Pair(bind.car, 
                            new Pair(BiwaScheme.undef, nil)),
                   letbody);
@@ -274,7 +274,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       
       var let_bindings = nil;
       var let_star_values_bindings = nil;
-      mv_bindings.to_array().reverse().each(function (item) {
+      underscore.each(mv_bindings.to_array().reverse(), function (item) {
 	  var init = item.cdr.car;
 	  var tmpsym = BiwaScheme.gensym()
 	  var binding = new Pair(tmpsym, 
@@ -316,7 +316,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     var ret = null;
 
-    mv_bindings.to_array().reverse().each(function(item){
+    underscore.each(mv_bindings.to_array().reverse(), function(item){
       var formals = item.car, init = item.cdr.car;
       ret = new Pair(Sym("call-with-values"),
               new Pair(new Pair(Sym("lambda"),
@@ -855,7 +855,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var k = ar.length
     var ret = ar[--k];
     while(k--){
-      ar[k].to_array().reverse().each(function(item){
+      underscore.each(ar[k].to_array().reverse(), function(item){
         ret = new Pair(item, ret);
       });
     }
@@ -891,7 +891,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("map", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    underscore.each(lists, function(ls){ assert_list(ls) });
 
     var a = [];
     return Call.multi_foreach(lists, {
@@ -917,7 +917,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("for-each", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    underscore.each(lists, function(ls){ assert_list(ls) });
 
     return Call.multi_foreach(lists, {
       call: function(xs){ 
@@ -1088,7 +1088,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("string-for-each", 2, null, function(ar){
     var proc = ar.shift(), strs = ar;
-    strs.each(function(str){ assert_string(str) });
+    underscore.each(strs, function(str){ assert_string(str) });
     
     return Call.multi_foreach(strs, {
       call: function(chars){ return new Call(proc, chars); },
@@ -1156,7 +1156,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector-map", 2, null, function(ar){
     var proc = ar.shift(), vecs = ar;
-    vecs.each(function(vec){ assert_vector(vec) });
+    underscore.each(vecs, function(vec){ assert_vector(vec) });
 
     var a = [];
     return Call.multi_foreach(vecs, {
@@ -1167,7 +1167,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector-for-each", 2, null, function(ar){
     var proc = ar.shift(), vecs = ar;
-    vecs.each(function(vec){ assert_vector(vec) });
+    underscore.each(vecs, function(vec){ assert_vector(vec) });
 
     return Call.multi_foreach(vecs, {
       call: function(objs){ return new Call(proc, objs); },
@@ -1424,7 +1424,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("for-all", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    underscore.each(lists, function(ls){ assert_list(ls) });
 
     var last = true; //holds last result which proc returns
     return Call.multi_foreach(lists, {
@@ -1441,7 +1441,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("exists", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    underscore.each(lists, function(ls){ assert_list(ls) });
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
@@ -1492,7 +1492,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("fold-left", 3, null, function(ar){
     var proc = ar.shift(), accum = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    underscore.each(lists, function(ls){ assert_list(ls) });
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
@@ -1625,7 +1625,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return ar[0];
     else{
       var ret = null;
-      ar.reverse().each(function(x){
+      underscore.each(ar.reverse(), function(x){
         if(ret){
           ret = new Pair(x, ret);
         }
@@ -1811,7 +1811,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var fields = [];
 
     // <record clause>:
-    record_clauses.to_array().each(function(clause){
+    underscore.each(record_clauses.to_array(), function(clause){
       switch(clause.car){
         // - (fields <field spec>*)
         case Sym("fields"):

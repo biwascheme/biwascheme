@@ -52,7 +52,7 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
     var copy = new BiwaScheme.Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
-    this.pairs_of.each(function(hashed_and_pairs){
+    underscore.each(this.pairs_of, function(hashed_and_pairs){
       var cloned = hashed_and_pairs[1].map(function(pair){
         return underscore.clone(pair);
       });
@@ -84,8 +84,8 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
 
   _apply_pair: function(func){
     var a = [];
-    this.pairs_of.values().each(function(pairs){
-      pairs.each(function(pair){
+    underscore.each(this.pairs_of.values(), function(pairs){
+      underscore.each(pairs, function(pair){
         a.push(func(pair));
       });
     });

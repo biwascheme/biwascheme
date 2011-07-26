@@ -197,7 +197,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   BiwaScheme.create_elements_by_dom = function(spec){
     var create_element = function(name, attrs, children){
       var tag = new Element(name, attrs); //attrs is an Object
-      children.each(function(child){
+      underscore.each(children, function(child){
         tag.insert({bottom: child});
       });
       return tag;
