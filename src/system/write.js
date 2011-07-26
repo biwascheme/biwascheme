@@ -71,7 +71,7 @@ BiwaScheme.to_display = function(obj){
   else if(obj instanceof BiwaScheme.Symbol)
     return obj.name;
   else if(obj instanceof Array)
-    return '#(' + obj.map(BiwaScheme.to_display).join(' ') + ')';
+    return '#(' + underscore.map(obj, BiwaScheme.to_display).join(' ') + ')';
   else if(obj instanceof BiwaScheme.Pair)
     return obj.inspect(BiwaScheme.to_display);
   else if(obj instanceof BiwaScheme.Char)
@@ -126,7 +126,7 @@ BiwaScheme.to_write_ss = function(obj, cyclic, appeared, array_mode){
     ret += "(" + a.join(" ") + ")";
   }
   else if(obj instanceof Array){
-    var a = obj.map(function(item){
+    var a = underscore.map(obj, function(item){
       return BiwaScheme.to_write_ss(item, cyclic, appeared, array_mode);
     })
     if(array_mode)

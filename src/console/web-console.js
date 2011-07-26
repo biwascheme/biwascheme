@@ -13,5 +13,5 @@ Console.puts = function(str, no_newline) {
 }
 
 Console.p = function (/*ARGS*/){
-    Console.puts("p> "+underscore.toArray(arguments).map(BiwaScheme.inspect).join(" "));
+    Console.puts("p> "+underscore.map(underscore.toArray(arguments), BiwaScheme.inspect).join(" "));
 }

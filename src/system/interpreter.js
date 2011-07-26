@@ -414,7 +414,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         else if(x == BiwaScheme.nil)
           ret = BiwaScheme.nil;
         else{
-          ret = new BiwaScheme.Pair(this.expand(x.car, flag), x.cdr.to_array().map(function(item){return this.expand(item, flag)}.bind(this)).to_list());
+          ret = new BiwaScheme.Pair(this.expand(x.car, flag), underscore.map(x.cdr.to_array(), function(item){return this.expand(item, flag)}.bind(this)).to_list());
         }
       }
     }

@@ -529,7 +529,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         }
       }
       // construct js code to create new object
-      var args_str = ar.map(function(value, i){
+      var args_str = underscore.map(ar, function(value, i){
         return "args['" + i + "']";
       }).join(",");
       return eval("new " + ctor + "(" + args_str + ")");

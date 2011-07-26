@@ -91,7 +91,7 @@ BiwaScheme.Iterator = {
     initialize: function(objs){
       this.objs = objs;
       this.size = objs.length;
-      this.iterators = objs.map(function(x){
+      this.iterators = underscore.map(objs, function(x){
         return BiwaScheme.Iterator.of(x);
       })
     },
@@ -103,7 +103,7 @@ BiwaScheme.Iterator = {
       return true;
     },
     next: function(){
-      return this.iterators.map(function(ite){
+      return underscore.map(this.iterators, function(ite){
         return ite.next();
       })
     }

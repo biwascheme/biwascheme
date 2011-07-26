@@ -52,7 +52,7 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
     this.sealed = !!sealed;
     this.opaque = parent_rtd.opaque || (!!opaque);
 
-    this.fields = fields.map(function(field){
+    this.fields = underscore.map(fields, function(field){
       return {name: field[0], mutable: !!field[1]};
     });
   },

@@ -5,7 +5,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0].escapeHTML();
   });
   BiwaScheme.inspect_objs = function(objs){
-    return objs.map(function(obj){
+    return underscore.map(objs, function(obj){
       if(obj.inspect)
         return obj.inspect();
       else
@@ -35,7 +35,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
          json === true || json === false:
       return json;
     case Object.isArray(json):
-      return json.map(function(item){ 
+      return underscore.map(json, function(item){ 
                return json2sexp(item);
              }).to_list();
     case typeof(json) == "object":
@@ -107,7 +107,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var results = [], i = 0;
     return Call.multi_foreach(lists, {
       call: function(xs){ 
-        var args = xs.map(function(x){ return x.car });
+        var args = underscore.map(xs, function(x){ return x.car });
         args.unshift(i);
         i++;
         return new Call(proc, args);
@@ -247,7 +247,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // i/o
 
   define_libfunc("print", 1, null, function(ar){
-    ar.map(function(item){
+    underscore.map(ar, function(item){
       puts(to_display(item), true);
     })
     puts(""); //newline

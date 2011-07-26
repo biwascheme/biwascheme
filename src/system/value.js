@@ -7,7 +7,7 @@ BiwaScheme.Values = BiwaScheme.Class.create({
   },
   to_write: function(){
     return "#<Values " +
-             this.content.map(BiwaScheme.to_write).join(" ") +
+             underscore.map(this.content, BiwaScheme.to_write).join(" ") +
            ">";
   }
 });
