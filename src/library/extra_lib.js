@@ -30,11 +30,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   BiwaScheme.json2sexp = function(json){
     switch(true){
-    case Object.isNumber(json) || 
-         Object.isString(json) ||
+    case underscore.isNumber(json) ||
+         underscore.isString(json) ||
          json === true || json === false:
       return json;
-    case Object.isArray(json):
+    case underscore.isArray(json):
       return underscore.map(json, function(item){ 
                return json2sexp(item);
              }).to_list();
@@ -305,7 +305,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("regexp-exec", 2, 2, function(ar){
     var rexp = ar[0];
-    if(Object.isString(ar[0])){
+    if(underscore.isString(ar[0])){
       rexp = new RegExp(ar[0]);
     }
     assert_regexp(rexp, "regexp-exec");

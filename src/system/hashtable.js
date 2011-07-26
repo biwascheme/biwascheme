@@ -112,7 +112,7 @@ BiwaScheme.Hashtable.string_hash = function(ar){
 };
 
 BiwaScheme.Hashtable.string_ci_hash = function(ar){
-  return Object.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
+  return underscore.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
 };
 
 BiwaScheme.Hashtable.symbol_hash = function(ar){

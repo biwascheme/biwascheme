@@ -262,8 +262,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   }
   define_libfunc("element-new", 1, 1, function(ar){
     var string_or_symbol = function(item){
-      return Object.isString(item) || 
-             (item instanceof Symbol) || 
+      return underscore.isString(item) ||
+             (item instanceof Symbol) ||
              (item instanceof Pair);
     };
     if(BiwaScheme.tree_all(ar[0], string_or_symbol)){

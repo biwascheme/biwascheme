@@ -113,7 +113,7 @@ BiwaScheme.build_list = function(ary){
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
-    if(Object.isArray(obj) && !obj.is_vector){
+    if(underscore.isArray(obj) && !obj.is_vector){
       obj = BiwaScheme.build_list(obj);
     }
     list = new BiwaScheme.Pair(obj, list);
