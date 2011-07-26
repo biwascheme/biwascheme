@@ -1493,6 +1493,36 @@ describe('19 R5RS compatibility', {
 //(scheme-report-environment n)    procedure 
 })
 
+describe('js interface', {
+  'sleep' : function(){
+    (new BiwaScheme.Interpreter).evaluate("(begin 1 (sleep 0) 2)", function(result){
+      expect(result).should_be(2);
+    });
+  },
+  'js-call' : function() {
+    ev('(js-call (js-eval "Math.pow") 2 4)').should_be(16);
+  },
+  'js-invoke' : function(){ 
+    ev('(js-invoke (js-eval "Math") "pow" 2 4)').should_be(16);
+  },
+  'js-new' : function(){
+    ev('(js-invoke (js-new "Date" 2008 1 1) "getFullYear")').should_be(2008);
+    BiwaScheme.TestForJSNew = function(obj){
+      this.foo = obj["foo"];
+    };
+    var tmp = scm_eval('(js-new "BiwaScheme.TestForJSNew" \'foo (lambda () 4))');
+    expect(underscore.isFunction(tmp.foo)).should_be(true)
+  },
+  'js-null?' : function(){
+    ev('(js-null? (js-eval "null"))').should_be(true);
+    ev('(js-null? 0)').should_be(false);
+  },
+  'js-undefined?' : function(){
+    ev('(js-undefined? (js-eval "undefined"))').should_be(true);
+    ev('(js-undefined? 0)').should_be(false);
+  }
+});
+
 describe('browser functions', {
   'element-empty!' : function(){
     scm_eval('(element-empty! ($ "div1"))');
@@ -1513,33 +1543,6 @@ describe('browser functions', {
     scm_eval('(element-show! ($ "div1"))');
     expect( $("div1").visible() ).should_be(true);
   },
-  'sleep' : function(){
-    (new BiwaScheme.Interpreter).evaluate("(begin 1 (sleep 0) 2)", function(result){
-      expect(result).should_be(2);
-    })
-  },
-  'js-call' : function() {
-    ev('(js-call (js-eval "Math.pow") 2 4)').should_be(16);
-  },
-  'js-invoke' : function(){ 
-    ev('(js-invoke (js-eval "Math") "pow" 2 4)').should_be(16);
-  },
-  'js-new' : function(){
-    ev('(js-invoke (js-new "Date" 2008 1 1) "getFullYear")').should_be(2008);
-    BiwaScheme.TestForJSNew = function(obj){
-      this.foo = obj["foo"];
-    };
-    var tmp = scm_eval('(js-new "BiwaScheme.TestForJSNew" \'foo (lambda () 4))');
-    expect(Object.isFunction(tmp.foo)).should_be(true)
-  },
-  'js-null?' : function(){
-    ev('(js-null? (js-eval "null"))').should_be(true);
-    ev('(js-null? 0)').should_be(false);
-  },
-  'js-undefined?' : function(){
-    ev('(js-undefined? (js-eval "undefined"))').should_be(true);
-    ev('(js-undefined? 0)').should_be(false);
-  }
 });
 
 describe('extra library', {

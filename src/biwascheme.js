@@ -76,12 +76,13 @@ var BiwaScheme = {
   var src = readAttribute(script, 'src');
   var dir = src.match(/(.*)biwascheme.js/)[1];
 
-  require(dir+'prototype.js', 'window.$$', function(){
+  require(dir+'prototype.js',     'window.$$', function(){
   require(dir+'stackbase.js',     'window.BiwaScheme.CoreEnv', function(){
   require(dir+'r6rs_lib.js',      'window.BiwaScheme.CoreEnv["+"]', function(){
+  require(dir+'js_interface.js',  'window.BiwaScheme.CoreEnv["js-eval"]', function(){
   require(dir+'webscheme_lib.js', 'window.BiwaScheme.CoreEnv["getelem"]', function(){
   require(dir+'extra_lib.js',     'window.BiwaScheme.CoreEnv["print"]', function(){
-  require(dir+'dumper.js',     'window.BiwaScheme.Dumper', function(){
+  require(dir+'dumper.js',        'window.BiwaScheme.Dumper', function(){
   require(dir+'io.js',            'window.JSIO', function(){
     var onError = function(e, state){
       puts(e.message); 
