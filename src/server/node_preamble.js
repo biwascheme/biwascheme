@@ -1,4 +1,5 @@
 var underscore = require('underscore');
+underscore.mixin(require('underscore.string'));
 
 var window = {
 };
