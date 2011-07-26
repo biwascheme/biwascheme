@@ -740,7 +740,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       case "+inf.0": return Infinity;
       case "-inf.0": return -Infinity;
       case "+nan.0": return NaN;
-      default:       if(/[eE.]/.match(s))
+      default:       if(s.match(/[eE.]/))
                        return parseFloat(s);
                      else
                        return parseInt(s, radix);
@@ -832,7 +832,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     for(var o=ar[0]; o != nil; o=o.cdr){
       if(o == nil) return true;
       if(!(o instanceof Pair)) return false;
-      if(contents.find(function(item){ return item === o.car}))
+      if(underscore.detect(contents, function(item){ return item === o.car; }))
         return false; //cyclic
       contents.push(o.car);
     }
@@ -999,7 +999,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       assert_char(ar[1]);
       c = ar[1].value;
     }
-    return c.times(ar[0]);
+    var out = "";
+    underscore.times(ar[0], function() { out += c; });
+    return out;
   })
   define_libfunc("string", 1, null, function(ar){
     for(var i=0; i<ar.length; i++)
@@ -1078,9 +1080,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("string->list", 1, 1, function(ar){
     assert_string(ar[0]);
-    var chars = [];
-    ar[0].scan(/./, function(s){ chars.push(Char.get(s[0])) });
-    return chars.to_list();
+    return underscore.map(ar[0].split(""), function(s){ return Char.get(s[0]); }).to_list();
   })
   define_libfunc("list->string", 1, 1, function(ar){
     assert_list(ar[0]);
@@ -1930,7 +1930,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return [Sym("define"), name, [Sym("record-accessor"), rtd, field.idx]];
     });
 
-    var mutator_defs = fields.findAll(function(field){
+    var mutator_defs = underscore.filter(fields, function(field){
       return field.mutable;
     });
     mutator_defs = underscore.map(mutator_defs, function(field){

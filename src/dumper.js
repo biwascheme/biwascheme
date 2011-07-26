@@ -30,8 +30,8 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     var s="";
     var pad1="", pad2="";
     var level = level || 0;
-    level.times(function(){ pad1 += this.dump_pad; }.bind(this));
-    (level+1).times(function(){ pad2 += this.dump_pad; }.bind(this));
+    underscore.times(level, function(){ pad1 += this.dump_pad; }.bind(this));
+    underscore.times((level+1), function(){ pad2 += this.dump_pad; }.bind(this));
 
     s += pad1 + '[<span class="dump_opecode">' + obj[0] + '</span>';
     var i = 1;

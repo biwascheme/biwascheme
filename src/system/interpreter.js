@@ -132,9 +132,9 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     //puts("executing "+x[0]);
     
     while(true){ //x[0] != "halt"){
-      
+
       this.run_dump_hook(a, x, f, c, s);
-        
+
       switch(x[0]){
       case "halt":
         return a;
@@ -272,7 +272,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
 
           // invoke the function
           var result = func(args, this);
-          
+
           if(result instanceof BiwaScheme.Pause){
             // it requested the interpreter to suspend
             var pause = result;
@@ -302,13 +302,13 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
                             ["argument",
                             ["constant", result.proc, 
                             ["apply", result.args.length]]]];
-            var push_args = result.args.inject(call_proc, function(opc, arg){
+            var push_args = underscore.inject(result.args, function(opc, arg){
               // (foo 1 2) => first push 2, then 1
               //   [constant 2 ... [constant 1 ... ]
               return ["constant", arg, 
                      ["argument",
                      opc]];
-            })
+            }, call_proc);
             x = ["frame",
                   push_args,
                 call_after]

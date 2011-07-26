@@ -25,7 +25,7 @@ var intp = new BiwaScheme.Interpreter(function(e){
   process.exit(1);
 });
 
-if(opts.args.size() >= 1){
+if(opts.args.length >= 1){
   var src = fs.readFileSync(opts.args[0], 'utf8');
   intp.evaluate(src);
 }
