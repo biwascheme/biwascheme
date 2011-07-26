@@ -63,7 +63,7 @@ BiwaScheme.to_write = function(obj){
       case -Infinity: return "-inf.0";
     }
   }
-  return Object.inspect(obj);
+  return BiwaScheme.inspect(obj);
 }
 BiwaScheme.to_display = function(obj){
   if(typeof(obj.valueOf()) == "string")
@@ -155,11 +155,11 @@ BiwaScheme.find_cyclic = function(obj, known, used){
               null;
   if(!items) return;
 
-  items.each(function(item){
+  underscore.each(items, function(item){
     if(typeof(item)=='number' || typeof(item)=='string' ||
       item === BiwaScheme.undef || item === true || item === false ||
       item === BiwaScheme.nil || item instanceof BiwaScheme.Symbol) return;
-    
+
     var i = known.indexOf(item);
     if(i >= 0)
       used[i] = true;

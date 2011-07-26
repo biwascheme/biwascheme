@@ -118,7 +118,7 @@ BiwaScheme.Iterator = {
       case (obj === BiwaScheme.nil):
         return new this.ForList(obj);
       default:
-        throw new BiwaScheme.Bug("Iterator.of: unknown class: "+Object.inspect(obj));
+        throw new BiwaScheme.Bug("Iterator.of: unknown class: "+BiwaScheme.inspect(obj));
     }
   }
 }

@@ -14,7 +14,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
       "#<Interpreter: stack size=>",
       this.stack.length, " ",
       "after_evaluate=",
-      Object.inspect(this.after_evaluate),
+      BiwaScheme.inspect(this.after_evaluate),
       ">"
     ].join("");
   },
@@ -153,7 +153,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         else if(BiwaScheme.CoreEnv.hasOwnProperty(sym))
           var val = BiwaScheme.CoreEnv[sym];
         else
-          throw new BiwaScheme.Error("execute: unbound symbol: "+Object.inspect(sym));
+          throw new BiwaScheme.Error("execute: unbound symbol: "+BiwaScheme.inspect(sym));
 
         a = val;
         break;
@@ -321,7 +321,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         }
         else{
           // unknown function type
-          throw new BiwaScheme.Error(Object.inspect(func) + " is not a function");
+          throw new BiwaScheme.Error(BiwaScheme.inspect(func) + " is not a function");
         }
         break;
       case "return":

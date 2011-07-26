@@ -46,3 +46,21 @@ BiwaScheme.UserError = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
     this.message = msg;
   }
 });
+
+BiwaScheme.inspect = function(object) {
+  try {
+    if (underscore.isUndefined(object)) return 'undefined';
+    if (object === null) return 'null';
+    if (object.inspect) return object.inspect();
+    if (underscore.isString(object)) {
+      return "'" + object.replace(/'/g, '\\\'') + "'";
+    }
+    if (underscore.isArray(object)) {
+      return '[' + underscore.map(object, BiwaScheme.inspect).join(', ') + ']';
+    }
+    return object.toString();
+  } catch (e) {
+    if (e instanceof RangeError) return '...';
+    throw e;
+  }
+};

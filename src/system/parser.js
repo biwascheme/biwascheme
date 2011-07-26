@@ -12,7 +12,7 @@
       return [
         "#<Parser:",
         this.i, "/", this.tokens.length, " ",
-        Object.inspect(this.tokens),
+        BiwaScheme.inspect(this.tokens),
         ">"
       ].join("");
     },

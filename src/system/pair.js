@@ -82,7 +82,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 
   // returns human-redable string of pair
   inspect: function(conv){
-    conv || (conv = Object.inspect);
+    conv || (conv = BiwaScheme.inspect);
     var a = [];
     var last = this.foreach(function(o){
       a.push(conv(o));

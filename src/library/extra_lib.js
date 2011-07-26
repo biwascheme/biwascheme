@@ -9,7 +9,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       if(obj.inspect)
         return obj.inspect();
       else
-        return Object.inspect($H(obj));
+        return BiwaScheme.inspect($H(obj));
     }).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
@@ -46,7 +46,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       }
       return ls;
     default:
-      throw new Error("json->sexp: detected invalid value for json: "+Object.inspect(json));
+      throw new Error("json->sexp: detected invalid value for json: "+BiwaScheme.inspect(json));
     }
     throw new Bug("must not happen");
   }

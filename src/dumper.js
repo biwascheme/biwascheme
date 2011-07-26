@@ -80,7 +80,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
 
   stack_max_len: 80,
   dump_stack: function(stk, size){
-    if(stk === null || stk === undefined) return Object.inspect(stk)
+    if(stk === null || stk === undefined) return BiwaScheme.inspect(stk)
     var s = "<table>";
 
     // show the 'physical' stack top
@@ -176,7 +176,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       s += "</table>";
     }
     else{
-      s = Object.inspect(obj).escapeHTML() + "<br>\n";
+      s = BiwaScheme.inspect(obj).escapeHTML() + "<br>\n";
     }
     dumpitem.id = "dump" + this.n_dumps;
     dumpitem.innerHTML = s;

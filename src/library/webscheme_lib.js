@@ -723,7 +723,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     },
     assert_init: function(){
       if(!this.client_id){
-        puts("ts-init not called:"+Object.inspect(this.client_id));
+        puts("ts-init not called:"+BiwaScheme.inspect(this.client_id));
         throw new Error("ts-init not called");
       }
     },
