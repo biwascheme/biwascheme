@@ -1,7 +1,6 @@
 var sys = require('sys'),
     fs = require('fs'),
     path = require('path'),
-    
     optparse = require('optparse');
 
 function Options(argv){
@@ -33,4 +32,3 @@ else{
   // TODO repl
   //sys.print("biwas > ");
 }
-

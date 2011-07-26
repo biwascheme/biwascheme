@@ -37,12 +37,9 @@ FILES0 = \
 #  src/io.js \
 
 CONSOLE_FILES0 =					\
-  src/prototype.js				\
-  src/underscore.js \
-  src/rename_underscore.js \
-  src/system/class.js \
-  src/stackbase.js				\
-  src/system/set.js				\
+  src/system/class.js               \
+  src/stackbase.js				    \
+  src/system/set.js				    \
   src/system/write.js				\
   src/system/pair.js				\
   src/system/value.js				\
@@ -60,11 +57,10 @@ CONSOLE_FILES0 =					\
   src/system/interpreter.js			\
   src/library/infra.js				\
   src/library/r6rs_lib.js			\
-  src/library/js_interface.js \
-  src/library/webscheme_lib.js \
+  src/library/js_interface.js       \
   src/library/extra_lib.js			\
   src/library/srfi.js				\
-  src/dumper.js					\
+  src/dumper.js					    \
   \
   $(NULL)
 
@@ -93,16 +89,17 @@ lib/console_biwascheme.js: $(CONSOLE_FILES) Makefile
 	rm __merged.js
 	@echo "Wrote " $@
 
-bin/biwas: src/console/node-console.js lib/console_biwascheme.js src/node_main.js
+bin/biwas: src/server/node_preamble.js src/console/node-console.js lib/console_biwascheme.js src/node_main.js
 	echo '#!/usr/bin/env node' > $@
+	cat src/server/node_preamble.js >> $@
 	cat src/console/node-console.js >> $@
 	cat lib/console_biwascheme.js >> $@
 	cat src/node_main.js >> $@
 	chmod +x $@
 	@echo "Wrote " $@
 
-biwa_node_module/biwascheme/lib/biwascheme.js: src/server/node_module_preamble.js lib/console_biwascheme.js src/server/node_module_postamble.js
-	cat src/server/node_module_preamble.js >> $@
+biwa_node_module/biwascheme/lib/biwascheme.js: src/server/node_preamble.js lib/console_biwascheme.js src/server/node_module_postamble.js
+	cat src/server/node_preamble.js >> $@
 	cat lib/console_biwascheme.js >> $@
 	cat src/server/node_module_postamble.js >> $@
 	@echo "Wrote " $@

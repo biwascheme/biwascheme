@@ -1,8 +1,10 @@
+var underscore = require('underscore');
+
 var window = {
 };
 
 var navigator = {
-  userAgent: "console-nodejs",
+  userAgent: "console-nodejs"
 };
 
 var document = {
@@ -31,7 +33,7 @@ var Element = {
 };
 
 var HTMLElement = {
-  prototype: {},
+  prototype: {}
 };
 
 
@@ -44,5 +46,5 @@ Console.puts = function(str, no_newline) {
 };
 
 Console.p = function() {
-  require('sys').print.apply(this, arguments)
+  require('sys').print.apply(this, arguments);
 };
