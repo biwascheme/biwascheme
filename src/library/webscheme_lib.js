@@ -5,7 +5,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_port(port);
     return port.get_string();
   });
-  
+
   //
   // element
   //
@@ -15,30 +15,29 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("element-empty!", 1, 1, function(ar){
     return $(ar[0]).empty();
   });
-
   define_libfunc("element-visible?", 1, 1, function(ar){
-    return $(ar[0]).visible();
+    return $(ar[0]).is(":hidden");
   });
   define_libfunc("element-toggle!", 1, 1, function(ar){
     return $(ar[0]).toggle();
-  })
+  });
   define_libfunc("element-hide!", 1, 1, function(ar){
     return $(ar[0]).hide();
-  })
+  });
   define_libfunc("element-show!", 1, 1, function(ar){
     return $(ar[0]).show();
-  })
+  });
   define_libfunc("element-remove!", 1, 1, function(ar){
-    return $(ar[0]).remove("");
-  })
+    return $(ar[0]).remove();
+  });
   define_libfunc("element-update!", 2, 2, function(ar){
     return $(ar[0]).html(ar[1]);
-  })
+  });
   define_libfunc("element-replace!", 2, 2, function(ar){
-    return $(ar[0]).replace(ar[1]);
+    return $(ar[0]).replaceWith(ar[1]);
   });
   define_libfunc("element-insert!", 2, 2, function(ar){
-    return $(ar[0]).insert(ar[1]);
+    return $(ar[0]).append(ar[1]);
   });
   define_libfunc("element-wrap!", 3, 3, function(ar){
     throw new Bug("not yet implemented");
@@ -90,17 +89,17 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("element-read-attribute", 2, 2, function(ar){
     assert_string(ar[1]);
-    return $(ar[0]).readAttribute(ar[1]);
+    return $(ar[0]).attr(ar[1]);
   });
   define_libfunc("element-write-attribute", 3, 3, function(ar){
     assert_string(ar[1]);
-    return $(ar[0]).writeAttribute(ar[1], ar[2]);
+    return $(ar[0]).attr(ar[1], ar[2]);
   });
   define_libfunc("element-height", 1, 1, function(ar){
-    return $(ar[0]).getHeight();
+    return $(ar[0]).height();
   });
   define_libfunc("element-width", 1, 1, function(ar){
-    return $(ar[0]).getWidth();
+    return $(ar[0]).width();
   });
   define_libfunc("element-class-names", 1, 1, function(ar){
     throw new Bug("not yet implemented");
@@ -142,8 +141,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     throw new Bug("not yet implemented");
   })
   define_libfunc("element-dimensions", 1, 1, function(ar){
-    var dimensions = $(ar[0]).getDimensions();
-    return new Values(dimensions.width, dimensions.height);
+    return new Values($(ar[0]).width(), $(ar[0]).height());
   })
   define_libfunc("element-make-positioned!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
@@ -193,45 +191,19 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //  (element-new '(div (span "foo"))  => <div><span>foo</span></div>
   //
 
-  // This function is not used; slower than by_string
-  BiwaScheme.create_elements_by_dom = function(spec){
-    var create_element = function(name, attrs, children){
-      var tag = new Element(name, attrs); //attrs is an Object
-      underscore.each(children, function(child){
-        tag.insert({bottom: child});
-      });
-      return tag;
-    };
-    var spec = spec.to_array();
-    var name = spec[0].name || spec[0]; // Symbol or String
-    var attrs = {};
-    var children = [];
-    for(var i=1; i<spec.length; i++){
-      if(spec[i] instanceof Symbol){ //attribute
-        attrs[ spec[i].name ] = spec[i+1];
-        i++;
-      }
-      else{
-        if(spec[i] instanceof Pair)
-          children.push(create_elements_by_dom(spec[i]));
-        else
-          children.push(spec[i].toString());
-      }
-    }
-    return create_element(name, attrs, children);
-  };
-
   BiwaScheme.create_elements_by_string = function(spec){
-    var spec = spec.to_array();
+    spec = spec.to_array();
     var name = spec.shift();
     if(name instanceof Symbol) name = name.name;
-    if(name.match(/(.*)\.(.*)/)){
-      name = RegExp.$1;
-      spec.unshift(Sym("class"), RegExp.$2);
+    var m = name.match(/(.*)\.(.*)/);
+    if (m) {
+      name = m[1];
+      spec.unshift(Sym("class"), m[2]);
     }
-    if(name.match(/(.*)\#(.*)/)){
-      name = RegExp.$1;
-      spec.unshift(Sym("id"), RegExp.$2);
+    m = name.match(/(.*)\#(.*)/);
+    if (m) {
+      name = m[1];
+      spec.unshift(Sym("id"), m[2]);
     }
     var children = [];
     var s = ["<" + name];
@@ -251,7 +223,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     s.push( children.join("") );
     s.push("</" + name + ">");
     return s.join("");
-  }
+  };
+
   BiwaScheme.tree_all = function(tree, pred){
     if(tree === nil)
       return true;
@@ -259,7 +232,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return false;
     else
       return BiwaScheme.tree_all(tree.cdr, pred); 
-  }
+  };
   define_libfunc("element-new", 1, 1, function(ar){
     var string_or_symbol = function(item){
       return underscore.isString(item) ||
@@ -267,15 +240,20 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
              (item instanceof Pair);
     };
     if(BiwaScheme.tree_all(ar[0], string_or_symbol)){
-      var div = new Element("div");
-      div.html( create_elements_by_string(ar[0]) );
-      return div.firstChild;
+      return $(create_elements_by_string(ar[0]))[0];
+    } else {
+      return nil;
     }
-    else
-      return nil //create_elements_by_dom(ar[0]);
   });
+  BiwaScheme.element_content = function(selector) {
+    if ($(selector).attr("value")) {
+      return $(selector).val();
+    } else {
+      return underscore.escapeHTML($(selector).html());
+    }
+  };
   define_libfunc("element-content", 1, 1, function(ar){
-    return ar[0].value || underscore.escapeHTML(ar[0].html());
+    return BiwaScheme.element_content(ar[0]);
   });
 
   //
@@ -285,29 +263,25 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var path = ar[0];
     assert_string(path);
     return new BiwaScheme.Pause(function(pause){
-      new Ajax.Request(path, {
-        method: 'get',
-        evalJSON: false,
-        evalJS: false,
-        onSuccess: function(transport) {
+      $.ajax(path, {
+        success: function(data) {
           // create new interpreter not to destroy current stack.
           var local_intp = new Interpreter(intp.on_error);
-          local_intp.evaluate(transport.responseText,
+          local_intp.evaluate(data,
                               function(){
                                 return pause.resume(BiwaScheme.undef);
                               });
         },
-        onFailure: function(transport){
+        error: function() {
           throw new Error("load: network error: failed to load"+path);
         }
       });
     });
-  })
+  });
 
   _require = function(src, check, proc){
-    var script = document.createElement('script')
-    script.src = src;
-    document.body.appendChild(script);
+    var script = $("<script/>", { src: src });
+    $("body").append(script);
 
     var checker = new Function("return !!(" + check + ")");
 
@@ -334,32 +308,33 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
 
   BiwaScheme.getelem = function(ar){
-    var x = $(ar[0]); 
-    if (x===undefined || x===null)
-      return false;
-    else
+    var x = $(ar[0]);
+    if (x.length > 0) {
       return x;
+    } else {
+      return false;
+    }
   };
   define_libfunc("$",       1, 1, BiwaScheme.getelem);
-  define_libfunc("getelem", 1, 1, BiwaScheme.getelem); 
+  define_libfunc("getelem", 1, 1, BiwaScheme.getelem);
 
   define_libfunc("set-style!", 3, 3, function(ar){
     assert_string(ar[1]);
-    ar[0].style[ar[1]] = ar[2];
+    $(ar[0]).css(ar[1], ar[2]);
     return BiwaScheme.undef;
   });
   define_libfunc("get-style", 2, 2, function(ar){
     assert_string(ar[1]);
-    return ar[0].style[ar[1]];
+    return $(ar[0]).css(ar[1]);
   });
   define_libfunc("set-content!", 2, 2, function(ar){
     assert_string(ar[1]);
     var str = ar[1].replace(/\n/g,"<br>").replace(/\t/g,"&nbsp;&nbsp;&nbsp;");
-    ar[0].html(str);
+    $(ar[0]).html(str);
     return BiwaScheme.undef;
   });
   define_libfunc("get-content", 1, 1, function(ar){
-    return ar[0].value || underscore.unescapeHTML(ar[0].html());
+    return BiwaScheme.element_content(ar[0]);
   });
 
   //
@@ -367,36 +342,37 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   define_libfunc("set-handler!", 3, 3, function(ar, intp){
     throw new Error("set-handler! is obsolete, please use add-handler! instead");
-  })
+  });
   define_libfunc("add-handler!", 3, 3, function(ar, intp){
-    var elem = ar[0], evtype = ar[1], proc = ar[2];
+    var selector = ar[0], evtype = ar[1], proc = ar[2];
     var on_error = intp.on_error;
-    Event.observe(elem, evtype, function(event){
+    $(selector).bind(evtype, function(event){
       var intp = new Interpreter(on_error);
-      intp.invoke_closure(proc, [event||Window.event]);
+      intp.invoke_closure(proc, [event]);
     });
     return BiwaScheme.undef;
-  })
+  });
   define_libfunc("wait-for", 2, 2, function(ar){
-    var elem = ar[0], evtype = ar[1];
+    var selector = ar[0], evtype = ar[1];
+    var elem = $(selector);
     elem.biwascheme_wait_for = elem.biwascheme_wait_for || {};
 
     var prev_handler = elem.biwascheme_wait_for[evtype];
     if (prev_handler) {
       // Maybe a wait-for is called more than once,
       // and previous handler is not consumed.
-      Event.stopObserving(elem, evtype, prev_handler);
+      elem.unbind(evtype, prev_handler);
     }
 
     return new BiwaScheme.Pause(function(pause){
-      var handler = function(event){ 
+      var handler = function(event){
         elem.biwascheme_wait_for[evtype] = undefined;
-        Event.stopObserving(elem, evtype, handler);
-        return pause.resume(BiwaScheme.undef); 
+        elem.unbind(evtype, handler);
+        return pause.resume(BiwaScheme.undef);
       };
 
       elem.biwascheme_wait_for[evtype] = handler;
-      Event.observe(elem, evtype, handler);
+      elem.bind(evtype, handler);
     });
   });
 
@@ -415,7 +391,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     throw new Error("obsolete");
   });
   define_libfunc("element-append-child!", 2, 2, function(ar){
-    return $(ar[0]).appendChild(ar[1]);
+    return $(ar[0]).append(ar[1]);
   });
   define_libfunc("dom-remove-child!", 2, 2, function(ar){
     throw new Error("obsolete");
@@ -433,11 +409,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_string(path);
 
     return new BiwaScheme.Pause(function(pause){
-      new Ajax.Request(path, {
-        method: 'get',
-        onSuccess: function(transport) {
-          pause.resume(transport.responseText)
-        }
+      $.get(path, function(transport) {
+        pause.resume(transport.responseText);
       });
     });
   });
@@ -452,15 +425,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     alist.foreach(function(item){
       assert_string(item.car);
       h[item.car] = item.cdr;
-    })
+    });
 
     return new BiwaScheme.Pause(function(pause){
-      new Ajax.Request(path, {
-        method: 'post',
-        postBody: h.toQueryString(),
-        onSuccess: function(transport) {
-          pause.resume(transport.responseText)
-        }
+      $.post(path, h, function(transport) {
+        pause.resume(transport.responseText);
       });
     });
   });
@@ -474,17 +443,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     for(var i=0; i<receives.length; i++)
       if(receives[i] === null) break;
     var receiver_id = i;
-    url += "?callback=BiwaScheme.jsonp_receiver[" + receiver_id + "]"
+    url += "?callback=BiwaScheme.jsonp_receiver[" + receiver_id + "]";
 
     return new BiwaScheme.Pause(function(pause){
       receives[receiver_id] = function(data){
         pause.resume(data);
         receives[receiver_id] = null;
-      }
-      var script = document.createElement('script')
-      script.src = url;
-      document.body.appendChild(script);
-    })
+      };
+      var script = $("<script/>", { src: src });
+      $("body").append(script);
+    });
   });
 
   //
