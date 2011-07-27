@@ -301,7 +301,7 @@
 
 <script type="text/javascript"><!--
 $("#code").keypress(function(e) {
-	if (e.ctrlKey && (e.keyCode == Event.KEY_RETURN || e.keyCode == 10)) {
+	if (e.ctrlKey && e.keyCode == 13) {
         e.preventDefault();
 		draw();
 	}
@@ -337,7 +337,7 @@ function clear_canvas() {
 
 function sample(name) {
 	var code = get_code_block(name);
-	$("#code").html(code);
+	$("#code").val(code);
 }
 
 // --></script>
