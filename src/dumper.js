@@ -5,14 +5,14 @@ with(BiwaScheme) {
 
 BiwaScheme.Dumper = BiwaScheme.Class.create({
   initialize: function(dumparea){
-    this.dumparea = dumparea || $("#dumparea") || null;;
+    this.dumparea = dumparea || $("#dumparea")[0] || null;
     this.reset();
   },
 
   reset: function(){
     if(this.dumparea){
       // Note: this is for repl.html (needs refactoring..)
-      $(this.dumparea).html("");
+      $(this.dumparea).empty();
     }
     this.n_folds = 0;
     this.closures = [];
@@ -64,9 +64,9 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
 
     if(lines.length > this.fold_limit){
       var fold_btn   = " <span style='text-decoration:underline; color:blue; cursor:pointer;'" +
-                           "onclick='BiwaScheme.Dumper.toggle_fold("+this.n_folds+")'>more</span>"
-      var fold_start = "<div style='display:none' id='fold"+this.n_folds+"'>"; 
-      var fold_end   = "</div>"
+                           "onclick='BiwaScheme.Dumper.toggle_fold("+this.n_folds+")'>more</span>";
+      var fold_start = "<div style='display:none' id='fold"+this.n_folds+"'>";
+      var fold_end   = "</div>";
       this.n_folds++;
       return [
         lines.slice(0, this.fold_limit).join("<br>"), fold_btn,
@@ -80,7 +80,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
 
   stack_max_len: 80,
   dump_stack: function(stk, size){
-    if(stk === null || stk === undefined) return BiwaScheme.inspect(stk)
+    if(stk === null || stk === undefined) return BiwaScheme.inspect(stk);
     var s = "<table>";
 
     // show the 'physical' stack top
@@ -145,10 +145,9 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
   },
 
   dump: function(obj){
-    var dumpitem = document.createElement("div"); 
     var s = "";
     if(obj instanceof Object){
-      s += "<table>"
+      s += "<table>";
 
       // header
       s += "<tr><td colspan='4'>" + 
@@ -156,38 +155,39 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
-      underscore.each(obj, function(pair){
-        if(pair.key!="x" && pair.key != "stack"){
-          var value = (pair.key=="c" ? this.dump_closure(pair.value) 
-                                     : this.dump_obj(pair.value))
-          s += "<tr><td>" + pair.key + ": </td>" + 
+      underscore.each(underscore.keys(obj), function(key){
+        var value = obj[key];
+        if(key!="x" && key != "stack"){
+          value = (key=="c" ? this.dump_closure(value)
+                            : this.dump_obj(value));
+          s += "<tr><td>" + key + ": </td>" +
                "<td colspan='3'>" + value + "</td></tr>";
         }
       }.bind(this));
-      s += "<tr><td>x:</td><td>" + 
-           (this.is_opc(obj.get("x")) ? this.dump_opc(obj.get("x")) 
-                                      : this.dump_obj(obj.get("x"))) +
+      s += "<tr><td>x:</td><td>" +
+           (this.is_opc(obj["x"]) ? this.dump_opc(obj["x"])
+                                  : this.dump_obj(obj["x"])) +
            "</td>";
 
       // stack
       s += "<td style='border-left: 1px solid black'>stack:</td><td>" +
-           this.dump_stack(obj.get("stack"), obj.get("s")) +
+           this.dump_stack(obj["stack"], obj["s"]) +
            "</td></tr>";
       s += "</table>";
     }
     else{
       s = underscore.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
     }
-    dumpitem.id = "dump" + this.n_dumps;
-    dumpitem.innerHTML = s;
-    this.dumparea.appendChild(dumpitem);
+    var dumpitem = $("<div/>", { id: ("dump" + this.n_dumps) });
+    dumpitem.html(s);
+    $(this.dumparea).append(dumpitem);
     (function(n){
-      $("dump_"+this.n_dumps+"_header").observe("click", function(){
+      $("#dump_"+this.n_dumps+"_header").click(function(){
         this.dump_move_to(n);
         this.dump_fold();
       }.bind(this));
     }.bind(this))(this.n_dumps);
-    Element.hide(dumpitem);
+    dumpitem.hide();
     this.n_dumps++;
   },
 
@@ -196,32 +196,32 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
   //
   dump_move_to: function(n){
     if (0 <= n && n <= this.n_dumps){
-      Element.hide($("dump"+this.cur));
+      $("#dump"+this.cur).hide();
       this.cur = n;
-      Element.show($("dump"+this.cur));
+      $("#dump"+this.cur).show();
     }
   },
 
   dump_move: function(dir){
     if(0 <= this.cur && this.cur < this.n_dumps)
-      Element.hide($("dump"+this.cur));
+      $("#dump"+this.cur).hide();
 
     if(0 <= this.cur+dir && this.cur+dir < this.n_dumps)
       this.cur += dir;
 
-    Element.show($("dump"+this.cur));
+    $("#dump"+this.cur).show();
   },
 
   dump_fold: function(){
     for(var i=0; i<this.n_dumps; i++)
-      if(i!=this.cur) Element.hide($("dump"+i));
+      if(i!=this.cur) $("#dump"+i).hide();
 
     this.is_folded = true;
   },
 
   dump_unfold: function(){
     for(var i=0; i<this.n_dumps; i++)
-      Element.show($("dump"+i));
+      $("#dump"+i).show();
 
     this.is_folded = false;
   },
@@ -232,9 +232,9 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     else
       this.dump_fold();
   }
-})
+});
 } // with(BiwaScheme);
 
 BiwaScheme.Dumper.toggle_fold = function(n){
-  Element.toggle("fold"+n);
+  $("#fold"+n).toggle();
 };

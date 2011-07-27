@@ -24,7 +24,7 @@ BiwaScheme.Port.BrowserInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true,
   },
   get_string: function(after){
     var form = document.createElement("div");
-    form.innerHTML = "<input id='webscheme-read-line' type='text'><input id='webscheme-read-line-submit' type='button' value='ok'>";
+    form.html("<input id='webscheme-read-line' type='text'><input id='webscheme-read-line-submit' type='button' value='ok'>");
     $('bs-console').appendChild(form);
 
     return new BiwaScheme.Pause(function(pause){

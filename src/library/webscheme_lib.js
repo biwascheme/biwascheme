@@ -275,7 +275,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return nil //create_elements_by_dom(ar[0]);
   });
   define_libfunc("element-content", 1, 1, function(ar){
-    return ar[0].value || underscore.escapeHTML(ar[0].innerHTML);
+    return ar[0].value || underscore.escapeHTML(ar[0].html());
   });
 
   //
@@ -355,11 +355,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("set-content!", 2, 2, function(ar){
     assert_string(ar[1]);
     var str = ar[1].replace(/\n/g,"<br>").replace(/\t/g,"&nbsp;&nbsp;&nbsp;");
-    ar[0].innerHTML = str;
+    ar[0].html(str);
     return BiwaScheme.undef;
   });
   define_libfunc("get-content", 1, 1, function(ar){
-    return ar[0].value || underscore.unescapeHTML(ar[0].innerHTML);
+    return ar[0].value || underscore.unescapeHTML(ar[0].html());
   });
 
   //
