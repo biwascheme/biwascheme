@@ -16,7 +16,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return $(ar[0]).empty();
   });
   define_libfunc("element-visible?", 1, 1, function(ar){
-    return $(ar[0]).is(":hidden");
+    return $(ar[0]).is(":visible");
   });
   define_libfunc("element-toggle!", 1, 1, function(ar){
     return $(ar[0]).toggle();
@@ -121,67 +121,67 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("element-empty?", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-descendant-of!", 2, 2, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("scroll-to-element!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-style", 2, 2, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-opacity", 2, 2, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-style-set!", 2, 2, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-opacity-set!", 2, 2, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-dimensions", 1, 1, function(ar){
     return new Values($(ar[0]).width(), $(ar[0]).height());
-  })
+  });
   define_libfunc("element-make-positioned!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-undo-positioned!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-make-clipping!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-undo-clipping!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-cumulative-offset", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-positioned-offset", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-absolutize!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-relativize!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-cumulative-scroll-offset", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-offset-parent", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-viewport-offset", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-clone-position!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
   define_libfunc("element-absolutize!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
-  })
+  });
 
   // usage:
   //  (element-new '(div "foo"))        => <div>foo</div>

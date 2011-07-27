@@ -1525,23 +1525,23 @@ describe('js interface', {
 
 describe('browser functions', {
   'element-empty!' : function(){
-    scm_eval('(element-empty! ($ "div1"))');
-    expect( $("div1").innerHTML ).should_be("");
+    scm_eval('(element-empty! ($ "#div1"))');
+    expect( $("#div1").html() ).should_be("");
   },
   'element-remove!' : function(){
-    $("div1").update("<div id='div2'>foo</div>");
-    scm_eval('(element-remove! ($ "div2"))');
-    expect( $("div1").innerHTML ).should_be("");
+    $("#div1").html("<div id='div2'>foo</div>");
+    scm_eval('(element-remove! ($ "#div2"))');
+    expect( $("#div1").html() ).should_be("");
   },
   'element-hide!' : function(){
     $("div1").show();
-    scm_eval('(element-hide! ($ "div1"))');
-    expect( $("div1").visible() ).should_be(false);
+    scm_eval('(element-hide! ($ "#div1"))');
+    expect( $("#div1").is(":visible") ).should_be(false);
   },
   'element-show!' : function(){
     $("div1").hide();
-    scm_eval('(element-show! ($ "div1"))');
-    expect( $("div1").visible() ).should_be(true);
+    scm_eval('(element-show! ($ "#div1"))');
+    expect( $("#div1").is(":visible") ).should_be(true);
   },
 });
 
