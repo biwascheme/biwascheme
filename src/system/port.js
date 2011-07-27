@@ -23,14 +23,14 @@ BiwaScheme.Port.BrowserInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true,
   initialize: function(){
   },
   get_string: function(after){
-    var form = document.createElement("div");
+    var form = $("<form/>");
     form.html("<input id='webscheme-read-line' type='text'><input id='webscheme-read-line-submit' type='button' value='ok'>");
-    $('bs-console').appendChild(form);
+    $("#bs-console").append(form);
 
     return new BiwaScheme.Pause(function(pause){
-      Event.observe($('webscheme-read-line-submit'), 'click', function(){
-        var input = $('webscheme-read-line').value;
-        form.parentNode.removeChild(form);
+      $("#webscheme-read-line-submit").click(function(){
+        var input = $("#webscheme-read-line").val();
+        form.remove();
         puts(input);
         pause.resume(after(input));
       });
