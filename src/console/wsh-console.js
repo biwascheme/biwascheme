@@ -15,7 +15,9 @@ if(typeof(WScript) == 'object'){
   Console.p = function(/*ARGS*/) {
       WScript.Echo.apply(this, arguments);
   }
-  eval(read("../lib/prototype.js"));
+  eval(read("../lib/underscore.js"));
+  eval(read("../lib/underscore.string.js"));
+  eval(read("../lib/rename_underscore.js"));
   eval(read("../lib/stackbase.js"));
   eval(read("../lib/r6rs_lib.js"));
   eval("function ev(str){ "+

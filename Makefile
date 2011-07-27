@@ -3,7 +3,7 @@
 #
 
 FILES0 = \
-  src/prototype.js \
+  src/jquery.js \
   src/underscore.js \
   src/underscore.string.js \
   src/rename_underscore.js \

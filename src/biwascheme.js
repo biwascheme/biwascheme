@@ -76,7 +76,10 @@ var BiwaScheme = {
   var src = readAttribute(script, 'src');
   var dir = src.match(/(.*)biwascheme.js/)[1];
 
-  require(dir+'prototype.js',     'window.$$', function(){
+  require(dir+'jquery.js',        'window.$', function(){
+  require(dir+'underscore.js',    'window._', function(){
+  require(dir+'underscore.string.js', 'window._.capitalize', function(){
+  require(dir+'rename_underscore', 'window.underscore', function(){
   require(dir+'stackbase.js',     'window.BiwaScheme.CoreEnv', function(){
   require(dir+'r6rs_lib.js',      'window.BiwaScheme.CoreEnv["+"]', function(){
   require(dir+'js_interface.js',  'window.BiwaScheme.CoreEnv["js-eval"]', function(){
@@ -92,7 +95,7 @@ var BiwaScheme = {
         dumper.dump_move(1);
       }
       throw(e);
-    }
+    };
     var intp = new BiwaScheme.Interpreter(onError);
     try{
       intp.evaluate(script.innerHTML, function(){});
@@ -100,7 +103,7 @@ var BiwaScheme = {
     catch(e){
       onError(e);
     }
-  })})})})})})});
+  })})})})})})})})})});
 })();
 
 //vim: set ft=javascript:
