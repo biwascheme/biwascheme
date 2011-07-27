@@ -63,7 +63,8 @@ How to use from inside node.js as a module
 Files
 =====
 
-* lib/biwascheme.js : The latest release version
+* lib/biwascheme.js : The latest release version, uncompressed
+* lib/biwascheme-min.js : The latest release version, compressed
 * demo/
   * Demos
 * src/

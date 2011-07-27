@@ -317,6 +317,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   };
   define_libfunc("$",       1, 1, BiwaScheme.getelem);
   define_libfunc("getelem", 1, 1, BiwaScheme.getelem);
+  define_libfunc("dom-element", 1, 1, function(ar) {
+    return $(ar[0])[0];
+  });
 
   define_libfunc("set-style!", 3, 3, function(ar){
     assert_string(ar[1]);

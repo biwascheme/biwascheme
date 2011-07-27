@@ -13,7 +13,7 @@
   <h1>A Picture Language (from <a href="http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-15.html#%_sec_2.2.4">SICP 2.2.4</a>)</h1>
 
   <h4>Code:</h4>
-  <form name=inputbox action="#" onSubmit="return false">
+  <form name="inputbox" id="inputbox" action="#" onSubmit="return false">
     <button onClick="sample('parallelogram')" />sample 1</button>
     <button onClick="sample('star')" />sample 2</button>
     <button onClick="sample('koch')" />sample 3</button>
@@ -262,7 +262,7 @@
   (js-invoke *ctx* "restore"))
 
 (define ($draw-image x0 y0 x1 y1)
-  (let ((img ($ "img1"))
+  (let ((img (dom-element "#img1"))
         (cx0 (canvas-x x0))
         (cy0 (canvas-y y0))
         (cx1 (canvas-x x1))
@@ -273,7 +273,7 @@
   (if (and (> edge1-x 0) (zero? edge1-y)
            (> edge2-y 0) (zero? edge2-x))
       ($draw-image orig-x orig-y (+ orig-x edge1-x) (+ orig-y edge2-y))
-    (let ((img ($ "img1")))
+    (let ((img (dom-element "#img1")))
       (let ((imgw (js-ref img "width"))
             (imgh (js-ref img "height")))
         (js-invoke *ctx* "save")
@@ -285,8 +285,8 @@
         (js-invoke *ctx* "restore")))))
 
 
-;;;; 
-(define *canvas* ($ "canvassample"))
+;;;;
+(define *canvas* (dom-element "#canvassample"))
 (define *ctx* (js-invoke *canvas* "getContext" "2d"))
 (define *canvas-width* 384)
 (define *canvas-height* 384)
@@ -300,30 +300,27 @@
 </script>
 
 <script type="text/javascript"><!--
-
-$('code').onkeypress = function(e) {
-	e = e ? e : event;
+$("#code").keypress(function(e) {
 	if (e.ctrlKey && (e.keyCode == Event.KEY_RETURN || e.keyCode == 10)) {
-		Event.stop(e);
+        e.preventDefault();
 		draw();
 	}
-}
+});
 
-biwascheme = new BiwaScheme.Interpreter();
+biwascheme = new BiwaScheme.Interpreter(function(e) { console.log(e.message); });
 
 function get_code_block(id) {
-	var codeElm = document.getElementById(id);
-	return codeElm.textContent || codeElm.innerText || codeElm.text;
+    return $("#" + id).text();
 }
+
 biwascheme.evaluate(get_code_block("basic-functions"));
 
 // run pict language
 function draw() {
 	try {
-		$('bs-console').innerHTML = "";
+		$("#bs-console").empty();
 		// Compile Scheme to JavaScript
-		var form = document.inputbox;
-		var source = form.code.value;
+        var source = $("#code").val();
 
 		clear_canvas();
 		var res = biwascheme.evaluate("(let1 f (begin " + source + ") (if (procedure? f) (begin ($save-ctx) (f *frame*) ($restore-ctx)) (print f)))");
@@ -334,13 +331,13 @@ function draw() {
 }
 
 function clear_canvas() {
-	var ctx = $("canvassample").getContext('2d');
+	var ctx = $("#canvassample")[0].getContext('2d');
 	ctx.clearRect(0, 0, 384, 384);
 }
 
 function sample(name) {
 	var code = get_code_block(name);
-	$('code').innerHTML = code;
+	$("#code").html(code);
 }
 
 // --></script>
