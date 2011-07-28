@@ -24,15 +24,16 @@ BiwaScheme.Port.BrowserInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true,
   },
   get_string: function(after){
     var form = $("<form/>");
-    form.html("<input id='webscheme-read-line' type='text'><input id='webscheme-read-line-submit' type='button' value='ok'>");
+    form.html("<input id='webscheme-read-line' type='text'><input type='submit' value='ok'>");
     $("#bs-console").append(form);
 
     return new BiwaScheme.Pause(function(pause){
-      $("#webscheme-read-line-submit").click(function(){
+      form.submit(function(){
         var input = $("#webscheme-read-line").val();
         form.remove();
         puts(input);
         pause.resume(after(input));
+        return false;
       });
     });
   }
