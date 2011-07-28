@@ -36,7 +36,6 @@ BROWSER_FILES =                                   \
   src/deps/underscore.string.js                   \
   $(BASIC_FILES)                                  \
   src/library/webscheme_lib.js                    \
-  src/library/tuplespace.js                       \
   src/platforms/browser/dumper.js                 \
   src/platforms/browser/console.js                \
   src/platforms/browser/release_initializer.js
