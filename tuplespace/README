@@ -29,7 +29,7 @@ Requirements
 ------------
 
 * Gauche (http://practical-scheme.net/gauche/)
-  * eg. '$ brew install gacuhe' on Mac with Homebrew
+  * eg. '$ brew install gauche' on Mac with Homebrew
 * ../lib/biwascheme.js
   * type 'make' to rebuild it
 
