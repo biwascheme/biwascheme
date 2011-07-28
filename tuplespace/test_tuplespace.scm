@@ -2,10 +2,10 @@
 (use gauche.threads)
 
 (test-start "tuple space")
-(load "./tuplespace.scm")  ; テストすべきプログラムをロード
-(import tuplespace)  ; モジュールを定義している場合はインポート
+(load "./tuplespace.scm")
+(import tuplespace)
 
-(test-module 'tuplespace) ; モジュールの一貫性チェック
+(test-module 'tuplespace)
 
 (define *ts* #f)
 

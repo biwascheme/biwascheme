@@ -2,8 +2,8 @@
 (use gauche.threads)
 (use util.match)
 
-(load "./tuplespace.scm")  ; テストすべきプログラムをロード
-(import tuplespace)  ; モジュールを定義している場合はインポート
+(load "./tuplespace.scm")
+(import tuplespace)
 
 ;;; utility
 (define (times proc n)
