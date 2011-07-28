@@ -30,8 +30,8 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     var s="";
     var pad1="", pad2="";
     var level = level || 0;
-    underscore.times(level, underscore.bind(function(){ pad1 += this.dump_pad; }, this));
-    underscore.times((level+1), underscore.bind(function(){ pad2 += this.dump_pad; }, this));
+    _.times(level, _.bind(function(){ pad1 += this.dump_pad; }, this));
+    _.times((level+1), _.bind(function(){ pad2 += this.dump_pad; }, this));
 
     s += pad1 + '[<span class="dump_opecode">' + obj[0] + '</span>';
     var i = 1;
@@ -91,14 +91,14 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       var l = stk.length - 1;
       s += "<tr><td class='dump_dead'>[" + l + "]</td>" +
            "<td class='dump_dead'>" + 
-           underscore.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
+           _.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
            "</td></tr>";
     }
 
     // show the element in the stack
     for(var i=size-1; i >= 0; i--){
       s += "<tr><td class='dump_stknum'>[" + i + "]</td>" +
-           "<td>" + underscore.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
+           "<td>" + _.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
            "</td></tr>";
     }
     return s + "</table>";
@@ -125,12 +125,12 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       this.closures.push(cls);
     }
 
-    var c = underscore.clone(cls);
+    var c = _.clone(cls);
     var body = c.shift();
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",
       this.dump_obj(c), " <span class='dump_closure'>body :</span> ",
-      underscore.truncate(this.dump_obj(body), 100)
+      _.truncate(this.dump_obj(body), 100)
     ].join("");
   },
 
@@ -140,7 +140,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     else{
       var s = write_ss(obj, true); //true=Array mode
       if(s == "[object Object]") s = this.dump_object(obj);
-      return underscore.escapeHTML(s);
+      return _.escapeHTML(s);
     }
   },
 
@@ -155,7 +155,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
-      underscore.each(underscore.keys(obj), underscore.bind(function(key){
+      _.each(_.keys(obj), _.bind(function(key){
         var value = obj[key];
         if(key!="x" && key != "stack"){
           value = (key=="c" ? this.dump_closure(value)
@@ -176,13 +176,13 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       s += "</table>";
     }
     else{
-      s = underscore.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
+      s = _.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
     }
     var dumpitem = $("<div/>", { id: ("dump" + this.n_dumps) });
     dumpitem.html(s);
     $(this.dumparea).append(dumpitem);
-    (underscore.bind(function(n){
-      $("#dump_"+this.n_dumps+"_header").click(underscore.bind(function(){
+    (_.bind(function(n){
+      $("#dump_"+this.n_dumps+"_header").click(_.bind(function(){
         this.dump_move_to(n);
         this.dump_fold();
       }, this));

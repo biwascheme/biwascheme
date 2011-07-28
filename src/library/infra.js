@@ -69,7 +69,7 @@ var make_assert = function(check){
     var fname = arguments.callee.caller
                   ? arguments.callee.caller.fname 
                   : "";
-    check.apply(this, [fname].concat(underscore.toArray(arguments)));
+    check.apply(this, [fname].concat(_.toArray(arguments)));
   }
 }
 var make_simple_assert = function(type, test){
@@ -110,7 +110,7 @@ var assert_between = make_assert(function(fname, obj, from, to){
   }
 });
 
-var assert_string = make_simple_assert("string", underscore.isString);
+var assert_string = make_simple_assert("string", _.isString);
 
 var assert_char = make_simple_assert("character", BiwaScheme.isChar);
 var assert_symbol = make_simple_assert("symbol", BiwaScheme.isSymbol);
@@ -132,11 +132,11 @@ var assert_record_cd = make_simple_assert("record constructor descriptor",
                                           BiwaScheme.isRecordCD);
 
 var assert_function = make_simple_assert("JavaScript function", 
-                                         underscore.isFunction);
+                                         _.isFunction);
 var assert_closure = make_simple_assert("scheme function", 
                                         BiwaScheme.isClosure);
 var assert_procedure = make_simple_assert("scheme/js function", function(obj){
-  return BiwaScheme.isClosure(obj) || underscore.isFunction(obj);
+  return BiwaScheme.isClosure(obj) || _.isFunction(obj);
 });
 
 var assert_date = make_simple_assert("date", function(obj){

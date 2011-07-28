@@ -235,7 +235,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   };
   define_libfunc("element-new", 1, 1, function(ar){
     var string_or_symbol = function(item){
-      return underscore.isString(item) ||
+      return _.isString(item) ||
              (item instanceof Symbol) ||
              (item instanceof Pair);
     };
@@ -249,7 +249,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if ($(selector).attr("value")) {
       return $(selector).val();
     } else {
-      return underscore.escapeHTML($(selector).html());
+      return _.escapeHTML($(selector).html());
     }
   };
   define_libfunc("element-content", 1, 1, function(ar){

@@ -1511,7 +1511,7 @@ describe('js interface', {
       this.foo = obj["foo"];
     };
     var tmp = scm_eval('(js-new "BiwaScheme.TestForJSNew" \'foo (lambda () 4))');
-    expect(underscore.isFunction(tmp.foo)).should_be(true)
+    expect(_.isFunction(tmp.foo)).should_be(true);
   },
   'js-null?' : function(){
     ev('(js-null? (js-eval "null"))').should_be(true);

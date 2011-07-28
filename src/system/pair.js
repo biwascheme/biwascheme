@@ -103,7 +103,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 });
 // TODO: remove this and rename build_list to List()
 BiwaScheme.List = function(){
-  return underscore.toArray(arguments).to_list();
+  return _.toArray(arguments).to_list();
 };
 
 // Converts a nested arrays to a list.
@@ -113,7 +113,7 @@ BiwaScheme.build_list = function(ary){
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
-    if(underscore.isArray(obj) && !obj.is_vector){
+    if(_.isArray(obj) && !obj.is_vector){
       obj = BiwaScheme.build_list(obj);
     }
     list = new BiwaScheme.Pair(obj, list);

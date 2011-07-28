@@ -5,7 +5,7 @@ Console.puts = function(str, no_newline) {
   var text;
   console = $("#bs-console");
   if (console[0]) {
-	text = underscore.escapeHTML(str + (no_newline ? "" : "\n"));
+	text = _.escapeHTML(str + (no_newline ? "" : "\n"));
 	var span = $("<span>");
 	span.html(text.replace(/\n/g,"<br>").replace(/ /g,"&nbsp;"));
 	console.append(span);
@@ -13,5 +13,5 @@ Console.puts = function(str, no_newline) {
 };
 
 Console.p = function (/*ARGS*/){
-  Console.puts("p> "+underscore.map(underscore.toArray(arguments), BiwaScheme.inspect).join(" "));
+  Console.puts("p> "+_.map(_.toArray(arguments), BiwaScheme.inspect).join(" "));
 };

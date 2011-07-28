@@ -196,7 +196,7 @@ with(BiwaScheme) {
       5: function(x){ throw new Bug("not implemented: ISO-8601 year-month-day-hour-minute-second format") }
     }
 
-    return format.replace(/~([\w1-5~])/g, function(_, x){
+    return format.replace(/~([\w1-5~])/g, function(str, x){
       var func = getter[x];
       if(func)
         return func(date);

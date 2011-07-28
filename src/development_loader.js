@@ -31,7 +31,6 @@ var BiwaScheme = BiwaScheme || {};
   document.write(script_tag(dir+"src/jquery.js"));
   document.write(script_tag(dir+"src/underscore.js"));
   document.write(script_tag(dir+"src/underscore.string.js"));
-  document.write(script_tag(dir+"src/rename_underscore.js"));
   document.write(script_tag(dir+"src/console/web-console.js"));
   document.write(script_tag(dir+"src/system/class.js"));
   document.write(script_tag(dir+"src/stackbase.js"));

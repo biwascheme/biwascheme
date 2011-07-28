@@ -6,7 +6,6 @@ FILES0 = \
   src/jquery.js \
   src/underscore.js \
   src/underscore.string.js \
-  src/rename_underscore.js \
   src/console/web-console.js \
   src/system/class.js \
   src/stackbase.js \

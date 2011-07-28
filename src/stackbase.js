@@ -49,14 +49,14 @@ BiwaScheme.UserError = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
 
 BiwaScheme.inspect = function(object) {
   try {
-    if (underscore.isUndefined(object)) return 'undefined';
+    if (_.isUndefined(object)) return 'undefined';
     if (object === null) return 'null';
     if (object.inspect) return object.inspect();
-    if (underscore.isString(object)) {
+    if (_.isString(object)) {
       return "'" + object.replace(/'/g, '\\\'') + "'";
     }
-    if (underscore.isArray(object)) {
-      return '[' + underscore.map(object, BiwaScheme.inspect).join(', ') + ']';
+    if (_.isArray(object)) {
+      return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';
     }
     return object.toString();
   } catch (e) {

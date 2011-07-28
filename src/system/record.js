@@ -52,7 +52,7 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
     this.sealed = !!sealed;
     this.opaque = parent_rtd.opaque || (!!opaque);
 
-    this.fields = underscore.map(fields, function(field){
+    this.fields = _.map(fields, function(field){
       return {name: field[0], mutable: !!field[1]};
     });
   },
@@ -155,7 +155,7 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
   record_constructor: function(){
     var arg_for_protocol = (this.parent_cd ? this._make_n([], this.rtd)
                                            : this._make_p());
-    arg_for_protocol = underscore.bind(arg_for_protocol, this);
+    arg_for_protocol = _.bind(arg_for_protocol, this);
 
     return new BiwaScheme.Call(this.protocol, [arg_for_protocol], function(ar){
       var ctor = ar[0];

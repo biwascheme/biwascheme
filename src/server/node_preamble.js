@@ -1,5 +1,5 @@
-var underscore = require('underscore');
-underscore.mixin(require('underscore.string'));
+var _ = require('underscore');
+_.mixin(require('underscore.string'));
 
 var Console = {};
 Console.puts = function(str, no_newline) {

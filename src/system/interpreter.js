@@ -302,7 +302,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
                             ["argument",
                             ["constant", result.proc, 
                             ["apply", result.args.length]]]];
-            var push_args = underscore.inject(result.args, function(opc, arg){
+            var push_args = _.inject(result.args, function(opc, arg){
               // (foo 1 2) => first push 2, then 1
               //   [constant 2 ... [constant 1 ... ]
               return ["constant", arg, 
@@ -414,7 +414,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         else if(x == BiwaScheme.nil)
           ret = BiwaScheme.nil;
         else{
-          ret = new BiwaScheme.Pair(this.expand(x.car, flag), underscore.map(x.cdr.to_array(), underscore.bind(function(item){ return this.expand(item, flag); }, this)).to_list());
+          ret = new BiwaScheme.Pair(this.expand(x.car, flag), _.map(x.cdr.to_array(), _.bind(function(item){ return this.expand(item, flag); }, this)).to_list());
         }
       }
     }

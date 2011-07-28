@@ -1,4 +1,4 @@
-// underscore.js, underscore.string.js and rename_underscore.js are loaded in test/spidermonkey.sh
+// underscore.js and underscore.string.js are loaded in test/spidermonkey.sh
 
 var Console = {};
 Console.puts = function(str, no_newline) {

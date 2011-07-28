@@ -2,10 +2,10 @@
 if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("html-escape", 1, 1, function(ar){
     assert_string(ar[0]);
-    return underscore.escapeHTML(ar[0]);
+    return _.escapeHTML(ar[0]);
   });
   BiwaScheme.inspect_objs = function(objs){
-    return underscore.map(objs, BiwaScheme.inspect).join(", ");
+    return _.map(objs, BiwaScheme.inspect).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
     return BiwaScheme.inspect_objs(ar);
@@ -25,14 +25,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   BiwaScheme.json2sexp = function(json){
     switch(true){
-    case underscore.isNumber(json) ||
-         underscore.isString(json) ||
+    case _.isNumber(json) ||
+         _.isString(json) ||
          json === true || json === false:
       return json;
-    case underscore.isArray(json):
-      return underscore.map(json, function(item){ 
-               return json2sexp(item);
-             }).to_list();
+    case _.isArray(json):
+      return _.map(json, json2sexp).to_list();
     case typeof(json) == "object":
       var ls = nil;
       for(key in json){
@@ -87,7 +85,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_list(ls);
 
     var ret = [];
-    underscore.each(ls.to_array().reverse(),function(x){
+    _.each(ls.to_array().reverse(),function(x){
       ret.push(x);
       ret.push(item);
     });
@@ -97,12 +95,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("map-with-index", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var results = [], i = 0;
     return Call.multi_foreach(lists, {
       call: function(xs){ 
-        var args = underscore.map(xs, function(x){ return x.car });
+        var args = _.map(xs, function(x){ return x.car });
         args.unshift(i);
         i++;
         return new Call(proc, args);
@@ -144,7 +142,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_procedure(ar[0]);
     assert_vector(ar[1]);
 
-    return sort_with_comp(underscore.clone(ar[1]), ar[0]);
+    return sort_with_comp(_.clone(ar[1]), ar[0]);
   });
   define_libfunc("vector-sort/comp!", 1, 2, function(ar){
     assert_procedure(ar[0]);
@@ -242,7 +240,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // i/o
 
   define_libfunc("print", 1, null, function(ar){
-    underscore.map(ar, function(item){
+    _.map(ar, function(item){
       puts(to_display(item), true);
     })
     puts(""); //newline
@@ -300,7 +298,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("regexp-exec", 2, 2, function(ar){
     var rexp = ar[0];
-    if(underscore.isString(ar[0])){
+    if(_.isString(ar[0])){
       rexp = new RegExp(ar[0]);
     }
     assert_regexp(rexp, "regexp-exec");

@@ -77,7 +77,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         }
       }
       // construct js code to create new object
-      var args_str = underscore.map(ar, function(value, i){
+      var args_str = _.map(ar, function(value, i){
         return "args['" + i + "']";
       }).join(",");
       return eval("new " + ctor + "(" + args_str + ")");
@@ -104,7 +104,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var on_error = intp.on_error;
     return function(/*args*/){
       var intp = new Interpreter(on_error);
-      intp.invoke_closure(proc, underscore.toArray(arguments));
+      intp.invoke_closure(proc, _.toArray(arguments));
     };
   };
   define_libfunc("js-closure", 1, 1, function(ar, intp){

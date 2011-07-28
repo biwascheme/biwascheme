@@ -30,14 +30,14 @@
 BiwaScheme.Class = {
   create: function(methods) {
     var klass = function(){ this.initialize.apply(this, arguments); };
-    underscore.extend(klass.prototype, methods);
+    _.extend(klass.prototype, methods);
     return klass;
   },
 
   extend: function(parent, methods) {
     var klass = function(){ this.initialize.apply(this, arguments); };
     klass.prototype = parent;
-    underscore.extend(klass.prototype, methods);
+    _.extend(klass.prototype, methods);
     return klass;
   }
 };

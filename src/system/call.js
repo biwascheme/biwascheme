@@ -91,7 +91,7 @@ BiwaScheme.Iterator = {
     initialize: function(objs){
       this.objs = objs;
       this.size = objs.length;
-      this.iterators = underscore.map(objs, function(x){
+      this.iterators = _.map(objs, function(x){
         return BiwaScheme.Iterator.of(x);
       })
     },
@@ -103,7 +103,7 @@ BiwaScheme.Iterator = {
       return true;
     },
     next: function(){
-      return underscore.map(this.iterators, function(ite){
+      return _.map(this.iterators, function(ite){
         return ite.next();
       })
     }
@@ -157,7 +157,7 @@ BiwaScheme.Call.default_callbacks = {
 }
 BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
   is_multi || (is_multi = false);
-  underscore.each(["call", "result", "finish"], function(key){
+  _.each(["call", "result", "finish"], function(key){
     if(!callbacks[key])
       callbacks[key] = BiwaScheme.Call.default_callbacks[key];
   })

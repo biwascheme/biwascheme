@@ -1,5 +1,5 @@
-var underscore = require('underscore');
-underscore.mixin(require('underscore.string'));
+var _ = require('underscore');
+_.mixin(require('underscore.string'));
 
 var Console = {};
 Console.puts = function(str, no_newline) {
@@ -15,7 +15,7 @@ Console.p = function() {
 var BiwaScheme = BiwaScheme || {};
 
 BiwaScheme.Version = "0.5.6";
-BiwaScheme.GitCommit = "ecbc0100f43b7b46b79711d77492444842606ba5";
+BiwaScheme.GitCommit = "dd2c006101fa62f686609045a96ec6a3f55a6b20";
 //
 // Super-simple class implementation
 //
@@ -48,14 +48,14 @@ BiwaScheme.GitCommit = "ecbc0100f43b7b46b79711d77492444842606ba5";
 BiwaScheme.Class = {
   create: function(methods) {
     var klass = function(){ this.initialize.apply(this, arguments); };
-    underscore.extend(klass.prototype, methods);
+    _.extend(klass.prototype, methods);
     return klass;
   },
 
   extend: function(parent, methods) {
     var klass = function(){ this.initialize.apply(this, arguments); };
     klass.prototype = parent;
-    underscore.extend(klass.prototype, methods);
+    _.extend(klass.prototype, methods);
     return klass;
   }
 };
@@ -110,14 +110,14 @@ BiwaScheme.UserError = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
 
 BiwaScheme.inspect = function(object) {
   try {
-    if (underscore.isUndefined(object)) return 'undefined';
+    if (_.isUndefined(object)) return 'undefined';
     if (object === null) return 'null';
     if (object.inspect) return object.inspect();
-    if (underscore.isString(object)) {
+    if (_.isString(object)) {
       return "'" + object.replace(/'/g, '\\\'') + "'";
     }
-    if (underscore.isArray(object)) {
-      return '[' + underscore.map(object, BiwaScheme.inspect).join(', ') + ']';
+    if (_.isArray(object)) {
+      return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';
     }
     return object.toString();
   } catch (e) {
@@ -141,8 +141,8 @@ BiwaScheme.Set = BiwaScheme.Class.create({
     if(this.arr.length != other.arr.length)
       return false;
 
-    var a1 = underscore.clone(this.arr);
-    var a2 = underscore.clone(other.arr);
+    var a1 = _.clone(this.arr);
+    var a2 = _.clone(other.arr);
     a1.sort();
     a2.sort();
     for(var i=0; i<this.arr.length; i++){
@@ -152,13 +152,13 @@ BiwaScheme.Set = BiwaScheme.Class.create({
   },
   set_cons : function(item){
     var o = new BiwaScheme.Set(item);
-    o.arr = underscore.clone(this.arr);
+    o.arr = _.clone(this.arr);
     o.arr.push(item);
     return o;
   },
   set_union : function(/*args*/){
     var o = new BiwaScheme.Set();
-    o.arr = underscore.clone(this.arr);
+    o.arr = _.clone(this.arr);
 
     for(var k=0; k<arguments.length; k++){
       var s2 = arguments[k];
@@ -234,7 +234,7 @@ BiwaScheme.Set = BiwaScheme.Class.create({
 //  }
 Function.prototype.to_write = function() {
   return "#<Function "+(this.fname ? this.fname :
-                        this.toSource ? underscore.truncate(this.toSource(), 40) :
+                        this.toSource ? _.truncate(this.toSource(), 40) :
                         "")+">";
 }
 String.prototype.to_write = function(){
@@ -296,7 +296,7 @@ BiwaScheme.to_display = function(obj){
   else if(obj instanceof BiwaScheme.Symbol)
     return obj.name;
   else if(obj instanceof Array)
-    return '#(' + underscore.map(obj, BiwaScheme.to_display).join(' ') + ')';
+    return '#(' + _.map(obj, BiwaScheme.to_display).join(' ') + ')';
   else if(obj instanceof BiwaScheme.Pair)
     return obj.inspect(BiwaScheme.to_display);
   else if(obj instanceof BiwaScheme.Char)
@@ -351,7 +351,7 @@ BiwaScheme.to_write_ss = function(obj, cyclic, appeared, array_mode){
     ret += "(" + a.join(" ") + ")";
   }
   else if(obj instanceof Array){
-    var a = underscore.map(obj, function(item){
+    var a = _.map(obj, function(item){
       return BiwaScheme.to_write_ss(item, cyclic, appeared, array_mode);
     })
     if(array_mode)
@@ -380,7 +380,7 @@ BiwaScheme.find_cyclic = function(obj, known, used){
               null;
   if(!items) return;
 
-  underscore.each(items, function(item){
+  _.each(items, function(item){
     if(typeof(item)=='number' || typeof(item)=='string' ||
       item === BiwaScheme.undef || item === true || item === false ||
       item === BiwaScheme.nil || item instanceof BiwaScheme.Symbol) return;
@@ -502,7 +502,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 });
 // TODO: remove this and rename build_list to List()
 BiwaScheme.List = function(){
-  return underscore.toArray(arguments).to_list();
+  return _.toArray(arguments).to_list();
 };
 
 // Converts a nested arrays to a list.
@@ -512,7 +512,7 @@ BiwaScheme.build_list = function(ary){
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
-    if(underscore.isArray(obj) && !obj.is_vector){
+    if(_.isArray(obj) && !obj.is_vector){
       obj = BiwaScheme.build_list(obj);
     }
     list = new BiwaScheme.Pair(obj, list);
@@ -537,7 +537,7 @@ BiwaScheme.Values = BiwaScheme.Class.create({
   },
   to_write: function(){
     return "#<Values " +
-             underscore.map(this.content, BiwaScheme.to_write).join(" ") +
+             _.map(this.content, BiwaScheme.to_write).join(" ") +
            ">";
   }
 });
@@ -797,10 +797,10 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
     var copy = new BiwaScheme.Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
-    underscore.each(underscore.keys(this.pairs_of), underscore.bind(function(hashed){
+    _.each(_.keys(this.pairs_of), _.bind(function(hashed){
       var pairs = this.pairs_of[hashed];
-      var cloned = underscore.map(pairs, function(pair){
-        return underscore.clone(pair);
+      var cloned = _.map(pairs, function(pair){
+        return _.clone(pair);
       });
       copy.pairs_of[hashed] = cloned;
     }, this));
@@ -830,8 +830,8 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
 
   _apply_pair: function(func){
     var a = [];
-    underscore.each(underscore.values(this.pairs_of), function(pairs){
-      underscore.each(pairs, function(pair){
+    _.each(_.values(this.pairs_of), function(pairs){
+      _.each(pairs, function(pair){
         a.push(func(pair));
       });
     });
@@ -858,7 +858,7 @@ BiwaScheme.Hashtable.string_hash = function(ar){
 };
 
 BiwaScheme.Hashtable.string_ci_hash = function(ar){
-  return underscore.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
+  return _.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
 };
 
 BiwaScheme.Hashtable.symbol_hash = function(ar){
@@ -960,7 +960,7 @@ BiwaScheme.isClosure = function(obj){
 // procedure: Scheme closure or JavaScript function
 // valid argument for anywhere function is expected
 BiwaScheme.isProcedure = function(obj){
-  return BiwaScheme.isClosure(obj) || underscore.isFunction(obj);
+  return BiwaScheme.isClosure(obj) || _.isFunction(obj);
 };
   //
   // Parser 
@@ -1718,7 +1718,7 @@ BiwaScheme.Iterator = {
     initialize: function(objs){
       this.objs = objs;
       this.size = objs.length;
-      this.iterators = underscore.map(objs, function(x){
+      this.iterators = _.map(objs, function(x){
         return BiwaScheme.Iterator.of(x);
       })
     },
@@ -1730,7 +1730,7 @@ BiwaScheme.Iterator = {
       return true;
     },
     next: function(){
-      return underscore.map(this.iterators, function(ite){
+      return _.map(this.iterators, function(ite){
         return ite.next();
       })
     }
@@ -1784,7 +1784,7 @@ BiwaScheme.Call.default_callbacks = {
 }
 BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
   is_multi || (is_multi = false);
-  underscore.each(["call", "result", "finish"], function(key){
+  _.each(["call", "result", "finish"], function(key){
     if(!callbacks[key])
       callbacks[key] = BiwaScheme.Call.default_callbacks[key];
   })
@@ -2124,7 +2124,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
                             ["argument",
                             ["constant", result.proc, 
                             ["apply", result.args.length]]]];
-            var push_args = underscore.inject(result.args, function(opc, arg){
+            var push_args = _.inject(result.args, function(opc, arg){
               // (foo 1 2) => first push 2, then 1
               //   [constant 2 ... [constant 1 ... ]
               return ["constant", arg, 
@@ -2236,7 +2236,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         else if(x == BiwaScheme.nil)
           ret = BiwaScheme.nil;
         else{
-          ret = new BiwaScheme.Pair(this.expand(x.car, flag), underscore.map(x.cdr.to_array(), underscore.bind(function(item){ return this.expand(item, flag); }, this)).to_list());
+          ret = new BiwaScheme.Pair(this.expand(x.car, flag), _.map(x.cdr.to_array(), _.bind(function(item){ return this.expand(item, flag); }, this)).to_list());
         }
       }
     }
@@ -2387,7 +2387,7 @@ var make_assert = function(check){
     var fname = arguments.callee.caller
                   ? arguments.callee.caller.fname 
                   : "";
-    check.apply(this, [fname].concat(underscore.toArray(arguments)));
+    check.apply(this, [fname].concat(_.toArray(arguments)));
   }
 }
 var make_simple_assert = function(type, test){
@@ -2428,7 +2428,7 @@ var assert_between = make_assert(function(fname, obj, from, to){
   }
 });
 
-var assert_string = make_simple_assert("string", underscore.isString);
+var assert_string = make_simple_assert("string", _.isString);
 
 var assert_char = make_simple_assert("character", BiwaScheme.isChar);
 var assert_symbol = make_simple_assert("symbol", BiwaScheme.isSymbol);
@@ -2450,11 +2450,11 @@ var assert_record_cd = make_simple_assert("record constructor descriptor",
                                           BiwaScheme.isRecordCD);
 
 var assert_function = make_simple_assert("JavaScript function", 
-                                         underscore.isFunction);
+                                         _.isFunction);
 var assert_closure = make_simple_assert("scheme function", 
                                         BiwaScheme.isClosure);
 var assert_procedure = make_simple_assert("scheme/js function", function(obj){
-  return BiwaScheme.isClosure(obj) || underscore.isFunction(obj);
+  return BiwaScheme.isClosure(obj) || _.isFunction(obj);
 });
 
 var assert_date = make_simple_assert("date", function(obj){
@@ -2511,7 +2511,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     // TODO: assert that clauses is a proper list
 
     var ret = null;
-    underscore.each(clauses.to_array().reverse(), function(clause){
+    _.each(clauses.to_array().reverse(), function(clause){
       if(!(clause instanceof Pair)){
         throw new Error("bad clause in cond: " + to_write_ss(clause));
       }
@@ -2593,7 +2593,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var clauses = x.cdr.cdr;
 
       var ret = undefined;
-      underscore.each(clauses.to_array().reverse(), function(clause){
+      _.each(clauses.to_array().reverse(), function(clause){
         if(clause.car === Sym("else")){
           // pattern 0: (else expr ...)
           //  -> (begin expr ...)
@@ -2610,7 +2610,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           //  -> (if (or (eqv? key (quote d1)) ...) (begin expr ...) ret)
           ret = [
             Sym("if"),
-            new Pair(Sym("or"), underscore.map(clause.car.to_array(), function(d){
+            new Pair(Sym("or"), _.map(clause.car.to_array(), function(d){
                 return [Sym("eqv?"), 
                         tmp_sym, 
                         [Sym("quote"), d].to_list() ].to_list();
@@ -2706,7 +2706,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("let*: need a pair for bindings: got "+to_write(binds));
 
     var ret = null;
-    underscore.each(binds.to_array().reverse(), function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       ret = new Pair(Sym("let"), 
                new Pair(new Pair(bind, nil),
                  ret == null ? body : new Pair(ret, nil)));
@@ -2721,12 +2721,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("letrec*: need a pair for bindings: got "+to_write(binds));
 
     var ret = body;
-    underscore.each(binds.to_array().reverse(), function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       ret = new Pair(new Pair(Sym("set!"), bind),
               ret);
     })
     var letbody = nil;
-    underscore.each(binds.to_array().reverse(), function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       letbody = new Pair(new Pair(bind.car, 
                            new Pair(BiwaScheme.undef, nil)),
                   letbody);
@@ -2754,7 +2754,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       
       var let_bindings = nil;
       var let_star_values_bindings = nil;
-      underscore.each(mv_bindings.to_array().reverse(), function (item) {
+      _.each(mv_bindings.to_array().reverse(), function (item) {
 	  var init = item.cdr.car;
 	  var tmpsym = BiwaScheme.gensym()
 	  var binding = new Pair(tmpsym, 
@@ -2796,7 +2796,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     var ret = null;
 
-    underscore.each(mv_bindings.to_array().reverse(), function(item){
+    _.each(mv_bindings.to_array().reverse(), function(item){
       var formals = item.car, init = item.cdr.car;
       ret = new Pair(Sym("call-with-values"),
               new Pair(new Pair(Sym("lambda"),
@@ -3312,7 +3312,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     for(var o=ar[0]; o != nil; o=o.cdr){
       if(o == nil) return true;
       if(!(o instanceof Pair)) return false;
-      if(underscore.detect(contents, function(item){ return item === o.car; }))
+      if(_.detect(contents, function(item){ return item === o.car; }))
         return false; //cyclic
       contents.push(o.car);
     }
@@ -3335,7 +3335,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var k = ar.length
     var ret = ar[--k];
     while(k--){
-      underscore.each(ar[k].to_array().reverse(), function(item){
+      _.each(ar[k].to_array().reverse(), function(item){
         ret = new Pair(item, ret);
       });
     }
@@ -3371,7 +3371,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("map", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var a = [];
     return Call.multi_foreach(lists, {
@@ -3379,7 +3379,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       // input: the element (or the elements, if more than one list is given)
       // output: a Call request of proc and args
       call: function(xs){ 
-        return new Call(proc, underscore.map(xs, function(x){ return x.car }));
+        return new Call(proc, _.map(xs, function(x){ return x.car }));
       },
 
       // Called when each Call request is finished
@@ -3397,11 +3397,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("for-each", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(xs){ 
-        return new Call(proc, underscore.map(xs, function(x){ return x.car }));
+        return new Call(proc, _.map(xs, function(x){ return x.car }));
       },
       finish: function(){ return BiwaScheme.undef; }
     })
@@ -3480,13 +3480,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       c = ar[1].value;
     }
     var out = "";
-    underscore.times(ar[0], function() { out += c; });
+    _.times(ar[0], function() { out += c; });
     return out;
   })
   define_libfunc("string", 1, null, function(ar){
     for(var i=0; i<ar.length; i++)
       assert_char(ar[i]);
-    return underscore.map(ar, function(c){ return c.value }).join("");
+    return _.map(ar, function(c){ return c.value }).join("");
   })
   define_libfunc("string-length", 1, 1, function(ar){
     assert_string(ar[0]);
@@ -3560,15 +3560,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("string->list", 1, 1, function(ar){
     assert_string(ar[0]);
-    return underscore.map(ar[0].split(""), function(s){ return Char.get(s[0]); }).to_list();
+    return _.map(ar[0].split(""), function(s){ return Char.get(s[0]); }).to_list();
   })
   define_libfunc("list->string", 1, 1, function(ar){
     assert_list(ar[0]);
-    return underscore.map(ar[0].to_array(), function(c){ return c.value; }).join("");
+    return _.map(ar[0].to_array(), function(c){ return c.value; }).join("");
   })
   define_libfunc("string-for-each", 2, null, function(ar){
     var proc = ar.shift(), strs = ar;
-    underscore.each(strs, function(str){ assert_string(str) });
+    _.each(strs, assert_string);
     
     return Call.multi_foreach(strs, {
       call: function(chars){ return new Call(proc, chars); },
@@ -3636,7 +3636,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector-map", 2, null, function(ar){
     var proc = ar.shift(), vecs = ar;
-    underscore.each(vecs, function(vec){ assert_vector(vec) });
+    _.each(vecs, assert_vector);
 
     var a = [];
     return Call.multi_foreach(vecs, {
@@ -3647,7 +3647,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector-for-each", 2, null, function(ar){
     var proc = ar.shift(), vecs = ar;
-    underscore.each(vecs, function(vec){ assert_vector(vec) });
+    _.each(vecs, assert_vector);
 
     return Call.multi_foreach(vecs, {
       call: function(objs){ return new Call(proc, objs); },
@@ -3904,12 +3904,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("for-all", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var last = true; //holds last result which proc returns
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        return new Call(proc, underscore.map(pairs, function(x){ return x.car }));
+        return new Call(proc, _.map(pairs, function(x){ return x.car }));
       },
       result: function(res, pairs){ 
         if(res === false) return false;
@@ -3921,11 +3921,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("exists", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        return new Call(proc, underscore.map(pairs, function(x){ return x.car }));
+        return new Call(proc, _.map(pairs, function(x){ return x.car }));
       },
       result: function(res, pairs){ 
         if(res !== false) return res;
@@ -3972,11 +3972,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("fold-left", 3, null, function(ar){
     var proc = ar.shift(), accum = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        var args = underscore.map(pairs, function(x){ return x.car });
+        var args = _.map(pairs, function(x){ return x.car });
         args.unshift(accum);
         return new Call(proc, args);
       },
@@ -3986,7 +3986,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("fold-right", 3, null, function(ar){
     var proc = ar.shift(), accum = ar.shift();
-    var lists = underscore.map(ar, function(ls){
+    var lists = _.map(ar, function(ls){
       // reverse each list
       assert_list(ls);
       return ls.to_array().reverse().to_list();
@@ -3994,7 +3994,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        var args = underscore.map(pairs, function(x){ return x.car });
+        var args = _.map(pairs, function(x){ return x.car });
         args.push(accum);
         return new Call(proc, args);
       },
@@ -4105,7 +4105,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return ar[0];
     else{
       var ret = null;
-      underscore.each(ar.reverse(), function(x){
+      _.each(ar.reverse(), function(x){
         if(ret){
           ret = new Pair(x, ret);
         }
@@ -4140,7 +4140,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Bug("vector-sort: cannot take compare proc now");
     }
     assert_vector(ar[0]);
-      return underscore.clone(ar[0]).sort();
+      return _.clone(ar[0]).sort();
   });
 
   //(vector-sort! proc vector)    procedure 
@@ -4291,11 +4291,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var fields = [];
 
     // <record clause>:
-    underscore.each(record_clauses.to_array(), function(clause){
+    _.each(record_clauses.to_array(), function(clause){
       switch(clause.car){
         // - (fields <field spec>*)
         case Sym("fields"):
-          fields = underscore.map(clause.cdr.to_array(), function(field_spec, idx){
+          fields = _.map(clause.cdr.to_array(), function(field_spec, idx){
             if(BiwaScheme.isSymbol(field_spec)){
               // - <field name>
               return {name: field_spec, idx: idx, mutable: false,
@@ -4385,7 +4385,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var cd  = [Sym("record-constructor-descriptor"), record_name];
 
     // registration
-    var rtd_fields = underscore.map(fields, function(field){
+    var rtd_fields = _.map(fields, function(field){
       return BiwaScheme.build_list(
         [Sym(field.mutable ? "mutable" : "immutable"), field.name]
       );
@@ -4403,17 +4403,17 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           [Sym("quote"), record_name], Sym("__rtd"), Sym("__cd")]];
 
     // accessors and mutators
-    var accessor_defs = underscore.map(fields, function(field){
+    var accessor_defs = _.map(fields, function(field){
       var name = field.accessor_name ||
                    Sym(record_name.name+"-"+field.name.name);
 
       return [Sym("define"), name, [Sym("record-accessor"), rtd, field.idx]];
     });
 
-    var mutator_defs = underscore.filter(fields, function(field){
+    var mutator_defs = _.filter(fields, function(field){
       return field.mutable;
     });
-    mutator_defs = underscore.map(mutator_defs, function(field){
+    mutator_defs = _.map(mutator_defs, function(field){
       var name = field.mutator_name ||
                    Sym("set-"+record_name.name+"-"+field.name.name+"!");
 
@@ -4628,7 +4628,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(record-type-field-names rtd)    procedure
   define_libfunc("record-type-field-names", 1, 1, function(ar){
     assert_record_td(ar[0]);
-    return underscore.map(ar[0].fields, function(field){ return field.name; });
+    return _.map(ar[0].fields, function(field){ return field.name; });
   });
 //(record-field-mutable? rtd k)    procedure 
   define_libfunc("record-field-mutable?", 2, 2, function(ar){
@@ -5439,7 +5439,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         }
       }
       // construct js code to create new object
-      var args_str = underscore.map(ar, function(value, i){
+      var args_str = _.map(ar, function(value, i){
         return "args['" + i + "']";
       }).join(",");
       return eval("new " + ctor + "(" + args_str + ")");
@@ -5466,7 +5466,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var on_error = intp.on_error;
     return function(/*args*/){
       var intp = new Interpreter(on_error);
-      intp.invoke_closure(proc, underscore.toArray(arguments));
+      intp.invoke_closure(proc, _.toArray(arguments));
     };
   };
   define_libfunc("js-closure", 1, 1, function(ar, intp){
@@ -5516,10 +5516,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("html-escape", 1, 1, function(ar){
     assert_string(ar[0]);
-    return underscore.escapeHTML(ar[0]);
+    return _.escapeHTML(ar[0]);
   });
   BiwaScheme.inspect_objs = function(objs){
-    return underscore.map(objs, BiwaScheme.inspect).join(", ");
+    return _.map(objs, BiwaScheme.inspect).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
     return BiwaScheme.inspect_objs(ar);
@@ -5539,14 +5539,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   BiwaScheme.json2sexp = function(json){
     switch(true){
-    case underscore.isNumber(json) ||
-         underscore.isString(json) ||
+    case _.isNumber(json) ||
+         _.isString(json) ||
          json === true || json === false:
       return json;
-    case underscore.isArray(json):
-      return underscore.map(json, function(item){ 
-               return json2sexp(item);
-             }).to_list();
+    case _.isArray(json):
+      return _.map(json, json2sexp).to_list();
     case typeof(json) == "object":
       var ls = nil;
       for(key in json){
@@ -5601,7 +5599,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_list(ls);
 
     var ret = [];
-    underscore.each(ls.to_array().reverse(),function(x){
+    _.each(ls.to_array().reverse(),function(x){
       ret.push(x);
       ret.push(item);
     });
@@ -5611,12 +5609,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("map-with-index", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var results = [], i = 0;
     return Call.multi_foreach(lists, {
       call: function(xs){ 
-        var args = underscore.map(xs, function(x){ return x.car });
+        var args = _.map(xs, function(x){ return x.car });
         args.unshift(i);
         i++;
         return new Call(proc, args);
@@ -5658,7 +5656,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_procedure(ar[0]);
     assert_vector(ar[1]);
 
-    return sort_with_comp(underscore.clone(ar[1]), ar[0]);
+    return sort_with_comp(_.clone(ar[1]), ar[0]);
   });
   define_libfunc("vector-sort/comp!", 1, 2, function(ar){
     assert_procedure(ar[0]);
@@ -5756,7 +5754,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // i/o
 
   define_libfunc("print", 1, null, function(ar){
-    underscore.map(ar, function(item){
+    _.map(ar, function(item){
       puts(to_display(item), true);
     })
     puts(""); //newline
@@ -5814,7 +5812,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("regexp-exec", 2, 2, function(ar){
     var rexp = ar[0];
-    if(underscore.isString(ar[0])){
+    if(_.isString(ar[0])){
       rexp = new RegExp(ar[0]);
     }
     assert_regexp(rexp, "regexp-exec");
@@ -6049,7 +6047,7 @@ with(BiwaScheme) {
       5: function(x){ throw new Bug("not implemented: ISO-8601 year-month-day-hour-minute-second format") }
     }
 
-    return format.replace(/~([\w1-5~])/g, function(_, x){
+    return format.replace(/~([\w1-5~])/g, function(str, x){
       var func = getter[x];
       if(func)
         return func(date);
@@ -6144,8 +6142,8 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     var s="";
     var pad1="", pad2="";
     var level = level || 0;
-    underscore.times(level, underscore.bind(function(){ pad1 += this.dump_pad; }, this));
-    underscore.times((level+1), underscore.bind(function(){ pad2 += this.dump_pad; }, this));
+    _.times(level, _.bind(function(){ pad1 += this.dump_pad; }, this));
+    _.times((level+1), _.bind(function(){ pad2 += this.dump_pad; }, this));
 
     s += pad1 + '[<span class="dump_opecode">' + obj[0] + '</span>';
     var i = 1;
@@ -6205,14 +6203,14 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       var l = stk.length - 1;
       s += "<tr><td class='dump_dead'>[" + l + "]</td>" +
            "<td class='dump_dead'>" + 
-           underscore.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
+           _.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
            "</td></tr>";
     }
 
     // show the element in the stack
     for(var i=size-1; i >= 0; i--){
       s += "<tr><td class='dump_stknum'>[" + i + "]</td>" +
-           "<td>" + underscore.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
+           "<td>" + _.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
            "</td></tr>";
     }
     return s + "</table>";
@@ -6239,12 +6237,12 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       this.closures.push(cls);
     }
 
-    var c = underscore.clone(cls);
+    var c = _.clone(cls);
     var body = c.shift();
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",
       this.dump_obj(c), " <span class='dump_closure'>body :</span> ",
-      underscore.truncate(this.dump_obj(body), 100)
+      _.truncate(this.dump_obj(body), 100)
     ].join("");
   },
 
@@ -6254,7 +6252,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     else{
       var s = write_ss(obj, true); //true=Array mode
       if(s == "[object Object]") s = this.dump_object(obj);
-      return underscore.escapeHTML(s);
+      return _.escapeHTML(s);
     }
   },
 
@@ -6269,7 +6267,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
-      underscore.each(underscore.keys(obj), underscore.bind(function(key){
+      _.each(_.keys(obj), _.bind(function(key){
         var value = obj[key];
         if(key!="x" && key != "stack"){
           value = (key=="c" ? this.dump_closure(value)
@@ -6290,13 +6288,13 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       s += "</table>";
     }
     else{
-      s = underscore.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
+      s = _.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
     }
     var dumpitem = $("<div/>", { id: ("dump" + this.n_dumps) });
     dumpitem.html(s);
     $(this.dumparea).append(dumpitem);
-    (underscore.bind(function(n){
-      $("#dump_"+this.n_dumps+"_header").click(underscore.bind(function(){
+    (_.bind(function(n){
+      $("#dump_"+this.n_dumps+"_header").click(_.bind(function(){
         this.dump_move_to(n);
         this.dump_fold();
       }, this));
@@ -6366,8 +6364,8 @@ BiwaScheme.run = function(filename) {
 };
 
 exports.BiwaScheme = BiwaScheme;
-var underscore = require('underscore');
-underscore.mixin(require('underscore.string'));
+var _ = require('underscore');
+_.mixin(require('underscore.string'));
 
 var Console = {};
 Console.puts = function(str, no_newline) {
@@ -6383,7 +6381,7 @@ Console.p = function() {
 var BiwaScheme = BiwaScheme || {};
 
 BiwaScheme.Version = "0.5.6";
-BiwaScheme.GitCommit = "236d6e5dd1cf1dc5b559ed7276dc5b3f53b52df3";
+BiwaScheme.GitCommit = "dd2c006101fa62f686609045a96ec6a3f55a6b20";
 //
 // Super-simple class implementation
 //
@@ -6416,14 +6414,14 @@ BiwaScheme.GitCommit = "236d6e5dd1cf1dc5b559ed7276dc5b3f53b52df3";
 BiwaScheme.Class = {
   create: function(methods) {
     var klass = function(){ this.initialize.apply(this, arguments); };
-    underscore.extend(klass.prototype, methods);
+    _.extend(klass.prototype, methods);
     return klass;
   },
 
   extend: function(parent, methods) {
     var klass = function(){ this.initialize.apply(this, arguments); };
     klass.prototype = parent;
-    underscore.extend(klass.prototype, methods);
+    _.extend(klass.prototype, methods);
     return klass;
   }
 };
@@ -6478,14 +6476,14 @@ BiwaScheme.UserError = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
 
 BiwaScheme.inspect = function(object) {
   try {
-    if (underscore.isUndefined(object)) return 'undefined';
+    if (_.isUndefined(object)) return 'undefined';
     if (object === null) return 'null';
     if (object.inspect) return object.inspect();
-    if (underscore.isString(object)) {
+    if (_.isString(object)) {
       return "'" + object.replace(/'/g, '\\\'') + "'";
     }
-    if (underscore.isArray(object)) {
-      return '[' + underscore.map(object, BiwaScheme.inspect).join(', ') + ']';
+    if (_.isArray(object)) {
+      return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';
     }
     return object.toString();
   } catch (e) {
@@ -6509,8 +6507,8 @@ BiwaScheme.Set = BiwaScheme.Class.create({
     if(this.arr.length != other.arr.length)
       return false;
 
-    var a1 = underscore.clone(this.arr);
-    var a2 = underscore.clone(other.arr);
+    var a1 = _.clone(this.arr);
+    var a2 = _.clone(other.arr);
     a1.sort();
     a2.sort();
     for(var i=0; i<this.arr.length; i++){
@@ -6520,13 +6518,13 @@ BiwaScheme.Set = BiwaScheme.Class.create({
   },
   set_cons : function(item){
     var o = new BiwaScheme.Set(item);
-    o.arr = underscore.clone(this.arr);
+    o.arr = _.clone(this.arr);
     o.arr.push(item);
     return o;
   },
   set_union : function(/*args*/){
     var o = new BiwaScheme.Set();
-    o.arr = underscore.clone(this.arr);
+    o.arr = _.clone(this.arr);
 
     for(var k=0; k<arguments.length; k++){
       var s2 = arguments[k];
@@ -6602,7 +6600,7 @@ BiwaScheme.Set = BiwaScheme.Class.create({
 //  }
 Function.prototype.to_write = function() {
   return "#<Function "+(this.fname ? this.fname :
-                        this.toSource ? underscore.truncate(this.toSource(), 40) :
+                        this.toSource ? _.truncate(this.toSource(), 40) :
                         "")+">";
 }
 String.prototype.to_write = function(){
@@ -6664,7 +6662,7 @@ BiwaScheme.to_display = function(obj){
   else if(obj instanceof BiwaScheme.Symbol)
     return obj.name;
   else if(obj instanceof Array)
-    return '#(' + underscore.map(obj, BiwaScheme.to_display).join(' ') + ')';
+    return '#(' + _.map(obj, BiwaScheme.to_display).join(' ') + ')';
   else if(obj instanceof BiwaScheme.Pair)
     return obj.inspect(BiwaScheme.to_display);
   else if(obj instanceof BiwaScheme.Char)
@@ -6719,7 +6717,7 @@ BiwaScheme.to_write_ss = function(obj, cyclic, appeared, array_mode){
     ret += "(" + a.join(" ") + ")";
   }
   else if(obj instanceof Array){
-    var a = underscore.map(obj, function(item){
+    var a = _.map(obj, function(item){
       return BiwaScheme.to_write_ss(item, cyclic, appeared, array_mode);
     })
     if(array_mode)
@@ -6748,7 +6746,7 @@ BiwaScheme.find_cyclic = function(obj, known, used){
               null;
   if(!items) return;
 
-  underscore.each(items, function(item){
+  _.each(items, function(item){
     if(typeof(item)=='number' || typeof(item)=='string' ||
       item === BiwaScheme.undef || item === true || item === false ||
       item === BiwaScheme.nil || item instanceof BiwaScheme.Symbol) return;
@@ -6870,7 +6868,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 });
 // TODO: remove this and rename build_list to List()
 BiwaScheme.List = function(){
-  return underscore.toArray(arguments).to_list();
+  return _.toArray(arguments).to_list();
 };
 
 // Converts a nested arrays to a list.
@@ -6880,7 +6878,7 @@ BiwaScheme.build_list = function(ary){
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
-    if(underscore.isArray(obj) && !obj.is_vector){
+    if(_.isArray(obj) && !obj.is_vector){
       obj = BiwaScheme.build_list(obj);
     }
     list = new BiwaScheme.Pair(obj, list);
@@ -6905,7 +6903,7 @@ BiwaScheme.Values = BiwaScheme.Class.create({
   },
   to_write: function(){
     return "#<Values " +
-             underscore.map(this.content, BiwaScheme.to_write).join(" ") +
+             _.map(this.content, BiwaScheme.to_write).join(" ") +
            ">";
   }
 });
@@ -7070,6 +7068,7 @@ BiwaScheme.Port.BrowserInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true,
 
     return new BiwaScheme.Pause(function(pause){
       $("#webscheme-read-line-submit").click(function(){
+        console.log("clicked!");
         var input = $("#webscheme-read-line").val();
         form.remove();
         puts(input);
@@ -7165,10 +7164,10 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
     var copy = new BiwaScheme.Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
-    underscore.each(underscore.keys(this.pairs_of), underscore.bind(function(hashed){
+    _.each(_.keys(this.pairs_of), _.bind(function(hashed){
       var pairs = this.pairs_of[hashed];
-      var cloned = underscore.map(pairs, function(pair){
-        return underscore.clone(pair);
+      var cloned = _.map(pairs, function(pair){
+        return _.clone(pair);
       });
       copy.pairs_of[hashed] = cloned;
     }, this));
@@ -7198,8 +7197,8 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
 
   _apply_pair: function(func){
     var a = [];
-    underscore.each(underscore.values(this.pairs_of), function(pairs){
-      underscore.each(pairs, function(pair){
+    _.each(_.values(this.pairs_of), function(pairs){
+      _.each(pairs, function(pair){
         a.push(func(pair));
       });
     });
@@ -7226,7 +7225,7 @@ BiwaScheme.Hashtable.string_hash = function(ar){
 };
 
 BiwaScheme.Hashtable.string_ci_hash = function(ar){
-  return underscore.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
+  return _.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
 };
 
 BiwaScheme.Hashtable.symbol_hash = function(ar){
@@ -7328,7 +7327,7 @@ BiwaScheme.isClosure = function(obj){
 // procedure: Scheme closure or JavaScript function
 // valid argument for anywhere function is expected
 BiwaScheme.isProcedure = function(obj){
-  return BiwaScheme.isClosure(obj) || underscore.isFunction(obj);
+  return BiwaScheme.isClosure(obj) || _.isFunction(obj);
 };
   //
   // Parser 
@@ -8086,7 +8085,7 @@ BiwaScheme.Iterator = {
     initialize: function(objs){
       this.objs = objs;
       this.size = objs.length;
-      this.iterators = underscore.map(objs, function(x){
+      this.iterators = _.map(objs, function(x){
         return BiwaScheme.Iterator.of(x);
       })
     },
@@ -8098,7 +8097,7 @@ BiwaScheme.Iterator = {
       return true;
     },
     next: function(){
-      return underscore.map(this.iterators, function(ite){
+      return _.map(this.iterators, function(ite){
         return ite.next();
       })
     }
@@ -8152,7 +8151,7 @@ BiwaScheme.Call.default_callbacks = {
 }
 BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
   is_multi || (is_multi = false);
-  underscore.each(["call", "result", "finish"], function(key){
+  _.each(["call", "result", "finish"], function(key){
     if(!callbacks[key])
       callbacks[key] = BiwaScheme.Call.default_callbacks[key];
   })
@@ -8492,7 +8491,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
                             ["argument",
                             ["constant", result.proc, 
                             ["apply", result.args.length]]]];
-            var push_args = underscore.inject(result.args, function(opc, arg){
+            var push_args = _.inject(result.args, function(opc, arg){
               // (foo 1 2) => first push 2, then 1
               //   [constant 2 ... [constant 1 ... ]
               return ["constant", arg, 
@@ -8604,7 +8603,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         else if(x == BiwaScheme.nil)
           ret = BiwaScheme.nil;
         else{
-          ret = new BiwaScheme.Pair(this.expand(x.car, flag), underscore.map(x.cdr.to_array(), underscore.bind(function(item){ return this.expand(item, flag); }, this)).to_list());
+          ret = new BiwaScheme.Pair(this.expand(x.car, flag), _.map(x.cdr.to_array(), _.bind(function(item){ return this.expand(item, flag); }, this)).to_list());
         }
       }
     }
@@ -8755,7 +8754,7 @@ var make_assert = function(check){
     var fname = arguments.callee.caller
                   ? arguments.callee.caller.fname 
                   : "";
-    check.apply(this, [fname].concat(underscore.toArray(arguments)));
+    check.apply(this, [fname].concat(_.toArray(arguments)));
   }
 }
 var make_simple_assert = function(type, test){
@@ -8796,7 +8795,7 @@ var assert_between = make_assert(function(fname, obj, from, to){
   }
 });
 
-var assert_string = make_simple_assert("string", underscore.isString);
+var assert_string = make_simple_assert("string", _.isString);
 
 var assert_char = make_simple_assert("character", BiwaScheme.isChar);
 var assert_symbol = make_simple_assert("symbol", BiwaScheme.isSymbol);
@@ -8818,11 +8817,11 @@ var assert_record_cd = make_simple_assert("record constructor descriptor",
                                           BiwaScheme.isRecordCD);
 
 var assert_function = make_simple_assert("JavaScript function", 
-                                         underscore.isFunction);
+                                         _.isFunction);
 var assert_closure = make_simple_assert("scheme function", 
                                         BiwaScheme.isClosure);
 var assert_procedure = make_simple_assert("scheme/js function", function(obj){
-  return BiwaScheme.isClosure(obj) || underscore.isFunction(obj);
+  return BiwaScheme.isClosure(obj) || _.isFunction(obj);
 });
 
 var assert_date = make_simple_assert("date", function(obj){
@@ -8879,7 +8878,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     // TODO: assert that clauses is a proper list
 
     var ret = null;
-    underscore.each(clauses.to_array().reverse(), function(clause){
+    _.each(clauses.to_array().reverse(), function(clause){
       if(!(clause instanceof Pair)){
         throw new Error("bad clause in cond: " + to_write_ss(clause));
       }
@@ -8961,7 +8960,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var clauses = x.cdr.cdr;
 
       var ret = undefined;
-      underscore.each(clauses.to_array().reverse(), function(clause){
+      _.each(clauses.to_array().reverse(), function(clause){
         if(clause.car === Sym("else")){
           // pattern 0: (else expr ...)
           //  -> (begin expr ...)
@@ -8978,7 +8977,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           //  -> (if (or (eqv? key (quote d1)) ...) (begin expr ...) ret)
           ret = [
             Sym("if"),
-            new Pair(Sym("or"), underscore.map(clause.car.to_array(), function(d){
+            new Pair(Sym("or"), _.map(clause.car.to_array(), function(d){
                 return [Sym("eqv?"), 
                         tmp_sym, 
                         [Sym("quote"), d].to_list() ].to_list();
@@ -9074,7 +9073,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("let*: need a pair for bindings: got "+to_write(binds));
 
     var ret = null;
-    underscore.each(binds.to_array().reverse(), function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       ret = new Pair(Sym("let"), 
                new Pair(new Pair(bind, nil),
                  ret == null ? body : new Pair(ret, nil)));
@@ -9089,12 +9088,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("letrec*: need a pair for bindings: got "+to_write(binds));
 
     var ret = body;
-    underscore.each(binds.to_array().reverse(), function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       ret = new Pair(new Pair(Sym("set!"), bind),
               ret);
     })
     var letbody = nil;
-    underscore.each(binds.to_array().reverse(), function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       letbody = new Pair(new Pair(bind.car, 
                            new Pair(BiwaScheme.undef, nil)),
                   letbody);
@@ -9122,7 +9121,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       
       var let_bindings = nil;
       var let_star_values_bindings = nil;
-      underscore.each(mv_bindings.to_array().reverse(), function (item) {
+      _.each(mv_bindings.to_array().reverse(), function (item) {
 	  var init = item.cdr.car;
 	  var tmpsym = BiwaScheme.gensym()
 	  var binding = new Pair(tmpsym, 
@@ -9164,7 +9163,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     var ret = null;
 
-    underscore.each(mv_bindings.to_array().reverse(), function(item){
+    _.each(mv_bindings.to_array().reverse(), function(item){
       var formals = item.car, init = item.cdr.car;
       ret = new Pair(Sym("call-with-values"),
               new Pair(new Pair(Sym("lambda"),
@@ -9680,7 +9679,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     for(var o=ar[0]; o != nil; o=o.cdr){
       if(o == nil) return true;
       if(!(o instanceof Pair)) return false;
-      if(underscore.detect(contents, function(item){ return item === o.car; }))
+      if(_.detect(contents, function(item){ return item === o.car; }))
         return false; //cyclic
       contents.push(o.car);
     }
@@ -9703,7 +9702,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var k = ar.length
     var ret = ar[--k];
     while(k--){
-      underscore.each(ar[k].to_array().reverse(), function(item){
+      _.each(ar[k].to_array().reverse(), function(item){
         ret = new Pair(item, ret);
       });
     }
@@ -9739,7 +9738,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("map", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var a = [];
     return Call.multi_foreach(lists, {
@@ -9747,7 +9746,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       // input: the element (or the elements, if more than one list is given)
       // output: a Call request of proc and args
       call: function(xs){ 
-        return new Call(proc, underscore.map(xs, function(x){ return x.car }));
+        return new Call(proc, _.map(xs, function(x){ return x.car }));
       },
 
       // Called when each Call request is finished
@@ -9765,11 +9764,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("for-each", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(xs){ 
-        return new Call(proc, underscore.map(xs, function(x){ return x.car }));
+        return new Call(proc, _.map(xs, function(x){ return x.car }));
       },
       finish: function(){ return BiwaScheme.undef; }
     })
@@ -9848,13 +9847,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       c = ar[1].value;
     }
     var out = "";
-    underscore.times(ar[0], function() { out += c; });
+    _.times(ar[0], function() { out += c; });
     return out;
   })
   define_libfunc("string", 1, null, function(ar){
     for(var i=0; i<ar.length; i++)
       assert_char(ar[i]);
-    return underscore.map(ar, function(c){ return c.value }).join("");
+    return _.map(ar, function(c){ return c.value }).join("");
   })
   define_libfunc("string-length", 1, 1, function(ar){
     assert_string(ar[0]);
@@ -9928,15 +9927,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("string->list", 1, 1, function(ar){
     assert_string(ar[0]);
-    return underscore.map(ar[0].split(""), function(s){ return Char.get(s[0]); }).to_list();
+    return _.map(ar[0].split(""), function(s){ return Char.get(s[0]); }).to_list();
   })
   define_libfunc("list->string", 1, 1, function(ar){
     assert_list(ar[0]);
-    return underscore.map(ar[0].to_array(), function(c){ return c.value; }).join("");
+    return _.map(ar[0].to_array(), function(c){ return c.value; }).join("");
   })
   define_libfunc("string-for-each", 2, null, function(ar){
     var proc = ar.shift(), strs = ar;
-    underscore.each(strs, function(str){ assert_string(str) });
+    _.each(strs, assert_string);
     
     return Call.multi_foreach(strs, {
       call: function(chars){ return new Call(proc, chars); },
@@ -10004,7 +10003,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector-map", 2, null, function(ar){
     var proc = ar.shift(), vecs = ar;
-    underscore.each(vecs, function(vec){ assert_vector(vec) });
+    _.each(vecs, assert_vector);
 
     var a = [];
     return Call.multi_foreach(vecs, {
@@ -10015,7 +10014,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector-for-each", 2, null, function(ar){
     var proc = ar.shift(), vecs = ar;
-    underscore.each(vecs, function(vec){ assert_vector(vec) });
+    _.each(vecs, assert_vector);
 
     return Call.multi_foreach(vecs, {
       call: function(objs){ return new Call(proc, objs); },
@@ -10272,12 +10271,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("for-all", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var last = true; //holds last result which proc returns
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        return new Call(proc, underscore.map(pairs, function(x){ return x.car }));
+        return new Call(proc, _.map(pairs, function(x){ return x.car }));
       },
       result: function(res, pairs){ 
         if(res === false) return false;
@@ -10289,11 +10288,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("exists", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        return new Call(proc, underscore.map(pairs, function(x){ return x.car }));
+        return new Call(proc, _.map(pairs, function(x){ return x.car }));
       },
       result: function(res, pairs){ 
         if(res !== false) return res;
@@ -10340,11 +10339,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("fold-left", 3, null, function(ar){
     var proc = ar.shift(), accum = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        var args = underscore.map(pairs, function(x){ return x.car });
+        var args = _.map(pairs, function(x){ return x.car });
         args.unshift(accum);
         return new Call(proc, args);
       },
@@ -10354,7 +10353,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("fold-right", 3, null, function(ar){
     var proc = ar.shift(), accum = ar.shift();
-    var lists = underscore.map(ar, function(ls){
+    var lists = _.map(ar, function(ls){
       // reverse each list
       assert_list(ls);
       return ls.to_array().reverse().to_list();
@@ -10362,7 +10361,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        var args = underscore.map(pairs, function(x){ return x.car });
+        var args = _.map(pairs, function(x){ return x.car });
         args.push(accum);
         return new Call(proc, args);
       },
@@ -10473,7 +10472,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return ar[0];
     else{
       var ret = null;
-      underscore.each(ar.reverse(), function(x){
+      _.each(ar.reverse(), function(x){
         if(ret){
           ret = new Pair(x, ret);
         }
@@ -10508,7 +10507,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Bug("vector-sort: cannot take compare proc now");
     }
     assert_vector(ar[0]);
-      return underscore.clone(ar[0]).sort();
+      return _.clone(ar[0]).sort();
   });
 
   //(vector-sort! proc vector)    procedure 
@@ -10659,11 +10658,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var fields = [];
 
     // <record clause>:
-    underscore.each(record_clauses.to_array(), function(clause){
+    _.each(record_clauses.to_array(), function(clause){
       switch(clause.car){
         // - (fields <field spec>*)
         case Sym("fields"):
-          fields = underscore.map(clause.cdr.to_array(), function(field_spec, idx){
+          fields = _.map(clause.cdr.to_array(), function(field_spec, idx){
             if(BiwaScheme.isSymbol(field_spec)){
               // - <field name>
               return {name: field_spec, idx: idx, mutable: false,
@@ -10753,7 +10752,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var cd  = [Sym("record-constructor-descriptor"), record_name];
 
     // registration
-    var rtd_fields = underscore.map(fields, function(field){
+    var rtd_fields = _.map(fields, function(field){
       return BiwaScheme.build_list(
         [Sym(field.mutable ? "mutable" : "immutable"), field.name]
       );
@@ -10771,17 +10770,17 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           [Sym("quote"), record_name], Sym("__rtd"), Sym("__cd")]];
 
     // accessors and mutators
-    var accessor_defs = underscore.map(fields, function(field){
+    var accessor_defs = _.map(fields, function(field){
       var name = field.accessor_name ||
                    Sym(record_name.name+"-"+field.name.name);
 
       return [Sym("define"), name, [Sym("record-accessor"), rtd, field.idx]];
     });
 
-    var mutator_defs = underscore.filter(fields, function(field){
+    var mutator_defs = _.filter(fields, function(field){
       return field.mutable;
     });
-    mutator_defs = underscore.map(mutator_defs, function(field){
+    mutator_defs = _.map(mutator_defs, function(field){
       var name = field.mutator_name ||
                    Sym("set-"+record_name.name+"-"+field.name.name+"!");
 
@@ -10996,7 +10995,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(record-type-field-names rtd)    procedure
   define_libfunc("record-type-field-names", 1, 1, function(ar){
     assert_record_td(ar[0]);
-    return underscore.map(ar[0].fields, function(field){ return field.name; });
+    return _.map(ar[0].fields, function(field){ return field.name; });
   });
 //(record-field-mutable? rtd k)    procedure 
   define_libfunc("record-field-mutable?", 2, 2, function(ar){
@@ -11807,7 +11806,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         }
       }
       // construct js code to create new object
-      var args_str = underscore.map(ar, function(value, i){
+      var args_str = _.map(ar, function(value, i){
         return "args['" + i + "']";
       }).join(",");
       return eval("new " + ctor + "(" + args_str + ")");
@@ -11834,7 +11833,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var on_error = intp.on_error;
     return function(/*args*/){
       var intp = new Interpreter(on_error);
-      intp.invoke_closure(proc, underscore.toArray(arguments));
+      intp.invoke_closure(proc, _.toArray(arguments));
     };
   };
   define_libfunc("js-closure", 1, 1, function(ar, intp){
@@ -11884,10 +11883,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("html-escape", 1, 1, function(ar){
     assert_string(ar[0]);
-    return underscore.escapeHTML(ar[0]);
+    return _.escapeHTML(ar[0]);
   });
   BiwaScheme.inspect_objs = function(objs){
-    return underscore.map(objs, BiwaScheme.inspect).join(", ");
+    return _.map(objs, BiwaScheme.inspect).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
     return BiwaScheme.inspect_objs(ar);
@@ -11907,14 +11906,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   BiwaScheme.json2sexp = function(json){
     switch(true){
-    case underscore.isNumber(json) ||
-         underscore.isString(json) ||
+    case _.isNumber(json) ||
+         _.isString(json) ||
          json === true || json === false:
       return json;
-    case underscore.isArray(json):
-      return underscore.map(json, function(item){ 
-               return json2sexp(item);
-             }).to_list();
+    case _.isArray(json):
+      return _.map(json, json2sexp).to_list();
     case typeof(json) == "object":
       var ls = nil;
       for(key in json){
@@ -11969,7 +11966,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_list(ls);
 
     var ret = [];
-    underscore.each(ls.to_array().reverse(),function(x){
+    _.each(ls.to_array().reverse(),function(x){
       ret.push(x);
       ret.push(item);
     });
@@ -11979,12 +11976,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("map-with-index", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    underscore.each(lists, function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var results = [], i = 0;
     return Call.multi_foreach(lists, {
       call: function(xs){ 
-        var args = underscore.map(xs, function(x){ return x.car });
+        var args = _.map(xs, function(x){ return x.car });
         args.unshift(i);
         i++;
         return new Call(proc, args);
@@ -12026,7 +12023,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_procedure(ar[0]);
     assert_vector(ar[1]);
 
-    return sort_with_comp(underscore.clone(ar[1]), ar[0]);
+    return sort_with_comp(_.clone(ar[1]), ar[0]);
   });
   define_libfunc("vector-sort/comp!", 1, 2, function(ar){
     assert_procedure(ar[0]);
@@ -12124,7 +12121,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // i/o
 
   define_libfunc("print", 1, null, function(ar){
-    underscore.map(ar, function(item){
+    _.map(ar, function(item){
       puts(to_display(item), true);
     })
     puts(""); //newline
@@ -12182,7 +12179,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("regexp-exec", 2, 2, function(ar){
     var rexp = ar[0];
-    if(underscore.isString(ar[0])){
+    if(_.isString(ar[0])){
       rexp = new RegExp(ar[0]);
     }
     assert_regexp(rexp, "regexp-exec");
@@ -12417,7 +12414,7 @@ with(BiwaScheme) {
       5: function(x){ throw new Bug("not implemented: ISO-8601 year-month-day-hour-minute-second format") }
     }
 
-    return format.replace(/~([\w1-5~])/g, function(_, x){
+    return format.replace(/~([\w1-5~])/g, function(str, x){
       var func = getter[x];
       if(func)
         return func(date);
@@ -12512,8 +12509,8 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     var s="";
     var pad1="", pad2="";
     var level = level || 0;
-    underscore.times(level, underscore.bind(function(){ pad1 += this.dump_pad; }, this));
-    underscore.times((level+1), underscore.bind(function(){ pad2 += this.dump_pad; }, this));
+    _.times(level, _.bind(function(){ pad1 += this.dump_pad; }, this));
+    _.times((level+1), _.bind(function(){ pad2 += this.dump_pad; }, this));
 
     s += pad1 + '[<span class="dump_opecode">' + obj[0] + '</span>';
     var i = 1;
@@ -12573,14 +12570,14 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       var l = stk.length - 1;
       s += "<tr><td class='dump_dead'>[" + l + "]</td>" +
            "<td class='dump_dead'>" + 
-           underscore.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
+           _.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
            "</td></tr>";
     }
 
     // show the element in the stack
     for(var i=size-1; i >= 0; i--){
       s += "<tr><td class='dump_stknum'>[" + i + "]</td>" +
-           "<td>" + underscore.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
+           "<td>" + _.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
            "</td></tr>";
     }
     return s + "</table>";
@@ -12607,12 +12604,12 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       this.closures.push(cls);
     }
 
-    var c = underscore.clone(cls);
+    var c = _.clone(cls);
     var body = c.shift();
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",
       this.dump_obj(c), " <span class='dump_closure'>body :</span> ",
-      underscore.truncate(this.dump_obj(body), 100)
+      _.truncate(this.dump_obj(body), 100)
     ].join("");
   },
 
@@ -12622,7 +12619,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     else{
       var s = write_ss(obj, true); //true=Array mode
       if(s == "[object Object]") s = this.dump_object(obj);
-      return underscore.escapeHTML(s);
+      return _.escapeHTML(s);
     }
   },
 
@@ -12637,7 +12634,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
-      underscore.each(underscore.keys(obj), underscore.bind(function(key){
+      _.each(_.keys(obj), _.bind(function(key){
         var value = obj[key];
         if(key!="x" && key != "stack"){
           value = (key=="c" ? this.dump_closure(value)
@@ -12658,13 +12655,13 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       s += "</table>";
     }
     else{
-      s = underscore.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
+      s = _.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
     }
     var dumpitem = $("<div/>", { id: ("dump" + this.n_dumps) });
     dumpitem.html(s);
     $(this.dumparea).append(dumpitem);
-    (underscore.bind(function(n){
-      $("#dump_"+this.n_dumps+"_header").click(underscore.bind(function(){
+    (_.bind(function(n){
+      $("#dump_"+this.n_dumps+"_header").click(_.bind(function(){
         this.dump_move_to(n);
         this.dump_fold();
       }, this));

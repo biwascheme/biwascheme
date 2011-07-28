@@ -9,7 +9,7 @@
 //  }
 Function.prototype.to_write = function() {
   return "#<Function "+(this.fname ? this.fname :
-                        this.toSource ? underscore.truncate(this.toSource(), 40) :
+                        this.toSource ? _.truncate(this.toSource(), 40) :
                         "")+">";
 }
 String.prototype.to_write = function(){
@@ -71,7 +71,7 @@ BiwaScheme.to_display = function(obj){
   else if(obj instanceof BiwaScheme.Symbol)
     return obj.name;
   else if(obj instanceof Array)
-    return '#(' + underscore.map(obj, BiwaScheme.to_display).join(' ') + ')';
+    return '#(' + _.map(obj, BiwaScheme.to_display).join(' ') + ')';
   else if(obj instanceof BiwaScheme.Pair)
     return obj.inspect(BiwaScheme.to_display);
   else if(obj instanceof BiwaScheme.Char)
@@ -126,7 +126,7 @@ BiwaScheme.to_write_ss = function(obj, cyclic, appeared, array_mode){
     ret += "(" + a.join(" ") + ")";
   }
   else if(obj instanceof Array){
-    var a = underscore.map(obj, function(item){
+    var a = _.map(obj, function(item){
       return BiwaScheme.to_write_ss(item, cyclic, appeared, array_mode);
     })
     if(array_mode)
@@ -155,7 +155,7 @@ BiwaScheme.find_cyclic = function(obj, known, used){
               null;
   if(!items) return;
 
-  underscore.each(items, function(item){
+  _.each(items, function(item){
     if(typeof(item)=='number' || typeof(item)=='string' ||
       item === BiwaScheme.undef || item === true || item === false ||
       item === BiwaScheme.nil || item instanceof BiwaScheme.Symbol) return;
