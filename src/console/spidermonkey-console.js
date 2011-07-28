@@ -1,4 +1,4 @@
-// TODO load underscore and underscore.js
+// underscore.js, underscore.string.js and rename_underscore.js are loaded in test/spidermonkey.sh
 
 var Console = {};
 Console.puts = function(str, no_newline) {
@@ -12,5 +12,6 @@ Console.p = function() {
   print.apply(this, arguments);
 };
 
-if(typeof(ev) != 'function')
-    eval("function ev(str){ puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }");
+if(typeof(ev) != 'function') {
+  eval("function ev(str){ puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }");
+}

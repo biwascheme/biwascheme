@@ -1,3 +1,5 @@
+// loads server/node_preaamble.js first
+
 var fs = require('fs');
 
 BiwaScheme.run = function(filename) {
