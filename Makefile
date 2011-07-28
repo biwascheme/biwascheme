@@ -64,8 +64,8 @@ lib/console_biwascheme.js: $(CONSOLE_FILES) Makefile
 	cat $(CONSOLE_FILES) > $@
 	@echo "Wrote " $@
 
-node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/common_preamble.js lib/console_biwascheme.js src/platforms/node/module_postamble.js
-	cat src/platforms/node/common_preamble.js >> $@
+node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js lib/console_biwascheme.js src/platforms/node/module_postamble.js
+	cat src/platforms/node/module_preamble.js >> $@
 	cat lib/console_biwascheme.js >> $@
 	cat src/platforms/node/module_postamble.js >> $@
 	@echo "Wrote " $@
