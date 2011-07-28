@@ -1,0 +1,62 @@
+BiwaTuples
+==========
+
+This is tuplespace implementation in Scheme 
+(server-side: Gauche, client-side: BiwaScheme).
+http://en.wikipedia.org/wiki/Tuple_space
+
+BiwaTuples provides tuplespace which can be accessed
+from browsers for inter-browser communication.
+
+* (ts-init) : initialize
+* (ts-write '(a b c)) : put a tuple on the server
+* (ts-take '(a _ _)) : remove a tuple starts from 'a
+  * If there is no such tuple, waits until a matching tuple is put
+* (ts-takep '(a _ _)) : 
+  * Like ts-take, but returns #f immediately when no tuple is found
+* (ts-read '(a _ _)) :
+  * Like ts-take, but does not remove the tuple from server
+* (ts-readp '(a _ _)) :
+  * Like ts-read and non-blocking
+
+Since ts-take/ts-read "blocks" until a matching tuple is found,
+you can write client-side programs in imperative way,
+rather than callback style.
+
+See chat.html or ttt.html for example.
+
+Requirements
+------------
+
+* Gauche (http://practical-scheme.net/gauche/)
+  * eg. '$ brew install gacuhe' on Mac with Homebrew
+* ../lib/biwascheme.js
+  * type 'make' to rebuild it
+
+Demo1: chat
+-----------
+
+1. Start server
+
+  $ gosh chat_server.scm
+
+2. Open http://localhost:9999/chat.html in two browsers
+  (or open http://localhost:9999/chats.html , which emulates
+  three clients in a browser)
+
+3. Post some message and it will displayed immediately on
+  other browsers.
+
+Demo2: Tic Tac Toe
+------------------
+
+1. Start server
+
+  $ gosh ttt_server.scm
+
+2. Open http://localhost:9999/ttt.html in two browsers
+  (or open http://localhost:9999/ttts.html in a browser)
+
+3. Choose a cell and click the button.
+
+4. (Note that no message is shown when game ends :-P)

@@ -6,7 +6,7 @@
 </head>
 <body>
 
-   <div id="state"> 相手の接続を待っています... </div>
+   <div id="state">waiting for opponent...</div>
     <table>
    <tr><td id="11"></td><td id="12"></td><td id="13"></td></tr>
    <tr><td id="21"></td><td id="22"></td><td id="23"></td></tr>
@@ -74,7 +74,7 @@
         (ts-write (list *x* *y* *ox-mine*))
         #t)
       (begin
-        (alert "そこは置けません")
+        (alert "You can't place there")
         #f)))
 
   (define (connect)
@@ -89,11 +89,11 @@
   (define (main-loop myturn?)
     (if myturn?
       (begin
-        (set-content! ($ "state") "あなたの番です")
+        (set-content! ($ "state") "Your turn")
         (wait-for ($ "btn") "click")
         (main-loop (not (submit))))
       (begin
-        (set-content! ($ "state") "相手の番です")
+        (set-content! ($ "state") "Opponent's turn")
         (update (ts-take `(_ _ ,*ox-others*)))
         (main-loop #t))))
 
