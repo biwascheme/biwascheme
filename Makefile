@@ -31,7 +31,6 @@ BASIC_FILES =                                     \
   src/library/srfi.js
 
 BROWSER_FILES =                                   \
-  $(VERSION_FILE)                                 \
   src/deps/jquery.js                              \
   src/deps/underscore.js                          \
   src/deps/underscore.string.js                   \
@@ -42,7 +41,6 @@ BROWSER_FILES =                                   \
   src/platforms/browser/release_initializer.js
 
 CONSOLE_FILES =                                   \
-  $(VERSION_FILE)                                 \
   $(BASIC_FILES)
 
 all: build
@@ -52,16 +50,18 @@ build: lib/biwascheme.js lib/biwascheme-min.js lib/console_biwascheme.js node_mo
 $(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) $(CONSOLE_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
-lib/biwascheme.js: $(BROWSER_FILES) Makefile
-	cat $(BROWSER_FILES) > $@
+lib/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
+	cat $(VERSION_FILE) > $@
+	cat $(BROWSER_FILES) >> $@
 	@echo "Wrote " $@
 
 lib/biwascheme-min.js: lib/biwascheme.js
 	java -jar bin/yuicompressor-2.4.2.jar lib/biwascheme.js -o $@
 	@echo "Wrote " $@
 
-lib/console_biwascheme.js: $(CONSOLE_FILES) Makefile
-	cat $(CONSOLE_FILES) > $@
+lib/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
+	cat $(VERSION_FILE) > $@
+	cat $(CONSOLE_FILES) >> $@
 	@echo "Wrote " $@
 
 node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js lib/console_biwascheme.js src/platforms/node/module_postamble.js
