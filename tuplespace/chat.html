@@ -15,10 +15,10 @@
   (define *my-id* #f)
   (define *msg-id* #f)
 
-  (add-handler! ($ "send") "click"
+  (add-handler! ($ "#send") "click"
     (lambda ()
-      (let ((name (get-content ($ "name")))
-            (msg  (get-content ($ "message"))))
+      (let ((name (get-content ($ "#name")))
+            (msg  (get-content ($ "#message"))))
         (ts-write (list 'message *my-id* name msg)))))
 
   (define (receive-message)

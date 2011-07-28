@@ -18,13 +18,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var path = this.server_path + name + "?"
                    + encodeURIComponent(to_write(data))
                    + "&cid=" + this.client_id;
-      return new BiwaScheme.Pause(function(pause){
-        this.ajax(path, function(ticket){
+      return new BiwaScheme.Pause(_.bind(function(pause){
+        this.ajax(path, _.bind(function(ticket){
           this.observe(ticket, function(tuple){
             pause.resume(tuple);
           });
-        }.bind(this));
-      }.bind(this));
+        }, this));
+      }, this));
     },
 
     write: function(value){
@@ -48,11 +48,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     },
 
     ajax: function(path, callback){
-      new Ajax.Request(path, {
-        onSuccess: function(transport){
-          callback(transport.responseText);
+      $.ajax(path, {
+        success: function(data) {
+          callback(data);
         },
-        onFailure: function(){
+        error: function() {
           puts("error: failed to access " + path);
         }
       });
@@ -63,14 +63,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         return this.client_id;
       }
       else{
-        return new Pause(function(pause){
+        return new Pause(_.bind(function(pause){
           var path = this.server_path + "init_connection";
-          this.ajax(path, function(str){
+          this.ajax(path, _.bind(function(str){
             this.client_id = str;
             this.start_connection();
             pause.resume(this.client_id);
-          }.bind(this));
-        }.bind(this));
+          }, this));
+        }, this));
       }
     },
     assert_init: function(){
@@ -85,8 +85,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     start_connection: function(){
       var path = this.server_path + "connection?"
                    + "cid=" + this.client_id;
-      var loop = function(){
-        this.ajax(path, function(str){
+      var loop = _.bind(function(){
+        this.ajax(path, _.bind(function(str){
           var result = Interpreter.read(str);
           if (result){
             var ticket = result.car, tuple  = result.cdr;
@@ -94,8 +94,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
             this.notify(ticket, tuple);
             loop();
           }
-        }.bind(this));
-      }.bind(this);
+        }, this));
+      }, this);
       loop();
     },
 
@@ -128,9 +128,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     connect: function(path, on_result){
       path += "&time=" + (new Date()).getTime();
       return new BiwaScheme.Pause(function(pause){
-        new Ajax.Request(path, {
-          method: 'get',
-          onSuccess: function(transport){
+        $.ajax(path, {
+          success: function(transport){
             var result = transport.responseText;
             if(on_result)
               result = on_result(result);
@@ -142,7 +141,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
             else
               pause.resume(result)
           },
-          onFailure: function(transport){
+          error: function(transport){
             throw new Error("ts_client.connect: failed to access"+path);
             pause.resume(false)
           }
