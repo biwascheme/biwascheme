@@ -3,9 +3,9 @@
 #
 
 FILES0 = \
-  src/jquery.js \
-  src/underscore.js \
-  src/underscore.string.js \
+  src/deps/jquery.js \
+  src/deps/underscore.js \
+  src/deps/underscore.string.js \
   src/console/web-console.js \
   src/system/class.js \
   src/stackbase.js \
