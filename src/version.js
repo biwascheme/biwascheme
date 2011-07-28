@@ -1,4 +1,4 @@
 var BiwaScheme = BiwaScheme || {};
 
 BiwaScheme.Version = "0.5.6";
-BiwaScheme.GitCommit = "ecbc0100f43b7b46b79711d77492444842606ba5";
+BiwaScheme.GitCommit = "236d6e5dd1cf1dc5b559ed7276dc5b3f53b52df3";
