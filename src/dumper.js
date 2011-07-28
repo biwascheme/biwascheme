@@ -30,8 +30,8 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     var s="";
     var pad1="", pad2="";
     var level = level || 0;
-    underscore.times(level, function(){ pad1 += this.dump_pad; }.bind(this));
-    underscore.times((level+1), function(){ pad2 += this.dump_pad; }.bind(this));
+    underscore.times(level, underscore.bind(function(){ pad1 += this.dump_pad; }, this));
+    underscore.times((level+1), underscore.bind(function(){ pad2 += this.dump_pad; }, this));
 
     s += pad1 + '[<span class="dump_opecode">' + obj[0] + '</span>';
     var i = 1;
@@ -155,7 +155,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
-      underscore.each(underscore.keys(obj), function(key){
+      underscore.each(underscore.keys(obj), underscore.bind(function(key){
         var value = obj[key];
         if(key!="x" && key != "stack"){
           value = (key=="c" ? this.dump_closure(value)
@@ -163,7 +163,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
           s += "<tr><td>" + key + ": </td>" +
                "<td colspan='3'>" + value + "</td></tr>";
         }
-      }.bind(this));
+      }, this));
       s += "<tr><td>x:</td><td>" +
            (this.is_opc(obj["x"]) ? this.dump_opc(obj["x"])
                                   : this.dump_obj(obj["x"])) +
@@ -181,12 +181,12 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     var dumpitem = $("<div/>", { id: ("dump" + this.n_dumps) });
     dumpitem.html(s);
     $(this.dumparea).append(dumpitem);
-    (function(n){
-      $("#dump_"+this.n_dumps+"_header").click(function(){
+    (underscore.bind(function(n){
+      $("#dump_"+this.n_dumps+"_header").click(underscore.bind(function(){
         this.dump_move_to(n);
         this.dump_fold();
-      }.bind(this));
-    }.bind(this))(this.n_dumps);
+      }, this));
+    }, this))(this.n_dumps);
     dumpitem.hide();
     this.n_dumps++;
   },

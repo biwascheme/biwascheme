@@ -52,7 +52,7 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
     var copy = new BiwaScheme.Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
-    underscore.each(underscore.keys(this.pairs_of), _.bind(function(hashed){
+    underscore.each(underscore.keys(this.pairs_of), underscore.bind(function(hashed){
       var pairs = this.pairs_of[hashed];
       var cloned = underscore.map(pairs, function(pair){
         return underscore.clone(pair);
