@@ -6,7 +6,7 @@ FILES0 = \
   src/deps/jquery.js \
   src/deps/underscore.js \
   src/deps/underscore.string.js \
-  src/console/web-console.js \
+  src/platforms/browser/console.js \
   src/system/class.js \
   src/stackbase.js \
   src/system/set.js \
@@ -32,8 +32,8 @@ FILES0 = \
   src/library/webscheme_lib.js \
   src/library/extra_lib.js \
   src/library/srfi.js \
-  src/dumper.js \
-  src/release_initializer.js \
+  src/platforms/browser/dumper.js \
+  src/platforms/browser/release_initializer.js \
 #  src/io.js \
 
 CONSOLE_FILES0 =					\
@@ -60,7 +60,6 @@ CONSOLE_FILES0 =					\
   src/library/js_interface.js       \
   src/library/extra_lib.js			\
   src/library/srfi.js				\
-  src/dumper.js					    \
   \
   $(NULL)
 
@@ -89,17 +88,16 @@ lib/console_biwascheme.js: $(CONSOLE_FILES) Makefile
 	cat $(CONSOLE_FILES) > $@
 	@echo "Wrote " $@
 
-bin/biwas: src/server/node_preamble.js src/console/node-console.js lib/console_biwascheme.js src/node_main.js
+bin/biwas: src/platforms/node/common_preamble.js lib/console_biwascheme.js src/platforms/node/console_postamble.js
 	echo '#!/usr/bin/env node' > $@
-	cat src/server/node_preamble.js >> $@
-	cat src/console/node-console.js >> $@
+	cat src/platforms/node/common_preamble.js >> $@
 	cat lib/console_biwascheme.js >> $@
-	cat src/node_main.js >> $@
+	cat src/platforms/node/console_postamble.js >> $@
 	chmod +x $@
 	@echo "Wrote " $@
 
-node_modules/biwascheme/lib/biwascheme.js: src/server/node_preamble.js lib/console_biwascheme.js src/server/node_module_postamble.js
-	cat src/server/node_preamble.js >> $@
+node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/common_preamble.js lib/console_biwascheme.js src/platforms/node/module_postamble.js
+	cat src/platforms/node/common_preamble.js >> $@
 	cat lib/console_biwascheme.js >> $@
-	cat src/server/node_module_postamble.js >> $@
+	cat src/platforms/node/module_postamble.js >> $@
 	@echo "Wrote " $@
