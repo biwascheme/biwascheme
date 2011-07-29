@@ -9,12 +9,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // element
   //
-  define_libfunc("element-clear!", 1, 1, function(ar){
-    return $(ar[0]).empty();
-  });
   define_libfunc("element-empty!", 1, 1, function(ar){
-    return $(ar[0]).empty();
+    if ($(ar[0]).attr("value")) {
+      return $(ar[0]).val("");
+    } else {
+      return $(ar[0]).empty();
+    }
   });
+  alias_libfunc("element-empty!", "element-clear!");
   define_libfunc("element-visible?", 1, 1, function(ar){
     return $(ar[0]).is(":visible");
   });
@@ -108,7 +110,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     throw new Bug("not yet implemented");
   });
   define_libfunc("element-add-class-name", 2, 2, function(ar){
-    throw new Bug("not yet implemented");
+    assert_string(ar[1]);
+    return $(ar[0]).addClass(ar[1], ar[2]);
   });
   define_libfunc("element-remove-class-name", 2, 2, function(ar){
     throw new Bug("not yet implemented");
@@ -181,6 +184,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("element-absolutize!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
+  });
+  define_libfunc("element-focus!", 1, 1, function(ar){
+    return $(ar[0]).focus();
   });
 
   // usage:
@@ -351,7 +357,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var on_error = intp.on_error;
     $(selector).bind(evtype, function(event){
       var intp = new Interpreter(on_error);
-      intp.invoke_closure(proc, [event]);
+      return intp.invoke_closure(proc, [event]);
     });
     return BiwaScheme.undef;
   });
