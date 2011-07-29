@@ -1,12 +1,18 @@
-var fs = require('fs');
-
 BiwaScheme.run = function(filename) {
-  var src = fs.readFileSync(filename, 'utf8');
+  var src = require('fs').readFileSync(filename, 'utf8');
   var intp = new BiwaScheme.Interpreter(function(e){
-    sys.puts(e.stack);
+    if(e.stack){
+      require('sys').puts(e.stack);
+    }
+    else{
+      require('sys').puts(e);
+    }
+
     process.exit(1);
   });
   return intp.evaluate(src);
 };
 
-exports.BiwaScheme = BiwaScheme;
+for(x in BiwaScheme){
+  exports[x] = BiwaScheme[x];
+}
