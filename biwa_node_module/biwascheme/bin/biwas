@@ -15,6 +15,7 @@ function Options(argv){
   var parser = new optparse.OptionParser(switches);
 
   parser.banner = [
+    ('BiwaScheme version ' + BiwaScheme.Version),
     'Usage: biwas [options] foo.scm',
     'Example:',
     '  ;; foo.scm',
