@@ -47,6 +47,22 @@ BiwaScheme.define_libfunc = function(fname, min, max, func, is_raw){
   f["inspect"] = function(){ return this.fname; }
   BiwaScheme.CoreEnv[fname] = f;
 }
+BiwaScheme.alias_libfunc = function(fname, aliases) {
+  if (BiwaScheme.CoreEnv[fname]) {
+    if (_.isArray(aliases)) {
+      _.map(aliases, function(a) { BiwaScheme.alias_libfunc(fname, a); });
+    } else if (_.isString(aliases)) {
+      BiwaScheme.CoreEnv[aliases] = BiwaScheme.CoreEnv[fname];
+    } else {
+      throw new BiwaScheme.Bug("bad alias for library function " +
+                               "`" + fname + "': " + aliases.toString());
+    }
+  } else {
+    throw new BiwaScheme.Bug("library function " +
+                             "`" + fname + "'" +
+                             " does not exist, so can't alias it.");
+  }
+};
 BiwaScheme.define_libfunc_raw = function(fname, min, max, func){
   BiwaScheme.define_libfunc(fname, min, max, func, true);
 }
