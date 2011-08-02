@@ -120,8 +120,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0] === undefined;
   });
 
-  define_libfunc_raw("js-list-to-list", 1, 1, function(ar){
+  define_libfunc_raw("js-array-to-list", 1, 1, function(ar){
     return BiwaScheme.build_list(ar[0]);
+  });
+
+  define_libfunc_raw("list-to-js-array", 1, 1, function(ar){
+    return ar[0].to_array();
   });
 
   //
