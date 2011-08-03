@@ -34,7 +34,7 @@
           (element-empty! "#nicknames")
           (for-each
            (lambda (n) (element-append-child! "#nicknames" (element-new (list 'b n))))
-           (js-list-to-list nicknames))))
+           (js-array-to-list nicknames))))
 
 (handle "user message" add-message!)
 
