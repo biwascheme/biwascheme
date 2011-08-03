@@ -32,6 +32,7 @@
 (handle "nicknames"
         (lambda (nicknames)
           (element-empty! "#nicknames")
+          (element-append-child! "#nicknames" (element-new '(span "Online: ")))
           (for-each
            (lambda (n) (element-append-child! "#nicknames" (element-new (list 'b n))))
            (js-array-to-list nicknames))))
@@ -62,6 +63,7 @@
                         (if taken
                             (element-show! "#nickname-err")
                           (begin
+                           (element-hide! "#nickname-err")
                            (clear!)
                            (element-add-class-name "#chat" "nickname-set")))))
                 #f))
