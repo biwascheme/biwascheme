@@ -47,36 +47,30 @@
 (socketio-start
  (express-start 3333)
  (lambda (socket)
-   (define (handle type callback)
-     (socketio-on socket type callback))
+   (let ((handle (lambda (type callback) (socketio-on socket type callback)))
+         (broadcast (lambda args (apply socketio-broadcast (append (list socket) args))))
+         (broadcast-all (lambda args (apply socketio-broadcast-all (append (list socket) args))))
+         (nick #f))
 
-   (define (broadcast . args)
-     (apply socketio-broadcast (append (list socket) args)))
+     (handle "user message"
+             (lambda (msg)
+               (broadcast "user message" nick msg)))
 
-   (define (broadcast-all . args)
-     (apply socketio-broadcast-all (append (list socket) args)))
-
-   (define nick #f)
-
-   (handle "user message"
-           (lambda (msg)
-             (broadcast "user message" nick msg)))
-
-   (handle "nickname"
-           (lambda (new-nick callback)
-             (if (member new-nick *nicknames*)
-                 (js-call callback #t)
-               (begin
-                (js-call callback #f)
-                (set! nick new-nick)
-                (set! *nicknames* (cons nick *nicknames*))
-                (broadcast "announcement" (string-append nick " connected"))
-                (broadcast-all "nicknames" (list-to-js-array *nicknames*))))))
-
-   (handle "disconnect"
-           (lambda ()
-             (if nick
+     (handle "nickname"
+             (lambda (new-nick callback)
+               (if (member new-nick *nicknames*)
+                   (js-call callback #t)
                  (begin
-                  (set! *nicknames* (remove nick *nicknames*))
+                  (js-call callback #f)
+                  (set! nick new-nick)
+                  (set! *nicknames* (cons nick *nicknames*))
                   (broadcast "announcement" (string-append nick " connected"))
-                  (broadcast-all "nicknames" (list-to-js-array *nicknames*))))))))
+                  (broadcast-all "nicknames" (list-to-js-array *nicknames*))))))
+
+     (handle "disconnect"
+             (lambda ()
+               (if nick
+                   (begin
+                    (set! *nicknames* (remove nick *nicknames*))
+                    (broadcast "announcement" (string-append nick " connected"))
+                    (broadcast-all "nicknames" (list-to-js-array *nicknames*)))))))))
