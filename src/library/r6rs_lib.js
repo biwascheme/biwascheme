@@ -67,12 +67,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         if(clause.cdr === nil){
           // pattern 1: (test)
           //  -> (or test ret)
-          ret = [Sym("or"), test, ret].to_list();
+          ret = List(Sym("or"), test, ret);
         }
         else if (clause.cdr.cdr === nil){
           // pattern 2: (test expr)
           //  -> (if test expr ret)
-          ret = [Sym("if"), test, clause.cdr.car, ret].to_list();
+          ret = List(Sym("if"), test, clause.cdr.car, ret);
         }
         else if(clause.cdr.car === Sym("=>")){
           // pattern 3: (test => expr)
@@ -88,9 +88,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         else{
           // pattern 4: (test expr ...)
           //  -> (if test (begin expr ...) ret)
-          ret = [Sym("if"), test, 
-                   new Pair(Sym("begin"), clause.cdr),
-                   ret].to_list();
+          ret = List(Sym("if"), test,
+                     new Pair(Sym("begin"), clause.cdr),
+                     ret);
         }
       }
     });
@@ -128,16 +128,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         else{
           // pattern 1: ((datum ...) expr ...)
           //  -> (if (or (eqv? key (quote d1)) ...) (begin expr ...) ret)
-          ret = [
+          ret = List(
             Sym("if"),
-            new Pair(Sym("or"), _.map(clause.car.to_array(), function(d){
-                return [Sym("eqv?"), 
-                        tmp_sym, 
-                        [Sym("quote"), d].to_list() ].to_list();
-              }).to_list()),
+            new Pair(Sym("or"), array_to_list(_.map(clause.car.to_array(), function(d){
+                return List(Sym("eqv?"),
+                            tmp_sym,
+                            List(Sym("quote"), d));
+            }))),
             new Pair(Sym("begin"), clause.cdr),
             ret
-          ].to_list();
+          );
         }
       });
       return new Pair(Sym("let1"),
@@ -156,7 +156,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var i = objs.length-1;
     var t = objs[i];
     for(i=i-1; i>=0; i--)
-      t = [Sym("if"), objs[i], t, false].to_list();
+      t = List(Sym("if"), objs[i], t, false);
 
     return t;
   })
@@ -168,7 +168,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var objs = x.cdr.to_array()
     var f = false;
     for(var i=objs.length-1; i>=0; i--)
-      f = [Sym("if"), objs[i], objs[i], f].to_list();
+      f = List(Sym("if"), objs[i], objs[i], f);
 
     return f;
   })
@@ -197,16 +197,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if (name) {
       // (let loop ((a 1) (b 2)) body ..)
       //=> (letrec ((loop (lambda (a b) body ..))) (loop 1 2))
-      vars = vars.to_array().reverse().to_list();
-      vals = vals.to_array().reverse().to_list();
+      vars = array_to_list(vars.to_array().reverse());
+      vals = array_to_list(vals.to_array().reverse());
 
       var body_lambda = new Pair(Sym("lambda"), new Pair(vars, body));
       var init_call = new Pair(name, vals);
 
-      lambda = [Sym("letrec"), 
-                new Pair([name, body_lambda].to_list(), nil),
-                init_call
-               ].to_list();
+      lambda = List(Sym("letrec"),
+                    new Pair(List(name, body_lambda), nil),
+                    init_call);
     }
     else {
       lambda = new Pair(new Pair(Sym("lambda"), 
@@ -912,7 +911,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       // Called when reached to the end of the list(s)
       // input: none
       // output: the resultant value 
-      finish: function(){ return a.to_list(); }
+      finish: function(){ return array_to_list(a); }
     })
   })
   define_libfunc("for-each", 2, null, function(ar){
@@ -1080,7 +1079,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("string->list", 1, 1, function(ar){
     assert_string(ar[0]);
-    return _.map(ar[0].split(""), function(s){ return Char.get(s[0]); }).to_list();
+    return array_to_list(_.map(ar[0].split(""), function(s){ return Char.get(s[0]); }));
   })
   define_libfunc("list->string", 1, 1, function(ar){
     assert_list(ar[0]);
@@ -1140,7 +1139,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector->list", 1, 1, function(ar){
     assert_vector(ar[0]);
-    return ar[0].to_list();
+    return array_to_list(ar[0]);
   })
   define_libfunc("list->vector", 1, 1, function(ar){
     assert_list(ar[0]);
@@ -1219,45 +1218,38 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //quasiquote
   var expand_qq = function(f, lv){
     if(f instanceof Symbol || f === nil){
-      return [Sym("quote"), f].to_list();
+      return List(Sym("quote"), f);
     }
     else if(f instanceof Pair){
       var car = f.car;
       if(car instanceof Pair && car.car === Sym("unquote-splicing")){
         var lv = lv-1;
         if(lv == 0)
-          return [ Sym("append"), 
-                   f.car.cdr.car, 
-                   expand_qq(f.cdr, lv+1) 
-                 ].to_list();
+          return List(Sym("append"),
+                      f.car.cdr.car,
+                      expand_qq(f.cdr, lv+1));
         else
-          return [ Sym("cons"), 
-                   [Sym("list"), Sym("unquote-splicing"), expand_qq(f.car.cdr.car, lv)].to_list(),
-                   expand_qq(f.cdr, lv+1)
-                 ].to_list();
+          return List(Sym("cons"),
+                      List(Sym("list"), Sym("unquote-splicing"), expand_qq(f.car.cdr.car, lv)),
+                      expand_qq(f.cdr, lv+1));
       }
       else if(car === Sym("unquote")){
         var lv = lv-1;
         if(lv == 0)
           return f.cdr.car;
         else
-          return [ Sym("list"), 
-                   [Sym("quote"), Sym("unquote")].to_list(),
-                   expand_qq(f.cdr.car, lv)
-                 ].to_list();
+          return List(Sym("list"),
+                      List(Sym("quote"), Sym("unquote")),
+                      expand_qq(f.cdr.car, lv));
       }
       else if(car === Sym("quasiquote"))
-        return [
-                 Sym("list"), 
-                 Sym("quasiquote"), 
-                 expand_qq(f.cdr.car, lv+1)
-               ].to_list();
+        return List(Sym("list"),
+                    Sym("quasiquote"),
+                    expand_qq(f.cdr.car, lv+1));
       else
-        return [
-                 Sym("cons"), 
-                 expand_qq(f.car, lv),
-                 expand_qq(f.cdr, lv)
-               ].to_list();
+        return List(Sym("cons"),
+                    expand_qq(f.car, lv),
+                    expand_qq(f.cdr, lv));
     }
     else if(f instanceof Array){
       throw new Bug("vector quasiquotation is not implemented yet");
@@ -1292,10 +1284,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //        if(lv == 0)
 //          return f.cdr.car;
 //        else
-//          return [ Sym("vector"),
-//                   [Sym("quote"), Sym("unquote")].to_list(),
-//                   expand_qq(f.cdr.car, lv)
-//                 ].to_list();
+//          return List(Sym("vector"),
+//                      List(Sym("quote"), Sym("unquote")),
+//                      expand_qq(f.cdr.car, lv));
 //      }
 //      else{
 ////        return [ Sym("vector"),
@@ -1461,7 +1452,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return Call.foreach(ls, {
       call: function(x){ return new Call(proc, [x.car]) },
       result: function(res, x){ if(res) a.push(x.car); },
-      finish: function(){ return a.to_list() }
+      finish: function(){ return array_to_list(a) }
     })
   })
 //  define_scmfunc("partition+", 2, 2, 
@@ -1486,7 +1477,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         else    f.push(x.car); 
       },
       finish: function(){ 
-        return new Values([t.to_list(), f.to_list()]);
+        return new Values([array_to_list(t), array_to_list(f)]);
       }
     })
   })
@@ -1509,7 +1500,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var lists = _.map(ar, function(ls){
       // reverse each list
       assert_list(ls);
-      return ls.to_array().reverse().to_list();
+      return array_to_list(ls.to_array().reverse());
     })
 
     return Call.multi_foreach(lists, {
@@ -1530,7 +1521,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return Call.foreach(ls, {
       call: function(x){ return new Call(proc, [x.car]) },
       result: function(res, x){ if(!res) ret.push(x.car); },
-      finish: function(){ return ret.to_list(); }
+      finish: function(){ return array_to_list(ret); }
     })
   })
   var make_remover = function(key){
@@ -1544,7 +1535,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           return new Call(TopEnv[key] || CoreEnv[key], [obj, x.car]) 
         },
         result: function(res, x){ if(!res) ret.push(x.car); },
-        finish: function(){ return ret.to_list(); }
+        finish: function(){ return array_to_list(ret); }
       })
     }
   }
@@ -1651,7 +1642,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Bug("list-sort: cannot take compare proc now");
     }
     assert_list(ar[0]);
-    return ar[0].to_array().sort().to_list();
+    return array_to_list(ar[0].to_array().sort());
   });
 
   //(vector-sort proc vector)    procedure
@@ -1723,18 +1714,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     // construct subforms
     var loop = BiwaScheme.gensym();
 
-    var init_vars = varsc.map(function(var_def){
+    var init_vars = array_to_list(varsc.map(function(var_def){
       var a = var_def.to_array();
       return List(a[0], a[1]);
-    }).to_list();
+    }));
 
     var test = resultc.car;
     var result_exprs = new Pair(Sym("begin"), resultc.cdr);
 
-    var next_loop = new Pair(loop, varsc.map(function(var_def){
+    var next_loop = new Pair(loop, array_to_list(varsc.map(function(var_def){
       var a = var_def.to_array();
       return a[2] || a[0];
-    }).to_list());
+    })));
     var body_exprs = new Pair(Sym("begin"), bodyc).concat(List(next_loop));
 
     // combine subforms 

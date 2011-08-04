@@ -111,8 +111,10 @@ describe('utilities', {
       expect( to_display(Char.get("a")) ).should_be("a");
     }
   },
-  'Array#to_list' : function(){
-    expect( [1,2,3].to_list().to_write() ).should_be("(1 2 3)");
+  'array_to_list' : function(){
+    with(BiwaScheme){
+      expect( array_to_list([1,2,3]).to_write() ).should_be("(1 2 3)");
+    }
   },
   'List()' : function(){
     with(BiwaScheme){
@@ -147,8 +149,8 @@ describe('utilities', {
       obj.cdr = obj;
       expect( write_ss(obj) ).should_be("#0=(#0# . #0#)");
 
-      var x = [1,2,3].to_list();
-      obj = [x,x].to_list();
+      var x = List(1,2,3);
+      obj = List(x,x);
       expect( write_ss(obj) ).should_be("(#0=(1 2 3) #0#)");
 
       expect( write_ss(1) ).should_be("1");

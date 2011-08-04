@@ -105,24 +105,24 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 // Creates a list out of the arguments, converting any nested arrays into nested lists.
 // Example:
 //   BiwaScheme.List(1, 2, [3, 4]) ;=> (1 2 (3 4))
-BiwaScheme.List = function() {
-  var ary = _.toArray(arguments);
+var array_to_list = function(ary, deep) {
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
-    if(_.isArray(obj) && !obj.is_vector){
-      obj = BiwaScheme.List.apply(null, obj);
+    if(deep && _.isArray(obj) && !obj.is_vector){
+      obj = BiwaScheme.array_to_list(obj);
     }
     list = new BiwaScheme.Pair(obj, list);
   }
   return list;
-};
-
-// TODO: make this obsolete (extending core classes are not good)
-Array.prototype.to_list = function(){
-  var list = BiwaScheme.nil;
-  for(var i=this.length-1; i>=0; i--){
-    list = new BiwaScheme.Pair(this[i], list);
-  }
-  return list;
 }
+BiwaScheme.List = function() {
+  var ary = _.toArray(arguments);
+  return array_to_list(ary, true);
+};
+BiwaScheme.array_to_list = function(array) {
+  return BiwaScheme.List.apply(null, array);
+};
+BiwaScheme.shallow_array_to_list = function(ary) {
+  return array_to_list(ary, false);
+};

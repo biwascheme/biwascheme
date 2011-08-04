@@ -22,7 +22,7 @@ with(BiwaScheme) {
       a.push(n);
       n += step;
     }
-    return a.to_list();
+    return array_to_list(a);
   });
 
   //

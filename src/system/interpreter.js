@@ -374,21 +374,19 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         if (elsec == BiwaScheme.inner_of_nil){
           elsec = BiwaScheme.undef;
         }
-        ret = [
-          BiwaScheme.Sym("if"), 
-          this.expand(testc, flag), 
-          this.expand(thenc, flag),
-          this.expand(elsec, flag)
-        ].to_list();
+        ret = BiwaScheme.List(BiwaScheme.Sym("if"),
+                              this.expand(testc, flag),
+                              this.expand(thenc, flag),
+                              this.expand(elsec, flag));
         break;
       case BiwaScheme.Sym("set!"):
         var v=x.second(), x=x.third();
-        ret = [BiwaScheme.Sym("set!"), v, this.expand(x, flag)].to_list();
+        ret = BiwaScheme.List(BiwaScheme.Sym("set!"), v, this.expand(x, flag));
         break;
       case BiwaScheme.Sym("call-with-current-continuation"): 
       case BiwaScheme.Sym("call/cc"): 
         var x=x.second();
-        ret = [BiwaScheme.Sym("call/cc"), this.expand(x, flag)].to_list();
+        ret = BiwaScheme.List(BiwaScheme.Sym("call/cc"), this.expand(x, flag));
         break;
       default: //apply
         // if x is a macro call ...
@@ -414,7 +412,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         else if(x == BiwaScheme.nil)
           ret = BiwaScheme.nil;
         else{
-          ret = new BiwaScheme.Pair(this.expand(x.car, flag), _.map(x.cdr.to_array(), _.bind(function(item){ return this.expand(item, flag); }, this)).to_list());
+          ret = new BiwaScheme.Pair(this.expand(x.car, flag), BiwaScheme.shallow_array_to_list(_.map(x.cdr.to_array(), _.bind(function(item){ return this.expand(item, flag); }, this))));
         }
       }
     }
