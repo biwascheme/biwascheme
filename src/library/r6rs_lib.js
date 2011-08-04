@@ -1906,11 +1906,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     // registration
     var rtd_fields = _.map(fields, function(field){
-      return BiwaScheme.build_list(
-        [Sym(field.mutable ? "mutable" : "immutable"), field.name]
-      );
+      return List(Sym(field.mutable ? "mutable" : "immutable"), field.name);
     });
-    rtd_fields.is_vector = true; //tell build_list not to convert
+    rtd_fields.is_vector = true; //tell List not to convert
     var rtd_def = [Sym("make-record-type-descriptor"),
                     [Sym("quote"), record_name], parent_rtd, uid,
                     sealed, opaque, rtd_fields];
@@ -1941,7 +1939,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
 
     // wrap the definitions with `begin'
-    return BiwaScheme.build_list(
+    return List.apply(null,
       [Sym("begin"),
         registration,
         [Sym("define"), constructor_name, [Sym("record-constructor"), cd]],
@@ -1959,9 +1957,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 //(record-type-descriptor <record name>)    syntax 
   define_syntax("record-type-descriptor", function(x){
-    return BiwaScheme.build_list(
-      [Sym("_record-type-descriptor"), [Sym("quote"), x.cdr.car]]
-    );
+    return List(Sym("_record-type-descriptor"), [Sym("quote"), x.cdr.car]);
   });
   define_libfunc("_record-type-descriptor", 1, 1, function(ar){
     assert_symbol(ar[0]);
@@ -1973,9 +1969,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 //(record-constructor-descriptor <record name>)    syntax 
   define_syntax("record-constructor-descriptor", function(x){
-    return BiwaScheme.build_list(
-      [Sym("_record-constructor-descriptor"), [Sym("quote"), x.cdr.car]]
-    );
+    return List(Sym("_record-constructor-descriptor"), [Sym("quote"), x.cdr.car]);
   });
   define_libfunc("_record-constructor-descriptor", 1, 1, function(ar){
     assert_symbol(ar[0]);

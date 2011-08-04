@@ -118,15 +118,9 @@ describe('utilities', {
     with(BiwaScheme){
       expect( List(1,2,3) instanceof Pair ).should_be(true);
       expect( List(1,2,3).to_write() ).should_be("(1 2 3)");
-    }
-  },
-  'build_list' : function(){
-    with(BiwaScheme){
-      expect( build_list([1,2,3]) instanceof Pair ).should_be(true);
-      expect( build_list([1,2,3]).to_write() ).should_be("(1 2 3)");
-      expect( build_list([1,2,[3,4]]).to_write() ).should_be("(1 2 (3 4))");
-      expect( build_list(
-        [Sym("define"), Sym("x"), [Sym("+"), 1, 2]]
+      expect( List(1,2,[3,4]).to_write() ).should_be("(1 2 (3 4))");
+      expect( List(
+        Sym("define"), Sym("x"), [Sym("+"), 1, 2]
       ).to_write() ).should_be("(define x (+ 1 2))");
     }
   },

@@ -121,7 +121,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   define_libfunc_raw("js-array-to-list", 1, 1, function(ar){
-    return BiwaScheme.build_list(ar[0]);
+    return BiwaScheme.List.apply(null, ar[0]);
   });
 
   define_libfunc_raw("list-to-js-array", 1, 1, function(ar){

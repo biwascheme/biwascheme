@@ -101,20 +101,17 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
     return this.inspect(BiwaScheme.to_write);
   }
 });
-// TODO: remove this and rename build_list to List()
-BiwaScheme.List = function(){
-  return _.toArray(arguments).to_list();
-};
 
-// Converts a nested arrays to a list.
+// Creates a list out of the arguments, converting any nested arrays into nested lists.
 // Example:
-//   BiwaScheme.build_list([1, 2, [3, 4]]) ;=> (1 2 (3 4))
-BiwaScheme.build_list = function(ary){
+//   BiwaScheme.List(1, 2, [3, 4]) ;=> (1 2 (3 4))
+BiwaScheme.List = function() {
+  var ary = _.toArray(arguments);
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
     if(_.isArray(obj) && !obj.is_vector){
-      obj = BiwaScheme.build_list(obj);
+      obj = BiwaScheme.List.apply(null, obj);
     }
     list = new BiwaScheme.Pair(obj, list);
   }
