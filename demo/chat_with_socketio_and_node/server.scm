@@ -72,5 +72,5 @@
                (if nick
                    (begin
                     (set! *nicknames* (remove nick *nicknames*))
-                    (broadcast "announcement" (string-append nick " connected"))
+                    (broadcast "announcement" (string-append nick " disconnected"))
                     (broadcast-all "nicknames" (list-to-js-array *nicknames*)))))))))

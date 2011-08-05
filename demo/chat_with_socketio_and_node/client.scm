@@ -35,7 +35,7 @@
           (element-append-child! "#nicknames" (element-new '(span "Online: ")))
           (for-each
            (lambda (n) (element-append-child! "#nicknames" (element-new (list 'b n))))
-           (js-array-to-list nicknames))))
+           (list-sort (js-array-to-list nicknames)))))
 
 (handle "user message" add-message!)
 
