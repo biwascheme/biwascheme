@@ -1,7 +1,7 @@
 //
 // Port
 //
-BiwaScheme.Port = Class.create({
+BiwaScheme.Port = BiwaScheme.Class.create({
   initialize: function(is_in, is_out){
     this.is_open = true;
     this.is_binary = false; //??
@@ -19,28 +19,27 @@ BiwaScheme.Port = Class.create({
     return "#<Port>";
   }
 });
-BiwaScheme.Port.BrowserInput = Class.create(BiwaScheme.Port, {
-  initialize: function($super){
-    $super(true, false);
+BiwaScheme.Port.BrowserInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true, false), {
+  initialize: function(){
   },
   get_string: function(after){
-    var form = document.createElement("div")
-    form.innerHTML = "<input id='webscheme-read-line' type='text'><input id='webscheme-read-line-submit' type='button' value='ok'>";
-    $('bs-console').appendChild(form)
+    var form = $("<form/>");
+    form.html("<input id='webscheme-read-line' type='text'><input type='submit' value='ok'>");
+    $("#bs-console").append(form);
 
     return new BiwaScheme.Pause(function(pause){
-      Event.observe($('webscheme-read-line-submit'), 'click', function(){
-        var input = $('webscheme-read-line').value;
-        form.parentNode.removeChild(form);
+      form.submit(function(){
+        var input = $("#webscheme-read-line").val();
+        form.remove();
         puts(input);
         pause.resume(after(input));
+        return false;
       });
     });
   }
 })
-BiwaScheme.Port.DefaultOutput = Class.create(BiwaScheme.Port, {
-  initialize: function($super){
-    $super(false, true);
+BiwaScheme.Port.DefaultOutput = BiwaScheme.Class.extend(new BiwaScheme.Port(false, true), {
+  initialize: function(){
   },
   put_string: function(str){
     puts(str, true);
@@ -50,10 +49,9 @@ BiwaScheme.Port.DefaultOutput = Class.create(BiwaScheme.Port, {
 //
 // string ports (srfi-6)
 //
-BiwaScheme.Port.StringOutput = Class.create(BiwaScheme.Port, {
-  initialize: function($super){
+BiwaScheme.Port.StringOutput = BiwaScheme.Class.extend(new BiwaScheme.Port(false, true), {
+  initialize: function(){
     this.buffer = [];
-    $super(false, true);
   },
   put_string: function(str){
     this.buffer.push(str);
@@ -62,10 +60,9 @@ BiwaScheme.Port.StringOutput = Class.create(BiwaScheme.Port, {
     return this.buffer.join("");
   }
 });
-BiwaScheme.Port.StringInput = Class.create(BiwaScheme.Port, {
-  initialize: function($super, str){
+BiwaScheme.Port.StringInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true, false), {
+  initialize: function(str){
     this.str = str;
-    $super(true, false);
   },
   get_string: function(after){
     return after(this.str);

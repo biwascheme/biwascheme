@@ -111,22 +111,18 @@ describe('utilities', {
       expect( to_display(Char.get("a")) ).should_be("a");
     }
   },
-  'Array#to_list' : function(){
-    expect( [1,2,3].to_list().to_write() ).should_be("(1 2 3)");
+  'array_to_list' : function(){
+    with(BiwaScheme){
+      expect( array_to_list([1,2,3]).to_write() ).should_be("(1 2 3)");
+    }
   },
   'List()' : function(){
     with(BiwaScheme){
       expect( List(1,2,3) instanceof Pair ).should_be(true);
       expect( List(1,2,3).to_write() ).should_be("(1 2 3)");
-    }
-  },
-  'build_list' : function(){
-    with(BiwaScheme){
-      expect( build_list([1,2,3]) instanceof Pair ).should_be(true);
-      expect( build_list([1,2,3]).to_write() ).should_be("(1 2 3)");
-      expect( build_list([1,2,[3,4]]).to_write() ).should_be("(1 2 (3 4))");
-      expect( build_list(
-        [Sym("define"), Sym("x"), [Sym("+"), 1, 2]]
+      expect( List(1,2,[3,4]).to_write() ).should_be("(1 2 (3 4))");
+      expect( List(
+        Sym("define"), Sym("x"), [Sym("+"), 1, 2]
       ).to_write() ).should_be("(define x (+ 1 2))");
     }
   },
@@ -153,8 +149,8 @@ describe('utilities', {
       obj.cdr = obj;
       expect( write_ss(obj) ).should_be("#0=(#0# . #0#)");
 
-      var x = [1,2,3].to_list();
-      obj = [x,x].to_list();
+      var x = List(1,2,3);
+      obj = List(x,x);
       expect( write_ss(obj) ).should_be("(#0=(1 2 3) #0#)");
 
       expect( write_ss(1) ).should_be("1");
@@ -1493,30 +1489,11 @@ describe('19 R5RS compatibility', {
 //(scheme-report-environment n)    procedure 
 })
 
-describe('browser functions', {
-  'element-empty!' : function(){
-    scm_eval('(element-empty! ($ "div1"))');
-    expect( $("div1").innerHTML ).should_be("");
-  },
-  'element-remove!' : function(){
-    $("div1").update("<div id='div2'>foo</div>");
-    scm_eval('(element-remove! ($ "div2"))');
-    expect( $("div1").innerHTML ).should_be("");
-  },
-  'element-hide!' : function(){
-    $("div1").show();
-    scm_eval('(element-hide! ($ "div1"))');
-    expect( $("div1").visible() ).should_be(false);
-  },
-  'element-show!' : function(){
-    $("div1").hide();
-    scm_eval('(element-show! ($ "div1"))');
-    expect( $("div1").visible() ).should_be(true);
-  },
+describe('js interface', {
   'sleep' : function(){
     (new BiwaScheme.Interpreter).evaluate("(begin 1 (sleep 0) 2)", function(result){
       expect(result).should_be(2);
-    })
+    });
   },
   'js-call' : function() {
     ev('(js-call (js-eval "Math.pow") 2 4)').should_be(16);
@@ -1530,7 +1507,7 @@ describe('browser functions', {
       this.foo = obj["foo"];
     };
     var tmp = scm_eval('(js-new "BiwaScheme.TestForJSNew" \'foo (lambda () 4))');
-    expect(Object.isFunction(tmp.foo)).should_be(true)
+    expect(_.isFunction(tmp.foo)).should_be(true);
   },
   'js-null?' : function(){
     ev('(js-null? (js-eval "null"))').should_be(true);
@@ -1540,6 +1517,28 @@ describe('browser functions', {
     ev('(js-undefined? (js-eval "undefined"))').should_be(true);
     ev('(js-undefined? 0)').should_be(false);
   }
+});
+
+describe('browser functions', {
+  'element-empty!' : function(){
+    scm_eval('(element-empty! ($ "#div1"))');
+    expect( $("#div1").html() ).should_be("");
+  },
+  'element-remove!' : function(){
+    $("#div1").html("<div id='div2'>foo</div>");
+    scm_eval('(element-remove! ($ "#div2"))');
+    expect( $("#div1").html() ).should_be("");
+  },
+  'element-hide!' : function(){
+    $("div1").show();
+    scm_eval('(element-hide! ($ "#div1"))');
+    expect( $("#div1").is(":visible") ).should_be(false);
+  },
+  'element-show!' : function(){
+    $("div1").hide();
+    scm_eval('(element-show! ($ "#div1"))');
+    expect( $("#div1").is(":visible") ).should_be(true);
+  },
 });
 
 describe('extra library', {

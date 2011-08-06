@@ -1,48 +1,3 @@
-
-//  Object.prototype.inspect = function() {
-//    var a = [];
-//    for(var k in this){
-//      //if(this.prototype[k]) continue;
-//      a.push( k.toString() );//+" => "+this[k].toString() );
-//    }
-//    return "#<Object{"+a.join(",")+"}>";
-//  }
-Function.prototype.to_write = function() {
-  return "#<Function "+(this.fname ? this.fname :
-                        this.toSource ? this.toSource().truncate(40) :
-                        "")+">";
-}
-String.prototype.to_write = function(){
-  return '"' +
-         this.replace(/\\|\"/g,function($0){return'\\'+$0;})
-             .replace(/\x07/g, "\\a")
-             .replace(/\x08/g, "\\b")
-             .replace(/\t/g, "\\t")
-             .replace(/\n/g, "\\n")
-             .replace(/\v/g, "\\v")
-             .replace(/\f/g, "\\f")
-             .replace(/\r/g, "\\r") +
-         '"';
-}
-//Number.prototype.inspect = function() { return this.toString(); }
-Array.prototype.to_write = function(){
-  if(this.closure_p)
-    return "#<Closure>";
-
-  var a = [];
-  for(var i=0; i<this.length; i++){
-    a.push(BiwaScheme.to_write(this[i]));
-  }
-  return '#(' + a.join(" ") + ')';
-}
-//  Array.prototype.memq = function(x){
-//    for(var i=this.length-1; i>=0; i--){
-//      if(this[i] === x)
-//        return true;
-//    }
-//    return false;
-//  }
-
 //
 // utility functions
 //
@@ -51,6 +6,25 @@ BiwaScheme.to_write = function(obj){
     return "undefined";
   else if(obj === null)
     return "null";
+  else if(_.isFunction(obj))
+    return "#<Function "+(obj.fname ? obj.fname :
+                          obj.toSource ? _.truncate(obj.toSource(), 40) :
+                          "")+">";
+  else if(_.isString(obj))
+    return '"' +
+           obj.replace(/\\|\"/g,function($0){return'\\'+$0;})
+              .replace(/\x07/g, "\\a")
+              .replace(/\x08/g, "\\b")
+              .replace(/\t/g, "\\t")
+              .replace(/\n/g, "\\n")
+              .replace(/\v/g, "\\v")
+              .replace(/\f/g, "\\f")
+              .replace(/\r/g, "\\r") +
+           '"';
+  else if(_.isArray(obj) && obj.closure_p)
+    return "#<Closure>";
+  else if(_.isArray(obj))
+    return "#(" + _.map(obj, function(e) { return BiwaScheme.to_write(e); }).join(" ") + ")";
   else if(typeof(obj.to_write) == 'function')
     return obj.to_write();
   else if(isNaN(obj) && typeof(obj) == 'number')
@@ -63,7 +37,7 @@ BiwaScheme.to_write = function(obj){
       case -Infinity: return "-inf.0";
     }
   }
-  return Object.inspect(obj);
+  return BiwaScheme.inspect(obj);
 }
 BiwaScheme.to_display = function(obj){
   if(typeof(obj.valueOf()) == "string")
@@ -71,7 +45,7 @@ BiwaScheme.to_display = function(obj){
   else if(obj instanceof BiwaScheme.Symbol)
     return obj.name;
   else if(obj instanceof Array)
-    return '#(' + obj.map(BiwaScheme.to_display).join(' ') + ')';
+    return '#(' + _.map(obj, BiwaScheme.to_display).join(' ') + ')';
   else if(obj instanceof BiwaScheme.Pair)
     return obj.inspect(BiwaScheme.to_display);
   else if(obj instanceof BiwaScheme.Char)
@@ -126,7 +100,7 @@ BiwaScheme.to_write_ss = function(obj, cyclic, appeared, array_mode){
     ret += "(" + a.join(" ") + ")";
   }
   else if(obj instanceof Array){
-    var a = obj.map(function(item){
+    var a = _.map(obj, function(item){
       return BiwaScheme.to_write_ss(item, cyclic, appeared, array_mode);
     })
     if(array_mode)
@@ -155,11 +129,11 @@ BiwaScheme.find_cyclic = function(obj, known, used){
               null;
   if(!items) return;
 
-  items.each(function(item){
+  _.each(items, function(item){
     if(typeof(item)=='number' || typeof(item)=='string' ||
       item === BiwaScheme.undef || item === true || item === false ||
       item === BiwaScheme.nil || item instanceof BiwaScheme.Symbol) return;
-    
+
     var i = known.indexOf(item);
     if(i >= 0)
       used[i] = true;

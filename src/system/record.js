@@ -1,7 +1,7 @@
 //
 // Record
 //
-BiwaScheme.Record = Class.create({
+BiwaScheme.Record = BiwaScheme.Class.create({
   initialize: function(rtd, values){
     assert_record_td(rtd, "new Record");
 
@@ -24,17 +24,17 @@ BiwaScheme.isRecord = function(o){
 };
 
 // Record types
-BiwaScheme.Record._DefinedTypes = new Hash();
+BiwaScheme.Record._DefinedTypes = {};
 
 BiwaScheme.Record.define_type = function(name_str, rtd, cd){
-  return BiwaScheme.Record._DefinedTypes.set(name_str, {rtd: rtd, cd: cd});
+  return BiwaScheme.Record._DefinedTypes[name_str] = {rtd: rtd, cd: cd};
 };
 BiwaScheme.Record.get_type = function(name_str){
-  return BiwaScheme.Record._DefinedTypes.get(name_str);
+  return BiwaScheme.Record._DefinedTypes[name_str];
 };
 
 // Record type descriptor
-BiwaScheme.Record.RTD = Class.create({
+BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   //                   Symbol RTD        Symbol Bool  Bool    Array
   initialize: function(name, parent_rtd, uid, sealed, opaque, fields){
     this.name = name;
@@ -52,7 +52,7 @@ BiwaScheme.Record.RTD = Class.create({
     this.sealed = !!sealed;
     this.opaque = parent_rtd.opaque || (!!opaque);
 
-    this.fields = fields.map(function(field){
+    this.fields = _.map(fields, function(field){
       return {name: field[0], mutable: !!field[1]};
     });
   },
@@ -65,13 +65,13 @@ BiwaScheme.Record.RTD = Class.create({
   }
 });
 BiwaScheme.Record.RTD.last_uid = 0;
-BiwaScheme.Record.RTD.NongenerativeRecords = new Hash();
+BiwaScheme.Record.RTD.NongenerativeRecords = {};
 BiwaScheme.isRecordTD = function(o){
   return (o instanceof BiwaScheme.Record.RTD);
 };
 
 // Record constructor descriptor
-BiwaScheme.Record.CD = Class.create({
+BiwaScheme.Record.CD = BiwaScheme.Class.create({
   initialize: function(rtd, parent_cd, protocol){
     this._check(rtd, parent_cd, protocol);
     this.rtd = rtd;
@@ -154,7 +154,8 @@ BiwaScheme.Record.CD = Class.create({
 
   record_constructor: function(){
     var arg_for_protocol = (this.parent_cd ? this._make_n([], this.rtd)
-                                           : this._make_p()).bind(this);
+                                           : this._make_p());
+    arg_for_protocol = _.bind(arg_for_protocol, this);
 
     return new BiwaScheme.Call(this.protocol, [arg_for_protocol], function(ar){
       var ctor = ar[0];

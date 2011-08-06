@@ -25,7 +25,7 @@ BiwaScheme.CoreEnv = {};
 // Errors (temporary?)
 //
 
-BiwaScheme.Error = Class.create({
+BiwaScheme.Error = BiwaScheme.Class.create({
   initialize: function(msg){
     this.message = "Error: "+msg;
   },
@@ -34,15 +34,33 @@ BiwaScheme.Error = Class.create({
   }
 });
 
-BiwaScheme.Bug = Class.create(Object.extend(new BiwaScheme.Error(), {
+BiwaScheme.Bug = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
   initialize: function(msg){
     this.message = "[BUG] "+msg;
   }
-}));
+});
 
 // currently used by "raise"
-BiwaScheme.UserError = Class.create(Object.extend(new BiwaScheme.Error(), {
+BiwaScheme.UserError = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
   initialize: function(msg){
     this.message = msg;
   }
-}));
+});
+
+BiwaScheme.inspect = function(object) {
+  try {
+    if (_.isUndefined(object)) return 'undefined';
+    if (object === null) return 'null';
+    if (object.inspect) return object.inspect();
+    if (_.isString(object)) {
+      return "'" + object.replace(/'/g, '\\\'') + "'";
+    }
+    if (_.isArray(object)) {
+      return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';
+    }
+    return object.toString();
+  } catch (e) {
+    if (e instanceof RangeError) return '...';
+    throw e;
+  }
+};

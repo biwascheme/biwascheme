@@ -2,11 +2,11 @@
 /// Interpreter
 ///
 
-BiwaScheme.Interpreter = Class.create({
+BiwaScheme.Interpreter = BiwaScheme.Class.create({
   initialize: function(on_error){
     this.stack = [] //(make-vector 1000)
     this.on_error = on_error || function(e){};
-    this.after_evaluate = Prototype.emptyFunction;
+    this.after_evaluate = function(){};
   },
 
   inspect: function(){
@@ -14,7 +14,7 @@ BiwaScheme.Interpreter = Class.create({
       "#<Interpreter: stack size=>",
       this.stack.length, " ",
       "after_evaluate=",
-      Object.inspect(this.after_evaluate),
+      BiwaScheme.inspect(this.after_evaluate),
       ">"
     ].join("");
   },
@@ -117,12 +117,12 @@ BiwaScheme.Interpreter = Class.create({
       return;
 
     if (dumper) {
-      var state = new Hash({"a":a, 
-                            "f":f, 
-                            "c":c, 
-                            "s":s, 
-                            "x":x, 
-                            "stack":this.stack});
+      state = {"a":a,
+               "f":f,
+               "c":c,
+               "s":s,
+               "x":x,
+               "stack":this.stack};
       dumper.dump(state);
     }
   },
@@ -132,9 +132,9 @@ BiwaScheme.Interpreter = Class.create({
     //puts("executing "+x[0]);
     
     while(true){ //x[0] != "halt"){
-      
+
       this.run_dump_hook(a, x, f, c, s);
-        
+
       switch(x[0]){
       case "halt":
         return a;
@@ -153,7 +153,7 @@ BiwaScheme.Interpreter = Class.create({
         else if(BiwaScheme.CoreEnv.hasOwnProperty(sym))
           var val = BiwaScheme.CoreEnv[sym];
         else
-          throw new BiwaScheme.Error("execute: unbound symbol: "+Object.inspect(sym));
+          throw new BiwaScheme.Error("execute: unbound symbol: "+BiwaScheme.inspect(sym));
 
         a = val;
         break;
@@ -272,7 +272,7 @@ BiwaScheme.Interpreter = Class.create({
 
           // invoke the function
           var result = func(args, this);
-          
+
           if(result instanceof BiwaScheme.Pause){
             // it requested the interpreter to suspend
             var pause = result;
@@ -302,13 +302,13 @@ BiwaScheme.Interpreter = Class.create({
                             ["argument",
                             ["constant", result.proc, 
                             ["apply", result.args.length]]]];
-            var push_args = result.args.inject(call_proc, function(opc, arg){
+            var push_args = _.inject(result.args, function(opc, arg){
               // (foo 1 2) => first push 2, then 1
               //   [constant 2 ... [constant 1 ... ]
               return ["constant", arg, 
                      ["argument",
                      opc]];
-            })
+            }, call_proc);
             x = ["frame",
                   push_args,
                 call_after]
@@ -321,7 +321,7 @@ BiwaScheme.Interpreter = Class.create({
         }
         else{
           // unknown function type
-          throw new BiwaScheme.Error(Object.inspect(func) + " is not a function");
+          throw new BiwaScheme.Error(BiwaScheme.inspect(func) + " is not a function");
         }
         break;
       case "return":
@@ -374,21 +374,19 @@ BiwaScheme.Interpreter = Class.create({
         if (elsec == BiwaScheme.inner_of_nil){
           elsec = BiwaScheme.undef;
         }
-        ret = [
-          BiwaScheme.Sym("if"), 
-          this.expand(testc, flag), 
-          this.expand(thenc, flag),
-          this.expand(elsec, flag)
-        ].to_list();
+        ret = BiwaScheme.List(BiwaScheme.Sym("if"),
+                              this.expand(testc, flag),
+                              this.expand(thenc, flag),
+                              this.expand(elsec, flag));
         break;
       case BiwaScheme.Sym("set!"):
         var v=x.second(), x=x.third();
-        ret = [BiwaScheme.Sym("set!"), v, this.expand(x, flag)].to_list();
+        ret = BiwaScheme.List(BiwaScheme.Sym("set!"), v, this.expand(x, flag));
         break;
       case BiwaScheme.Sym("call-with-current-continuation"): 
       case BiwaScheme.Sym("call/cc"): 
         var x=x.second();
-        ret = [BiwaScheme.Sym("call/cc"), this.expand(x, flag)].to_list();
+        ret = BiwaScheme.List(BiwaScheme.Sym("call/cc"), this.expand(x, flag));
         break;
       default: //apply
         // if x is a macro call ...
@@ -414,7 +412,7 @@ BiwaScheme.Interpreter = Class.create({
         else if(x == BiwaScheme.nil)
           ret = BiwaScheme.nil;
         else{
-          ret = new BiwaScheme.Pair(this.expand(x.car, flag), x.cdr.to_array().map(function(item){return this.expand(item, flag)}.bind(this)).to_list());
+          ret = new BiwaScheme.Pair(this.expand(x.car, flag), BiwaScheme.shallow_array_to_list(_.map(x.cdr.to_array(), _.bind(function(item){ return this.expand(item, flag); }, this))));
         }
       }
     }

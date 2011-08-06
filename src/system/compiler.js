@@ -2,7 +2,7 @@
 /// Compiler
 ///
 
-BiwaScheme.Compiler = Class.create({
+BiwaScheme.Compiler = BiwaScheme.Class.create({
   initialize: function(){
   },
 
@@ -437,7 +437,7 @@ BiwaScheme.Compiler = Class.create({
     }
     //p("result of " + x.inspect() + ":");
     //p(ret);
-    //dump(new Hash({"ret":ret, "x":x, "e":e, "s":s, "next":next, "stack":[]}));
+    //dump({"ret":ret, "x":x, "e":e, "s":s, "next":next, "stack":[]});
 //      if(ret == null)
 //        throw new BiwaScheme.Bug("compile() exited in unusual way");
 //      else

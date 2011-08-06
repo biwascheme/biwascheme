@@ -1,7 +1,7 @@
 //
 // pause object (facility to stop/resume interpreting)
 //
-BiwaScheme.Pause = Class.create({
+BiwaScheme.Pause = BiwaScheme.Class.create({
   //new (on_pause: javascript function calling setTimeout, Ajax.Request, ..)
   initialize: function(on_pause){
     this.on_pause = on_pause;

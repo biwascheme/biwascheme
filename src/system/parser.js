@@ -2,7 +2,7 @@
   // Parser 
   // copied from jsScheme - should be rewrriten (support #0=, etc)
   //
-  BiwaScheme.Parser = Class.create({
+  BiwaScheme.Parser = BiwaScheme.Class.create({
     initialize: function(txt){
       this.tokens = this.tokenize(txt);
       this.i = 0;
@@ -12,7 +12,7 @@
       return [
         "#<Parser:",
         this.i, "/", this.tokens.length, " ",
-        Object.inspect(this.tokens),
+        BiwaScheme.inspect(this.tokens),
         ">"
       ].join("");
     },

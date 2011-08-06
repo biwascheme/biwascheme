@@ -3,7 +3,7 @@
 // cons cell
 //
 
-BiwaScheme.Pair = Class.create({
+BiwaScheme.Pair = BiwaScheme.Class.create({
   initialize: function(car, cdr){
     this.car = car;
     this.cdr = cdr;
@@ -82,7 +82,7 @@ BiwaScheme.Pair = Class.create({
 
   // returns human-redable string of pair
   inspect: function(conv){
-    conv || (conv = Object.inspect);
+    conv || (conv = BiwaScheme.inspect);
     var a = [];
     var last = this.foreach(function(o){
       a.push(conv(o));
@@ -101,31 +101,28 @@ BiwaScheme.Pair = Class.create({
     return this.inspect(BiwaScheme.to_write);
   }
 });
-// TODO: remove this and rename build_list to List()
-BiwaScheme.List = function(){
-  return $A(arguments).to_list();
-};
 
-// Converts a nested arrays to a list.
+// Creates a list out of the arguments, converting any nested arrays into nested lists.
 // Example:
-//   BiwaScheme.build_list([1, 2, [3, 4]]) ;=> (1 2 (3 4))
-BiwaScheme.build_list = function(ary){
+//   BiwaScheme.List(1, 2, [3, 4]) ;=> (1 2 (3 4))
+var array_to_list = function(ary, deep) {
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
-    if(Object.isArray(obj) && !obj.is_vector){
-      obj = BiwaScheme.build_list(obj);
+    if(deep && _.isArray(obj) && !obj.is_vector){
+      obj = BiwaScheme.array_to_list(obj);
     }
     list = new BiwaScheme.Pair(obj, list);
   }
   return list;
-};
-
-// TODO: make this obsolete (extending core classes are not good)
-Array.prototype.to_list = function(){
-  var list = BiwaScheme.nil;
-  for(var i=this.length-1; i>=0; i--){
-    list = new BiwaScheme.Pair(this[i], list);
-  }
-  return list;
 }
+BiwaScheme.List = function() {
+  var ary = _.toArray(arguments);
+  return array_to_list(ary, true);
+};
+BiwaScheme.array_to_list = function(array) {
+  return BiwaScheme.List.apply(null, array);
+};
+BiwaScheme.shallow_array_to_list = function(ary) {
+  return array_to_list(ary, false);
+};

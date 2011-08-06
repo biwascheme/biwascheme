@@ -21,10 +21,10 @@
 (define *httpd-document-root* "../")
 
 (sack-add-routing *sack*
-  #/(\.html|.js|.css|.scm)$/
+  #/(\.html|\.js|\.css|\.scm)/
   (lambda (req)
     (file->string (build-path *httpd-document-root*
-                              (string-drop (ref req 'path) 1)))))
+                              (string-drop (base-path-of req) 1)))))
 
 (sack-add-routing *sack*
   #/^\/reload$/

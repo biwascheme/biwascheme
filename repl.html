@@ -87,16 +87,17 @@
 <script type="text/javascript" src="src/development_loader.js">// <![CDATA[
 var biwascheme = new BiwaScheme.Interpreter();
 function bs_eval(){
-  $('bs-console').innerHTML = "";
-  var str = $("bs-input").value;
+  $("#bs-console").empty();
+  var str = $("#bs-input").html();
 
   try{
     var opc = biwascheme.compile(str);
-    $('bs-opecode').innerHTML = (new BiwaScheme.Dumper()).dump_opc(opc);
+    var dump = (new BiwaScheme.Dumper()).dump_opc(opc);
+    $("#bs-opecode").html(dump);
     var before = new Date();
     biwascheme.evaluate(str, function(result){
       var after = new Date();
-      $('time').innerHTML = "Time: " + (after-before)/1000 + "sec";
+      $("#time").html("Time: " + (after-before)/1000 + "sec");
       puts(BiwaScheme.to_write(result));
     });
   }
@@ -106,11 +107,8 @@ function bs_eval(){
   }
   return false;
 }
-$$("div.bs-snippet").each(function(div){
-  Event.observe(div, "click", function(e){
-    $('bs-input').innerHTML = "";
-    $('bs-input').value = div.firstChild.data;
-  });
+$(".bs-snippet").click(function(e){
+  $("#bs-input").html($(this).html());
 });
 // ]]></script>
 

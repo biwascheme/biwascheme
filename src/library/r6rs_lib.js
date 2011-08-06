@@ -31,7 +31,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     // TODO: assert that clauses is a proper list
 
     var ret = null;
-    clauses.to_array().reverse().each(function(clause){
+    _.each(clauses.to_array().reverse(), function(clause){
       if(!(clause instanceof Pair)){
         throw new Error("bad clause in cond: " + to_write_ss(clause));
       }
@@ -67,12 +67,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         if(clause.cdr === nil){
           // pattern 1: (test)
           //  -> (or test ret)
-          ret = [Sym("or"), test, ret].to_list();
+          ret = List(Sym("or"), test, ret);
         }
         else if (clause.cdr.cdr === nil){
           // pattern 2: (test expr)
           //  -> (if test expr ret)
-          ret = [Sym("if"), test, clause.cdr.car, ret].to_list();
+          ret = List(Sym("if"), test, clause.cdr.car, ret);
         }
         else if(clause.cdr.car === Sym("=>")){
           // pattern 3: (test => expr)
@@ -88,9 +88,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         else{
           // pattern 4: (test expr ...)
           //  -> (if test (begin expr ...) ret)
-          ret = [Sym("if"), test, 
-                   new Pair(Sym("begin"), clause.cdr),
-                   ret].to_list();
+          ret = List(Sym("if"), test,
+                     new Pair(Sym("begin"), clause.cdr),
+                     ret);
         }
       }
     });
@@ -113,7 +113,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var clauses = x.cdr.cdr;
 
       var ret = undefined;
-      clauses.to_array().reverse().each(function(clause){
+      _.each(clauses.to_array().reverse(), function(clause){
         if(clause.car === Sym("else")){
           // pattern 0: (else expr ...)
           //  -> (begin expr ...)
@@ -128,16 +128,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         else{
           // pattern 1: ((datum ...) expr ...)
           //  -> (if (or (eqv? key (quote d1)) ...) (begin expr ...) ret)
-          ret = [
+          ret = List(
             Sym("if"),
-            new Pair(Sym("or"), clause.car.to_array().map(function(d){
-                return [Sym("eqv?"), 
-                        tmp_sym, 
-                        [Sym("quote"), d].to_list() ].to_list();
-              }).to_list()),
+            new Pair(Sym("or"), array_to_list(_.map(clause.car.to_array(), function(d){
+                return List(Sym("eqv?"),
+                            tmp_sym,
+                            List(Sym("quote"), d));
+            }))),
             new Pair(Sym("begin"), clause.cdr),
             ret
-          ].to_list();
+          );
         }
       });
       return new Pair(Sym("let1"),
@@ -156,7 +156,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var i = objs.length-1;
     var t = objs[i];
     for(i=i-1; i>=0; i--)
-      t = [Sym("if"), objs[i], t, false].to_list();
+      t = List(Sym("if"), objs[i], t, false);
 
     return t;
   })
@@ -168,7 +168,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var objs = x.cdr.to_array()
     var f = false;
     for(var i=objs.length-1; i>=0; i--)
-      f = [Sym("if"), objs[i], objs[i], f].to_list();
+      f = List(Sym("if"), objs[i], objs[i], f);
 
     return f;
   })
@@ -197,16 +197,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if (name) {
       // (let loop ((a 1) (b 2)) body ..)
       //=> (letrec ((loop (lambda (a b) body ..))) (loop 1 2))
-      vars = vars.to_array().reverse().to_list();
-      vals = vals.to_array().reverse().to_list();
+      vars = array_to_list(vars.to_array().reverse());
+      vals = array_to_list(vals.to_array().reverse());
 
       var body_lambda = new Pair(Sym("lambda"), new Pair(vars, body));
       var init_call = new Pair(name, vals);
 
-      lambda = [Sym("letrec"), 
-                new Pair([name, body_lambda].to_list(), nil),
-                init_call
-               ].to_list();
+      lambda = List(Sym("letrec"),
+                    new Pair(List(name, body_lambda), nil),
+                    init_call);
     }
     else {
       lambda = new Pair(new Pair(Sym("lambda"), 
@@ -226,7 +225,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("let*: need a pair for bindings: got "+to_write(binds));
 
     var ret = null;
-    binds.to_array().reverse().each(function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       ret = new Pair(Sym("let"), 
                new Pair(new Pair(bind, nil),
                  ret == null ? body : new Pair(ret, nil)));
@@ -241,12 +240,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("letrec*: need a pair for bindings: got "+to_write(binds));
 
     var ret = body;
-    binds.to_array().reverse().each(function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       ret = new Pair(new Pair(Sym("set!"), bind),
               ret);
     })
     var letbody = nil;
-    binds.to_array().reverse().each(function(bind){
+    _.each(binds.to_array().reverse(), function(bind){
       letbody = new Pair(new Pair(bind.car, 
                            new Pair(BiwaScheme.undef, nil)),
                   letbody);
@@ -274,7 +273,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       
       var let_bindings = nil;
       var let_star_values_bindings = nil;
-      mv_bindings.to_array().reverse().each(function (item) {
+      _.each(mv_bindings.to_array().reverse(), function (item) {
 	  var init = item.cdr.car;
 	  var tmpsym = BiwaScheme.gensym()
 	  var binding = new Pair(tmpsym, 
@@ -316,7 +315,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     var ret = null;
 
-    mv_bindings.to_array().reverse().each(function(item){
+    _.each(mv_bindings.to_array().reverse(), function(item){
       var formals = item.car, init = item.cdr.car;
       ret = new Pair(Sym("call-with-values"),
               new Pair(new Pair(Sym("lambda"),
@@ -740,7 +739,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       case "+inf.0": return Infinity;
       case "-inf.0": return -Infinity;
       case "+nan.0": return NaN;
-      default:       if(/[eE.]/.match(s))
+      default:       if(s.match(/[eE.]/))
                        return parseFloat(s);
                      else
                        return parseInt(s, radix);
@@ -832,7 +831,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     for(var o=ar[0]; o != nil; o=o.cdr){
       if(o == nil) return true;
       if(!(o instanceof Pair)) return false;
-      if(contents.find(function(item){ return item === o.car}))
+      if(_.detect(contents, function(item){ return item === o.car; }))
         return false; //cyclic
       contents.push(o.car);
     }
@@ -855,7 +854,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var k = ar.length
     var ret = ar[--k];
     while(k--){
-      ar[k].to_array().reverse().each(function(item){
+      _.each(ar[k].to_array().reverse(), function(item){
         ret = new Pair(item, ret);
       });
     }
@@ -891,7 +890,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("map", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var a = [];
     return Call.multi_foreach(lists, {
@@ -899,7 +898,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       // input: the element (or the elements, if more than one list is given)
       // output: a Call request of proc and args
       call: function(xs){ 
-        return new Call(proc, xs.map(function(x){ return x.car }));
+        return new Call(proc, _.map(xs, function(x){ return x.car }));
       },
 
       // Called when each Call request is finished
@@ -912,16 +911,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       // Called when reached to the end of the list(s)
       // input: none
       // output: the resultant value 
-      finish: function(){ return a.to_list(); }
+      finish: function(){ return array_to_list(a); }
     })
   })
   define_libfunc("for-each", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(xs){ 
-        return new Call(proc, xs.map(function(x){ return x.car }));
+        return new Call(proc, _.map(xs, function(x){ return x.car }));
       },
       finish: function(){ return BiwaScheme.undef; }
     })
@@ -999,12 +998,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       assert_char(ar[1]);
       c = ar[1].value;
     }
-    return c.times(ar[0]);
+    var out = "";
+    _.times(ar[0], function() { out += c; });
+    return out;
   })
   define_libfunc("string", 1, null, function(ar){
     for(var i=0; i<ar.length; i++)
       assert_char(ar[i]);
-    return ar.map(function(c){ return c.value }).join("");
+    return _.map(ar, function(c){ return c.value }).join("");
   })
   define_libfunc("string-length", 1, 1, function(ar){
     assert_string(ar[0]);
@@ -1078,17 +1079,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("string->list", 1, 1, function(ar){
     assert_string(ar[0]);
-    var chars = [];
-    ar[0].scan(/./, function(s){ chars.push(Char.get(s[0])) });
-    return chars.to_list();
+    return array_to_list(_.map(ar[0].split(""), function(s){ return Char.get(s[0]); }));
   })
   define_libfunc("list->string", 1, 1, function(ar){
     assert_list(ar[0]);
-    return ar[0].to_array().map(function(c){ return c.value; }).join("");
+    return _.map(ar[0].to_array(), function(c){ return c.value; }).join("");
   })
   define_libfunc("string-for-each", 2, null, function(ar){
     var proc = ar.shift(), strs = ar;
-    strs.each(function(str){ assert_string(str) });
+    _.each(strs, assert_string);
     
     return Call.multi_foreach(strs, {
       call: function(chars){ return new Call(proc, chars); },
@@ -1140,7 +1139,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector->list", 1, 1, function(ar){
     assert_vector(ar[0]);
-    return ar[0].to_list();
+    return array_to_list(ar[0]);
   })
   define_libfunc("list->vector", 1, 1, function(ar){
     assert_list(ar[0]);
@@ -1156,7 +1155,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector-map", 2, null, function(ar){
     var proc = ar.shift(), vecs = ar;
-    vecs.each(function(vec){ assert_vector(vec) });
+    _.each(vecs, assert_vector);
 
     var a = [];
     return Call.multi_foreach(vecs, {
@@ -1167,7 +1166,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("vector-for-each", 2, null, function(ar){
     var proc = ar.shift(), vecs = ar;
-    vecs.each(function(vec){ assert_vector(vec) });
+    _.each(vecs, assert_vector);
 
     return Call.multi_foreach(vecs, {
       call: function(objs){ return new Call(proc, objs); },
@@ -1219,45 +1218,38 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //quasiquote
   var expand_qq = function(f, lv){
     if(f instanceof Symbol || f === nil){
-      return [Sym("quote"), f].to_list();
+      return List(Sym("quote"), f);
     }
     else if(f instanceof Pair){
       var car = f.car;
       if(car instanceof Pair && car.car === Sym("unquote-splicing")){
         var lv = lv-1;
         if(lv == 0)
-          return [ Sym("append"), 
-                   f.car.cdr.car, 
-                   expand_qq(f.cdr, lv+1) 
-                 ].to_list();
+          return List(Sym("append"),
+                      f.car.cdr.car,
+                      expand_qq(f.cdr, lv+1));
         else
-          return [ Sym("cons"), 
-                   [Sym("list"), Sym("unquote-splicing"), expand_qq(f.car.cdr.car, lv)].to_list(),
-                   expand_qq(f.cdr, lv+1)
-                 ].to_list();
+          return List(Sym("cons"),
+                      List(Sym("list"), Sym("unquote-splicing"), expand_qq(f.car.cdr.car, lv)),
+                      expand_qq(f.cdr, lv+1));
       }
       else if(car === Sym("unquote")){
         var lv = lv-1;
         if(lv == 0)
           return f.cdr.car;
         else
-          return [ Sym("list"), 
-                   [Sym("quote"), Sym("unquote")].to_list(),
-                   expand_qq(f.cdr.car, lv)
-                 ].to_list();
+          return List(Sym("list"),
+                      List(Sym("quote"), Sym("unquote")),
+                      expand_qq(f.cdr.car, lv));
       }
       else if(car === Sym("quasiquote"))
-        return [
-                 Sym("list"), 
-                 Sym("quasiquote"), 
-                 expand_qq(f.cdr.car, lv+1)
-               ].to_list();
+        return List(Sym("list"),
+                    Sym("quasiquote"),
+                    expand_qq(f.cdr.car, lv+1));
       else
-        return [
-                 Sym("cons"), 
-                 expand_qq(f.car, lv),
-                 expand_qq(f.cdr, lv)
-               ].to_list();
+        return List(Sym("cons"),
+                    expand_qq(f.car, lv),
+                    expand_qq(f.cdr, lv));
     }
     else if(f instanceof Array){
       throw new Bug("vector quasiquotation is not implemented yet");
@@ -1292,10 +1284,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //        if(lv == 0)
 //          return f.cdr.car;
 //        else
-//          return [ Sym("vector"),
-//                   [Sym("quote"), Sym("unquote")].to_list(),
-//                   expand_qq(f.cdr.car, lv)
-//                 ].to_list();
+//          return List(Sym("vector"),
+//                      List(Sym("quote"), Sym("unquote")),
+//                      expand_qq(f.cdr.car, lv));
 //      }
 //      else{
 ////        return [ Sym("vector"),
@@ -1424,12 +1415,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("for-all", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var last = true; //holds last result which proc returns
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        return new Call(proc, pairs.map(function(x){ return x.car }));
+        return new Call(proc, _.map(pairs, function(x){ return x.car }));
       },
       result: function(res, pairs){ 
         if(res === false) return false;
@@ -1441,11 +1432,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("exists", 2, null, function(ar){
     var proc = ar.shift();
     var lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        return new Call(proc, pairs.map(function(x){ return x.car }));
+        return new Call(proc, _.map(pairs, function(x){ return x.car }));
       },
       result: function(res, pairs){ 
         if(res !== false) return res;
@@ -1461,7 +1452,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return Call.foreach(ls, {
       call: function(x){ return new Call(proc, [x.car]) },
       result: function(res, x){ if(res) a.push(x.car); },
-      finish: function(){ return a.to_list() }
+      finish: function(){ return array_to_list(a) }
     })
   })
 //  define_scmfunc("partition+", 2, 2, 
@@ -1486,17 +1477,17 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         else    f.push(x.car); 
       },
       finish: function(){ 
-        return new Values([t.to_list(), f.to_list()]);
+        return new Values([array_to_list(t), array_to_list(f)]);
       }
     })
   })
   define_libfunc("fold-left", 3, null, function(ar){
     var proc = ar.shift(), accum = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        var args = pairs.map(function(x){ return x.car });
+        var args = _.map(pairs, function(x){ return x.car });
         args.unshift(accum);
         return new Call(proc, args);
       },
@@ -1506,15 +1497,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("fold-right", 3, null, function(ar){
     var proc = ar.shift(), accum = ar.shift();
-    var lists = ar.map(function(ls){
+    var lists = _.map(ar, function(ls){
       // reverse each list
       assert_list(ls);
-      return ls.to_array().reverse().to_list();
+      return array_to_list(ls.to_array().reverse());
     })
 
     return Call.multi_foreach(lists, {
       call: function(pairs){ 
-        var args = pairs.map(function(x){ return x.car });
+        var args = _.map(pairs, function(x){ return x.car });
         args.push(accum);
         return new Call(proc, args);
       },
@@ -1530,7 +1521,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return Call.foreach(ls, {
       call: function(x){ return new Call(proc, [x.car]) },
       result: function(res, x){ if(!res) ret.push(x.car); },
-      finish: function(){ return ret.to_list(); }
+      finish: function(){ return array_to_list(ret); }
     })
   })
   var make_remover = function(key){
@@ -1544,7 +1535,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           return new Call(TopEnv[key] || CoreEnv[key], [obj, x.car]) 
         },
         result: function(res, x){ if(!res) ret.push(x.car); },
-        finish: function(){ return ret.to_list(); }
+        finish: function(){ return array_to_list(ret); }
       })
     }
   }
@@ -1625,7 +1616,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return ar[0];
     else{
       var ret = null;
-      ar.reverse().each(function(x){
+      _.each(ar.reverse(), function(x){
         if(ret){
           ret = new Pair(x, ret);
         }
@@ -1651,7 +1642,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Bug("list-sort: cannot take compare proc now");
     }
     assert_list(ar[0]);
-    return ar[0].to_array().sort().to_list();
+    return array_to_list(ar[0].to_array().sort());
   });
 
   //(vector-sort proc vector)    procedure
@@ -1660,7 +1651,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Bug("vector-sort: cannot take compare proc now");
     }
     assert_vector(ar[0]);
-    return ar[0].clone().sort();
+      return _.clone(ar[0]).sort();
   });
 
   //(vector-sort! proc vector)    procedure 
@@ -1723,18 +1714,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     // construct subforms
     var loop = BiwaScheme.gensym();
 
-    var init_vars = varsc.map(function(var_def){
+    var init_vars = array_to_list(varsc.map(function(var_def){
       var a = var_def.to_array();
       return List(a[0], a[1]);
-    }).to_list();
+    }));
 
     var test = resultc.car;
     var result_exprs = new Pair(Sym("begin"), resultc.cdr);
 
-    var next_loop = new Pair(loop, varsc.map(function(var_def){
+    var next_loop = new Pair(loop, array_to_list(varsc.map(function(var_def){
       var a = var_def.to_array();
       return a[2] || a[0];
-    }).to_list());
+    })));
     var body_exprs = new Pair(Sym("begin"), bodyc).concat(List(next_loop));
 
     // combine subforms 
@@ -1811,11 +1802,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var fields = [];
 
     // <record clause>:
-    record_clauses.to_array().each(function(clause){
+    _.each(record_clauses.to_array(), function(clause){
       switch(clause.car){
         // - (fields <field spec>*)
         case Sym("fields"):
-          fields = clause.cdr.to_array().map(function(field_spec, idx){
+          fields = _.map(clause.cdr.to_array(), function(field_spec, idx){
             if(BiwaScheme.isSymbol(field_spec)){
               // - <field name>
               return {name: field_spec, idx: idx, mutable: false,
@@ -1905,12 +1896,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var cd  = [Sym("record-constructor-descriptor"), record_name];
 
     // registration
-    var rtd_fields = fields.map(function(field){
-      return BiwaScheme.build_list(
-        [Sym(field.mutable ? "mutable" : "immutable"), field.name]
-      );
+    var rtd_fields = _.map(fields, function(field){
+      return List(Sym(field.mutable ? "mutable" : "immutable"), field.name);
     });
-    rtd_fields.is_vector = true; //tell build_list not to convert
+    rtd_fields.is_vector = true; //tell List not to convert
     var rtd_def = [Sym("make-record-type-descriptor"),
                     [Sym("quote"), record_name], parent_rtd, uid,
                     sealed, opaque, rtd_fields];
@@ -1923,16 +1912,17 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           [Sym("quote"), record_name], Sym("__rtd"), Sym("__cd")]];
 
     // accessors and mutators
-    var accessor_defs = fields.map(function(field){
+    var accessor_defs = _.map(fields, function(field){
       var name = field.accessor_name ||
                    Sym(record_name.name+"-"+field.name.name);
 
       return [Sym("define"), name, [Sym("record-accessor"), rtd, field.idx]];
     });
 
-    var mutator_defs = fields.findAll(function(field){
+    var mutator_defs = _.filter(fields, function(field){
       return field.mutable;
-    }).map(function(field){
+    });
+    mutator_defs = _.map(mutator_defs, function(field){
       var name = field.mutator_name ||
                    Sym("set-"+record_name.name+"-"+field.name.name+"!");
 
@@ -1940,7 +1930,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
 
     // wrap the definitions with `begin'
-    return BiwaScheme.build_list(
+    return List.apply(null,
       [Sym("begin"),
         registration,
         [Sym("define"), constructor_name, [Sym("record-constructor"), cd]],
@@ -1958,9 +1948,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 //(record-type-descriptor <record name>)    syntax 
   define_syntax("record-type-descriptor", function(x){
-    return BiwaScheme.build_list(
-      [Sym("_record-type-descriptor"), [Sym("quote"), x.cdr.car]]
-    );
+    return List(Sym("_record-type-descriptor"), [Sym("quote"), x.cdr.car]);
   });
   define_libfunc("_record-type-descriptor", 1, 1, function(ar){
     assert_symbol(ar[0]);
@@ -1972,9 +1960,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 //(record-constructor-descriptor <record name>)    syntax 
   define_syntax("record-constructor-descriptor", function(x){
-    return BiwaScheme.build_list(
-      [Sym("_record-constructor-descriptor"), [Sym("quote"), x.cdr.car]]
-    );
+    return List(Sym("_record-constructor-descriptor"), [Sym("quote"), x.cdr.car]);
   });
   define_libfunc("_record-constructor-descriptor", 1, 1, function(ar){
     assert_symbol(ar[0]);
@@ -1995,7 +1981,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if(parent_rtd) assert_record_td(parent_rtd);
     if(uid){
       assert_symbol(uid);
-      var _rtd = BiwaScheme.Record.RTD.NongenerativeRecords.get(uid.name);
+      var _rtd = BiwaScheme.Record.RTD.NongenerativeRecords[uid.name];
       if(_rtd){
         // the record type is already defined.
         return _rtd;
@@ -2015,7 +2001,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var rtd = new BiwaScheme.Record.RTD(name, parent_rtd, uid,
                                      sealed, opaque, fields);
     if(uid)
-      BiwaScheme.Record.RTD.NongenerativeRecords.set(uid.name, rtd);
+      BiwaScheme.Record.RTD.NongenerativeRecords[uid.name] = rtd;
 
     return rtd;
   });
@@ -2147,7 +2133,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(record-type-field-names rtd)    procedure
   define_libfunc("record-type-field-names", 1, 1, function(ar){
     assert_record_td(ar[0]);
-    return ar[0].fields.map(function(field){ return field.name; });
+    return _.map(ar[0].fields, function(field){ return field.name; });
   });
 //(record-field-mutable? rtd k)    procedure 
   define_libfunc("record-field-mutable?", 2, 2, function(ar){

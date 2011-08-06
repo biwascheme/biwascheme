@@ -1,12 +1,12 @@
 //
 // Hashtable
 //
-// Based on the class Hash of prototype.js, but
-//  * Hash takes only strings as keys
+// Based on the base JavaScript Object class, but
+//  * Object takes only strings as keys
 //  * R6RS hashtable needs its own hash function
 // so some hacks are needed.
 
-BiwaScheme.Hashtable = Class.create({
+BiwaScheme.Hashtable = BiwaScheme.Class.create({
   initialize: function(_hash_proc, _equiv_proc, mutable){
     this.mutable = (mutable === undefined) ? true :
                    mutable ? true : false;
@@ -15,30 +15,30 @@ BiwaScheme.Hashtable = Class.create({
     this.equiv_proc = _equiv_proc;
 
     // Hash (hashed) => (array of (key and value))
-    this.pairs_of = new Hash();
+    this.pairs_of = {};
   },
 
   clear: function(){
-    this.pairs_of = new Hash();
+    this.pairs_of = {};
   },
 
   candidate_pairs: function(hashed){
-    return this.pairs_of.get(hashed);
+    return this.pairs_of[hashed];
   },
 
   add_pair: function(hashed, key, value){
-    var pairs = this.pairs_of.get(hashed);
+    var pairs = this.pairs_of[hashed];
 
     if (pairs) {
       pairs.push([key, value]);
     }
     else {
-      this.pairs_of.set(hashed, [[key, value]]);
+      this.pairs_of[hashed] = [[key, value]];
     }
   },
 
   remove_pair: function(hashed, pair){
-    var pairs = this.pairs_of.get(hashed);
+    var pairs = this.pairs_of[hashed];
     var i = pairs.indexOf(pair);
     if (i == -1){
       throw new BiwaScheme.Bug("Hashtable#remove_pair: pair not found!");
@@ -52,12 +52,13 @@ BiwaScheme.Hashtable = Class.create({
     var copy = new BiwaScheme.Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
-    this.pairs_of.each(function(hashed_and_pairs){
-      var cloned = hashed_and_pairs[1].map(function(pair){
-        return pair.clone();
+    _.each(_.keys(this.pairs_of), _.bind(function(hashed){
+      var pairs = this.pairs_of[hashed];
+      var cloned = _.map(pairs, function(pair){
+        return _.clone(pair);
       });
-      copy.pairs_of.set(hashed_and_pairs[0], cloned);
-    });
+      copy.pairs_of[hashed] = cloned;
+    }, this));
 
     return copy;
   },
@@ -84,8 +85,8 @@ BiwaScheme.Hashtable = Class.create({
 
   _apply_pair: function(func){
     var a = [];
-    this.pairs_of.values().each(function(pairs){
-      pairs.each(function(pair){
+    _.each(_.values(this.pairs_of), function(pairs){
+      _.each(pairs, function(pair){
         a.push(func(pair));
       });
     });
@@ -112,7 +113,7 @@ BiwaScheme.Hashtable.string_hash = function(ar){
 };
 
 BiwaScheme.Hashtable.string_ci_hash = function(ar){
-  return Object.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
+  return _.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
 };
 
 BiwaScheme.Hashtable.symbol_hash = function(ar){

@@ -54,5 +54,5 @@ BiwaScheme.isClosure = function(obj){
 // procedure: Scheme closure or JavaScript function
 // valid argument for anywhere function is expected
 BiwaScheme.isProcedure = function(obj){
-  return BiwaScheme.isClosure(obj) || Object.isFunction(obj);
+  return BiwaScheme.isClosure(obj) || _.isFunction(obj);
 };

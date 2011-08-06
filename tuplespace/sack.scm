@@ -14,7 +14,7 @@
   (use util.list) ; assoc-ref
   (use www.cgi) ; cgi-parse-parameters, etc
   (export 
-    <sack> after-of log-debug log-info log-connection log-error
+    <sack> base-path-of after-of log-debug log-info log-connection log-error
     sack-query-ref
     sack-new sack-start! sack-add-routing
     ;; for test
@@ -84,6 +84,7 @@
       (log-debug item)
       (let ((rexp (car item))
             (proc (cdr item)))
+        (slot-set! req 'base-path (let1 m (rxmatch rexp path) (string-append (rxmatch-before m) (rxmatch-substring m))))
         (slot-set! req 'after (rxmatch-after (rxmatch rexp path)))
         (proc req)))))
 
@@ -210,6 +211,7 @@
   ((method   :init-keyword :method   :accessor method-of)
    (path     :init-keyword :path     :accessor path-of) 
    (protocol :init-keyword :protocol :accessor protocol-of) 
+   (base-path :accessor base-path-of)
    (after  :accessor after-of)
    (body   :accessor body-of)
    (header :accessor header-of)

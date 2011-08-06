@@ -1,0 +1,10 @@
+Install node.js (http://nodejs.org/) if you don't already have it.
+
+Start the server:
+
+    $ ./start_server
+
+Start a couple of clients:
+
+    $ open http://localhost:3333/
+    $ open http://localhost:3333/

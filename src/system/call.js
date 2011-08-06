@@ -22,7 +22,7 @@
 // example:
 //   return new Call(proc, [x, y], function(ar){ ar[0] });
 //
-BiwaScheme.Call = Class.create({
+BiwaScheme.Call = BiwaScheme.Class.create({
   initialize: function(proc, args, after){
     this.proc = proc;
     this.args = args;
@@ -49,7 +49,7 @@ BiwaScheme.Call = Class.create({
 // Iterator - external iterator for Call.foreach
 //
 BiwaScheme.Iterator = {
-  ForArray: Class.create({
+  ForArray: BiwaScheme.Class.create({
     initialize: function(arr){
       this.arr = arr;
       this.i = 0;
@@ -61,7 +61,7 @@ BiwaScheme.Iterator = {
       return this.arr[this.i++];
     }
   }),
-  ForString: Class.create({
+  ForString: BiwaScheme.Class.create({
     initialize: function(str){
       this.str = str;
       this.i = 0;
@@ -73,7 +73,7 @@ BiwaScheme.Iterator = {
       return BiwaScheme.Char.get(this.str.charAt(this.i++));
     }
   }),
-  ForList: Class.create({
+  ForList: BiwaScheme.Class.create({
     initialize: function(ls){
       this.ls = ls;
     },
@@ -87,11 +87,11 @@ BiwaScheme.Iterator = {
       return pair;
     }
   }),
-  ForMulti: Class.create({
+  ForMulti: BiwaScheme.Class.create({
     initialize: function(objs){
       this.objs = objs;
       this.size = objs.length;
-      this.iterators = objs.map(function(x){
+      this.iterators = _.map(objs, function(x){
         return BiwaScheme.Iterator.of(x);
       })
     },
@@ -103,7 +103,7 @@ BiwaScheme.Iterator = {
       return true;
     },
     next: function(){
-      return this.iterators.map(function(ite){
+      return _.map(this.iterators, function(ite){
         return ite.next();
       })
     }
@@ -118,7 +118,7 @@ BiwaScheme.Iterator = {
       case (obj === BiwaScheme.nil):
         return new this.ForList(obj);
       default:
-        throw new BiwaScheme.Bug("Iterator.of: unknown class: "+Object.inspect(obj));
+        throw new BiwaScheme.Bug("Iterator.of: unknown class: "+BiwaScheme.inspect(obj));
     }
   }
 }
@@ -152,12 +152,12 @@ BiwaScheme.Iterator = {
 
 BiwaScheme.Call.default_callbacks = {
   call: function(x){ return new BiwaScheme.Call(this.proc, [x]) },
-  result: Prototype.emptyFunction,
-  finish: Prototype.emptyFunction
+  result: function(){},
+  finish: function(){}
 }
 BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
   is_multi || (is_multi = false);
-  ["call", "result", "finish"].each(function(key){
+  _.each(["call", "result", "finish"], function(key){
     if(!callbacks[key])
       callbacks[key] = BiwaScheme.Call.default_callbacks[key];
   })

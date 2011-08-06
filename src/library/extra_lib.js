@@ -2,15 +2,10 @@
 if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("html-escape", 1, 1, function(ar){
     assert_string(ar[0]);
-    return ar[0].escapeHTML();
+    return _.escapeHTML(ar[0]);
   });
   BiwaScheme.inspect_objs = function(objs){
-    return objs.map(function(obj){
-      if(obj.inspect)
-        return obj.inspect();
-      else
-        return Object.inspect($H(obj));
-    }).join(", ");
+    return _.map(objs, BiwaScheme.inspect).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
     return BiwaScheme.inspect_objs(ar);
@@ -30,14 +25,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   BiwaScheme.json2sexp = function(json){
     switch(true){
-    case Object.isNumber(json) || 
-         Object.isString(json) ||
+    case _.isNumber(json) ||
+         _.isString(json) ||
          json === true || json === false:
       return json;
-    case Object.isArray(json):
-      return json.map(function(item){ 
-               return json2sexp(item);
-             }).to_list();
+    case _.isArray(json):
+      return array_to_list(_.map(json, json2sexp));
     case typeof(json) == "object":
       var ls = nil;
       for(key in json){
@@ -46,7 +39,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       }
       return ls;
     default:
-      throw new Error("json->sexp: detected invalid value for json: "+Object.inspect(json));
+      throw new Error("json->sexp: detected invalid value for json: "+BiwaScheme.inspect(json));
     }
     throw new Bug("must not happen");
   }
@@ -72,7 +65,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("string-split", 2, 2, function(ar){
     assert_string(ar[0]);
     assert_string(ar[1]);
-    return ar[0].split(ar[1]).to_list();
+    return array_to_list(ar[0].split(ar[1]));
   })
 
   define_libfunc("string-join", 1, 2, function(ar){
@@ -92,28 +85,28 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_list(ls);
 
     var ret = [];
-    ls.to_array().reverse().each(function(x){
+    _.each(ls.to_array().reverse(),function(x){
       ret.push(x);
       ret.push(item);
     });
     ret.pop();
-    return ret.to_list();
+    return array_to_list(ret);
   });
 
   define_libfunc("map-with-index", 2, null, function(ar){
     var proc = ar.shift(), lists = ar;
-    lists.each(function(ls){ assert_list(ls) });
+    _.each(lists, assert_list);
 
     var results = [], i = 0;
     return Call.multi_foreach(lists, {
       call: function(xs){ 
-        var args = xs.map(function(x){ return x.car });
+        var args = _.map(xs, function(x){ return x.car });
         args.unshift(i);
         i++;
         return new Call(proc, args);
       },
       result: function(res){ results.push(res); },
-      finish: function(){ return results.to_list(); }
+      finish: function(){ return array_to_list(results); }
     });
   });
 
@@ -143,13 +136,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_procedure(ar[0]);
     assert_list(ar[1]);
 
-    return sort_with_comp(ar[1].to_array(), ar[0]).to_list();
+    return array_to_list(sort_with_comp(ar[1].to_array(), ar[0]));
   });
   define_libfunc("vector-sort/comp", 1, 2, function(ar){
     assert_procedure(ar[0]);
     assert_vector(ar[1]);
 
-    return sort_with_comp(ar[1].clone(), ar[0]);
+    return sort_with_comp(_.clone(ar[1]), ar[0]);
   });
   define_libfunc("vector-sort/comp!", 1, 2, function(ar){
     assert_procedure(ar[0]);
@@ -170,9 +163,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if (dotpos == -1)
       args = given;
     else {
-      for (var i = 0; i < dotpos; i++)
-	args[i] = given[i];
-      args[i] = given.slice(i).to_list();
+      for (var i = 0; i < dotpos; i++) {
+        args[i] = given[i];
+      }
+      args[i] = array_to_list(given.slice(i));
     }
     return args;
   }
@@ -226,11 +220,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   }
   define_syntax("%macroexpand", function(x){
     var expanded = (new Interpreter).expand(x.cdr.car);
-    return [Sym("quote"), expanded].to_list();
+    return List(Sym("quote"), expanded);
   });
   define_syntax("%macroexpand-1", function(x){
     var expanded = macroexpand_1(x.cdr.car);
-    return [Sym("quote"), expanded].to_list();
+    return List(Sym("quote"), expanded);
   });
 
   define_libfunc("macroexpand", 1, 1, function(ar){
@@ -247,7 +241,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // i/o
 
   define_libfunc("print", 1, null, function(ar){
-    ar.map(function(item){
+    _.map(ar, function(item){
       puts(to_display(item), true);
     })
     puts(""); //newline
@@ -305,13 +299,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("regexp-exec", 2, 2, function(ar){
     var rexp = ar[0];
-    if(Object.isString(ar[0])){
+    if(_.isString(ar[0])){
       rexp = new RegExp(ar[0]);
     }
     assert_regexp(rexp, "regexp-exec");
     assert_string(ar[1], "regexp-exec");
     var ret = rexp.exec(ar[1])
-    return (ret === null) ? false : ret.to_list();
+    return (ret === null) ? false : array_to_list(ret);
   })
 
 //  //Function: rxmatch regexp string 
