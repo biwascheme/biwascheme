@@ -91,6 +91,22 @@ Prerequisites:
 * sed
 * Java (to run YUI Compressor)
 
+Development
+===========
+
+Repository: https://github.com/yhara/biwascheme
+
+How to release
+--------------
+
+# Edit History.txt
+# Edit VERSION
+# $ make -B
+# Commit generated files
+# $ git tag x.y.z
+# Push changes to github (with --tags)
+# Update website ($ git pull)
+
 License
 =======
 
@@ -115,3 +131,5 @@ Contact
 =======
 
 https://github.com/yhara/biwascheme
+
+Yutaka HARA (yhara) yutaka.hara.gmail.com

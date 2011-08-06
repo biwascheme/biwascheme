@@ -1,3 +1,18 @@
+(Future)  v0.6.x
+
+  * new: add clojure-like JavaScript interop syntaxes
+
+(Future)  v0.6.0
+
+  * change: migrate from prototype.js to jQuery and underscore.js
+
+2011-08-07  v0.5.7
+
+  * new: install via npm ($ npm install biwascheme)
+    it means you can do require('biwascheme') on Node
+  * improve: added tuplespace/README
+  * fix: element-write-attribute did not work
+
 2011-07-07  v0.5.6
 
   * new: Node.js support! (try 'node bin/biwas a.scm')
