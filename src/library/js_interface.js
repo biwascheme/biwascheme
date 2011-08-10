@@ -128,6 +128,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0] === undefined;
   });
 
+  define_libfunc("js-function?", 1, 1, function(ar){
+    return _.isFunction(ar[0]);
+  });
+
   define_libfunc_raw("js-array-to-list", 1, 1, function(ar){
     return BiwaScheme.array_to_list(ar[0]);
   });
