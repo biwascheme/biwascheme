@@ -193,7 +193,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //  (element-new '(div "foo"))        => <div>foo</div>
   //  (element-new '("div#main" "foo")) => <div id='main'>foo</div>
   //  (element-new '("div.red" "foo"))  => <div class='red'>foo</div>
-  //  (element-new '(div align right))  => <div align='right'>foo</div>
+  //  (element-new '(div align "right" "foo"))  => <div align='right'>foo</div>
   //  (element-new '(div (span "foo"))  => <div><span>foo</span></div>
   //
 
@@ -429,12 +429,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_string(path);
     var alist = ar[1];
     assert_list(alist);
-    var h = {};
-
-    alist.foreach(function(item){
-      assert_string(item.car);
-      h[item.car] = item.cdr;
-    });
+    var h = alist_to_js_obj(alist);
 
     return new BiwaScheme.Pause(function(pause){
       $.post(path, h, function(transport) {

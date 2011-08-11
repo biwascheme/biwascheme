@@ -140,6 +140,37 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0].to_array();
   });
 
+  BiwaScheme.alist_to_js_obj = function(alist) {
+    if (alist === nil) {
+      return {} ;
+    }
+    assert_list(alist);
+    var obj = {};
+    alist.foreach(function(item){
+      assert_string(item.car);
+      obj[item.car] = item.cdr;
+    });
+    return obj;
+  };
+  define_libfunc("alist-to-js-obj", 1, 1, function(ar) {
+    return BiwaScheme.alist_to_js_obj(ar[0]);
+  });
+
+  BiwaScheme.js_obj_to_alist = function(obj) {
+    if (obj === undefined) {
+      return BiwaScheme.nil;
+    }
+    var arr = [];
+    _.each(obj, function(val, key) {
+      arr.push(new Pair(key, val));
+    });
+    var alist = BiwaScheme.array_to_list(arr);
+    return alist;
+  };
+  define_libfunc("js-obj-to-alist", 1, 1, function(ar) {
+    return BiwaScheme.js_obj_to_alist(ar[0]);
+  });
+
   //
   // timer, sleep
   //

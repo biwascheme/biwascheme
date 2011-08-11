@@ -1526,6 +1526,14 @@ describe('js interface', {
     ev('(js-function? (lambda () #t))').should_be(false);
     ev('(js-function? 0)').should_be(false);
     ev('(js-function? {})').should_be(false);
+  },
+  'alist-to-js-obj' : function(){
+    ev('(alist-to-js-obj \'()').should_be({});
+    ev('(alist-to-js-obj \'(("a" . 1) ("b" . 2)))').should_be({a: 1, b: 2});
+  },
+  'js-obj-to-alist' : function(){
+    ev('(equal? \'() (js-obj-to-alist (js-eval "{}")))').should_be(true);
+    ev('(equal? \'(("a" . 1) ("b" . 2)) (js-obj-to-alist (js-eval "var o = {a: 1, b: 2}; o;")))').should_be(true);
   }
 });
 
