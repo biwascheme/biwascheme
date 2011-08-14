@@ -157,4 +157,22 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
   });
 
+  //
+  // console
+  //
+  var define_console_func = function(name){
+    define_libfunc("console-"+name, 1, null, function(ar){
+      var con = window.console;
+      if(con){
+        con[name].apply(con, ar);
+      }
+      return BiwaScheme.undef;
+    });
+  };
+  define_console_func("debug");
+  define_console_func("log");
+  define_console_func("info");
+  define_console_func("warn");
+  define_console_func("error");
+
 }
