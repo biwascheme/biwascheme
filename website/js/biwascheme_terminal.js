@@ -123,7 +123,7 @@ jQuery(document).ready(function($, undefined) {
         for(fun in window.BiwaScheme.CoreEnv) {
             result[result.length] = fun;
         }
-        return result.to_list();
+        return BiwaScheme.array_to_list(result);
     });
 
     // return list of object properties like dir from python
@@ -133,7 +133,7 @@ jQuery(document).ready(function($, undefined) {
         for (i in object) {
             result.push(i);
         }
-        return result.to_list();
+        return BiwaScheme.array_to_list(result);
     });
 
     // check if object is in list
@@ -163,7 +163,8 @@ jQuery(document).ready(function($, undefined) {
     BiwaScheme.define_libfunc("split", 2, 2, function(args) {
         assert_string(args[0]);
         assert_string(args[1]);
-        return args[1].split(args[0]).to_list();
+        var result = args[1].split(args[0]);
+        return result.to_list();
     });
 
 });
