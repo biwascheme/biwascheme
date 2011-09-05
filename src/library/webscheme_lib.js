@@ -418,8 +418,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_string(path);
 
     return new BiwaScheme.Pause(function(pause){
-      $.get(path, function(transport) {
-        pause.resume(transport.responseText);
+      $.get(path, function(data) {
+        pause.resume(data);
       });
     });
   });
