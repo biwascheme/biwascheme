@@ -284,6 +284,43 @@ describe('syntaxes', {
   }
 });
 
+describe('S expression comment(#;)', {
+  'simple' : function() {
+    ev("#;1 2").should_be(2);
+    ev("1 #;2").should_be(1);
+    ev("1 #;(1 2)").should_be(1);
+    ev("#;(1 2) 1").should_be(1);
+    ew("(list #;1)").should_be("()");
+  },
+  'in-list' : function() {
+    ev("'(1 #;1 2)").should_be("(1 2)");
+    ev("(list 1 #;1 3)").should_be("(1 3)");
+    ev("(+ 1 #;1 4)").should_be("5");
+  },
+  'variety of data types' : function() {
+    ev("(list 1 #;#t 2)").should_be("(1 2)");
+    ev("(list 1 #;#(1 2 3) 3)").should_be("(1 3)");
+    ev("(list 1 #;(+ 1  2) 4)").should_be("(1 4)");
+    ev("(list 1 #;(a b c) 5)").should_be("(1 5)");
+    ev("(list 1 #;a 6)").should_be("(1 6)");
+    ev("(list 1 #;2.5 #;'a 8)").should_be("(1 8)");
+    ev("(list 1 #;  \"a b c\" #;'a 9)").should_be("(1 9)");
+    ev("(list 1 #;  \"#;\" #;'a 10)").should_be("(1 10)");
+    ev("(list 1 #; a 11) ;#;").should_be("(1 11)");
+
+  },
+  'nested comments' : function() {
+    ew("(list 1 #;(#;3) 'a)").should_be("(1 a)");
+    ew("(list 1 #;#(#;3) 'b)").should_be("(1 b)");
+    ew("(list 1 #;(#;3 #;1) 'c)").should_be("(1 c)");
+    ew("(list 1 #;#(#;3 #;1) 'd)").should_be("(1 d)");
+    ew("(list 1 #;(#;3 #;1 #;2) 'a)").should_be("(1 a)");
+    ew("(list 1 #;#(#;3 #;1 #;2) 7)").should_be("(1 7)");
+    ew("(list 1 #;#(#;3 #;1 #;2 2) 8)").should_be("(1 8)");
+    ew("(list 1 #;#(#;3 #;1 #;2 2 #;(1 2 #;3)) 9)").should_be("(1 9)");
+  }
+});
+
 describe('regexp', {
   'string->regexp' : function(){
     ew('(string->regexp "asdf")').should_be("/asdf/");
@@ -300,6 +337,8 @@ describe('regexp', {
     ew('(regexp-exec "(s)d(f)" "sdf")').should_be('("sdf" "s" "f")');
   }
 })
+
+describe(';; src/library/r6rs_lib.js', {});
 
 describe('11.2 Definitions', {
   'define a variable' : function(){
@@ -1489,6 +1528,8 @@ describe('19 R5RS compatibility', {
 //(scheme-report-environment n)    procedure 
 })
 
+describe(';; src/library/js_interface.js', {});
+
 describe('js interface', {
   'sleep' : function(){
     (new BiwaScheme.Interpreter).evaluate("(begin 1 (sleep 0) 2)", function(result){
@@ -1519,6 +1560,8 @@ describe('js interface', {
   }
 });
 
+describe(';; src/library/webscheme_lib.js', {});
+
 describe('browser functions', {
   'element-empty!' : function(){
     scm_eval('(element-empty! ($ "#div1"))');
@@ -1540,6 +1583,8 @@ describe('browser functions', {
     expect( $("#div1").is(":visible") ).should_be(true);
   },
 });
+
+describe(';; src/library/extra_lib.js', {});
 
 describe('extra library', {
   'let1' : function(){
@@ -1586,6 +1631,8 @@ describe('extra library', {
           (cons before (port-closed? port)))").should_be("(#f . #t)");
   }
 });
+
+describe(';; src/library/srfi.js', {});
 
 describe('srfi-1 list', {
   'iota' : function(){
@@ -1642,43 +1689,6 @@ describe('srfi-30 comment syntax', {
   },
   'token in a string' : function() {
     ev("\"#| abc |#|#\"").should_be("#| abc |#|#");
-  }
-});
-
-describe('S expression comment(#;)', {
-  'simple' : function() {
-    ev("#;1 2").should_be(2);
-    ev("1 #;2").should_be(1);
-    ev("1 #;(1 2)").should_be(1);
-    ev("#;(1 2) 1").should_be(1);
-    ew("(list #;1)").should_be("()");
-  },
-  'in-list' : function() {
-    ev("'(1 #;1 2)").should_be("(1 2)");
-    ev("(list 1 #;1 3)").should_be("(1 3)");
-    ev("(+ 1 #;1 4)").should_be("5");
-  },
-  'variety of data types' : function() {
-    ev("(list 1 #;#t 2)").should_be("(1 2)");
-    ev("(list 1 #;#(1 2 3) 3)").should_be("(1 3)");
-    ev("(list 1 #;(+ 1  2) 4)").should_be("(1 4)");
-    ev("(list 1 #;(a b c) 5)").should_be("(1 5)");
-    ev("(list 1 #;a 6)").should_be("(1 6)");
-    ev("(list 1 #;2.5 #;'a 8)").should_be("(1 8)");
-    ev("(list 1 #;  \"a b c\" #;'a 9)").should_be("(1 9)");
-    ev("(list 1 #;  \"#;\" #;'a 10)").should_be("(1 10)");
-    ev("(list 1 #; a 11) ;#;").should_be("(1 11)");
-
-  },
-  'nested comments' : function() {
-    ew("(list 1 #;(#;3) 'a)").should_be("(1 a)");
-    ew("(list 1 #;#(#;3) 'b)").should_be("(1 b)");
-    ew("(list 1 #;(#;3 #;1) 'c)").should_be("(1 c)");
-    ew("(list 1 #;#(#;3 #;1) 'd)").should_be("(1 d)");
-    ew("(list 1 #;(#;3 #;1 #;2) 'a)").should_be("(1 a)");
-    ew("(list 1 #;#(#;3 #;1 #;2) 7)").should_be("(1 7)");
-    ew("(list 1 #;#(#;3 #;1 #;2 2) 8)").should_be("(1 8)");
-    ew("(list 1 #;#(#;3 #;1 #;2 2 #;(1 2 #;3)) 9)").should_be("(1 9)");
   }
 });
 
