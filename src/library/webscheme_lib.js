@@ -420,7 +420,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return new BiwaScheme.Pause(function(pause){
       $.get(path, function(data) {
         pause.resume(data);
-      });
+      }, "text");
     });
   });
   // (http-post "/foo" '(("x" . 1) ("y" . 2)))
