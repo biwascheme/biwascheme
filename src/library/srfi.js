@@ -25,6 +25,23 @@ with(BiwaScheme) {
     return array_to_list(a);
   });
 
+  var copy_pair = function(pair){
+    var car = BiwaScheme.isPair(pair.car) ? copy_pair(pair.car)
+                                          : pair.car;
+    var cdr = BiwaScheme.isPair(pair.cdr) ? copy_pair(pair.cdr)
+                                          : pair.cdr;
+    return new Pair(car, cdr);
+  };
+  // (list-copy list)
+  define_libfunc("list-copy", 1, 1, function(ar){
+    if(BiwaScheme.isPair(ar[0])){
+      return copy_pair(ar[0]);
+    }
+    else{
+      return BiwaScheme.nil;
+    }
+  });
+
   //
   // srfi-6 & Gauche (string port)
   // 
@@ -257,5 +274,11 @@ with(BiwaScheme) {
   define_libfunc("vector-append", 2, null, function(ar){
     var vec = [];
     return vec.concat.apply(vec, ar);
-  })
+  });
+
+  // (vector-copy vector)
+  define_libfunc("vector-copy", 1, 1, function(ar){
+    assert_vector(ar[0]);
+    return _.clone(ar[0]);
+  });
 }

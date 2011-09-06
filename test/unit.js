@@ -1678,6 +1678,11 @@ describe('srfi-1 list', {
   'iota' : function(){
     ew("(iota 3)").should_be("(0 1 2)");
     ew("(iota 3 1)").should_be("(1 2 3)");
+  },
+  'list-copy': function(){
+    ew("(list-copy '(1 2 3))").should_be("(1 2 3)");
+    ev("(let1 ls '(1 2 3) \
+          (eq? ls (list-copy ls)))").should_be(false);
   }
 });
 
