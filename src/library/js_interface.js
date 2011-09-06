@@ -160,13 +160,27 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // console
   //
+  // (console-debug obj1 ...)
+  // (console-log obj1 ...)
+  // (console-info obj1 ...)
+  // (console-warn obj1 ...)
+  // (console-error obj1 ...)
+  //   Put objects to console, if window.console is defined.
+  //   Returns obj1.
+  //
+  // Example:
+  //     (some-func arg1 (console-debug arg2) arg3)
   var define_console_func = function(name){
     define_libfunc("console-"+name, 1, null, function(ar){
       var con = window.console;
       if(con){
-        con[name].apply(con, ar);
+        var vals = _.map(ar, function(item){
+          return BiwaScheme.inspect(item, {default: item});
+        });
+
+        con[name].apply(con, vals);
       }
-      return BiwaScheme.undef;
+      return ar[0];
     });
   };
   define_console_func("debug");
