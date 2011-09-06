@@ -111,6 +111,31 @@ describe('utilities', {
       expect( to_display(Char.get("a")) ).should_be("a");
     }
   },
+  'inspect': function(){
+    with(BiwaScheme){
+      expect( inspect(undefined) ).should_be("undefined");
+      expect( inspect(null) ).should_be("null");
+      expect( inspect(true) ).should_be("true");
+      expect( inspect(false) ).should_be("false");
+      expect( inspect("foo") ).should_be("'foo'");
+      expect( inspect("s' d\"") ).should_be("'s\\' d\"'");
+      //expect( inspect("foo\n") ).should_be("foo\\n")
+      expect( inspect([0,0,0]) ).should_be("[0, 0, 0]");
+
+      expect( inspect(BiwaScheme.nil) ).should_be("nil");
+      expect( inspect(BiwaScheme.undef) ).should_be("#<undef>");
+      expect( inspect(new Pair(1, 2)) ).should_be("(1 . 2)");
+      expect( inspect(Sym("sym")) ).should_be("'sym");
+
+      var obj1 = {};
+      obj1.inspect = function(){ return "obj1"; };
+      expect( inspect(obj1) ).should_be("obj1");
+
+      var obj2 = {};
+      obj2.toString = function(){ return "obj2"; };
+      expect( inspect(obj2) ).should_be("obj2");
+    }
+  },
   'array_to_list' : function(){
     with(BiwaScheme){
       expect( array_to_list([1,2,3]).to_write() ).should_be("(1 2 3)");
