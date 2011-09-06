@@ -184,8 +184,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     }
     var binds = x.cdr.car, body = x.cdr.cdr;
     
-    if(!(binds instanceof Pair)) 
+    if((!(binds instanceof Pair)) && binds != BiwaScheme.nil){
       throw new Error("let: need a pair for bindings: got "+to_write(binds));
+    }
 
     var vars = nil, vals = nil;
     for(var p=binds; p instanceof Pair; p=p.cdr){

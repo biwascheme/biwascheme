@@ -297,8 +297,13 @@ describe('syntaxes', {
     ev("(let* ((x 1) (y x)) y)").should_be(1);
     ev("(let ((x 2) (y 3)) (let* ((x 7) (z (+ x y))) (* z x)))").should_be(70);
   },
-//  'named let' : function(){
-//    ev("(let loop ((i 0) (x 0)) (if (= i 5) x (loop (+ i 1) (- x 1))))").should_be(-5);
+  'named let' : function(){
+    ev("(let loop ((i 0) (x 0)) (if (= i 5) x (loop (+ i 1) (- x 1))))").should_be(-5);
+    ev("(let loop () 9)").should_be(9);
+  },
+//  'named let*' : function(){
+//    ev("(let* loop ((i 0) (x i)) (if (= i 5) x (loop (+ i 1) (- x 1))))").should_be(-5);
+//    ev("(let* loop () 9)").should_be(9);
 //  },
   // TODO: more test for cond
   'cond' : function(){
