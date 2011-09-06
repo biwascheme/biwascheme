@@ -1617,6 +1617,13 @@ describe('extra library', {
        "  '(a b))").should_be("((0 a) (1 b))");
   },
 
+  'dotimes': function(){
+    ev("(dotimes (x 10 x))").should_be(10);
+    ew("(let1 ls '() \
+          (dotimes (x 3 ls) \
+            (set! ls (cons x ls))))").should_be("(2 1 0)");
+  },
+
   'list-sort/comp': function(){
     ew("(list-sort/comp (lambda (a b) (- b a)) \
           '(1 3 4 2 5))").should_be("(5 4 3 2 1)");

@@ -110,6 +110,33 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
   });
 
+  // loop
+
+  // (dotimes (variable limit result) body ...)
+  // Iterate with variable 0 to limit-1.
+  // ->
+  //    (do ((tlimit limit)
+  //         (variable 0 (+ variable 1)))
+  //        ((>= variable tlimit) result)
+  //      body ...)
+  define_syntax("dotimes", function(x){
+    var spec = x.cdr.car,
+        bodies = x.cdr.cdr;
+    var variable = spec.car,
+        limit = spec.cdr.car,
+        result = spec.cdr.cdr.car;
+    var tlimit = BiwaScheme.gensym();
+
+    var do_vars = List([tlimit, limit],
+                       [variable, 0, [Sym("+"), variable, 1]]);
+    var do_check = List([Sym(">="), variable, tlimit], result);
+
+    return new Pair(Sym("do"),
+             new Pair(do_vars,
+               new Pair(do_check,
+                 bodies)));
+  });
+
   // sorting
   
   // These functions takes a Scheme proc and sort the given
