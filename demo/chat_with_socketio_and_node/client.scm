@@ -1,3 +1,4 @@
+(load "socketio.scm")
 (js-load "/socket.io/socket.io.js" "io")
 
 (define (log-debug . args)
@@ -6,12 +7,11 @@
 (define *io* (js-eval "io"))
 (define *socket* (js-invoke *io* "connect"))
 
-(define (handle type callback)
-  (js-invoke *socket* "on" type (js-closure callback)))
+(define (handle . args)
+  (apply socketio-on (cons *socket* args)))
 
 (define (send . args)
-  (let1 args1 (map (lambda (e) (if (procedure? e) (js-closure e) e)) args)
-        (apply js-invoke (append (list *socket* "emit") args1))))
+  (apply socketio-emit (cons *socket* args)))
 
 (define (clear!)
   (element-empty! "#message")
@@ -35,7 +35,7 @@
           (element-append-child! "#nicknames" (element-new '(span "Online: ")))
           (for-each
            (lambda (n) (element-append-child! "#nicknames" (element-new (list 'b n))))
-           (list-sort (js-array-to-list nicknames)))))
+           (list-sort nicknames))))
 
 (handle "user message" add-message!)
 
