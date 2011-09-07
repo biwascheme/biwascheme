@@ -63,8 +63,9 @@ How to use from inside node.js as a module
 Files
 =====
 
-* lib/biwascheme.js : The latest release version, uncompressed
-* lib/biwascheme-min.js : The latest release version, compressed
+* lib/
+  * biwascheme.js : The latest release version, uncompressed
+  * biwascheme-min.js : The latest release version, compressed
 * demo/
   * Demos
 * src/
@@ -78,11 +79,21 @@ Files
   * (experimental) TupleSpace implemented in Scheme
 * website/
   * HTMLs and CSS of www.biwascheme.org
+* node_modules/
+  * npm package
 
 Building biwascheme.js
 ----------------------
 
-Make compiles src/\*.js into lib/biwascheme.js.
+These files are not included in the repository:
+
+* lib/biwascheme-min.js
+* lib/biwascheme.js
+* lib/console_biwascheme.js
+* node_modules/biwascheme/lib/biwascheme.js
+* src/version.js
+
+Make compiles src/\*.js into biwascheme.js.
 
     $ make
 
@@ -107,6 +118,8 @@ How to release
 5. $ git tag x.y.z
 6. Push changes to github (with --tags)
 7. Update website ($ git pull)
+
+TODO: how to release npm package
 
 License
 =======

@@ -45,10 +45,13 @@ CONSOLE_FILES =                                   \
 
 all: build
 
-build: lib/biwascheme.js lib/biwascheme-min.js lib/console_biwascheme.js node_modules/biwascheme/lib/biwascheme.js
+build: lib lib/biwascheme.js lib/biwascheme-min.js lib/console_biwascheme.js node_modules/biwascheme/lib/biwascheme.js
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) $(CONSOLE_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
+
+lib:
+	mkdir lib
 
 lib/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
 	cat $(VERSION_FILE) > $@
