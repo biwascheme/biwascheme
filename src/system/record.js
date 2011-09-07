@@ -5,6 +5,10 @@
 // Record is like struct in C, but supports more feature like inheritance.
 // see also: src/library/r6rs_lib.js
 
+//
+// Record 
+// represents each instance of record type
+//
 BiwaScheme.Record = BiwaScheme.Class.create({
   initialize: function(rtd, values){
     assert_record_td(rtd, "new Record");
@@ -41,7 +45,9 @@ BiwaScheme.Record.get_type = function(name_str){
   return BiwaScheme.Record._DefinedTypes[name_str];
 };
 
-// Record type descriptor
+//
+// RTD (Record type descriptor)
+//
 BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   //                   Symbol RTD        Symbol Bool  Bool    Array
   initialize: function(name, parent_rtd, uid, sealed, opaque, fields){
@@ -66,6 +72,23 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
     });
   },
 
+  // Returns the name of the k-th field.
+  // Only used for error messages.
+  field_name: function(k){
+    var names = this._field_names();
+
+    for(par = this.parent_rtd; par; par = par.parent_rtd){
+      names = par._field_names() + names;
+    }
+
+    return names[k];
+  },
+  _field_names: function(){
+    return _.map(this.fields, function(spec){
+        return spec.name;
+      });
+  },
+
   _generate_new_uid: function(){
     var n = (BiwaScheme.Record.RTD.last_uid++);
     return BiwaScheme.Sym("__record_td_uid_"+n);
@@ -82,7 +105,9 @@ BiwaScheme.isRecordTD = function(o){
   return (o instanceof BiwaScheme.Record.RTD);
 };
 
-// Record constructor descriptor
+//
+// CD (Record constructor descriptor)
+//
 BiwaScheme.Record.CD = BiwaScheme.Class.create({
   initialize: function(rtd, parent_cd, protocol){
     this._check(rtd, parent_cd, protocol);

@@ -1202,7 +1202,8 @@ describe('5 Control structures', {
 
 describe('6 Records', {
   // 6.2  Records: Syntactic layer
-//(define-record-type <name spec> <record clause>*)    syntax 
+
+  //(define-record-type <name spec> <record clause>*)    syntax 
   'define-record-type': function(){
     ew("(define-record-type (point new-point is-point) \
           (fields x \
@@ -1256,13 +1257,13 @@ describe('6 Records', {
                       (record-constructor-descriptor point2d))) \
         (point2d-x (make-point3d 1 2 3))").should_be(1);
   },
-//(record-type-descriptor <record name>)    syntax 
+  //(record-type-descriptor <record name>)    syntax 
   'record-type-descriptor': function(){
     ev("(define-record-type point) \
         (record-type-descriptor? \
           (record-type-descriptor point))").should_be(true);
   },
-//(record-constructor-descriptor <record name>)    syntax 
+  //(record-constructor-descriptor <record name>)    syntax 
   'record-type-descriptor': function(){
     ev("(define-record-type point) \
         (procedure? \

@@ -2085,15 +2085,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     return function(args){
       var record = args[0];
-      assert_record(record);
+      var error_msg = rtd.name.name+"-"+rtd.field_name(k)+": "+
+                      BiwaScheme.to_write(record)+
+                      " is not a "+rtd.name.name;
+      assert(BiwaScheme.isRecord(record), error_msg);
 
       var descendant = false;
       for(var _rtd = record.rtd; _rtd; _rtd = _rtd.parent_rtd){
         if(_rtd == rtd) descendant = true;
       }
-      assert(descendant,
-            "(record-accessor): "+BiwaScheme.to_write(record)+
-            " is not a "+rtd.name);
+      assert(descendant, error_msg);
 
       return record.get(k);
     };
@@ -2109,12 +2110,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     return function(args){
       var record = args[0], val = args[1];
+      var func_name = rtd.field_name(k);
+
       assert_record(record);
       assert(record.rtd === rtd,
-            "(record-mutator): "+BiwaScheme.to_write(record)+
-            " is not a "+rtd.name);
+            func_name+": "+BiwaScheme.to_write(record)+
+            " is not a "+rtd.name.name);
       assert(!record.rtd.sealed,
-            "(record-mutator): "+rtd.name+" is sealed (can't mutate)");
+            func_name+": "+rtd.name.name+" is sealed (can't mutate)");
 
       record.set(k, val);
     };
