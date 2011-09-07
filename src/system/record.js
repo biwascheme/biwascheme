@@ -1,6 +1,10 @@
 //
-// Record
+// R6RS Records
+// http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-7.html#node_chap_6
 //
+// Record is like struct in C, but supports more feature like inheritance.
+// see also: src/library/r6rs_lib.js
+
 BiwaScheme.Record = BiwaScheme.Class.create({
   initialize: function(rtd, values){
     assert_record_td(rtd, "new Record");
@@ -8,22 +12,26 @@ BiwaScheme.Record = BiwaScheme.Class.create({
     this.rtd = rtd;
     this.fields = values;
   },
+
   get: function(k){
     return this.fields[k]
   },
+
   set: function(k, v){
     this.fields[k] = v;
   },
+
   toString: function(){
     var contents = BiwaScheme.to_write(this.fields);
     return "#<Record "+this.rtd.name+" "+contents+">";
   }
 });
+
 BiwaScheme.isRecord = function(o){
   return (o instanceof BiwaScheme.Record);
 };
 
-// Record types
+// Defined record types
 BiwaScheme.Record._DefinedTypes = {};
 
 BiwaScheme.Record.define_type = function(name_str, rtd, cd){
@@ -40,6 +48,7 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
     this.name = name;
     this.parent_rtd = parent_rtd;
     this.is_base_type = !parent_rtd;
+
     if(uid){
       this.uid = uid;
       this.generative = false;
@@ -56,14 +65,17 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
       return {name: field[0], mutable: !!field[1]};
     });
   },
+
   _generate_new_uid: function(){
     var n = (BiwaScheme.Record.RTD.last_uid++);
     return BiwaScheme.Sym("__record_td_uid_"+n);
   },
+
   toString: function(){
     return "#<RecordTD "+name+">";
   }
 });
+
 BiwaScheme.Record.RTD.last_uid = 0;
 BiwaScheme.Record.RTD.NongenerativeRecords = {};
 BiwaScheme.isRecordTD = function(o){
