@@ -45,30 +45,27 @@ CONSOLE_FILES =                                   \
 
 all: build
 
-build: lib lib/biwascheme.js lib/biwascheme-min.js lib/console_biwascheme.js node_modules/biwascheme/lib/biwascheme.js
+build: release/biwascheme.js release/biwascheme-min.js release/console_biwascheme.js node_modules/biwascheme/lib/biwascheme.js
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) $(CONSOLE_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
-lib:
-	mkdir lib
-
-lib/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
+release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
 	cat $(VERSION_FILE) > $@
 	cat $(BROWSER_FILES) >> $@
 	@echo "Wrote " $@
 
-lib/biwascheme-min.js: lib/biwascheme.js
-	java -jar bin/yuicompressor-2.4.2.jar lib/biwascheme.js -o $@
+release/biwascheme-min.js: release/biwascheme.js
+	java -jar bin/yuicompressor-2.4.2.jar release/biwascheme.js -o $@
 	@echo "Wrote " $@
 
-lib/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
+release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
 	cat $(VERSION_FILE) > $@
 	cat $(CONSOLE_FILES) >> $@
 	@echo "Wrote " $@
 
-node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js lib/console_biwascheme.js src/platforms/node/module_postamble.js
+node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js release/console_biwascheme.js src/platforms/node/module_postamble.js
 	cat src/platforms/node/module_preamble.js > $@
-	cat lib/console_biwascheme.js >> $@
+	cat release/console_biwascheme.js >> $@
 	cat src/platforms/node/module_postamble.js >> $@
 	@echo "Wrote " $@

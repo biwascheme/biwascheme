@@ -11,7 +11,7 @@
             "var j = jQuery.noConflict();")
     (script :src "js/jquery.mobile-1.0a2.min.js" :type "text/javascript")
 
-    (script :src "repos/lib/biwascheme.js" :type "text/javascript"))
+    (script :src "repos/release/biwascheme.js" :type "text/javascript"))
 
   (body
     (div :data-role "page" :data-theme "e"

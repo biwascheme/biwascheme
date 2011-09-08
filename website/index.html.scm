@@ -15,7 +15,7 @@
     (script :src "js/jquery.cookie.min.js" :type "text/javascript")
     (script :src "js/jquery.terminal-0.2.3.min.js" :type "text/javascript")
 
-    (script :src "repos/lib/biwascheme.js" :type "text/javascript")
+    (script :src "repos/release/biwascheme.js" :type "text/javascript")
     (script :src "js/biwascheme_terminal.js" :type "text/javascript"))
 
   (body
@@ -33,7 +33,7 @@
       (ul
         (li
           (link-to "biwascheme.js"
-                   "repos/lib/biwascheme.js")
+                   "repos/release/biwascheme.js")
           " (version " (span :id "ver" "--") ")"))
 
       (script :type "text/javascript"
