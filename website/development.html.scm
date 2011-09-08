@@ -10,7 +10,7 @@
       (h3 "Source code")
 
       (p "The repository of BiwaScheme is "
-         (link-to "hosted in github" "http://github.com/yhara/biwascheme")
+         (link-to "hosted in github" "http://github.com/biwascheme/biwascheme")
          ".")
 
       (h3 "Mailing lists")
@@ -24,7 +24,7 @@
 
       (h3 "Issue tracker")
 
-      (link-to "http://github.com/yhara/biwascheme/issues")
+      (link-to "http://github.com/biwascheme/biwascheme/issues")
 
       (h3 "Technical documents")
 

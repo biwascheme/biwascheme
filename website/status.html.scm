@@ -36,7 +36,7 @@
       (h2 "Implementation Status")
 
       (p "BiwaScheme aims to conform to the latest
-          specification of the Scheme language,"
+          specification of the Scheme language, "
           (link-to "R6RS" "http://www.r6rs.org/") ".")
 
       (p "Most of the important features are already supported.
@@ -98,19 +98,19 @@
             (3 "List utilities"
              "ok")
             (4 "Sorting"
-             "not yet")
+             "partially ok")
             (5 "Control structures"
              "partially ok (when, unless)")
             (6 "Records"
-             "not yet")
+             "ok")
             (7 "Exceptions and conditions"
              "not yet")
             (8 "I/O"
              "partially ok (output to 'stdout')")
             (9 "File system"
-             "(no plan)")
+             "not yet")
             (10 "Command-line access and exit values"
-             "(no plan)")
+             "not yet")
             (11 "Arithmetic"
              "not yet")
             (12 "syntax-case"

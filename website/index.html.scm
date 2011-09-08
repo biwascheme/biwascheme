@@ -41,11 +41,11 @@
 
       (p
         (link-to "Older versions"
-                 "http://github.com/yhara/biwascheme/downloads")
+                 "http://github.com/biwascheme/biwascheme/downloads")
         " and the "
 
         (link-to "latest version"
-                 "http://github.com/yhara/biwascheme")
+                 "http://github.com/biwascheme/biwascheme")
         " are on github.")
 
       (h2 "Example")
@@ -94,7 +94,7 @@
       (ul
         (li "BiwaScheme: "
             (link-to "MIT License"
-                     "http://github.com/yhara/biwascheme/blob/master/MIT-LICENSE.txt"))
+                     "http://github.com/biwascheme/biwascheme/blob/master/MIT-LICENSE.txt"))
         (li "BiwaScheme Logo"
             " (by " (link-to "Jakub Jankiewicz" "http://jcubic.pl/") "): "
             (link-to "Creative Commons Attribution 3.0"
