@@ -51,8 +51,30 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //from Gauche
   //
 
+  // (identity obj)
+  // Returns obj.
   define_libfunc("identity", 1, 1, function(ar){
     return ar[0];
+  });
+
+  // (inc! i)
+  // = (set! i (+ i 1))
+  // Increments i (i.e., set i+1 to i).
+  define_syntax("inc!", function(x){
+    var target = x.cdr.car;
+    return List(Sym("set!"),
+                target, 
+                [Sym("+"), target, 1]);
+  });
+  
+  // (dec! i)
+  // = (set! i (- i 1))
+  // Decrements i (i.e., set i-1 to i).
+  define_syntax("dec!", function(x){
+    var target = x.cdr.car;
+    return List(Sym("set!"),
+                target, 
+                [Sym("-"), target, 1]);
   });
 
   // string

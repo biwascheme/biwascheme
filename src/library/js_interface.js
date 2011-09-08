@@ -8,7 +8,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc_raw("js-ref", 2, 2, function(ar){
     assert_string(ar[1]);
-    return ar[0][ar[1]]; //todo: first-class js function
+    return ar[0][ar[1]];
   });
   define_libfunc("js-set!", 3, 3, function(ar){
     assert_string(ar[1]);
@@ -33,6 +33,84 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return js_obj[func_name].apply(js_obj, ar);
     else
       throw new Error("js-invoke: function "+func_name+" is not defined");
+  });
+
+// Note: current parser does not support "." as function name
+//  // (. obj 'foo)
+//  // Short hand for JavaScript property access.
+//  define_libfunc_raw(".", 2, 2, function(ar){
+//    console.log(".", ar);
+//    assert_symbol(ar[1]);
+//    return ar[0][ar[1].name];
+//  });
+
+  // (.. obj '(foo 1 2 3))  ;=> obj.foo(1,2,3)
+  // (.. obj '(foo 1 2 3)   ;=> obj.foo(1,2,3)
+  //         'bar           ;      .bar
+  //         '(baz 4 5))    ;      .baz(4,5)
+  // (.. 'Math '(pow 2 3))  ;=> Math.pow(2,3)
+  // Also converts
+  //   (lambda (e) ...) to
+  //   (js-closure (lambda (e) ...))
+  //   and
+  //   '((a . b) (c . 4)) to
+  //   {a: "b", c: 4}
+  //
+  // Short hand for JavaScript method call.
+  define_libfunc_raw("..", 2, null, function(ar, intp){
+    var receiver = ar.shift();
+    // TODO: convert lambdas by js-closure 
+    if(BiwaScheme.isSymbol(receiver)){
+      receiver = eval(receiver.name); //XXX: is this ok?
+    }
+
+    var v = receiver;
+
+    // Process each method call
+    _.each(ar, function(callspec){
+        if(BiwaScheme.isSymbol(callspec)){
+          // Property access
+          v = v[callspec.name];
+        }
+        else if(BiwaScheme.isList(callspec)){
+          // Method call
+          var args = callspec.to_array();
+
+          assert_symbol(args[0]);
+          var method = args.shift().name;
+
+          // Convert arguments
+          args = _.map(args, function(arg){
+              if(BiwaScheme.isClosure(arg)){
+                // closure -> JavaScript funciton
+                return BiwaScheme.js_closure(arg, intp);
+              }
+              else if(BiwaScheme.isList(arg)){
+                // alist -> JavaScript Object
+                var o = {};
+                arg.foreach(function(pair){
+                    assert_symbol(pair.car);
+                    o[pair.car.name] = pair.cdr;
+                  });
+                return o;
+              }
+              else
+                return arg;
+            });
+
+          // Call the method
+          if(!_.isFunction(v[method])){
+            throw new BiwaScheme.Error("..: the method `"+method+"' not found");
+          }
+          v = v[method].apply(v, args);
+        }
+        else{
+          // (wrong argument)
+          throw new BiwaScheme.Error("..: expected list or symbol for callspec but got " + BiwaScheme.inspect(callspec));
+        }
+      });
+
+    return v;
   });
 
   // (js-new "Date" 2005 1 1)
@@ -199,5 +277,37 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       setTimeout(function(){ pause.resume(nil); }, sec * 1000);
     });
   });
+
+  //
+  // console
+  //
+  // (console-debug obj1 ...)
+  // (console-log obj1 ...)
+  // (console-info obj1 ...)
+  // (console-warn obj1 ...)
+  // (console-error obj1 ...)
+  //   Put objects to console, if window.console is defined.
+  //   Returns obj1.
+  //
+  // Example:
+  //     (some-func arg1 (console-debug arg2) arg3)
+  var define_console_func = function(name){
+    define_libfunc("console-"+name, 1, null, function(ar){
+      var con = window.console;
+      if(con){
+        var vals = _.map(ar, function(item){
+          return BiwaScheme.inspect(item, {default: item});
+        });
+
+        con[name].apply(con, vals);
+      }
+      return ar[0];
+    });
+  };
+  define_console_func("debug");
+  define_console_func("log");
+  define_console_func("info");
+  define_console_func("warn");
+  define_console_func("error");
 
 }

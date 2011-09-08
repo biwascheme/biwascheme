@@ -47,10 +47,12 @@ BiwaScheme.UserError = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
   }
 });
 
-BiwaScheme.inspect = function(object) {
+BiwaScheme.inspect = function(object, opts) {
   try {
     if (_.isUndefined(object)) return 'undefined';
     if (object === null) return 'null';
+    if (object === true) return '#t';
+    if (object === false) return '#f';
     if (object.inspect) return object.inspect();
     if (_.isString(object)) {
       return "'" + object.replace(/'/g, '\\\'') + "'";
@@ -58,7 +60,13 @@ BiwaScheme.inspect = function(object) {
     if (_.isArray(object)) {
       return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';
     }
-    return object.toString();
+
+    if (opts && opts["default"]){
+      return opts["default"];
+    }
+    else {
+      return object.toString();
+    }
   } catch (e) {
     if (e instanceof RangeError) return '...';
     throw e;

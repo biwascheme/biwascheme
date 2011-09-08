@@ -117,8 +117,8 @@ describe('utilities', {
     with(BiwaScheme){
       expect( inspect(undefined) ).should_be("undefined");
       expect( inspect(null) ).should_be("null");
-      expect( inspect(true) ).should_be("true");
-      expect( inspect(false) ).should_be("false");
+      expect( inspect(true) ).should_be("#t");
+      expect( inspect(false) ).should_be("#f");
       expect( inspect("foo") ).should_be("'foo'");
       expect( inspect("s' d\"") ).should_be("'s\\' d\"'");
       //expect( inspect("foo\n") ).should_be("foo\\n")
@@ -1697,6 +1697,11 @@ describe('srfi-1 list', {
   'iota' : function(){
     ew("(iota 3)").should_be("(0 1 2)");
     ew("(iota 3 1)").should_be("(1 2 3)");
+  },
+  'list-copy': function(){
+    ew("(list-copy '(1 2 3))").should_be("(1 2 3)");
+    ev("(let1 ls '(1 2 3) \
+          (eq? ls (list-copy ls)))").should_be(false);
   }
 });
 
