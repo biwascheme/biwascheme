@@ -61,8 +61,8 @@ BiwaScheme.inspect = function(object, opts) {
       return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';
     }
 
-    if (opts && opts["default"]){
-      return opts["default"];
+    if (opts && opts["fallback"]){
+      return opts["fallback"];
     }
     else {
       return object.toString();

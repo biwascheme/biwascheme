@@ -296,7 +296,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var con = window.console;
       if(con){
         var vals = _.map(ar, function(item){
-          return BiwaScheme.inspect(item, {default: item});
+          return BiwaScheme.inspect(item, {fallback: item});
         });
 
         con[name].apply(con, vals);
