@@ -6,12 +6,8 @@
           :content "text/html; charset=utf-8" )
 
     (link :href "css/jquery.mobile-1.0a2.min.css" :rel "stylesheet" :type "text/css")
-    (script :src "js/jquery-1.4.4.min.js" :type "text/javascript")
-    (script :type "text/javascript"
-            "var j = jQuery.noConflict();")
-    (script :src "js/jquery.mobile-1.0a2.min.js" :type "text/javascript")
-
-    (script :src "repos/release/biwascheme.js" :type "text/javascript"))
+    (script :src "repos/release/biwascheme.js" :type "text/javascript")
+    (script :src "js/jquery.mobile-1.0a2.min.js" :type "text/javascript"))
 
   (body
     (div :data-role "page" :data-theme "e"
@@ -36,15 +32,15 @@
      )
 
     (script :type "text/javascript"
-            "j(function(){
-                j('#ver').text(BiwaScheme.Version);
+            "$(function(){
+                $('#ver').text(BiwaScheme.Version);
 
                 var intp = new BiwaScheme.Interpreter(function(e){
                                                        puts(e);
                                                        });
-                j('#src').change(function(){
-                  j('#bs-console').empty();
-                  var src = j('#src').val();
+                $('#src').change(function(){
+                  $('#bs-console').empty();
+                  var src = $('#src').val();
                   intp.evaluate(src, function(result){
                                      puts(result);
                                      });

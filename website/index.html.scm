@@ -7,15 +7,11 @@
     (link :href "css/screen.css" :rel "stylesheet" :type "text/css")
 
     (link :href "css/jquery.terminal.css" :rel "stylesheet" :type "text/css")
-    (script :src "js/jquery-1.4.4.min.js" :type "text/javascript")
-    (script :type "text/javascript"
-            "jQuery.noConflict();")
+    (script :src "repos/release/biwascheme.js" :type "text/javascript")
     (script :src "js/jquery.mousewheel.min.js" :type "text/javascript")
     (script :src "js/jquery.timers.min.js" :type "text/javascript")
     (script :src "js/jquery.cookie.min.js" :type "text/javascript")
-    (script :src "js/jquery.terminal-0.2.3.min.js" :type "text/javascript")
-
-    (script :src "repos/release/biwascheme.js" :type "text/javascript")
+    (script :src "js/jquery.terminal-0.3.6.js" :type "text/javascript")
     (script :src "js/biwascheme_terminal.js" :type "text/javascript"))
 
   (body
@@ -78,6 +74,7 @@
         (li "Extending scheme interpreter in Javascipt")
         (li "Comprehensive " (link-to "unit test" "repos/test/spec.html"))
         (li "Tiny " (link-to "interpreter debugger" "repos/test/tracer.html")))
+        (li (link-to "Mobile version" "i.html"))
 
       (h2 "Links")
 
