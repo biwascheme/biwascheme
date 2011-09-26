@@ -1,3 +1,9 @@
+//
+// see also:
+// * src/library/webscheme_lib.js : library functions
+// * test/browser_functions/server.js : server side helpers
+//
+
 function scm_eval(str, func){
   var intp = new BiwaScheme.Interpreter(function(e){ throw e; });
 
@@ -6,16 +12,30 @@ function scm_eval(str, func){
 
 describe("http-request", function(){
   it("should get a text file", function(){
-    var text = null;
+    var result = null;
 
-    scm_eval('(http-request "testdata.txt")', function(result){
-      text = result;
+    scm_eval('(http-request "testdata.txt")', function(text){
+      result = text;
     });
 
-    waitsFor(function(){ return text }, 500);
+    waitsFor(function(){ return result }, 500);
 
     runs(function(){
-      expect(text).toEqual("ok!\n");
+      expect(result).toEqual("ok!\n");
+    });
+  });
+
+  it("should get a url with param", function(){
+    var result = null;
+
+    scm_eval('(http-request "/greet?name=yhara")', function(text){
+      result = text;
+    });
+
+    waitsFor(function(){ return result }, 500);
+
+    runs(function(){
+      expect(result).toEqual("Hello, yhara!");
     });
   });
 });

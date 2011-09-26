@@ -25,6 +25,11 @@ app.get('/fs/biwascheme-min.js', function(req, res){
            { 'Content-Type': 'text/javascript' });
 });
 
+// http://localhost:PORT/greet?name=foo
+app.get('/greet', function(req, res){
+ res.send("Hello, " + req.param("name") + "!");
+});
+
 app.listen(PORT);
 
 require('sys').puts("Open http://localhost:"+PORT+"/");
