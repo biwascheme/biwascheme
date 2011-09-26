@@ -9,6 +9,7 @@ var express = require('express'),
 
 app.configure(function(){
   app.use(express.static(__dirname + '/public'));
+  app.use(express.bodyParser());
   app.use(express.errorHandler({
     dumpExceptions: true,
     showStack: true 
@@ -25,9 +26,20 @@ app.get('/fs/biwascheme-min.js', function(req, res){
            { 'Content-Type': 'text/javascript' });
 });
 
-// http://localhost:PORT/greet?name=foo
+// GET /greet?name=foo
 app.get('/greet', function(req, res){
  res.send("Hello, " + req.param("name") + "!");
+});
+
+// POST /length (str=...)
+app.post('/length', function(req, res){
+ var str = req.param("str");
+ if(str){
+   res.send("" + str.length);
+ }
+ else{
+   res.send("ERROR: str not given");
+ }
 });
 
 app.listen(PORT);

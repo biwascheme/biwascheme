@@ -39,3 +39,19 @@ describe("http-request", function(){
     });
   });
 });
+
+describe("http-post", function(){
+  it("should issue a post request", function(){
+    var result = null;
+
+    scm_eval('(http-post "/length" \'(("str" . "asdf")))', function(text){
+      result = text;
+    });
+
+    waitsFor(function(){ return result }, 500);
+
+    runs(function(){
+      expect(result).toEqual("4");
+    });
+  });
+});

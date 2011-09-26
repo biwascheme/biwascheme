@@ -432,9 +432,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var h = alist_to_js_obj(alist);
 
     return new BiwaScheme.Pause(function(pause){
-      $.post(path, h, function(transport) {
-        pause.resume(transport.responseText);
-      });
+      $.post(path, h, function(data) {
+        pause.resume(data);
+      }, "text");
     });
   });
 
