@@ -454,7 +454,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         pause.resume(data);
         receives[receiver_id] = null;
       };
-      var script = $("<script/>", { src: src });
+      var script = $("<script/>", { src: url });
       $("body").append(script);
     });
   });

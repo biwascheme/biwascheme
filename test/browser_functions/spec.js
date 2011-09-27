@@ -55,3 +55,19 @@ describe("http-post", function(){
     });
   });
 });
+
+describe("receive-jsonp", function(){
+  it("should get a json", function(){
+    var result = null;
+
+    scm_eval('(receive-jsonp "/jsonp")', function(text){
+      result = text;
+    });
+
+    waitsFor(function(){ return result }, 500);
+
+    runs(function(){
+      expect(result).toEqual("ok");
+    });
+  });
+});

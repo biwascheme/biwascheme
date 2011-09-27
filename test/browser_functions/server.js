@@ -26,20 +26,33 @@ app.get('/fs/biwascheme-min.js', function(req, res){
            { 'Content-Type': 'text/javascript' });
 });
 
-// GET /greet?name=foo
+// GET /greet (name)
 app.get('/greet', function(req, res){
- res.send("Hello, " + req.param("name") + "!");
+  res.send("Hello, " + req.param("name") + "!");
 });
 
-// POST /length (str=...)
+// POST /length (str)
 app.post('/length', function(req, res){
- var str = req.param("str");
- if(str){
-   res.send("" + str.length);
- }
- else{
-   res.send("ERROR: str not given");
- }
+  var str = req.param("str");
+  if(str){
+    res.send(String(str.length));
+  }
+  else{
+    res.send("ERROR: str not given");
+  }
+});
+
+// GET /jsonp (callback)
+app.get('/jsonp', function(req, res){
+  var callback_name = req.param("callback");
+  console.log("jsonp", {callback_name: callback_name});
+
+  if(callback_name){ //.match(/^[A-Za-z0-9_]+$/)){
+    res.send(callback_name + "('ok')");
+  }
+  else{
+    res.send("ERROR: invalid callback");
+  }
 });
 
 app.listen(PORT);
