@@ -3,3 +3,4 @@ lib/biwascheme.js
 lib/console_biwascheme.js
 node_modules/biwascheme/lib/biwascheme.js
 src/version.js
+test/browser_functions/node_modules/
