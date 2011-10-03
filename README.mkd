@@ -108,8 +108,8 @@ Development
 
 Repository: https://github.com/yhara/biwascheme
 
-How to release
---------------
+How to release (memo)
+---------------------
 
 1. Edit History.txt
 2. Edit VERSION
@@ -118,6 +118,7 @@ How to release
 5. $ git tag x.y.z
 6. Push changes to github (with --tags)
 7. Update website ($ git pull)
+8. Copy generated files (release/) to web server
 
 TODO: how to release npm package
 
