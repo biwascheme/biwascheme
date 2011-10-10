@@ -1146,6 +1146,7 @@ describe('3 List utilities', {
   },
   'assoc' : function(){
     ew("(assoc (list 'a) '(((a)) ((b)) ((c))))").should_be("((a))");
+    ew("(assoc #f '((#t 1) (#f 2)))").should_be("(#f 2)");
   },
   'assq' : function(){
     ew("(assq 'a '((a 1) (b 2) (c 3)))").should_be("(a 1)");

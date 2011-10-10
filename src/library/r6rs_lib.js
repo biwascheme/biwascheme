@@ -1590,27 +1590,28 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       finish: function(){ return false; }
     })
   })
-  var make_assoc = function(key){
+  var make_assoc = function(func_name, eq_func_name){
     return function(ar){ 
-      var obj = ar[0], ls = ar[1];
-      assert_list(ls);
+      var obj = ar[0], list = ar[1];
+      assert_list(list);
 
       var ret = [];
-      return Call.foreach(ls, {
-        call: function(x){ 
-          if(x.car.car)
-            return new Call(TopEnv[key] || CoreEnv[key], [obj, x.car.car]) 
-          else
-            throw new Error("ass*: pair required but got "+to_write(x.car));
+      return Call.foreach(list, {
+        call: function(ls){ 
+          if(!BiwaScheme.isPair(ls.car))
+            throw new Error(func_name+": pair required but got "+to_write(ls.car));
+            
+          var equality = (TopEnv[eq_func_name] || CoreEnv[eq_func_name]);
+          return new Call(equality, [obj, ls.car.car]);
         },
-        result: function(res, x){ if(res) return x.car; },
+        result: function(was_equal, ls){ if(was_equal) return ls.car; },
         finish: function(){ return false; }
       })
     }
   }
-  define_libfunc("assoc", 2, 2, make_assoc("equal?"));
-  define_libfunc("assv", 2, 2, make_assoc("eqv?"));
-  define_libfunc("assq", 2, 2, make_assoc("eq?"));
+  define_libfunc("assoc", 2, 2, make_assoc("assoc", "equal?"));
+  define_libfunc("assv", 2, 2, make_assoc("assv", "eqv?"));
+  define_libfunc("assq", 2, 2, make_assoc("assq", "eq?"));
 
   define_libfunc("cons*", 1, null, function(ar){
     if(ar.length == 1)
