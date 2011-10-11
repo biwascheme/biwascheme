@@ -862,7 +862,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ret;
   });
   define_libfunc("reverse", 1, 1, function(ar){
-    if(!(ar[0] instanceof Pair)) throw new Error("reverse needs pair but got " + ar[0]);
+    assert_pair(ar[0]);
 
     var l = nil;
     for(var o=ar[0]; o!=nil; o=o.cdr)
@@ -870,7 +870,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return l;
   });
   define_libfunc("list-tail", 2, 2, function(ar){
-    if(!(ar[0] instanceof Pair)) throw new Error("list-tail needs pair but got " + ar[0]);
+    assert_pair(ar[0]);
+    assert_integer(ar[1]);
+    if(ar[1] < 0)
+      throw new Error("list-tail: index out of range ("+ar[1]+")");
 
     var o = ar[0];
     for(var i=0; i<ar[1]; i++){
@@ -880,7 +883,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return o;
   });
   define_libfunc("list-ref", 2, 2, function(ar){
-    if(!(ar[0] instanceof Pair)) throw new Error("list-ref needs pair but got " + ar[0]);
+    assert_pair(ar[0]);
+    assert_integer(ar[1]);
+    if(ar[1] < 0)
+      throw new Error("list-tail: index out of range ("+ar[1]+")");
 
     var o = ar[0];
     for(var i=0; i<ar[1]; i++){
