@@ -763,6 +763,14 @@ describe('11.9 Pairs and lists', {
   },
   'list-ref' : function(){
     ew("(list-ref '(a b c d) 2)").should_be("c");
+
+    var ex;
+    try{ ev("(list-ref '(a b c d) 9)") } catch(e){ ex = e; }
+    expect(ex instanceof BiwaScheme.Error).should_be(true) 
+
+//    ex = null;
+//    try{ ev("(list-ref '(a b c d) -9)") } catch(e){ ex = e; }
+//    expect(ex instanceof BiwaScheme.Error).should_be(true);
   },
   'map' : function(){
     ew("(map (lambda (x) (+ x 1)) '(1 2 3))").should_be("(2 3 4)");

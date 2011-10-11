@@ -862,7 +862,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ret;
   });
   define_libfunc("reverse", 1, 1, function(ar){
-    if(!ar[0] instanceof Pair) throw new Error("reverse needs pair but got " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("reverse needs pair but got " + ar[0]);
 
     var l = nil;
     for(var o=ar[0]; o!=nil; o=o.cdr)
@@ -870,21 +870,21 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return l;
   });
   define_libfunc("list-tail", 2, 2, function(ar){
-    if(!ar[0] instanceof Pair) throw new Error("list-tail needs pair but got " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("list-tail needs pair but got " + ar[0]);
 
     var o = ar[0];
     for(var i=0; i<ar[1]; i++){
-      if(!o instanceof Pair) throw new Error("list-tail: the list is shorter than " + ar[1]);
+      if(!(o instanceof Pair)) throw new Error("list-tail: the list is shorter than " + ar[1]);
       o = o.cdr;
     }
     return o;
   });
   define_libfunc("list-ref", 2, 2, function(ar){
-    if(!ar[0] instanceof Pair) throw new Error("list-ref needs pair but got " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("list-ref needs pair but got " + ar[0]);
 
     var o = ar[0];
     for(var i=0; i<ar[1]; i++){
-      if(!o instanceof Pair) throw new Error("list-ref: the list is shorter than " + ar[1]);
+      if(!(o instanceof Pair)) throw new Error("list-ref: the list is shorter than " + ar[1]);
       o = o.cdr;
     }
     return o.car;
