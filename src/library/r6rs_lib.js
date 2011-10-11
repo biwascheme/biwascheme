@@ -1134,6 +1134,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("vector-ref", 2, 2, function(ar){
     assert_vector(ar[0]);
     assert_integer(ar[1]);
+    assert_between(ar[1], 0, ar[0].length-1);
 
     return ar[0][ar[1]];
   })

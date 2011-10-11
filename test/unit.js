@@ -29,7 +29,10 @@ function should_raise_error(str){
   var ex = null;
   try{ scm_eval(str) } catch(e){ ex = e; }
 
+  // The exception must be BiwaScheme.Error
   expect(ex instanceof BiwaScheme.Error).should_be(true);
+  // It must not be interpreter bug
+  expect(ex.message).should_not_match("\[BUG\]");
 }
 
 var Set = BiwaScheme.Set;
@@ -933,6 +936,8 @@ describe('11.13  Vectors', {
   },
   'vector-ref' : function(){
     ev("(vector-ref '#(1 1 2 3 5 8 13 21) 5)").should_be(8)
+    should_raise_error("(vector-ref '#() 9)");
+    should_raise_error("(vector-ref '#() -9)");
   },
   'vector-set!' : function(){
     ev("(let ((a (vector 2 2 3))) (vector-set! a 0 1) a)").should_be([1,2,3])
