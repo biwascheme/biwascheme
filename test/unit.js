@@ -25,6 +25,12 @@ function ev(str, func){
 function ew(str, func){
   return expect(BiwaScheme.to_write((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function())));
 }
+function should_raise_error(str){
+  var ex = null;
+  try{ scm_eval(str) } catch(e){ ex = e; }
+
+  expect(ex instanceof BiwaScheme.Error).should_be(true);
+}
 
 var Set = BiwaScheme.Set;
 describe('Set', {
@@ -761,24 +767,14 @@ describe('11.9 Pairs and lists', {
   'list-tail' : function(){
     ew("(list-tail '(a b c d) 2)").should_be("(c d)");
 
-    var ex;
-    try{ ev("(list-tail '(a b c d) 9)") } catch(e){ ex = e; }
-    expect(ex instanceof BiwaScheme.Error).should_be(true) 
-
-    ex = null;
-    try{ ev("(list-tail '(a b c d) -9)") } catch(e){ ex = e; }
-    expect(ex instanceof BiwaScheme.Error).should_be(true);
+    should_raise_error("(list-tail '(a b c d) 9)");
+    should_raise_error("(list-tail '(a b c d) -9)");
   },
   'list-ref' : function(){
     ew("(list-ref '(a b c d) 2)").should_be("c");
 
-    var ex;
-    try{ ev("(list-ref '(a b c d) 9)") } catch(e){ ex = e; }
-    expect(ex instanceof BiwaScheme.Error).should_be(true) 
-
-    ex = null;
-    try{ ev("(list-ref '(a b c d) -9)") } catch(e){ ex = e; }
-    expect(ex instanceof BiwaScheme.Error).should_be(true);
+    should_raise_error("(list-ref '(a b c d) 9)");
+    should_raise_error("(list-ref '(a b c d) -9)");
   },
   'map' : function(){
     ew("(map (lambda (x) (+ x 1)) '(1 2 3))").should_be("(2 3 4)");
