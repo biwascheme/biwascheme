@@ -1644,13 +1644,6 @@ describe('browser functions', {
     $("div1").hide();
     scm_eval('(element-show! ($ "#div1"))');
     expect( $("#div1").is(":visible") ).should_be(true);
-  },
-  
-  'http-request' : function(){
-    scm_eval('(http-request "testdata.txt")', function(result){
-      if(result != "ok!\n")
-        console.error("test failed: http-request");
-    });
   }
 });
 
