@@ -56,7 +56,7 @@ release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
 	@echo "Wrote " $@
 
 release/biwascheme-min.js: release/biwascheme.js
-	java -jar bin/yuicompressor-2.4.2.jar release/biwascheme.js -o $@
+	uglifyjs -o $@ release/biwascheme.js
 	@echo "Wrote " $@
 
 release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
