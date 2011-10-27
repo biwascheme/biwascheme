@@ -14,27 +14,34 @@
 <div id="bs-console"></div>
 
 <script type="text/javascript">// <![CDATA[
-var loader_development = function(proc){
+var loader_development = function(){
   document.write("<script src='../src/development_loader.js'>" +
     "BiwaScheme.register_tests();" +
     "JSSpec.start_test();" +
     "<\/script>");
 };
 
-var loader_production = function(proc){
-  document.write("<script src='../lib/biwascheme.js'>" +
+var loader_production = function(name){
+  document.write("<script src='../release/"+name+"'>" +
     '(js-eval "BiwaScheme.register_tests();' +
     '          JSSpec.start_test();")' +
     "<\/script>");
 };
 
-if (location.hash.match(/lib/)){
-  if(console) console.log("starting tests for lib/biwascheme.js");
-  loader_production();
-}
-else{
-  if(console) console.log("starting tests for src/*.js");
-  loader_development();
+switch(location.hash){
+  case "#release":
+    if(console) console.log("starting tests for release/biwascheme.js");
+    loader_production("biwascheme.js");
+    break;
+
+  case "#min":
+    if(console) console.log("starting tests for release/biwascheme-min.js");
+    loader_production("biwascheme-min.js");
+    break;
+
+  default:
+    if(console) console.log("starting tests for src/*.js");
+    loader_development();
 }
 
 // ]]></script>
