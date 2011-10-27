@@ -21,7 +21,8 @@
   };
 
   // Start user's program
-  var script = $("script[src$='biwascheme.js']").html();
+  var script = $("script[src$='biwascheme.js']").html() ||
+               $("script[src$='biwascheme-min.js']").html();
   if (script) {
     var intp = new BiwaScheme.Interpreter(onError);
     try{
