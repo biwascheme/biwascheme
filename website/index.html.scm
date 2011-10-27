@@ -64,7 +64,7 @@
       (ul
         (li "Most syntax/base library of R6RS (see "
             (a :href "status.html" "Status") ")")
-        (li "Support for"
+        (li "Support for "
             (a :title "Wikipedia article about Lisp Macros"
                :href "http://en.wikipedia.org/wiki/Macro_%28computer_science%29#Lisp_macros"
                "Lisp Macros")
