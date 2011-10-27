@@ -13,12 +13,12 @@ see [http://www.biwascheme.org/](http://www.biwascheme.org/)
 Download
 ========
 
-* [http://www.biwascheme.org/repos/lib/biwascheme.js](http://www.biwascheme.org/repos/lib/biwascheme.js) (release version)
+* [http://www.biwascheme.org/repos/release/biwascheme-min.js](http://www.biwascheme.org/repos/release/biwascheme-min.js) (release version)
 
 How to use
 ==========
 
-Just load biwascheme.js and write Scheme code.
+Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
 
     <!DOCTYPE html>
     <html>
@@ -36,13 +36,13 @@ Just load biwascheme.js and write Scheme code.
 How to use with node.js to run a biwa script
 --------------------------------------------
 
-1. $ npm install optparse
+1. $ npm install biwascheme
 2. create a file a.scm:
 
     (display "Hello, world!")
     (newline)
 
-3. $ node bin/biwas a.scm
+3. $ biwas a.scm
 
 How to use from inside node.js as a module
 ------------------------------------------
@@ -63,50 +63,50 @@ How to use from inside node.js as a module
 Files
 =====
 
-* lib/
+* release/
   * biwascheme.js : The latest release version, uncompressed
   * biwascheme-min.js : The latest release version, compressed
+* node_modules/
+  * Files for npm package
 * demo/
   * Demos
 * src/
+  * deps/
+    * Dependencies (jQuery, underscore)
   * system/
     * Source code of the interpreter
   * library/
     * Built-in library functions
+  * platform/
+    * Platform dependent code (browser, node, etc.)
 * test/
   * Unit tests
 * tuplespace/
   * (experimental) TupleSpace implemented in Scheme
 * website/
   * HTMLs and CSS of www.biwascheme.org
-* node_modules/
-  * npm package
 
 Building biwascheme.js
 ----------------------
-
-These files are not included in the repository:
-
-* lib/biwascheme-min.js
-* lib/biwascheme.js
-* lib/console_biwascheme.js
-* node_modules/biwascheme/lib/biwascheme.js
-* src/version.js
-
-Make compiles src/\*.js into biwascheme.js.
-
-    $ make
 
 Prerequisites:
 
 * make
 * sed
-* Java (to run YUI Compressor)
+* node.js and uglifyjs (npm install uglify-js -g) 
+
+Make compiles src/\*.js into release/biwascheme.js.
+
+    $ make
 
 Development
 ===========
 
-Repository: https://github.com/yhara/biwascheme
+Repository: https://github.com/biwascheme/biwascheme 
+
+Issues: https://github.com/biwascheme/biwascheme/issues
+
+Mailing-list: http://groups.google.co.jp/group/biwascheme
 
 How to release (memo)
 ---------------------
@@ -136,15 +136,13 @@ Acknowledgements
 * jsScheme
   * http://alex.ability.ru/scheme.html (inavailable)
 
-* YUI Compressor (bin/yuicompressor-2.4.2.jar)
-  * http://developer.yahoo.com/yui/compressor/
-
 * ExplorerCanvas (demo/excanvas.js)
   * http://excanvas.sourceforge.net/
 
 Contact
 =======
 
-https://github.com/yhara/biwascheme
+https://github.com/biwascheme/biwascheme
 
 Yutaka HARA (yhara) yutaka.hara.gmail.com
+http://twitter.com/yhara_en
