@@ -12,28 +12,28 @@
 
 <div id="bs-console"></div>
 
-<script src="../lib/biwascheme.js">
+<script src="../release/biwascheme.js">
 ;; access twitter
 (define (get-timeline type)
   (json->sexp (receive-jsonp (string-append "http://twitter.com/statuses/" type "_timeline.json"))))
 
 ;; class user
-;(define (protected? user)       (cadr (assoc "protected" user)))
-;(define (userid-of user)        (cadr (assoc "id" user)))
-;(define (profile-image-of user) (cadr (assoc "profile_image_url" user)))
-(define (screen-name-of user)   (cadr (assoc "screen_name" user)))
-;(define (location-of user)      (cadr (assoc "location" user)))
-;(define (description-of user)   (cadr (assoc "description" uesr)))
-;(define (name-of user)          (cadr (assoc "name" user)))
-;(define (url-of user)           (cadr (assoc "url" user)))
+;(define (protected? user)       (cdr (assoc "protected" user)))
+;(define (userid-of user)        (cdr (assoc "id" user)))
+;(define (profile-image-of user) (cdr (assoc "profile_image_url" user)))
+(define (screen-name-of user)   (cdr (assoc "screen_name" user)))
+;(define (location-of user)      (cdr (assoc "location" user)))
+;(define (description-of user)   (cdr (assoc "description" uesr)))
+;(define (name-of user)          (cdr (assoc "name" user)))
+;(define (url-of user)           (cdr (assoc "url" user)))
 
 ;; class post 
-;(define (truncated? post) (cadr (assoc "truncated" post)))
-(define (text-of post)    (cadr (assoc "text" post)))
-;(define (postid-of post)  (cadr (assoc "id" post)))
-;(define (source-of post)  (cadr (assoc "source" post)))
-(define (date-of post)    (parse-date (cadr (assoc "created_at" post))))
-(define (user-of post)    (cadr (assoc "user" post)))
+;(define (truncated? post) (cdr (assoc "truncated" post)))
+(define (text-of post)    (cdr (assoc "text" post)))
+;(define (postid-of post)  (cdr (assoc "id" post)))
+;(define (source-of post)  (cdr (assoc "source" post)))
+(define (date-of post)    (parse-date (cdr (assoc "created_at" post))))
+(define (user-of post)    (cdr (assoc "user" post)))
 (define (screen-name post) 
   (screen-name-of (user-of post)))
 
@@ -44,9 +44,10 @@
          (text-of post)))
 
 (define (reload-timeline)
-  (element-update! ($ "bs-console") "loading...")
-  (let1 timeline (get-timeline "friends")
-    (element-empty! ($ "bs-console"))
+  (element-update! ($ "#bs-console") "loading...")
+  (let1 timeline (get-timeline "public")
+    (console-log timeline)
+    (element-empty! ($ "#bs-console"))
     (for-each describe-post timeline)))
 
 (add-handler! ($ "reload") "click" reload-timeline)

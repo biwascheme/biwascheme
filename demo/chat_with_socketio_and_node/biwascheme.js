@@ -1,1 +1,1 @@
-../../lib/biwascheme.js
+../../release/biwascheme.js
