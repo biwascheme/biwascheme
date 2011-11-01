@@ -2,9 +2,26 @@
 
   * new: add clojure-like JavaScript interop syntaxes
 
+(Future)  v0.6.1
+
+  * change: argument for $ is passed to jQuery's $.
+      old: ($ "foo")
+      new: ($ "#foo")
+
 (Future)  v0.6.0
 
-  * change: migrate from prototype.js to jQuery and underscore.js
+  * improve: migrate from prototype.js to jQuery and underscore.js
+    This version should be 100% compatible to 0.5.7.
+
+  * new functions:
+      list-copy
+      console-log (also debug, info, warn, error)
+      inc!, dec!
+      dotimes
+      js-function?
+  * new demos:
+      demo/raphaeljs/
+      demo/chat_with_socketio_and_node/
 
 2011-08-07  v0.5.7
 
