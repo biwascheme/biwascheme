@@ -30,7 +30,10 @@
         (li
           (link-to "biwascheme.js"
                    "repos/release/biwascheme.js")
-          " (version " (span :id "ver" "--") ")"))
+          " (version " (span :id "ver" "--") ")")
+        (li
+          (link-to "biwascheme-min.js"
+                   "repos/release/biwascheme-min.js")))
 
       (script :type "text/javascript"
               "jQuery('#ver').html(BiwaScheme.Version)")
