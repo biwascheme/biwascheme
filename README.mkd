@@ -120,7 +120,10 @@ How to release (memo)
 7. Update website ($ git pull)
 8. Copy generated files (release/) to web server
 
-TODO: how to release npm package
+How to release npm package
+
+9. Edit node_modules/biwascheme/package.json
+10. $ npm publish node_modules/biwascheme/
 
 License
 =======
