@@ -312,9 +312,8 @@ describe('syntaxes', {
     ev("(let loop ((i 0) (x 0)) (if (= i 5) x (loop (+ i 1) (- x 1))))").should_be(-5);
     ev("(let loop () 9)").should_be(9);
   },
-  // TODO: more test for cond
   'cond' : function(){
-    ev("(cond ((= 1 2) #f) ((= 2 2) #t) (else '()))").should_be_true();
+    ev("(cond ((= 1 2) #f) ((= 2 2) #t))").should_be_true();
   },
   'cond(else)' : function(){
     ew("(cond ((= 1 2) #f) ((= 2 3) #t) (else '()))").should_be("()");
