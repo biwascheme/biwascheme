@@ -85,28 +85,25 @@
   </div>
 
 <script type="text/javascript" src="src/development_loader.js">// <![CDATA[
-var biwascheme = new BiwaScheme.Interpreter(function(e){
-  console.error(e);
-});
+var on_error = function(e){
+  puts(e.message);
+  throw(e);
+};
+var biwascheme = new BiwaScheme.Interpreter(on_error);
 function bs_eval(){
   $("#bs-console").empty();
   var str = $("#bs-input").val();
 
-  try{
-    var opc = biwascheme.compile(str);
-    var dump = (new BiwaScheme.Dumper()).dump_opc(opc);
-    $("#bs-opecode").html(dump);
-    var before = new Date();
-    biwascheme.evaluate(str, function(result){
-      var after = new Date();
-      $("#time").html("Time: " + (after-before)/1000 + "sec");
-      puts(BiwaScheme.to_write(result));
-    });
-  }
-  catch(e){
-    puts(e.message);
-    throw(e);
-  }
+  var opc = biwascheme.compile(str);
+  var dump = (new BiwaScheme.Dumper()).dump_opc(opc);
+  $("#bs-opecode").html(dump);
+  var before = new Date();
+  biwascheme.evaluate(str, function(result){
+    var after = new Date();
+    $("#time").html("Time: " + (after-before)/1000 + "sec");
+    puts(BiwaScheme.to_write(result));
+  });
+
   return false;
 }
 $(".bs-snippet").click(function(e){
