@@ -790,34 +790,52 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return BiwaScheme.undef;
   });
 
-  define_libfunc("caar", 1, 1, function(ar){ return ar[0].car.car; });
-  define_libfunc("cadr", 1, 1, function(ar){ return ar[0].cdr.car; });
-  define_libfunc("cdar", 1, 1, function(ar){ return ar[0].car.cdr; });
-  define_libfunc("cddr", 1, 1, function(ar){ return ar[0].cdr.cdr; });
-  define_libfunc("caaar", 1, 1, function(ar){ return ar[0].car.car.car; });
-  define_libfunc("caadr", 1, 1, function(ar){ return ar[0].cdr.car.car; });
-  define_libfunc("cadar", 1, 1, function(ar){ return ar[0].car.cdr.car; });
-  define_libfunc("caddr", 1, 1, function(ar){ return ar[0].cdr.cdr.car; });
-  define_libfunc("cdaar", 1, 1, function(ar){ return ar[0].car.car.cdr; });
-  define_libfunc("cdadr", 1, 1, function(ar){ return ar[0].cdr.car.cdr; });
-  define_libfunc("cddar", 1, 1, function(ar){ return ar[0].car.cdr.cdr; });
-  define_libfunc("cdddr", 1, 1, function(ar){ return ar[0].cdr.cdr.cdr; });
-  define_libfunc("caaaar", 1, 1, function(ar){ return ar[0].car.car.car.car; });
-  define_libfunc("caaadr", 1, 1, function(ar){ return ar[0].cdr.car.car.car; });
-  define_libfunc("caadar", 1, 1, function(ar){ return ar[0].car.cdr.car.car; });
-  define_libfunc("caaddr", 1, 1, function(ar){ return ar[0].cdr.cdr.car.car; });
-  define_libfunc("cadaar", 1, 1, function(ar){ return ar[0].car.car.cdr.car; });
-  define_libfunc("cadadr", 1, 1, function(ar){ return ar[0].cdr.car.cdr.car; });
-  define_libfunc("caddar", 1, 1, function(ar){ return ar[0].car.cdr.cdr.car; });
-  define_libfunc("cadddr", 1, 1, function(ar){ return ar[0].cdr.cdr.cdr.car; });
-  define_libfunc("cdaaar", 1, 1, function(ar){ return ar[0].car.car.car.cdr; });
-  define_libfunc("cdaadr", 1, 1, function(ar){ return ar[0].cdr.car.car.cdr; });
-  define_libfunc("cdadar", 1, 1, function(ar){ return ar[0].car.cdr.car.cdr; });
-  define_libfunc("cdaddr", 1, 1, function(ar){ return ar[0].cdr.cdr.car.cdr; });
-  define_libfunc("cddaar", 1, 1, function(ar){ return ar[0].car.car.cdr.cdr; });
-  define_libfunc("cddadr", 1, 1, function(ar){ return ar[0].cdr.car.cdr.cdr; });
-  define_libfunc("cdddar", 1, 1, function(ar){ return ar[0].car.cdr.cdr.cdr; });
-  define_libfunc("cddddr", 1, 1, function(ar){ return ar[0].cdr.cdr.cdr.cdr; });
+  // cadr, caddr, cadddr, etc.
+  (function(){
+    // To traverse into pair and raise error
+    var get = function(funcname, spec, obj){
+      var ret = obj;
+      _.each(spec, function(is_cdr){
+        if(ret instanceof Pair){
+          ret = (is_cdr ? ret.cdr : ret.car);
+        }
+        else{
+          throw new Error(funcname+": attempt to get "+(is_cdr ? "cdr" : "car")+" of "+ret);
+        }
+      });
+      return ret;
+    };
+    define_libfunc("caar", 1, 1, function(ar){ return get("caar", [0, 0], ar[0]); });
+    define_libfunc("cadr", 1, 1, function(ar){ return get("cadr", [1, 0], ar[0]); });
+    define_libfunc("cdar", 1, 1, function(ar){ return get("cadr", [0, 1], ar[0]); });
+    define_libfunc("cddr", 1, 1, function(ar){ return get("cadr", [1, 1], ar[0]); });
+
+    define_libfunc("caaar", 1, 1, function(ar){ return get("caaar", [0, 0, 0], ar[0]); });
+    define_libfunc("caadr", 1, 1, function(ar){ return get("caadr", [1, 0, 0], ar[0]); });
+    define_libfunc("cadar", 1, 1, function(ar){ return get("cadar", [0, 1, 0], ar[0]); });
+    define_libfunc("caddr", 1, 1, function(ar){ return get("caddr", [1, 1, 0], ar[0]); });
+    define_libfunc("cdaar", 1, 1, function(ar){ return get("cdaar", [0, 0, 1], ar[0]); });
+    define_libfunc("cdadr", 1, 1, function(ar){ return get("cdadr", [1, 0, 1], ar[0]); });
+    define_libfunc("cddar", 1, 1, function(ar){ return get("cddar", [0, 1, 1], ar[0]); });
+    define_libfunc("cdddr", 1, 1, function(ar){ return get("cdddr", [1, 1, 1], ar[0]); });
+
+    define_libfunc("caaaar", 1, 1, function(ar){ return get("caaaar", [0, 0, 0, 0], ar[0]); });
+    define_libfunc("caaadr", 1, 1, function(ar){ return get("caaadr", [1, 0, 0, 0], ar[0]); });
+    define_libfunc("caadar", 1, 1, function(ar){ return get("caadar", [0, 1, 0, 0], ar[0]); });
+    define_libfunc("caaddr", 1, 1, function(ar){ return get("caaddr", [1, 1, 0, 0], ar[0]); });
+    define_libfunc("cadaar", 1, 1, function(ar){ return get("cadaar", [0, 0, 1, 0], ar[0]); });
+    define_libfunc("cadadr", 1, 1, function(ar){ return get("cadadr", [1, 0, 1, 0], ar[0]); });
+    define_libfunc("caddar", 1, 1, function(ar){ return get("caddar", [0, 1, 1, 0], ar[0]); });
+    define_libfunc("cadddr", 1, 1, function(ar){ return get("cadddr", [1, 1, 1, 0], ar[0]); });
+    define_libfunc("cdaaar", 1, 1, function(ar){ return get("cdaaar", [0, 0, 0, 1], ar[0]); });
+    define_libfunc("cdaadr", 1, 1, function(ar){ return get("cdaadr", [1, 0, 0, 1], ar[0]); });
+    define_libfunc("cdadar", 1, 1, function(ar){ return get("cdadar", [0, 1, 0, 1], ar[0]); });
+    define_libfunc("cdaddr", 1, 1, function(ar){ return get("cdaddr", [1, 1, 0, 1], ar[0]); });
+    define_libfunc("cddaar", 1, 1, function(ar){ return get("cddaar", [0, 0, 1, 1], ar[0]); });
+    define_libfunc("cddadr", 1, 1, function(ar){ return get("cddadr", [1, 0, 1, 1], ar[0]); });
+    define_libfunc("cdddar", 1, 1, function(ar){ return get("cdddar", [0, 1, 1, 1], ar[0]); });
+    define_libfunc("cddddr", 1, 1, function(ar){ return get("cddddr", [1, 1, 1, 1], ar[0]); });
+  })();
 
   define_libfunc("null?", 1, 1, function(ar){
     return (ar[0] === nil);
