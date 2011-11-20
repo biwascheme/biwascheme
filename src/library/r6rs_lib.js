@@ -57,14 +57,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           ret = new Pair(Sym("begin"), clause.cdr);
         }
       }
-      // The following made cond return <#undef> whenever there was no
-      // else clause, even if there was a true condition
-      //
-      // else if(ret === null){
-      //   // pattern D: no else clause
-      //   //  -> #<undef>
-      //   ret = BiwaScheme.undef;
-      // }
       else{
         var test = clause.car;
         if(clause.cdr === nil){
