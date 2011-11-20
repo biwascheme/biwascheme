@@ -52,7 +52,7 @@
 
         (make-r6rs-base-rows
           '(("11.4" "Expressions"
-             "almost ok")
+             "ok")
             ("11.5" "Equivalence predicates"
              "ok")
             ("11.6" "Procedure predicate"
@@ -84,7 +84,7 @@
             ("11.19" "Macro transformers"
              "not yet")
             ("11.20" "Tail calls and tail contexts"
-             "ok?")
+             "ok")
           )))
 
       (h3 "R6RS Standard Libraries")
@@ -100,7 +100,7 @@
             (4 "Sorting"
              "partially ok")
             (5 "Control structures"
-             "partially ok (when, unless)")
+             "partially ok (except case-lambda)")
             (6 "Records"
              "ok")
             (7 "Exceptions and conditions"
