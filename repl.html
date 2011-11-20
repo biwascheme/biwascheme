@@ -85,10 +85,12 @@
   </div>
 
 <script type="text/javascript" src="src/development_loader.js">// <![CDATA[
-var biwascheme = new BiwaScheme.Interpreter();
+var biwascheme = new BiwaScheme.Interpreter(function(e){
+  console.error(e);
+});
 function bs_eval(){
   $("#bs-console").empty();
-  var str = $("#bs-input").html();
+  var str = $("#bs-input").val();
 
   try{
     var opc = biwascheme.compile(str);
