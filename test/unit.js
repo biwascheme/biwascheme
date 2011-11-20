@@ -312,10 +312,16 @@ describe('syntaxes', {
     ev("(let loop ((i 0) (x 0)) (if (= i 5) x (loop (+ i 1) (- x 1))))").should_be(-5);
     ev("(let loop () 9)").should_be(9);
   },
-  'cond' : function(){
-    ev("(cond ((= 1 2) #f) ((= 2 2) #t))").should_be_true();
+  'cond (only 1 clause)' : function(){
+    ev("(cond (1 2))").should_be(2);
   },
-  'cond(else)' : function(){
+  'cond (funcall as test)' : function(){
+    ev("(cond ((= 1 1) 2))").should_be(2);
+  },
+  'cond (=>)' : function(){
+    ev("(cond ((= 1 1) => identity))").should_be(true);
+  },
+  'cond (else)' : function(){
     ew("(cond ((= 1 2) #f) ((= 2 3) #t) (else '()))").should_be("()");
   }
 });
