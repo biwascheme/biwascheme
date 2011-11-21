@@ -43,29 +43,23 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Error("js-invoke: function "+func_name+" is not defined");
   });
 
-// Note: current parser does not support "." as function name
-//  // (. obj 'foo)
-//  // Short hand for JavaScript property access.
-//  define_libfunc_raw(".", 2, 2, function(ar){
-//    console.log(".", ar);
-//    assert_symbol(ar[1]);
-//    return ar[0][ar[1].name];
-//  });
-
-  // (.. obj '(foo 1 2 3))  ;=> obj.foo(1,2,3)
-  // (.. obj '(foo 1 2 3)   ;=> obj.foo(1,2,3)
-  //         'bar           ;      .bar
-  //         '(baz 4 5))    ;      .baz(4,5)
-  // (.. 'Math '(pow 2 3))  ;=> Math.pow(2,3)
-  // Also converts
+  // Short hand for JavaScript method call.
+  //
+  // (js-invocation obj '(foo 1 2 3))  ;=> obj.foo(1,2,3)
+  // (js-invocation obj '(foo 1 2 3)   ;=> obj.foo(1,2,3)
+  //                    'bar           ;      .bar
+  //                    '(baz 4 5))    ;      .baz(4,5)
+  // (js-invocation 'Math '(pow 2 3))  ;=> Math.pow(2,3)
+  //
+  // It also converts
   //   (lambda (e) ...) to
   //   (js-closure (lambda (e) ...))
   //   and
   //   '((a . b) (c . 4)) to
   //   {a: "b", c: 4}
   //
-  // Short hand for JavaScript method call.
-  define_libfunc_raw("..", 2, null, function(ar, intp){
+  // TODO: provide corresponding macro ".." 
+  define_libfunc_raw("js-invocation", 2, null, function(ar, intp){
     var receiver = ar.shift();
     // TODO: convert lambdas by js-closure 
     if(BiwaScheme.isSymbol(receiver)){
@@ -108,13 +102,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
           // Call the method
           if(!_.isFunction(v[method])){
-            throw new BiwaScheme.Error("..: the method `"+method+"' not found");
+            throw new BiwaScheme.Error("js-invocation: the method `"+method+"' not found");
           }
           v = v[method].apply(v, args);
         }
         else{
           // (wrong argument)
-          throw new BiwaScheme.Error("..: expected list or symbol for callspec but got " + BiwaScheme.inspect(callspec));
+          throw new BiwaScheme.Error("js-invocation: expected list or symbol for callspec but got " + BiwaScheme.inspect(callspec));
         }
       });
 

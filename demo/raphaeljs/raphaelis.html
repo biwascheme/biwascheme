@@ -26,10 +26,10 @@
       <script type="text/javascript" src="raphael-min.js"></script>
       <script type="text/javascript" src="../../release/biwascheme.js" id="source">
 ;; Show source code
-(.. ($ "#source_view")
-    `(html ,(.. ($ "#source") '(html))))
+(js-invoke ($ "#source_view") 'html (js-invoke ($ "#source") 'html))
 ;(.. ($ "#source_view")
 ;    `(html ,(http-request "raphaelis.scm")))
+
 
 ;; square - represents a single square
 ;;   x, y : position in a field
@@ -40,7 +40,7 @@
   (protocol
     (lambda (orig-make-square)
       (lambda (x y)
-        (let* ((rect (.. *paper*
+        (let* ((rect (js-invocation *paper*
                          '(rect 0 0 20 20)
                          '(attr ((fill . "pink") (stroke . "#ff8888")))))
                (square (orig-make-square 0 0 rect)))
@@ -52,12 +52,12 @@
 (define (square-move! sq x y)
   (set-square-x! sq x)
   (set-square-y! sq y)
-  (.. (square-rect sq)
+  (js-invocation (square-rect sq)
       `(attr ((x . ,(* x 20))
               (y . ,(* y 20))))))
 
 (define (square-die! sq)
-  (.. (square-rect sq)
+  (js-invocation (square-rect sq)
       '(attr ((fill . "#888") (stroke . "#444")))))
 
 ;; block - represents a tetromino
@@ -144,7 +144,7 @@
           (orig-make-field 10 20 data rect))))))
 
 (define (field-new!)
-  (let1 rect (.. *paper* 
+  (let1 rect (js-invocation *paper* 
                  `(rect 0 0 ,(* 10 20) ,(* 20 20))
                  '(attr ((stroke . "#ccc") (fill . "#ccc"))))
     (make-field rect)))
@@ -188,7 +188,7 @@
   (define (remove-squares! row)
     (vector-for-each (lambda (sq) 
                        (when sq 
-                         (.. (square-rect sq) '(remove))))
+                         (js-invoke (square-rect sq) 'remove)))
                      row))
   (define (filled? row)
     (for-all identity (vector->list row)))
@@ -250,7 +250,7 @@
 
   (define (on-keydown e)
     (call/cc (lambda (return)
-      (case (.. e 'keyCode)
+      (case (js-ref e 'keyCode)
         ((38) ; up(rotate) 
          (when (field-check field (block-rotated-place block x y))
            (block-rotate! block)))
@@ -272,8 +272,8 @@
           (return #t)))
       #f)))
 
-  (.. ($ (js-eval "window"))
-      `(keydown ,on-keydown))
+  (js-invoke ($ (js-eval "window"))
+             'keydown (js-closure on-keydown))
 
   (main))
       </script>
