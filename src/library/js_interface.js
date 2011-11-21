@@ -7,8 +7,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return eval(ar[0]);
   });
   define_libfunc_raw("js-ref", 2, 2, function(ar){
-    assert_string(ar[1]);
-    return ar[0][ar[1]];
+    if(_.isString(ar[1])){
+      return ar[0][ar[1]];
+    }
+    else{
+      assert_symbol(ar[1]);
+      return ar[0][ar[1].name];
+    }
   });
   define_libfunc("js-set!", 3, 3, function(ar){
     assert_string(ar[1]);
@@ -28,7 +33,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc_raw("js-invoke", 2, null, function(ar){
     var js_obj = ar.shift();
     var func_name = ar.shift();
-    assert_string(func_name);
+    if(!_.isString(func_name)){
+      assert_symbol(func_name);
+      func_name = func_name.name;
+    }
     if(js_obj[func_name])
       return js_obj[func_name].apply(js_obj, ar);
     else
