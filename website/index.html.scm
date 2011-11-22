@@ -40,7 +40,7 @@
 
       (p
         (link-to "Older versions"
-                 "http://github.com/biwascheme/biwascheme/downloads")
+                 "http://github.com/biwascheme/biwascheme/tags")
         " and the "
 
         (link-to "latest version"
@@ -76,8 +76,8 @@
         (li "Calling JavaScript functions from Scheme and Scheme from JavaScript")
         (li "Extending scheme interpreter in Javascipt")
         (li "Comprehensive " (link-to "unit test" "repos/test/spec.html"))
-        (li "Tiny " (link-to "interpreter debugger" "repos/test/tracer.html")))
-        (li (link-to "Mobile version" "i.html"))
+        (li "Tiny " (link-to "interpreter debugger" "repos/test/tracer.html"))
+        (li (link-to "Mobile version" "i.html")))
 
       (h2 "Links")
 
