@@ -1,0 +1,37 @@
+TODO for BiwaScheme
+===================
+
+High priority
+-------------
+
+- release 0.6.0
+
+
+- [r6rs] Errors and conditions
+- [r6rs] library definition and loading
+
+Middle priority
+---------------
+
+-- new syntax: ..
+
+-- reference
+
+-- [r6rs-lib] immutable hashtable
+ --- should try http://www.timdown.co.uk/jshashtable/ ?
+-- [r6rs-lib] enumeration
+-- [r6rs-lib][node] Command-line access and exit values
+
+
+Low priority
+------------
+
+--- [r6rs] vector quasiquote
+--- [r6rs] case-lambda
+--- [r6rs] syntax-case, syntax-rules
+--- [r6rs] some functions for numbers
+ --- should try http://github.com/dyoo/js-numbers/ ?
+
+--- move website to Heroku?
+ --- because some tests needs server-side program
+--- use Node for unit tests
