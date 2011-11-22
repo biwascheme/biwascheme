@@ -3,7 +3,7 @@ BiwaScheme
 
 BiwaScheme is a Scheme interpreter written in JavaScript.
 
-Works with web browsers and Node.js.
+Works with web browsers (including mobile devices) and Node.js.
 
 Demos
 -----
@@ -64,27 +64,27 @@ Files
 =====
 
 * release/
-  * biwascheme.js : The latest release version, uncompressed
-  * biwascheme-min.js : The latest release version, compressed
+  + biwascheme.js : The latest release version, uncompressed
+  + biwascheme-min.js : The latest release version, compressed
 * node_modules/
-  * Files for npm package
+  + Files for npm package
 * demo/
-  * Demos
+  + Demos
 * src/
-  * deps/
-    * Dependencies (jQuery, underscore)
-  * system/
-    * Source code of the interpreter
-  * library/
-    * Built-in library functions
-  * platform/
-    * Platform dependent code (browser, node, etc.)
+  + deps/
+     - Dependencies (jQuery, underscore)
+  + system/
+     - Source code of the interpreter
+  + library/
+     - Built-in library functions
+  + platform/
+     - Platform dependent code (browser, node, etc.)
 * test/
-  * Unit tests
+  + Unit tests
 * tuplespace/
-  * (experimental) TupleSpace implemented in Scheme
+  + (experimental) TupleSpace implemented in Scheme
 * website/
-  * HTMLs and CSS of www.biwascheme.org
+  + HTMLs and CSS of www.biwascheme.org
 
 Building biwascheme.js
 ----------------------
@@ -93,7 +93,8 @@ Prerequisites:
 
 * make
 * sed
-* node.js and uglifyjs (npm install uglify-js -g) 
+* node (Node.js)
+* uglifyjs ($ npm install uglify-js -g) 
 
 Make compiles src/\*.js into release/biwascheme.js.
 
@@ -102,28 +103,37 @@ Make compiles src/\*.js into release/biwascheme.js.
 Development
 ===========
 
-Repository: https://github.com/biwascheme/biwascheme 
-
-Issues: https://github.com/biwascheme/biwascheme/issues
-
-Mailing-list: http://groups.google.co.jp/group/biwascheme
+- [Repository](https://github.com/biwascheme/biwascheme)
+- [Issues](https://github.com/biwascheme/biwascheme/issues)
+- [Mailing-list](http://groups.google.co.jp/group/biwascheme)
 
 How to release (memo)
 ---------------------
 
 1. Edit History.txt
 2. Edit VERSION
-3. $ make -B
-4. Commit generated files
-5. $ git tag x.y.z
-6. Push changes to github (with --tags)
-7. Update website ($ git pull)
-8. Copy generated files (release/) to web server
-
-How to release npm package
-
-9. Edit node_modules/biwascheme/package.json
-10. $ npm publish node_modules/biwascheme/
+3. Edit node_modules/biwascheme/package.json
+4. $ make -B
+5. Make sure it is working:
+   + run tests
+     - open test/spec.html
+     - open test/spec.html#release
+     - open test/spec.html#min
+     - run test/browser_functions/
+       - $ cd test/browser_functions && node server.js && open http://localhost:7001/
+   + run demos
+     - demo/*
+     - open repl.html
+     - open website/i.html
+   + try npm package
+       - $ npm install node_modules/biwascheme/ -g
+       - $ biwas -v
+6. $ git tag x.y.z
+7. Push changes to github (with --tags)
+8. Update website ($ git pull)
+9. Copy generated files (release/) to web server
+10. Publish npm package
+  - $ npm publish node_modules/biwascheme/
 
 License
 =======
