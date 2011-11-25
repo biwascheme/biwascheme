@@ -2,6 +2,10 @@
 
   * new: add clojure-like JavaScript interop syntaxes
 
+(not yet)  v0.6.1
+
+  * new: R6RS Enumerations
+
 2011-11-22  v0.6.0
 
   * change: migrated from prototype.js to jQuery and underscore.js
