@@ -68,7 +68,7 @@ BiwaScheme.define_libfunc_raw = function(fname, min, max, func){
 }
 BiwaScheme.define_syntax = function(sname, func) {
   var s = new BiwaScheme.Syntax(sname, func);
-  BiwaScheme.TopEnv[sname] = s;
+  BiwaScheme.CoreEnv[sname] = s;
 }
 BiwaScheme.define_scmfunc = function(fname, min, max, str){
   (new Interpreter).evaluate("(define "+fname+" "+str+"\n)");
@@ -88,8 +88,9 @@ var make_assert = function(check){
     check.apply(this, [fname].concat(_.toArray(arguments)));
   }
 }
-var make_simple_assert = function(type, test){
+var make_simple_assert = function(type, test, _fname){
   return make_assert(function(fname, obj, opt){
+    if(_fname) fname = _fname;
     option = opt ? ("("+opt+")") : ""
     if(!test(obj)){
       throw new BiwaScheme.Error(fname + option + ": " +
@@ -146,6 +147,8 @@ var assert_record_td = make_simple_assert("record type descriptor",
                                           BiwaScheme.isRecordTD);
 var assert_record_cd = make_simple_assert("record constructor descriptor",
                                           BiwaScheme.isRecordCD);
+var assert_enum_set = make_simple_assert("enum_set",
+                                          BiwaScheme.isEnumSet);
 
 var assert_function = make_simple_assert("JavaScript function", 
                                          _.isFunction);
@@ -169,9 +172,9 @@ var assert_date = make_simple_assert("date", function(obj){
 //  }
 //});
 
-var assert = make_assert(function(fname, success, message){
+var assert = make_assert(function(fname, success, message, _fname){
   if(!success){
-    throw new BiwaScheme.Error(fname+": "+message);
+    throw new BiwaScheme.Error((_fname || fname)+": "+message);
   }
 });
 

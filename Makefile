@@ -16,6 +16,7 @@ BASIC_FILES =                                     \
   src/system/number.js                            \
   src/system/port.js                              \
   src/system/record.js                            \
+  src/system/enumeration.js                       \
   src/system/hashtable.js                         \
   src/system/syntax.js                            \
   src/system/types.js                             \

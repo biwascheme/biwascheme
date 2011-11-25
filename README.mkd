@@ -107,6 +107,12 @@ Development
 - [Issues](https://github.com/biwascheme/biwascheme/issues)
 - [Mailing-list](http://groups.google.co.jp/group/biwascheme)
 
+How to add a new file (memo)
+----------------------------
+
+* edit Makefile
+* edit src/development_loader.js
+
 How to release (memo)
 ---------------------
 

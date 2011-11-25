@@ -11,6 +11,7 @@ var BiwaScheme = BiwaScheme || {};
 BiwaScheme.register_tests = function(){
 
 var on_error = function(e){
+  console.warn(e);
   throw e;
 }
 
@@ -1547,6 +1548,113 @@ describe('13 Hashtables', {
 })
 
 describe('14 Enumerators', {
+  'make-enumeration': function(){
+    ew("(enum-set->list \
+          (make-enumeration '(a b c b)))").should_be("(a b c)");
+  },
+  'enum-set-universe': function(){
+    ew("(enum-set->list \
+          (enum-set-universe \
+            (make-enumeration '(a b c b))))").should_be("(a b c)");
+  },
+  'enum-set-indexer': function(){
+    ev("((enum-set-indexer (make-enumeration '(a b c b))) \
+         'b)").should_be(1);
+  },
+  'enum-set-constructor': function(){
+    ew("(enum-set->list \
+          ((enum-set-constructor (make-enumeration '(a b c b))) \
+           '(c b a c)))").should_be("(a b c)");
+  },
+  'enum-set->list': function(){
+    ew("(define-enumeration color (red green black white) color-set) \
+        (enum-set->list (color-set white red))").should_be("(red white)");
+  },
+  'enum-set-member?': function(){
+    ew("(let1 es (make-enumeration '(a b c b)) \
+          (list (enum-set-member? 'a es) \
+                (enum-set-member? 'x es)))").should_be("(#t #f)");
+  },
+  'enum-set-subset?(same type)': function(){
+    ew("(define-enumeration e (a b c d) es) \
+        (list (enum-set-subset? (es b d) (es a b d)) \
+              (enum-set-subset? (es b d) (es a c d)))"
+      ).should_be("(#t #f)");
+  },
+  'enum-set-subset?(different type)': function(){
+    ew("(define-enumeration e1 (a b c) es1) \
+        (define-enumeration e2 (a b c d) es2) \
+        (define-enumeration e3 (a b x y) es3) \
+        (list (enum-set-subset? (es1 a b) (es2 a b)) \
+              (enum-set-subset? (es1 a b) (es2 c d)) \
+              (enum-set-subset? (es1 a b) (es3 a b)) \
+              (enum-set-subset? (es1 a b) (es3 a x)))"
+      ).should_be("(#t #f #f #f)");
+  },
+  'enum-set=?': function(){
+    ew("(define-enumeration e1 (a b c) es1) \
+        (define-enumeration e2 (a b c) es2) \
+        (define-enumeration e3 (a b x y) es3) \
+        (list (enum-set=? (es1 a b) (es1 a b)) \
+              (enum-set=? (es1 a b) (es1 c)) \
+              (enum-set=? (es1 a b) (es2 a b)) \
+              (enum-set=? (es1 a b) (es2 c)) \
+              (enum-set=? (es1 a b) (es3 a b)) \
+              (enum-set=? (es1 a b) (es3 a x)))"
+      ).should_be("(#t #f #t #f #f #f)");
+  },
+
+  'enum-set-union': function(){
+    ew("(define-enumeration e (a b c d) es) \
+        (map enum-set->list \
+          (list (enum-set-union (es a) (es c)) \
+                (enum-set-union (es a b c) (es b c d)) \
+                (enum-set-union (es c d) (es c d))))"
+      ).should_be("((a c) (a b c d) (c d))");
+  },
+  'enum-set-intersection': function(){
+    ew("(define-enumeration e (a b c d) es) \
+        (map enum-set->list \
+          (list (enum-set-intersection (es a b) (es c d)) \
+                (enum-set-intersection (es a b c) (es b c d)) \
+                (enum-set-intersection (es a c d b) (es d b c a))))"
+      ).should_be("(() (b c) (a b c d))");
+  },
+  'enum-set-difference': function(){
+    ew("(define-enumeration e (a b c d) es) \
+        (map enum-set->list \
+          (list (enum-set-difference (es a b) (es c d)) \
+                (enum-set-difference (es a b c) (es b c d)) \
+                (enum-set-difference (es a c d b) (es d b c a))))"
+      ).should_be("((a b) (a) ())");
+  },
+
+  'enum-set-complement': function(){
+    ew("(define-enumeration e (a b c) es) \
+        (map enum-set->list \
+          (list (enum-set-complement (es)) \
+                (enum-set-complement (es a b)) \
+                (enum-set-complement (es a b c))"
+      ).should_be("((a b c) (c) ())");
+  },
+  'enum-set-projection': function(){
+    ew("(define-enumeration e1 (a b c) es1) \
+        (define-enumeration e2 (b c d) es2) \
+        (map enum-set->list \
+          (list (enum-set-projection (es1 a b) (es2)) \
+                (enum-set-projection (es1 a) (es2 b c)) \
+                (enum-set-projection (es1 a b c) (es2 b c d))))"
+      ).should_be("((b) () (b c))");
+  },
+
+  'define-enumeration (color)': function(){
+    ew("(define-enumeration color (red green black white) color-set) \
+        (color red)").should_be("red");
+  },
+  'define-enumeration (color-set)': function(){
+    ew("(define-enumeration color (red green black white) color-set) \
+        (enum-set->list (color-set white red))").should_be("(red white)");
+  },
 })
 
 describe('15 Composite library', {
