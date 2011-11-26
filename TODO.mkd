@@ -14,10 +14,11 @@ High priority
 - upgrade jQuery to 1.7
 
 - (format)
-- (raise)
 
 - stop raising error when undefined is returned
 - list->js-array, js-array->list
+
+- require('sys') -> require('util')
 
 Middle priority
 ---------------
@@ -28,9 +29,8 @@ Middle priority
 
 -- better parser (for missing syntaxes)
 
--- [r6rs-lib] enumeration
--- [r6rs-lib][node] Command-line access and exit values
-
+-- $ biwas -e
+-- $ biwas (REPL)
 
 Low priority
 ------------
@@ -47,10 +47,10 @@ Low priority
 --- use Node for unit tests
 --- use biwas instead of Makefile
 
---- should try http://www.timdown.co.uk/jshashtable/ ?
-
 Refactoring and maintenance
 ---------------------------
+
+--- '$ make website'
 
 --- stackbase.js
 
@@ -79,4 +79,24 @@ Refactoring and maintenance
 
      File:
        src/system/class.js?
+
+Memo
+----
+
+### format
+
+22.3.1 FORMAT Basic Output
+
+o||~C||character || (format nil "~C" #\A) =>  "A"
+ ||~:C|| spelled || (format nil "~:C" #\Space) =>  "Space"
+ ||~@C||how to type || (format nil "~:@C" #\Control-Partial) =>  "Control-<PARTIAL> (Top-F)"  
+ 
+ ||~[n]% ||newline||
+ ||~[n]& ||fresh-line
+ ||~[n]| ||page separator
+o||~~    ||tilde
+
+ ||~R || 
+
+
 

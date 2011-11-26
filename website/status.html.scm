@@ -108,9 +108,9 @@
             (8 "I/O"
              "partially ok (output to 'stdout')")
             (9 "File system"
-             "not yet")
+             "ok (on Node.js)")
             (10 "Command-line access and exit values"
-             "not yet")
+             "ok (on Node.js)")
             (11 "Arithmetic"
              "not yet")
             (12 "syntax-case"
@@ -118,7 +118,7 @@
             (13 "Hashtables"
              "ok")
             (14 "Enumerations"
-             "not yet")
+             "ok")
             (15 "Composite library"
              "not yet")
             (16 "eval"
