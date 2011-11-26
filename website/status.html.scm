@@ -116,7 +116,7 @@
             (12 "syntax-case"
              "not yet")
             (13 "Hashtables"
-             "almost ok")
+             "ok")
             (14 "Enumerations"
              "not yet")
             (15 "Composite library"
