@@ -2683,10 +2683,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0].keys().length;
   });
 
+  // Find a pair from a hashtable with given key.
   //
-  // find_hash_pair: the key of the magic :-)
-  // takes two callback functions i.e, on_found and on_not_found
+  // hash      - a BiwaScheme.Hashtable
+  // key       - an object
+  // callbacks - an object contains callback functions
+  //             .on_found     - function(pair, hashed)
+  //               pair   - [Object key, Object value]
+  //               hashed - Object hashed
+  //             .on_not_found - function(hashed)
+  //               hashed - Object hashed
   //
+  // Returns an instance of BiwaScheme.Call.
   BiwaScheme.find_hash_pair = function(hash, key, callbacks){
     // invoke hash proc 
     return new Call(hash.hash_proc, [key], function(ar){
@@ -2734,6 +2742,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("hashtable-set!", 3, 3, function(ar){
     var hash = ar[0], key = ar[1], value = ar[2];
     assert_hashtable(hash);
+    assert(hash.mutable, "hashtable is not mutable");
 
     return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair){
@@ -2751,6 +2760,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("hashtable-delete!", 2, 2, function(ar){
     var hash = ar[0], key = ar[1];
     assert_hashtable(hash);
+    assert(hash.mutable, "hashtable is not mutable");
 
     return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair, hashed){
@@ -2782,6 +2792,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("hashtable-update!", 4, 4, function(ar){
     var hash = ar[0], key = ar[1], proc = ar[2], ifnone = ar[3];
     assert_hashtable(hash);
+    assert(hash.mutable, "hashtable is not mutable");
     assert_procedure(proc);
 
     return BiwaScheme.find_hash_pair(hash, key, {
@@ -2814,6 +2825,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //(hashtable-clear! hashtable k)    procedure 
   define_libfunc("hashtable-clear!", 0, 1, function(ar){
     assert_hashtable(ar[0]);
+    assert(ar[0].mutable, "hashtable is not mutable");
     ar[0].clear();
     return BiwaScheme.undef;
   });
