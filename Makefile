@@ -25,6 +25,7 @@ BASIC_FILES =                                     \
   src/system/pause.js                             \
   src/system/call.js                              \
   src/system/interpreter.js                       \
+  src/system/_nodejs.js                           \
   src/library/infra.js                            \
   src/library/r6rs_lib.js                         \
   src/library/js_interface.js                     \
@@ -39,6 +40,7 @@ BROWSER_FILES =                                   \
   src/library/webscheme_lib.js                    \
   src/platforms/browser/dumper.js                 \
   src/platforms/browser/console.js                \
+  src/platforms/browser/platform.js               \
   src/platforms/browser/release_initializer.js
 
 CONSOLE_FILES =                                   \
@@ -65,9 +67,10 @@ release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
 	cat $(CONSOLE_FILES) >> $@
 	@echo "Wrote " $@
 
-node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js release/console_biwascheme.js src/platforms/node/module_postamble.js
+node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js release/console_biwascheme.js src/platforms/node/platform.js src/platforms/node/module_postamble.js
 	cat src/platforms/node/module_preamble.js > $@
 	cat release/console_biwascheme.js >> $@
+	cat src/platforms/node/platform.js >> $@
 	cat src/platforms/node/module_postamble.js >> $@
 	@echo "Wrote " $@
 

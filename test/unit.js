@@ -1428,9 +1428,11 @@ describe('8 I/O', {
 })
 
 describe('9 File System', {
+  // TODO: add test
 })
 
 describe('10 Command-line access and exit values', {
+  // TODO: add test
 })
 
 describe('12 syntax-case', {

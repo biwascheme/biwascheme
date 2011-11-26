@@ -2492,31 +2492,32 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // Chapter 9 File System
   //
-//(file-exists? filename)    procedure 
+  //(file-exists? filename)    procedure 
   define_libfunc("file-exists?", 1, 1, function(ar){
-		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); //TODO: extract to a function
     assert_string(ar[0]);
-    var fileIn = FileIO.open(ar[0]);
-    return fileIn.exists();
+    return BiwaScheme.NodeJS("file_exists", ar[0]);
   });
-//(delete-file filename)    procedure 
+
+  //(delete-file filename)    procedure 
   define_libfunc("delete-file", 1, 1, function(ar){
-		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); //TODO: extract to a function
     assert_string(ar[0]);
-    var deleted = FileIO.unlink(FileIO.open(ar[0]));
-    if(!deleted){
-      //TODO: raise %i/o-filename if not found or not deletable
-      puts("delete-file: cannot delete " + ar[0]);
-    }
+    BiwaScheme.NodeJS("delete_file", ar[0]);
     return BiwaScheme.undef;
   });
 
   //
   // Chapter 10 Command-line access and exit values
   //
-//(command-line)    procedure
-//(exit)    procedure 
-//(exit obj)    procedure
+  //(command-line)    procedure
+  define_libfunc("command-line", 0, 0, function(ar){
+    return BiwaScheme.List.apply(null, BiwaScheme.NodeJS("command_line"));
+  });
+  //(exit)    procedure 
+  //(exit obj)    procedure
+  define_libfunc("exit", 0, 1, function(ar){
+    var obj = ar[0];
+    BiwaScheme.NodeJS("exit", obj);
+  });
 
   //
   // Chapter 11 Arithmetic
