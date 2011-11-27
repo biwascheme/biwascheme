@@ -21,25 +21,7 @@ BiwaScheme.check_arity = function(len, min, max){
 BiwaScheme.define_libfunc = function(fname, min, max, func, is_raw){
   var f = function(ar, intp){
     BiwaScheme.check_arity(ar.length, min, max);
-    var result = func(ar, intp);
-    if (is_raw) {
-      return result;
-    }
-    else{
-      if (result === undefined){
-        throw new BiwaScheme.Bug("library function " + 
-                                 "`" + fname + "'" +
-                                 " returned JavaScript's undefined");
-      }
-      else if (result === null){
-        throw new BiwaScheme.Bug("library function " +
-                                 "`" + fname + "'" + 
-                                 " returned JavaScript's null");
-      }
-      else {
-        return result;
-      }
-    }
+    return func(ar, intp);
   };
 
   func["fname"] = fname; // for assert_*
