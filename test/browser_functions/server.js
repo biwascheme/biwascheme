@@ -57,4 +57,4 @@ app.get('/jsonp', function(req, res){
 
 app.listen(PORT);
 
-require('sys').puts("Open http://localhost:"+PORT+"/");
+require('util').puts("Open http://localhost:"+PORT+"/");

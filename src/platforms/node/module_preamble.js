@@ -3,14 +3,14 @@ _.mixin(require('underscore.string'));
 
 var Console = {};
 Console.puts = function(str, no_newline) {
-  require('sys').print(str);
+  require('util').print(str);
   if (!no_newline) {
-    require('sys').print("\n");
+    require('util').print("\n");
   }
 };
 
 Console.p = function() {
-  require('sys').print.apply(this, arguments);
+  require('util').print.apply(this, arguments);
 };
 
 if(typeof(ev) != 'function') {

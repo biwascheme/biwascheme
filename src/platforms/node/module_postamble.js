@@ -4,10 +4,10 @@ BiwaScheme.run = function(filename) {
   var src = require('fs').readFileSync(filename, 'utf8');
   var intp = new BiwaScheme.Interpreter(function(e){
     if(e.stack){
-      require('sys').puts(e.stack);
+      require('util').puts(e.stack);
     }
     else{
-      require('sys').puts(e);
+      require('util').puts(e);
     }
 
     process.exit(1);
