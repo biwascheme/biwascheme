@@ -13,7 +13,7 @@ High priority
 
 - upgrade jQuery to 1.7
 
-- (format)
+- (format) srfi-28 http://srfi.schemers.org/srfi-28/srfi-28.html
 
 - stop raising error when undefined is returned
 - list->js-array, js-array->list
@@ -31,6 +31,10 @@ Middle priority
 
 -- $ biwas -e
 -- $ biwas (REPL)
+
+-- id="biwa-script"
+
+-- fix leaking variables
 
 Low priority
 ------------
