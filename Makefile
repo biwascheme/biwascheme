@@ -74,5 +74,9 @@ node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js
 	cat src/platforms/node/module_postamble.js >> $@
 	@echo "Wrote " $@
 
+
 browser_test:
 	cd test/browser_functions; node ./server.js
+
+website:
+	gosh website/converter.scm website/

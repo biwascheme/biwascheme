@@ -54,8 +54,6 @@ Low priority
 Refactoring and maintenance
 ---------------------------
 
---- '$ make website'
-
 --- stackbase.js
 
 --- use underscore.uniqueId for gensym, etc.
