@@ -2372,7 +2372,19 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(open-bytevector-output-port)    procedure 
 //(call-with-bytevector-output-port proc)    procedure 
 //(open-string-output-port)    procedure   
-//(call-with-string-output-port proc)    procedure 
+  //(call-with-string-output-port proc)    procedure 
+  define_libfunc("call-with-string-output-port", 1, 1, function(ar){
+    var proc = ar[0];
+    assert_procedure(proc);
+
+    var port = new BiwaScheme.Port.StringOutput();
+
+    return new Call(proc, [port], function(ar){
+      port.close();
+      return port.output_string();
+    });
+  });
+
 //(standard-output-port)    procedure 
 //(standard-error-port)    procedure 
 //8.3 (current-output-port)    procedure 

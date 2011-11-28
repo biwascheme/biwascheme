@@ -1417,6 +1417,11 @@ describe('8 I/O', {
             (open-output-string) \
             (lambda (port) port)))").should_be(true); 
   },
+  'call-with-string-output-port' : function(){
+    ev("(call-with-string-output-port \
+          (lambda (port) \
+            (write 'ok port)))").should_be("ok"); 
+  },
   'eof-object' : function(){
     ev("(eqv? (eof-object) (eof-object))").should_be(true); 
     ev("(eq? (eof-object) (eof-object))").should_be(true);
