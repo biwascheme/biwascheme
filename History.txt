@@ -12,9 +12,13 @@
       - mutable hashtables
       - new functions
         - write-char
-        - file-exists?, delete-file, command-line, exit
-            (R6RS standard library chapter 9 and 10)
         - format (srfi-28)
+
+  * new on Node:
+    - One line program on command-line
+      $ biwas -e "(print 'hello)"
+    - file-exists?, delete-file, command-line, exit
+        (R6RS standard library chapter 9 and 10)
 
 2011-11-22  v0.6.0
 

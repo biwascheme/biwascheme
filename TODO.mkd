@@ -33,7 +33,6 @@ Middle priority
 
 -- better parser (for missing syntaxes)
 
--- $ biwas -e
 -- $ biwas (REPL)
 
 -- id="biwa-script"
@@ -61,7 +60,7 @@ Low priority
 Refactoring and maintenance
 ---------------------------
 
---- rename src/system/foo.js to \_foo.js when class Foo is not defined
+--- rename src/system/foo.js to _foo.js when class Foo is not defined
     * types.js
     * value.js
     * write.js
