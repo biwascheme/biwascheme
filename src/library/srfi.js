@@ -260,19 +260,45 @@ with(BiwaScheme) {
   //
   // srfi-28 (format)
   //
-  define_libfunc("format", 1, null, function(ar){
-    var format_str = ar.shift();
-    assert_string(format_str);
 
-    return format_str.replace(/~[as]/g, function(matched){
-             assert(ar.length > 0,
-                    "insufficient number of arguments", "format");
-             if (matched == "~a")
-               return BiwaScheme.to_display(ar.shift());
-             else
-               return BiwaScheme.to_write(ar.shift());
-           }).replace(/~%/, "\n")
-             .replace(/~~/, "~");
+  // (format format-str obj1 obj2 ...) -> string
+  // (format #f format-str ...) -> string
+  // (format #t format-str ...) -> output to current port 
+  // (format port format-str ...) -> output to the port 
+  define_libfunc("format", 1, null, function(ar){
+    if (_.isString(ar[0])) {
+      var port = null, format_str = ar.shift();
+    }
+    else if (ar[0] === false) {
+      ar.shift();
+      var port = null, format_str = ar.shift();
+    }
+    else if (ar[0] === true) {
+      ar.shift();
+      var port = BiwaScheme.Port.current_output,
+          format_str = ar.shift();
+    }
+    else {
+      var port = ar.shift(), format_str = ar.shift();
+      assert_port(port);
+    }
+
+    var str = format_str.replace(/~[as]/g, function(matched){
+                 assert(ar.length > 0,
+                        "insufficient number of arguments", "format");
+                 if (matched == "~a")
+                   return BiwaScheme.to_display(ar.shift());
+                 else
+                   return BiwaScheme.to_write(ar.shift());
+              }).replace(/~%/, "\n")
+                .replace(/~~/, "~");
+    if (port) {
+      port.put_string(str);
+      return BiwaScheme.undef;
+    }
+    else {
+      return str;
+    }
   });
   
   //

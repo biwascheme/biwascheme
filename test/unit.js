@@ -1880,8 +1880,18 @@ describe('srfi-28 format', {
     ev('(format "~a,~s,~a,~s" 1 "foo" \'y #t)').should_be('1,"foo",y,#t');
   },
   'format (extended)' : function(){
-    //(format #f "foo")
-    //(format #t "foo")
+    // output to string
+    ev('(format #f "<~s>" 123)').should_be("<123>");
+    // output to current port
+    ev('(let1 port (open-output-string) \
+          (with-output-to-port port \
+            (lambda () \
+              (format #t "<~s>" 456))) \
+          (get-output-string port))').should_be("<456>");
+    // output to the given port
+    ev('(call-with-string-output-port \
+          (lambda (port) \
+            (format port "<~s>" 789)))').should_be("<789>")
   }
 });
 
