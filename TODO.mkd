@@ -29,8 +29,6 @@ Middle priority
 
 -- new syntax: ..
 
--- reference
-
 -- better parser (for missing syntaxes)
 
 -- id="biwa-script"
@@ -48,12 +46,18 @@ Low priority
 
 --- [r6rs][node] i/o
 
---- move website to Heroku?
- --- because some tests needs server-side program
 --- use Node for unit tests
 --- use biwas instead of Makefile
 
 --- combination of with-output-to-port and values
+
+Things other than code
+----------------------
+
+-- reference
+
+--- move website to Heroku?
+ --- because some tests needs server-side program
 
 Refactoring and maintenance
 ---------------------------
@@ -68,8 +72,6 @@ Refactoring and maintenance
       * puts, p
       * TopEnv, CoreEnv
       * Error, Bug, UserError
-
---- use underscore.uniqueId for gensym, etc.
 
 --- BiwaScheme.memoize
     eg.
@@ -94,24 +96,3 @@ Refactoring and maintenance
 
      File:
        src/system/class.js?
-
-Memo
-----
-
-### format
-
-22.3.1 FORMAT Basic Output
-
-o||~C||character || (format nil "~C" #\A) =>  "A"
- ||~:C|| spelled || (format nil "~:C" #\Space) =>  "Space"
- ||~@C||how to type || (format nil "~:@C" #\Control-Partial) =>  "Control-<PARTIAL> (Top-F)"  
- 
- ||~[n]% ||newline||
- ||~[n]& ||fresh-line
- ||~[n]| ||page separator
-o||~~    ||tilde
-
- ||~R || 
-
-
-

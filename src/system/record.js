@@ -90,8 +90,7 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   },
 
   _generate_new_uid: function(){
-    var n = (BiwaScheme.Record.RTD.last_uid++);
-    return BiwaScheme.Sym("__record_td_uid_"+n);
+    return BiwaScheme.Sym(_.uniqueId("__record_td_uid"));
   },
 
   toString: function(){
@@ -99,7 +98,6 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   }
 });
 
-BiwaScheme.Record.RTD.last_uid = 0;
 BiwaScheme.Record.RTD.NongenerativeRecords = {};
 BiwaScheme.isRecordTD = function(o){
   return (o instanceof BiwaScheme.Record.RTD);

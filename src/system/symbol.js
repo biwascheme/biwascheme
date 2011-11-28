@@ -34,8 +34,6 @@ BiwaScheme.Sym = function(name,leaveCase){
   }
 }
 
-BiwaScheme.gensyms = 0;
 BiwaScheme.gensym = function(){
-  BiwaScheme.gensyms++;
-  return BiwaScheme.Sym("__gensym_" + BiwaScheme.gensyms);
+  return BiwaScheme.Sym(_.uniqueId("__gensym"));
 };
