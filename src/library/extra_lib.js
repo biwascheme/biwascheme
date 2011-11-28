@@ -307,6 +307,23 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_port(ar[0]);
     return !(ar[0].is_open);
   });
+  //define_libfunc("with-input-from-port", 2, 2, function(ar){
+  //define_libfunc("with-error-to-port", 2, 2, function(ar){
+  define_libfunc("with-output-to-port", 2, 2, function(ar){
+    var port = ar[0], proc = ar[1];
+    assert_port(port);
+    assert_procedure(proc);
+
+    var original_port = BiwaScheme.Port.current_output;
+    BiwaScheme.Port.current_output = port
+
+    return new Call(proc, [port], function(ar){
+      port.close();
+      BiwaScheme.Port.current_output = original_port;
+
+      return ar[0];
+    });
+  });
   
   // syntax
   

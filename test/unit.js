@@ -1819,6 +1819,12 @@ describe('extra library', {
                (before (port-closed? port))) \
           (close-port port) \
           (cons before (port-closed? port)))").should_be("(#f . #t)");
+  },
+  'with-output-to-port': function(){
+    ev("(let1 port (open-output-string) \
+          (with-output-to-port port \
+            (lambda () (write 'ok port))) \
+          (get-output-string port))").should_be("ok");
   }
 });
 

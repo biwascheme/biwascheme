@@ -26,6 +26,10 @@ High priority
 Middle priority
 ---------------
 
+-- check uses of assert_closure
+   - maybe should use assert_procedure
+   - rename assert_closure to assert_lambda?
+
 -- new syntax: ..
 
 -- reference
@@ -54,6 +58,8 @@ Low priority
  --- because some tests needs server-side program
 --- use Node for unit tests
 --- use biwas instead of Makefile
+
+--- combination of with-output-to-port and values
 
 Refactoring and maintenance
 ---------------------------
