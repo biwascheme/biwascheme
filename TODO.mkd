@@ -13,13 +13,15 @@ High priority
 
 - upgrade jQuery to 1.7
 
-- (format) srfi-28 http://srfi.schemers.org/srfi-28/srfi-28.html
-
 - stop raising error when undefined is returned
 - list->js-array, js-array->list
 
 - (print (js-eval "null")) raises error (only on Node?)
-  -- should think more about .to_write, .toString, .inspect
+  -- should think more about .to_display, .to_write, .toString, .inspect
+     BiwaScheme.to_display : used by (display), etc.
+     BiwaScheme.to_write : used by (write), etc.
+     BiwaScheme.inspect : used by BiwaScheme.inspect
+     .toString : used by Firebug?
 
 Middle priority
 ---------------
@@ -56,7 +58,16 @@ Low priority
 Refactoring and maintenance
 ---------------------------
 
---- stackbase.js
+--- rename src/system/foo.js to \_foo.js when class Foo is not defined
+    * types.js
+    * value.js
+    * write.js
+    * \_nodejs.js
+
+    * stackbase.js
+      * puts, p
+      * TopEnv, CoreEnv
+      * Error, Bug, UserError
 
 --- use underscore.uniqueId for gensym, etc.
 

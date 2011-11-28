@@ -258,6 +258,24 @@ with(BiwaScheme) {
   });
 
   //
+  // srfi-28 (format)
+  //
+  define_libfunc("format", 1, null, function(ar){
+    var format_str = ar.shift();
+    assert_string(format_str);
+
+    return format_str.replace(/~[as]/g, function(matched){
+             assert(ar.length > 0,
+                    "insufficient number of arguments", "format");
+             if (matched == "~a")
+               return BiwaScheme.to_display(ar.shift());
+             else
+               return BiwaScheme.to_write(ar.shift());
+           }).replace(/~%/, "\n")
+             .replace(/~~/, "~");
+  });
+  
+  //
   // srfi-38 (write/ss)
   //
   var user_write_ss = function(ar){

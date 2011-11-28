@@ -1855,6 +1855,25 @@ describe('srfi-27 random', {
   }
 });
 
+describe('srfi-28 format', {
+  'format' : function(){
+    // tilde
+    ev('(format "~~")').should_be("~");
+    // newline
+    ev('(format "~%")').should_be("\n");
+    // standard
+    ev('(format "~s" "foo")').should_be('"foo"');
+    // aesthetic
+    ev('(format "~a" "foo")').should_be('foo');
+
+    ev('(format "~a,~s,~a,~s" 1 "foo" \'y #t)').should_be('1,"foo",y,#t');
+  },
+  'format (extended)' : function(){
+    //(format #f "foo")
+    //(format #t "foo")
+  }
+});
+
 describe('srfi-30 comment syntax', {
   'simple(1)' : function(){
     ev("#| abc |# (+ 1 3)").should_be(4);

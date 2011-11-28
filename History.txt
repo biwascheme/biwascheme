@@ -4,7 +4,17 @@
 
 (not yet)  v0.6.1
 
-  * new: R6RS Enumerations
+  * change: do not raise error when null or undefined is returned
+            from libfunc
+
+  * new:
+      - R6RS Enumerations
+      - mutable hashtables
+      - new functions
+        - write-char
+        - file-exists?, delete-file, command-line, exit
+            (R6RS standard library chapter 9 and 10)
+        - format (srfi-28)
 
 2011-11-22  v0.6.0
 
