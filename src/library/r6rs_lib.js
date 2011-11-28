@@ -2471,7 +2471,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
   })
 
-  // write-char [1,2]
+  define_libfunc("write-char", 1, 2, function(ar){
+    var port = ar[1] || Port.current_output;
+    assert_char(ar[0]);
+    port.put_string(ar[0].value);
+    return BiwaScheme.undef;
+  });
   define_libfunc("newline", 0, 1, function(ar){
     var port = ar[0] || Port.current_output;
     port.put_string("\n");

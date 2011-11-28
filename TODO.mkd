@@ -18,7 +18,8 @@ High priority
 - stop raising error when undefined is returned
 - list->js-array, js-array->list
 
-- require('sys') -> require('util')
+- (print (js-eval "null")) raises error (only on Node?)
+  -- should think more about .to_write, .toString, .inspect
 
 Middle priority
 ---------------
@@ -44,6 +45,7 @@ Low priority
 --- [r6rs] syntax-case, syntax-rules
 --- [r6rs] some functions for numbers
  --- should try http://github.com/dyoo/js-numbers/ ?
+
 --- [r6rs][node] i/o
 
 --- move website to Heroku?
