@@ -17,7 +17,7 @@ var on_error = function(e){
 
 // test main
 function puts(){}
-function scm_eval(str, func){
+function scm_eval(str, func, _on_error){
   return (new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function());
 }
 function ev(str, func){
@@ -28,7 +28,13 @@ function ew(str, func){
 }
 function should_raise_error(str){
   var ex = null;
-  try{ scm_eval(str) } catch(e){ ex = e; }
+  try{
+    var intp = new BiwaScheme.Interpreter(function(e){ throw e; });
+    intp.evaluate(str);
+  }
+  catch(e){
+    ex = e;
+  }
 
   // The exception must be BiwaScheme.Error
   expect(ex instanceof BiwaScheme.Error).should_be(true);
