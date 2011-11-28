@@ -33,8 +33,6 @@ Middle priority
 
 -- better parser (for missing syntaxes)
 
--- $ biwas (REPL)
-
 -- id="biwa-script"
 
 -- fix leaking variables

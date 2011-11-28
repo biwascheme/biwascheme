@@ -17,6 +17,8 @@
   * new on Node:
     - One line program on command-line
       $ biwas -e "(print 'hello)"
+    - REPL
+      $ biwas   # (no arguments)
     - file-exists?, delete-file, command-line, exit
         (R6RS standard library chapter 9 and 10)
 
