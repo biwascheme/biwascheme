@@ -18,7 +18,7 @@ BiwaScheme.check_arity = function(len, min, max){
   else if(max && max < len)
     throw new BiwaScheme.Error(fname+": too many arguments (at most: "+max+" got: "+len+")");
 }
-BiwaScheme.define_libfunc = function(fname, min, max, func, is_raw){
+BiwaScheme.define_libfunc = function(fname, min, max, func){
   var f = function(ar, intp){
     BiwaScheme.check_arity(ar.length, min, max);
     return func(ar, intp);
@@ -45,9 +45,6 @@ BiwaScheme.alias_libfunc = function(fname, aliases) {
                              " does not exist, so can't alias it.");
   }
 };
-BiwaScheme.define_libfunc_raw = function(fname, min, max, func){
-  BiwaScheme.define_libfunc(fname, min, max, func, true);
-}
 BiwaScheme.define_syntax = function(sname, func) {
   var s = new BiwaScheme.Syntax(sname, func);
   BiwaScheme.CoreEnv[sname] = s;

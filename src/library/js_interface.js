@@ -3,10 +3,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // interface to javascript
   //
-  define_libfunc_raw("js-eval", 1, 1, function(ar){
+  define_libfunc("js-eval", 1, 1, function(ar){
     return eval(ar[0]);
   });
-  define_libfunc_raw("js-ref", 2, 2, function(ar){
+  define_libfunc("js-ref", 2, 2, function(ar){
     if(_.isString(ar[1])){
       return ar[0][ar[1]];
     }
@@ -22,7 +22,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   // (js-call (js-eval "Math.pow") 2 4)
-  define_libfunc_raw("js-call", 1, null, function(ar){
+  define_libfunc("js-call", 1, null, function(ar){
     var js_func = ar.shift();
     assert_function(js_func);
 
@@ -30,7 +30,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return js_func.apply(receiver, ar);
   });
   // (js-invoke (js-new "Date") "getTime")
-  define_libfunc_raw("js-invoke", 2, null, function(ar){
+  define_libfunc("js-invoke", 2, null, function(ar){
     var js_obj = ar.shift();
     var func_name = ar.shift();
     if(!_.isString(func_name)){
@@ -59,7 +59,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //   {a: "b", c: 4}
   //
   // TODO: provide corresponding macro ".." 
-  define_libfunc_raw("js-invocation", 2, null, function(ar, intp){
+  define_libfunc("js-invocation", 2, null, function(ar, intp){
     var receiver = ar.shift();
     // TODO: convert lambdas by js-closure 
     if(BiwaScheme.isSymbol(receiver)){
@@ -208,11 +208,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return _.isFunction(ar[0]);
   });
 
-  define_libfunc_raw("js-array-to-list", 1, 1, function(ar){
+  define_libfunc("js-array-to-list", 1, 1, function(ar){
     return BiwaScheme.array_to_list(ar[0]);
   });
 
-  define_libfunc_raw("list-to-js-array", 1, 1, function(ar){
+  define_libfunc("list-to-js-array", 1, 1, function(ar){
     return ar[0].to_array();
   });
 
