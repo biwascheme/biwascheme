@@ -1,48 +1,49 @@
 <html>
-<head>
-<style>
-div#bs-console{ border:1px solid black }
-div#dumparea{ border:1px solid black }
-div#dumparea div{ border-bottom: 1px solid black; margin:0 }
-span.dump_opecode{ color:orange; }
-span.dump_env{ color:goldenrod; }
-span.dump_stackframe{ color:cornflowerblue; }
-span.dump_closure{ color:limegreen; }
-span.dump_constant{ color:limegreen; }
-td.dump_dead{ color:lightgray; }
-td.dump_stknum{ color:gold; }
-</style>
-</head>
+  <head>
+    <style>
+      div#bs-console{ border:1px solid black }
+      div#dumparea{ border:1px solid black }
+      div#dumparea div{ border-bottom: 1px solid black; margin:0 }
+      span.dump_opecode{ color:orange; }
+      span.dump_env{ color:goldenrod; }
+      span.dump_stackframe{ color:cornflowerblue; }
+      span.dump_closure{ color:limegreen; }
+      span.dump_constant{ color:limegreen; }
+      td.dump_dead{ color:lightgray; }
+      td.dump_stknum{ color:gold; }
+    </style>
+  </head>
 <body>
-<h1><a href='http://www.biwascheme.org/'>BiwaScheme</a> tracer</h1>
-<textarea id="bs-input" rows="10" cols="60">1</textarea><br>
-<input type=button value="eval" onclick="eval_it()">
-<div id='bs-console'>
-</div>
-<input type=button value="&lt;" onclick="dumper.dump_move(-1)">
-<input type=button value="&gt;" onclick="dumper.dump_move(1)">
-<input type=button value="all" onclick="dumper.dump_toggle_fold()">
-<div id='dumparea'>
-</div>
+  <h1><a href='http://www.biwascheme.org/'>BiwaScheme</a> tracer</h1>
 
-<script type="text/javascript" src="../src/development_loader.js">
-// for browsers   
-var dumper = new BiwaScheme.Dumper();
-BiwaScheme.Interpreter.dumper = dumper;
+  <textarea id="bs-input" rows="10" cols="60">1</textarea><br>
+  <input type=button value="eval" onclick="eval_it()">
 
-function eval_it(){
-  var show_error = function(e){
-    puts("Error: "+e.message);
-    throw e;
-  };
-  dumper.reset();
-  $("#bs-console").html("");
-  var src = $("#bs-input").val();
-  puts(src);
-  puts(";=> " + BiwaScheme.to_write((new BiwaScheme.Interpreter(show_error)).evaluate(src)));
-  dumper.dump_move(1);
-}
-</script>
+  <div id='bs-console'></div>
+
+  <input type=button value="&lt;" onclick="dumper.dump_move(-1)">
+  <input type=button value="&gt;" onclick="dumper.dump_move(1)">
+  <input type=button value="all" onclick="dumper.dump_toggle_fold()">
+
+  <div id='dumparea'></div>
+
+  <script type="text/javascript" src="../src/development_loader.js">
+    var dumper = new BiwaScheme.Dumper();
+    BiwaScheme.Interpreter.dumper = dumper;
+
+    function eval_it(){
+      var show_error = function(e){
+        puts("Error: "+e.message);
+        throw e;
+      };
+      dumper.reset();
+      $("#bs-console").html("");
+      var src = $("#bs-input").val();
+      puts(src);
+      puts(";=> " + BiwaScheme.to_write((new BiwaScheme.Interpreter(show_error)).evaluate(src)));
+      dumper.dump_move(1);
+    }
+  </script>
 </body>
 </html>
 <!-- vim:set ft=javascript: -->
