@@ -1,17 +1,29 @@
 TODO for BiwaScheme
 ===================
 
+Inbox
+-----
+
+* passign multiple values to continuation
+  (receive a (call/cc (lambda (c) (c 1 2 3))) (display a))
+  should be (1 2 3)
+
+* equal should stop
+  (let ((x (list 'a 'b 'c 'a))
+      (y (list 'a 'b 'c 'a 'b 'c 'a)))
+    (set-cdr! (list-tail x 2) x)
+    (set-cdr! (list-tail y 5) y)
+    (equal? x y))
+
 High priority
 -------------
 
-- LICENCE to biwascheme-min.js
+- LICENCE to biwascheme(-min).js
 
 - [r6rs] Errors and conditions
 - [r6rs] library definition and loading
 
 - upgrade jQuery to 1.7
-
-- list->js-array, js-array->list
 
 - (print (js-eval "null")) raises error (only on Node?)
   -- should think more about .to_display, .to_write, .toString, .inspect
@@ -20,8 +32,14 @@ High priority
      BiwaScheme.inspect : used by BiwaScheme.inspect
      .toString : used by Firebug?
 
+- unbound variable reference in define-macro returns undefined
+  (yhara/#15)
+
 Middle priority
 ---------------
+
+- list->js-array, js-array->list
+
 
 -- check uses of assert_closure
    - maybe should use assert_procedure
@@ -30,10 +48,14 @@ Middle priority
 -- new syntax: ..
 
 -- better parser (for missing syntaxes)
+   * #\vtab, etc.
+   * #b, #o
 
 -- id="biwa-script"
 
 -- fix leaking variables
+
+-- dynamic-wind
 
 Low priority
 ------------
@@ -61,6 +83,8 @@ Things other than code
 
 Refactoring and maintenance
 ---------------------------
+
+--- try http://visionmedia.github.com/mocha/ ?
 
 --- rename src/system/foo.js to _foo.js when class Foo is not defined
     * types.js
