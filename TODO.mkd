@@ -18,6 +18,9 @@ Inbox
 High priority
 -------------
 
+- release 0.6.1
+  - biwas (precisely, old optparse it uses) does not work on node 0.6.2
+
 - LICENCE to biwascheme(-min).js
 
 - [r6rs] Errors and conditions
@@ -38,8 +41,7 @@ High priority
 Middle priority
 ---------------
 
-- list->js-array, js-array->list
-
+-- list->js-array, js-array->list
 
 -- check uses of assert_closure
    - maybe should use assert_procedure
@@ -50,6 +52,7 @@ Middle priority
 -- better parser (for missing syntaxes)
    * #\vtab, etc.
    * #b, #o
+   * a program "1;;" raises error: unbound symbol: '1;;'
 
 -- id="biwa-script"
 
@@ -120,3 +123,5 @@ Refactoring and maintenance
 
      File:
        src/system/class.js?
+
+--- remove test/console_test.js
