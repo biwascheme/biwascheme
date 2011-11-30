@@ -40,7 +40,7 @@ td.dump_stknum{ color:gold; }
 </div>
 <script type="text/javascript" src="../src/development_loader.js">
 BiwaScheme.Interpreter.dumper = new BiwaScheme.Dumper();
-var code = $("code").innerHTML;
+var code = $("#code").html();
 var ret = (new BiwaScheme.Interpreter(function(e){
     puts(e.message);
     throw e;
