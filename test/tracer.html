@@ -36,8 +36,8 @@ function eval_it(){
     throw e;
   };
   dumper.reset();
-  $("bs-console").update("");
-  var src = $("bs-input").value;
+  $("#bs-console").html("");
+  var src = $("#bs-input").val();
   puts(src);
   puts(";=> " + BiwaScheme.to_write((new BiwaScheme.Interpreter(show_error)).evaluate(src)));
   dumper.dump_move(1);
