@@ -2,7 +2,9 @@
 
   * new: add clojure-like JavaScript interop syntaxes
 
-(not yet)  v0.6.1
+2011-12-01  v0.6.1
+
+  * fix: bin/biwas works on Node 0.6.x
 
   * change: do not raise error when null or undefined is returned
             from libfunc
@@ -11,8 +13,8 @@
       - R6RS Enumerations
       - mutable hashtables
       - new functions
-        - write-char
         - format (srfi-28)
+        - write-char, with-output-to-port, call-with-string-output-port
 
   * new on Node:
     - One line program on command-line

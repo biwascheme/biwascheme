@@ -131,15 +131,17 @@ How to release (memo)
      - demo/*
      - open repl.html
      - open website/i.html
+     - open test/tracer.html
+     - open test/tracer_auto.html
    + try npm package
        - $ npm install node_modules/biwascheme/ -g
        - $ biwas -v
-6. $ git tag x.y.z
-7. Push changes to github (with --tags)
-8. Update website ($ git pull)
-9. Copy generated files (release/) to web server
-10. Publish npm package
+6. Commit and create tag ($ git tag x.y.z)
+7. Push changes to github with --tags
+8. Update website on web server (git pull)
+9. Publish npm package
   - $ npm publish node_modules/biwascheme/
+10. Copy generated files (release/) to web server
 
 License
 =======
