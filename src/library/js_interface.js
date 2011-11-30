@@ -179,22 +179,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return obj;
   });
 
-  // (js-closure (lambda (event) ..))
   BiwaScheme.js_closure = function(proc, intp){
     var on_error = intp.on_error;
     return function(/*args*/){
       var intp = new Interpreter(on_error);
-      // ensure that no undefined or null values get in, as they will wreak
-      // havok on the library functions
-      var args = _.map(_.toArray(arguments),
-                       function(e) {
-                         if (_.isUndefined(e)) { return BiwaScheme.Sym("undefined"); }
-                         else if (_.isNull(e)) { return BiwaScheme.Sym("null"); }
-                         else { return e; }
-                       });
-      return intp.invoke_closure(proc, args);
+      return intp.invoke_closure(proc, _.toArray(arguments));
     };
   };
+  // (js-closure (lambda (event) ..))
+  // Returns a js function which executes the given procedure.
+  //
+  // Example
+  //   (add-handler! ($ "#btn") "click" (js-closure on-click))
   define_libfunc("js-closure", 1, 1, function(ar, intp){
     assert_closure(ar[0]);
     return BiwaScheme.js_closure(ar[0], intp);
