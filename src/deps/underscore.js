@@ -1,1 +1,1 @@
-../../node_modules/biwascheme/node_modules/underscore/underscore.js
+underscore-1.2.2.min.js
