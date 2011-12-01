@@ -48,17 +48,14 @@ How to use from inside node.js as a module
 ------------------------------------------
 
 1. $ npm install biwascheme
-2. create a file a.scm:
+2. create a file server.js:
 
-    (display "Hello, world!")
-    (newline)
+    var BiwaScheme = require("biwascheme");
+    BiwaScheme.run("(+ 1 2)");
+    // or
+    // BiwaScheme.run_file("a.scm");
 
-3. create a file server.js:
-
-    var BiwaScheme = require("biwascheme").BiwaScheme;
-    BiwaScheme.run("a.scm");
-
-4. $ node server.js
+3. $ node server.js
 
 Files
 =====
@@ -100,21 +97,24 @@ Make compiles src/\*.js into release/biwascheme.js.
 
     $ make
 
-Development
-===========
+Links
+=====
 
 - [Repository](https://github.com/biwascheme/biwascheme)
 - [Issues](https://github.com/biwascheme/biwascheme/issues)
 - [Mailing-list](http://groups.google.co.jp/group/biwascheme)
 
-How to add a new file (memo)
-----------------------------
+Development memos
+=================
+
+How to add a new file
+---------------------
 
 * edit Makefile
 * edit src/development_loader.js
 
-How to release (memo)
----------------------
+How to release
+--------------
 
 1. Edit History.txt
 2. Edit VERSION
@@ -141,7 +141,33 @@ How to release (memo)
 8. Update website on web server (git pull)
 9. Publish npm package
   - $ npm publish node_modules/biwascheme/
-10. Copy generated files (release/) to web server
+10. Copy generated files (release/*.js, src/version.js) to web server
+  - copy src/deps/underscore(.string).js, too
+
+How to upgrade dependencies
+---------------------------
+
+jQuery:
+* update src/deps/jquery.js
+
+underscore:
+* update src/deps/underscore.js
+* update node_modules/biwascheme/package.json
+
+underscore.string:
+* update src/deps/underscore.string.js
+* update node_modules/biwascheme/package.json
+
+Website
+-------
+
+www.biwascheme.org is hosted by Heroku.
+
+Files for website is stored in the branch 'website'.
+This is almost same as master, but:
+
+* contains compiled release/*.js
+* contains src/version.js
 
 License
 =======

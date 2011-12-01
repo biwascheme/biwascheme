@@ -19,7 +19,6 @@ High priority
 -------------
 
 - release 0.6.2
-  - BiwaScheme.run_file
 
 - LICENCE to biwascheme(-min).js
 
@@ -34,6 +33,34 @@ High priority
      BiwaScheme.to_write : used by (write), etc.
      BiwaScheme.inspect : used by BiwaScheme.inspect
      .toString : used by Firebug?
+
+     display -> write <- inspect
+                 |
+                 v
+                 toString
+
+||Type   ||Source||write  ||display||inspect||toString
+||boolean||#t    ||'#t'   ||       ||       ||'true' (js)
+||nil    ||()    ||'()'   ||       ||       ||'nil'
+||number ||1     ||'1'    ||       ||       ||'1' (js)
+||symbol ||'a    ||'a'    ||       ||       ||'\'a'
+||string ||"a"   ||'"a"'  ||'a'    ||       ||'"a"' or "'a'" (js)
+||char   ||#\a   ||'#\a'  ||'a'    ||[write]||
+
+||vector ||#(1 2)||"#(1 2)"||      ||       ||"1,2" (js)
+||pair   ||'("a")||'("a"')"||      ||inspect||[inspect]
+
+||function||(js-clojure f)||"#<...>"||
+
+||enum-set ||e||          ||       ||       ||"#<...>"
+||hashtable||h||"#<...>"  ||       ||       ||
+||record   ||r||"#<...>"  ||       ||       ||
+||port     ||p||"#<...>"  ||       ||"#<...>"||
+
+||undef  ||     ||        ||       ||       ||"#<undef>"
+
+||null   ||(js-eval "null")||"#<null>" || || ||<js error>
+||undefined||(js-eval "undefined")||"#<undefined>" || || ||<js error>
 
 - unbound variable reference in define-macro returns undefined
   (yhara/#15)
@@ -54,6 +81,8 @@ Middle priority
 -- fix leaking variables
 
 -- dynamic-wind
+
+-- handle error on biwas(REPL)
 
 Low priority
 ------------
@@ -95,6 +124,10 @@ Website
 
 Refactoring and maintenance
 ---------------------------
+
+--- add ./biwas
+
+--- remove _types.js
 
 --- try http://visionmedia.github.com/mocha/ ?
 

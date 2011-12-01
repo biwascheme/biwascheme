@@ -2,6 +2,14 @@
 
   * new: add clojure-like JavaScript interop syntaxes
 
+(not yet)  v0.6.2
+
+  * new on Node:
+    - BiwaScheme.run_file
+
+  * internal:
+    - Moved website to Heroku
+
 2011-12-01  v0.6.1
 
   * fix: bin/biwas works on Node 0.6.x
