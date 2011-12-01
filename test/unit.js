@@ -1566,9 +1566,10 @@ describe('14 Enumerators', {
           (make-enumeration '(a b c b)))").should_be("(a b c)");
   },
   'enum-set-universe': function(){
-    ew("(enum-set->list \
-          (enum-set-universe \
-            (make-enumeration '(a b c b))))").should_be("(a b c)");
+    ew("(let1 e (make-enumeration '(a b c b)) \
+          (map enum-set->list \
+            (list (enum-set-universe e) \
+                  (enum-set-universe e))))").should_be("((a b c) (a b c))");
   },
   'enum-set-indexer': function(){
     ev("((enum-set-indexer (make-enumeration '(a b c b))) \

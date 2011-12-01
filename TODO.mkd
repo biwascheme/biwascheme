@@ -18,8 +18,8 @@ Inbox
 High priority
 -------------
 
-- release 0.6.1
-  - biwas (precisely, old optparse it uses) does not work on node 0.6.2
+- release 0.6.2
+  - BiwaScheme.run_file
 
 - LICENCE to biwascheme(-min).js
 
@@ -49,11 +49,6 @@ Middle priority
 
 -- new syntax: ..
 
--- better parser (for missing syntaxes)
-   * #\vtab, etc.
-   * #b, #o
-   * a program "1;;" raises error: unbound symbol: '1;;'
-
 -- id="biwa-script"
 
 -- fix leaking variables
@@ -76,13 +71,27 @@ Low priority
 
 --- combination of with-output-to-port and values
 
-Things other than code
-----------------------
+--- better parser (for missing syntaxes)
+   * #\vtab, etc.
+   * #b, #o
+   * a program "1;;" raises error: unbound symbol: '1;;'
+
+Website 
+-------
 
 -- reference
 
---- move website to Heroku?
- --- because some tests needs server-side program
+--- make test/browser_functions/ online
+  --- merge server.js to web.js?
+
+-- better example for index.html
+  (display "hello") does not work without #bs-console
+
+-- provide compiled older versions of biwascheme.js
+
+--- better design
+  * css
+  * same header for demos, tracer, etc (frame?)
 
 Refactoring and maintenance
 ---------------------------
@@ -101,29 +110,5 @@ Refactoring and maintenance
       * puts, p
       * TopEnv, CoreEnv
       * Error, Bug, UserError
-
---- BiwaScheme.memoize
-    eg.
-      BiwaScheme.memoize(BiwaScheme.Enumeration.EnumType.prototype, "_universe"); 
-
-      Original function:
-        constructor: function(){
-          return function(ar){
-          };
-        }
-
-      Memoizer:
-        memoize = function(obj, name){
-          obj["compute_"+name] = obj[name];
-          obj[name] = function(/*arguments*/){
-            if(!obj.hasOwnProperty("cached_"+name)){
-              obj["cached_"+name] = obj["compute_"+name].apply(TODO, arguments);
-            }
-            return obj["cached_"+name];
-          }
-        }
-
-     File:
-       src/system/class.js?
 
 --- remove test/console_test.js

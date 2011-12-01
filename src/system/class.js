@@ -41,3 +41,51 @@ BiwaScheme.Class = {
     return klass;
   }
 };
+
+// Update the given method to memoized version.
+//
+// - klass : a class defined by BiwaScheme.Class.create
+// - name_or_names : method name (a string or an array of strings)
+//
+// Example
+//
+//   // Given this method
+//   BiwaScheme.Enumeration.EnumType = ...
+//     universe: function(){
+//       return ...
+//     }
+//   ...
+//   // Memoize
+//   BiwaScheme.Class.memoize(BiwaScheme.Enumeration.EnumType,
+//                            "_universe"); 
+//
+//   // Equal to:
+//   BiwaScheme.Enumeration.EnumType = ...
+//     universe: function(){
+//       if(!this.hasOwnProperty("cached_universe")){
+//         this.cached_universe = this.compute_universe();
+//       }
+//       return this.cached_universe;
+//     },
+//     compute_universe: function(){ 
+//       // Original function, renamed to compute_*
+//       return ...
+//     }
+//   ...
+BiwaScheme.Class.memoize = function(klass, name_or_names){
+  var proto = klass.prototype;
+  var names = _.isArray(name_or_names) ? name_or_names : [name_or_names];
+
+  _.each(names, function(name){
+    // Copy original function foo as 'compute_foo'
+    proto["compute_"+name] = proto[name];
+
+    // Define memoizing version
+    proto[name] = function(/*arguments*/){
+      if(!this.hasOwnProperty("cached_"+name)){
+        this["cached_"+name] = this["compute_"+name].apply(this, _.toArray(arguments));
+      }
+      return this["cached_"+name];
+    }
+  });
+}
