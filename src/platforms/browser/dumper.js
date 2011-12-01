@@ -50,7 +50,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       }
       else{
         s += (i == obj.length-1) ? pad1 : pad2;
-        s += this.dump_obj(obj[i]); //String(obj[i]).escapeHTML();
+        s += this.dump_obj(obj[i]);
       }
       if(i != obj.length-1) s += "<br>\n";
     }
@@ -140,7 +140,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     else{
       var s = write_ss(obj, true); //true=Array mode
       if(s == "[object Object]") s = this.dump_object(obj);
-      return _.escapeHTML(s);
+      return _.escape(s);
     }
   },
 
@@ -176,7 +176,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       s += "</table>";
     }
     else{
-      s = _.escapeHTML(BiwaScheme.inspect(obj)) + "<br>\n";
+      s = _.escape(BiwaScheme.inspect(obj)) + "<br>\n";
     }
     var dumpitem = $("<div/>", { id: ("dump" + this.n_dumps) });
     dumpitem.html(s);

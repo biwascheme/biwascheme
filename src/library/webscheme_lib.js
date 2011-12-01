@@ -258,7 +258,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if ($(selector).attr("value")) {
       return $(selector).val();
     } else {
-      return _.escapeHTML($(selector).html());
+      return _.escape($(selector).html());
     }
   };
   define_libfunc("element-content", 1, 1, function(ar){

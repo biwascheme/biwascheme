@@ -5,7 +5,7 @@ Console.puts = function(str, no_newline) {
   var text;
   console = $("#bs-console");
   if (console[0]) {
-	text = _.escapeHTML(str + (no_newline ? "" : "\n"));
+	text = _.escape(str + (no_newline ? "" : "\n"));
 	var span = $("<span>");
 	span.html(text.replace(/\n/g,"<br>").replace(/ /g,"&nbsp;"));
 	console.append(span);
