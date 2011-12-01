@@ -25,6 +25,23 @@ with(BiwaScheme) {
     return array_to_list(a);
   });
 
+  var copy_pair = function(pair){
+    var car = BiwaScheme.isPair(pair.car) ? copy_pair(pair.car)
+                                          : pair.car;
+    var cdr = BiwaScheme.isPair(pair.cdr) ? copy_pair(pair.cdr)
+                                          : pair.cdr;
+    return new Pair(car, cdr);
+  };
+  // (list-copy list)
+  define_libfunc("list-copy", 1, 1, function(ar){
+    if(BiwaScheme.isPair(ar[0])){
+      return copy_pair(ar[0]);
+    }
+    else{
+      return BiwaScheme.nil;
+    }
+  });
+
   //
   // srfi-6 & Gauche (string port)
   // 
@@ -241,6 +258,50 @@ with(BiwaScheme) {
   });
 
   //
+  // srfi-28 (format)
+  //
+
+  // (format format-str obj1 obj2 ...) -> string
+  // (format #f format-str ...) -> string
+  // (format #t format-str ...) -> output to current port 
+  // (format port format-str ...) -> output to the port 
+  define_libfunc("format", 1, null, function(ar){
+    if (_.isString(ar[0])) {
+      var port = null, format_str = ar.shift();
+    }
+    else if (ar[0] === false) {
+      ar.shift();
+      var port = null, format_str = ar.shift();
+    }
+    else if (ar[0] === true) {
+      ar.shift();
+      var port = BiwaScheme.Port.current_output,
+          format_str = ar.shift();
+    }
+    else {
+      var port = ar.shift(), format_str = ar.shift();
+      assert_port(port);
+    }
+
+    var str = format_str.replace(/~[as]/g, function(matched){
+                 assert(ar.length > 0,
+                        "insufficient number of arguments", "format");
+                 if (matched == "~a")
+                   return BiwaScheme.to_display(ar.shift());
+                 else
+                   return BiwaScheme.to_write(ar.shift());
+              }).replace(/~%/, "\n")
+                .replace(/~~/, "~");
+    if (port) {
+      port.put_string(str);
+      return BiwaScheme.undef;
+    }
+    else {
+      return str;
+    }
+  });
+  
+  //
   // srfi-38 (write/ss)
   //
   var user_write_ss = function(ar){
@@ -257,5 +318,11 @@ with(BiwaScheme) {
   define_libfunc("vector-append", 2, null, function(ar){
     var vec = [];
     return vec.concat.apply(vec, ar);
-  })
+  });
+
+  // (vector-copy vector)
+  define_libfunc("vector-copy", 1, 1, function(ar){
+    assert_vector(ar[0]);
+    return _.clone(ar[0]);
+  });
 }

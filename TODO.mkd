@@ -1,0 +1,129 @@
+TODO for BiwaScheme
+===================
+
+Inbox
+-----
+
+* passign multiple values to continuation
+  (receive a (call/cc (lambda (c) (c 1 2 3))) (display a))
+  should be (1 2 3)
+
+* equal should stop
+  (let ((x (list 'a 'b 'c 'a))
+      (y (list 'a 'b 'c 'a 'b 'c 'a)))
+    (set-cdr! (list-tail x 2) x)
+    (set-cdr! (list-tail y 5) y)
+    (equal? x y))
+
+High priority
+-------------
+
+- release 0.6.1
+  - biwas (precisely, old optparse it uses) does not work on node 0.6.2
+
+- LICENCE to biwascheme(-min).js
+
+- [r6rs] Errors and conditions
+- [r6rs] library definition and loading
+
+- upgrade jQuery to 1.7
+
+- (print (js-eval "null")) raises error (only on Node?)
+  -- should think more about .to_display, .to_write, .toString, .inspect
+     BiwaScheme.to_display : used by (display), etc.
+     BiwaScheme.to_write : used by (write), etc.
+     BiwaScheme.inspect : used by BiwaScheme.inspect
+     .toString : used by Firebug?
+
+- unbound variable reference in define-macro returns undefined
+  (yhara/#15)
+
+Middle priority
+---------------
+
+-- list->js-array, js-array->list
+
+-- check uses of assert_closure
+   - maybe should use assert_procedure
+   - rename assert_closure to assert_lambda?
+
+-- new syntax: ..
+
+-- better parser (for missing syntaxes)
+   * #\vtab, etc.
+   * #b, #o
+   * a program "1;;" raises error: unbound symbol: '1;;'
+
+-- id="biwa-script"
+
+-- fix leaking variables
+
+-- dynamic-wind
+
+Low priority
+------------
+
+--- [r6rs] vector quasiquote
+--- [r6rs] case-lambda
+--- [r6rs] syntax-case, syntax-rules
+--- [r6rs] some functions for numbers
+ --- should try http://github.com/dyoo/js-numbers/ ?
+
+--- [r6rs][node] i/o
+
+--- use Node for unit tests
+--- use biwas instead of Makefile
+
+--- combination of with-output-to-port and values
+
+Things other than code
+----------------------
+
+-- reference
+
+--- move website to Heroku?
+ --- because some tests needs server-side program
+
+Refactoring and maintenance
+---------------------------
+
+--- move package.json to root and remove node_modules/ ?
+
+--- try http://visionmedia.github.com/mocha/ ?
+
+--- rename src/system/foo.js to _foo.js when class Foo is not defined
+    * types.js
+    * value.js
+    * write.js
+    * \_nodejs.js
+
+    * stackbase.js
+      * puts, p
+      * TopEnv, CoreEnv
+      * Error, Bug, UserError
+
+--- BiwaScheme.memoize
+    eg.
+      BiwaScheme.memoize(BiwaScheme.Enumeration.EnumType.prototype, "_universe"); 
+
+      Original function:
+        constructor: function(){
+          return function(ar){
+          };
+        }
+
+      Memoizer:
+        memoize = function(obj, name){
+          obj["compute_"+name] = obj[name];
+          obj[name] = function(/*arguments*/){
+            if(!obj.hasOwnProperty("cached_"+name)){
+              obj["cached_"+name] = obj["compute_"+name].apply(TODO, arguments);
+            }
+            return obj["cached_"+name];
+          }
+        }
+
+     File:
+       src/system/class.js?
+
+--- remove test/console_test.js

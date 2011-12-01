@@ -56,11 +56,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           //  -> (begin expr ...)
           ret = new Pair(Sym("begin"), clause.cdr);
         }
-      } 
-      else if(ret === null){
-        // pattern D: no else clause
-        //  -> #<undef>
-        ret = BiwaScheme.undef;
       }
       else{
         var test = clause.car;
@@ -184,8 +179,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     }
     var binds = x.cdr.car, body = x.cdr.cdr;
     
-    if(!(binds instanceof Pair)) 
+    if((!(binds instanceof Pair)) && binds != BiwaScheme.nil){
       throw new Error("let: need a pair for bindings: got "+to_write(binds));
+    }
 
     var vars = nil, vals = nil;
     for(var p=binds; p instanceof Pair; p=p.cdr){
@@ -794,34 +790,52 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return BiwaScheme.undef;
   });
 
-  define_libfunc("caar", 1, 1, function(ar){ return ar[0].car.car; });
-  define_libfunc("cadr", 1, 1, function(ar){ return ar[0].cdr.car; });
-  define_libfunc("cdar", 1, 1, function(ar){ return ar[0].car.cdr; });
-  define_libfunc("cddr", 1, 1, function(ar){ return ar[0].cdr.cdr; });
-  define_libfunc("caaar", 1, 1, function(ar){ return ar[0].car.car.car; });
-  define_libfunc("caadr", 1, 1, function(ar){ return ar[0].cdr.car.car; });
-  define_libfunc("cadar", 1, 1, function(ar){ return ar[0].car.cdr.car; });
-  define_libfunc("caddr", 1, 1, function(ar){ return ar[0].cdr.cdr.car; });
-  define_libfunc("cdaar", 1, 1, function(ar){ return ar[0].car.car.cdr; });
-  define_libfunc("cdadr", 1, 1, function(ar){ return ar[0].cdr.car.cdr; });
-  define_libfunc("cddar", 1, 1, function(ar){ return ar[0].car.cdr.cdr; });
-  define_libfunc("cdddr", 1, 1, function(ar){ return ar[0].cdr.cdr.cdr; });
-  define_libfunc("caaaar", 1, 1, function(ar){ return ar[0].car.car.car.car; });
-  define_libfunc("caaadr", 1, 1, function(ar){ return ar[0].cdr.car.car.car; });
-  define_libfunc("caadar", 1, 1, function(ar){ return ar[0].car.cdr.car.car; });
-  define_libfunc("caaddr", 1, 1, function(ar){ return ar[0].cdr.cdr.car.car; });
-  define_libfunc("cadaar", 1, 1, function(ar){ return ar[0].car.car.cdr.car; });
-  define_libfunc("cadadr", 1, 1, function(ar){ return ar[0].cdr.car.cdr.car; });
-  define_libfunc("caddar", 1, 1, function(ar){ return ar[0].car.cdr.cdr.car; });
-  define_libfunc("cadddr", 1, 1, function(ar){ return ar[0].cdr.cdr.cdr.car; });
-  define_libfunc("cdaaar", 1, 1, function(ar){ return ar[0].car.car.car.cdr; });
-  define_libfunc("cdaadr", 1, 1, function(ar){ return ar[0].cdr.car.car.cdr; });
-  define_libfunc("cdadar", 1, 1, function(ar){ return ar[0].car.cdr.car.cdr; });
-  define_libfunc("cdaddr", 1, 1, function(ar){ return ar[0].cdr.cdr.car.cdr; });
-  define_libfunc("cddaar", 1, 1, function(ar){ return ar[0].car.car.cdr.cdr; });
-  define_libfunc("cddadr", 1, 1, function(ar){ return ar[0].cdr.car.cdr.cdr; });
-  define_libfunc("cdddar", 1, 1, function(ar){ return ar[0].car.cdr.cdr.cdr; });
-  define_libfunc("cddddr", 1, 1, function(ar){ return ar[0].cdr.cdr.cdr.cdr; });
+  // cadr, caddr, cadddr, etc.
+  (function(){
+    // To traverse into pair and raise error
+    var get = function(funcname, spec, obj){
+      var ret = obj;
+      _.each(spec, function(is_cdr){
+        if(ret instanceof Pair){
+          ret = (is_cdr ? ret.cdr : ret.car);
+        }
+        else{
+          throw new Error(funcname+": attempt to get "+(is_cdr ? "cdr" : "car")+" of "+ret);
+        }
+      });
+      return ret;
+    };
+    define_libfunc("caar", 1, 1, function(ar){ return get("caar", [0, 0], ar[0]); });
+    define_libfunc("cadr", 1, 1, function(ar){ return get("cadr", [1, 0], ar[0]); });
+    define_libfunc("cdar", 1, 1, function(ar){ return get("cadr", [0, 1], ar[0]); });
+    define_libfunc("cddr", 1, 1, function(ar){ return get("cadr", [1, 1], ar[0]); });
+
+    define_libfunc("caaar", 1, 1, function(ar){ return get("caaar", [0, 0, 0], ar[0]); });
+    define_libfunc("caadr", 1, 1, function(ar){ return get("caadr", [1, 0, 0], ar[0]); });
+    define_libfunc("cadar", 1, 1, function(ar){ return get("cadar", [0, 1, 0], ar[0]); });
+    define_libfunc("caddr", 1, 1, function(ar){ return get("caddr", [1, 1, 0], ar[0]); });
+    define_libfunc("cdaar", 1, 1, function(ar){ return get("cdaar", [0, 0, 1], ar[0]); });
+    define_libfunc("cdadr", 1, 1, function(ar){ return get("cdadr", [1, 0, 1], ar[0]); });
+    define_libfunc("cddar", 1, 1, function(ar){ return get("cddar", [0, 1, 1], ar[0]); });
+    define_libfunc("cdddr", 1, 1, function(ar){ return get("cdddr", [1, 1, 1], ar[0]); });
+
+    define_libfunc("caaaar", 1, 1, function(ar){ return get("caaaar", [0, 0, 0, 0], ar[0]); });
+    define_libfunc("caaadr", 1, 1, function(ar){ return get("caaadr", [1, 0, 0, 0], ar[0]); });
+    define_libfunc("caadar", 1, 1, function(ar){ return get("caadar", [0, 1, 0, 0], ar[0]); });
+    define_libfunc("caaddr", 1, 1, function(ar){ return get("caaddr", [1, 1, 0, 0], ar[0]); });
+    define_libfunc("cadaar", 1, 1, function(ar){ return get("cadaar", [0, 0, 1, 0], ar[0]); });
+    define_libfunc("cadadr", 1, 1, function(ar){ return get("cadadr", [1, 0, 1, 0], ar[0]); });
+    define_libfunc("caddar", 1, 1, function(ar){ return get("caddar", [0, 1, 1, 0], ar[0]); });
+    define_libfunc("cadddr", 1, 1, function(ar){ return get("cadddr", [1, 1, 1, 0], ar[0]); });
+    define_libfunc("cdaaar", 1, 1, function(ar){ return get("cdaaar", [0, 0, 0, 1], ar[0]); });
+    define_libfunc("cdaadr", 1, 1, function(ar){ return get("cdaadr", [1, 0, 0, 1], ar[0]); });
+    define_libfunc("cdadar", 1, 1, function(ar){ return get("cdadar", [0, 1, 0, 1], ar[0]); });
+    define_libfunc("cdaddr", 1, 1, function(ar){ return get("cdaddr", [1, 1, 0, 1], ar[0]); });
+    define_libfunc("cddaar", 1, 1, function(ar){ return get("cddaar", [0, 0, 1, 1], ar[0]); });
+    define_libfunc("cddadr", 1, 1, function(ar){ return get("cddadr", [1, 0, 1, 1], ar[0]); });
+    define_libfunc("cdddar", 1, 1, function(ar){ return get("cdddar", [0, 1, 1, 1], ar[0]); });
+    define_libfunc("cddddr", 1, 1, function(ar){ return get("cddddr", [1, 1, 1, 1], ar[0]); });
+  })();
 
   define_libfunc("null?", 1, 1, function(ar){
     return (ar[0] === nil);
@@ -861,7 +875,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ret;
   });
   define_libfunc("reverse", 1, 1, function(ar){
-    if(!ar[0] instanceof Pair) throw new Error("reverse needs pair but got " + ar[0]);
+    assert_pair(ar[0]);
 
     var l = nil;
     for(var o=ar[0]; o!=nil; o=o.cdr)
@@ -869,21 +883,27 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return l;
   });
   define_libfunc("list-tail", 2, 2, function(ar){
-    if(!ar[0] instanceof Pair) throw new Error("list-tail needs pair but got " + ar[0]);
+    assert_pair(ar[0]);
+    assert_integer(ar[1]);
+    if(ar[1] < 0)
+      throw new Error("list-tail: index out of range ("+ar[1]+")");
 
     var o = ar[0];
     for(var i=0; i<ar[1]; i++){
-      if(!o instanceof Pair) throw new Error("list-tail: the list is shorter than " + ar[1]);
+      if(!(o instanceof Pair)) throw new Error("list-tail: the list is shorter than " + ar[1]);
       o = o.cdr;
     }
     return o;
   });
   define_libfunc("list-ref", 2, 2, function(ar){
-    if(!ar[0] instanceof Pair) throw new Error("list-ref needs pair but got " + ar[0]);
+    assert_pair(ar[0]);
+    assert_integer(ar[1]);
+    if(ar[1] < 0)
+      throw new Error("list-tail: index out of range ("+ar[1]+")");
 
     var o = ar[0];
     for(var i=0; i<ar[1]; i++){
-      if(!o instanceof Pair) throw new Error("list-ref: the list is shorter than " + ar[1]);
+      if(!(o instanceof Pair)) throw new Error("list-ref: the list is shorter than " + ar[1]);
       o = o.cdr;
     }
     return o.car;
@@ -1127,6 +1147,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("vector-ref", 2, 2, function(ar){
     assert_vector(ar[0]);
     assert_integer(ar[1]);
+    assert_between(ar[1], 0, ar[0].length-1);
 
     return ar[0][ar[1]];
   })
@@ -1589,27 +1610,28 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       finish: function(){ return false; }
     })
   })
-  var make_assoc = function(key){
+  var make_assoc = function(func_name, eq_func_name){
     return function(ar){ 
-      var obj = ar[0], ls = ar[1];
-      assert_list(ls);
+      var obj = ar[0], list = ar[1];
+      assert_list(list);
 
       var ret = [];
-      return Call.foreach(ls, {
-        call: function(x){ 
-          if(x.car.car)
-            return new Call(TopEnv[key] || CoreEnv[key], [obj, x.car.car]) 
-          else
-            throw new Error("ass*: pair required but got "+to_write(x.car));
+      return Call.foreach(list, {
+        call: function(ls){ 
+          if(!BiwaScheme.isPair(ls.car))
+            throw new Error(func_name+": pair required but got "+to_write(ls.car));
+            
+          var equality = (TopEnv[eq_func_name] || CoreEnv[eq_func_name]);
+          return new Call(equality, [obj, ls.car.car]);
         },
-        result: function(res, x){ if(res) return x.car; },
+        result: function(was_equal, ls){ if(was_equal) return ls.car; },
         finish: function(){ return false; }
       })
     }
   }
-  define_libfunc("assoc", 2, 2, make_assoc("equal?"));
-  define_libfunc("assv", 2, 2, make_assoc("eqv?"));
-  define_libfunc("assq", 2, 2, make_assoc("eq?"));
+  define_libfunc("assoc", 2, 2, make_assoc("assoc", "equal?"));
+  define_libfunc("assv", 2, 2, make_assoc("assv", "eqv?"));
+  define_libfunc("assq", 2, 2, make_assoc("assq", "eq?"));
 
   define_libfunc("cons*", 1, null, function(ar){
     if(ar.length == 1)
@@ -1761,10 +1783,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   //
   // Chapter 6 Records
+  // see also: src/system/record.js
   //
+
   // 6.2 Records: Syntactic layer
-//eqv, eq
-//(define-record-type <name spec> <record clause>*)    syntax 
+  //eqv, eq
+
+  //(define-record-type <name spec> <record clause>*)    syntax 
   define_syntax("define-record-type", function(x){
     // (define-record-type <name spec> <record clause>*)
     var name_spec = x.cdr.car;
@@ -1929,7 +1954,32 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return [Sym("define"), name, [Sym("record-mutator"), rtd, field.idx]];
     });
 
-    // wrap the definitions with `begin'
+    // Wrap the definitions with `begin'
+    // Example:
+    //   (begin
+    //     (let* ((__rtd (make-record-type-descriptor 'square
+    //                     (record-type-descriptor rect)
+    //                     #f #f #f 
+    //                     #((mutable w) (mutable h))))
+    //            (__cd (make-record-constructor-descriptor __rtd
+    //                    (record-constructor-descriptor rect)
+    //                    (lambda (n) ...))))
+    //       (_define-record-type 'square __rtd __cd))
+    //
+    //     (define make-square
+    //       (record-constructor
+    //         (record-constructor-descriptor square)))
+    //     (define square?
+    //       (record-predicate (record-type-descriptor square)))
+    //     (define square-w
+    //       (record-accessor (record-type-descriptor square) 0))
+    //     (define square-h
+    //       (record-accessor (record-type-descriptor square) 1))
+    //     (define set-square-w!
+    //       (record-mutator (record-type-descriptor square) 0))
+    //     (define set-square-h!
+    //       (record-mutator (record-type-descriptor square) 1)))
+    //
     return List.apply(null,
       [Sym("begin"),
         registration,
@@ -1939,6 +1989,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           concat(mutator_defs)
     );
   });
+
   define_libfunc("_define-record-type", 3, 3, function(ar){
     assert_symbol(ar[0]);
     assert_record_td(ar[1]);
@@ -1946,7 +1997,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     BiwaScheme.Record.define_type(ar[0].name, ar[1], ar[2]);
     return BiwaScheme.undef;
   });
-//(record-type-descriptor <record name>)    syntax 
+
+  //(record-type-descriptor <record name>)    syntax 
   define_syntax("record-type-descriptor", function(x){
     return List(Sym("_record-type-descriptor"), [Sym("quote"), x.cdr.car]);
   });
@@ -1958,7 +2010,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     else
       throw new Error("record-type-descriptor: unknown record type "+ar[0].name);
   });
-//(record-constructor-descriptor <record name>)    syntax 
+
+  //(record-constructor-descriptor <record name>)    syntax 
   define_syntax("record-constructor-descriptor", function(x){
     return List(Sym("_record-constructor-descriptor"), [Sym("quote"), x.cdr.car]);
   });
@@ -1972,7 +2025,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   // 6.3  Records: Procedural layer
-//(make-record-type-descriptor name    procedure
+  //(make-record-type-descriptor name    procedure
   define_libfunc("make-record-type-descriptor", 6, 6, function(ar){
     var name = ar[0], parent_rtd = ar[1], uid = ar[2],
         sealed = ar[3], opaque = ar[4], fields = ar[5];
@@ -2005,11 +2058,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     return rtd;
   });
-//(record-type-descriptor? obj)    procedure 
+
+  //(record-type-descriptor? obj)    procedure 
   define_libfunc("record-type-descriptor?", 1, 1, function(ar){
     return (ar[0] instanceof BiwaScheme.Record.RTD);
   });
-//(make-record-constructor-descriptor rtd    procedure 
+
+  //(make-record-constructor-descriptor rtd    procedure 
   define_libfunc("make-record-constructor-descriptor", 3, 3, function(ar){
     var rtd = ar[0], parent_cd = ar[1], protocol = ar[2];
 
@@ -2019,14 +2074,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     return new BiwaScheme.Record.CD(rtd, parent_cd, protocol);
   });
-//(record-constructor constructor-descriptor)    procedure
+
+  //(record-constructor constructor-descriptor)    procedure
   define_libfunc("record-constructor", 1, 1, function(ar){
     var cd = ar[0];
     assert_record_cd(cd);
 
     return cd.record_constructor();
   });
-//(record-predicate rtd)    procedure
+
+  //(record-predicate rtd)    procedure
   define_libfunc("record-predicate", 1, 1, function(ar){
     var rtd = ar[0];
     assert_record_td(rtd);
@@ -2038,7 +2095,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
              (obj.rtd === rtd);
     };
   });
-//(record-accessor rtd k)    procedure 
+
+  //(record-accessor rtd k)    procedure 
   define_libfunc("record-accessor", 2, 2, function(ar){
     var rtd = ar[0], k = ar[1];
     assert_record_td(rtd);
@@ -2048,20 +2106,22 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     return function(args){
       var record = args[0];
-      assert_record(record);
+      var error_msg = rtd.name.name+"-"+rtd.field_name(k)+": "+
+                      BiwaScheme.to_write(record)+
+                      " is not a "+rtd.name.name;
+      assert(BiwaScheme.isRecord(record), error_msg);
 
       var descendant = false;
       for(var _rtd = record.rtd; _rtd; _rtd = _rtd.parent_rtd){
         if(_rtd == rtd) descendant = true;
       }
-      assert(descendant,
-            "(record-accessor): "+BiwaScheme.to_write(record)+
-            " is not a "+rtd.name);
+      assert(descendant, error_msg);
 
       return record.get(k);
     };
   });
-//(record-mutator rtd k)    procedure
+
+  //(record-mutator rtd k)    procedure
   define_libfunc("record-mutator", 2, 2, function(ar){
     var rtd = ar[0], k = ar[1];
     assert_record_td(rtd);
@@ -2071,19 +2131,21 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     return function(args){
       var record = args[0], val = args[1];
+      var func_name = rtd.field_name(k);
+
       assert_record(record);
       assert(record.rtd === rtd,
-            "(record-mutator): "+BiwaScheme.to_write(record)+
-            " is not a "+rtd.name);
+            func_name+": "+BiwaScheme.to_write(record)+
+            " is not a "+rtd.name.name);
       assert(!record.rtd.sealed,
-            "(record-mutator): "+rtd.name+" is sealed (can't mutate)");
+            func_name+": "+rtd.name.name+" is sealed (can't mutate)");
 
       record.set(k, val);
     };
   });
 
   // 6.4  Records: Inspection
-//(record? obj)    procedure
+  //(record? obj)    procedure
   define_libfunc("record?", 1, 1, function(ar){
     var obj = ar[0];
     if(BiwaScheme.isRecord(obj)){
@@ -2095,47 +2157,56 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     else
       return false;
   });
-//(record-rtd record)    procedure
+
+  //(record-rtd record)    procedure
   define_libfunc("record-rtd", 1, 1, function(ar){
     assert_record(ar[0]);
     return ar[0].rtd;
   });
-//(record-type-name rtd)    procedure
+
+  //(record-type-name rtd)    procedure
   define_libfunc("record-type-name", 1, 1, function(ar){
     assert_record_td(ar[0]);
     return ar[0].name;
   });
-//(record-type-parent rtd)    procedure
+
+  //(record-type-parent rtd)    procedure
   define_libfunc("record-type-parent", 1, 1, function(ar){
     assert_record_td(ar[0]);
     return ar[0].parent_rtd;
   });
-//(record-type-uid rtd)    procedure 
+
+  //(record-type-uid rtd)    procedure 
   define_libfunc("record-type-uid", 1, 1, function(ar){
     assert_record_td(ar[0]);
     return ar[0].uid;
   });
-//(record-type-generative? rtd)    procedure 
+
+  //(record-type-generative? rtd)    procedure 
   define_libfunc("record-type-generative?", 1, 1, function(ar){
     assert_record_td(ar[0]);
     return ar[0].generative;
   });
-//(record-type-sealed? rtd)    procedure
+
+  //(record-type-sealed? rtd)    procedure
   define_libfunc("record-type-sealed?", 1, 1, function(ar){
     assert_record_td(ar[0]);
     return ar[0].sealed;
   });
-//(record-type-opaque? rtd)    procedure
+
+  //(record-type-opaque? rtd)    procedure
   define_libfunc("record-type-opaque?", 1, 1, function(ar){
     assert_record_td(ar[0]);
     return ar[0].opaque;
   });
-//(record-type-field-names rtd)    procedure
+
+  //(record-type-field-names rtd)    procedure
   define_libfunc("record-type-field-names", 1, 1, function(ar){
     assert_record_td(ar[0]);
     return _.map(ar[0].fields, function(field){ return field.name; });
   });
-//(record-field-mutable? rtd k)    procedure 
+
+  //(record-field-mutable? rtd k)    procedure 
   define_libfunc("record-field-mutable?", 2, 2, function(ar){
     var rtd = ar[0], k = ar[1];
     assert_record_td(ar[0]);
@@ -2301,7 +2372,19 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(open-bytevector-output-port)    procedure 
 //(call-with-bytevector-output-port proc)    procedure 
 //(open-string-output-port)    procedure   
-//(call-with-string-output-port proc)    procedure 
+  //(call-with-string-output-port proc)    procedure 
+  define_libfunc("call-with-string-output-port", 1, 1, function(ar){
+    var proc = ar[0];
+    assert_procedure(proc);
+
+    var port = new BiwaScheme.Port.StringOutput();
+
+    return new Call(proc, [port], function(ar){
+      port.close();
+      return port.output_string();
+    });
+  });
+
 //(standard-output-port)    procedure 
 //(standard-error-port)    procedure 
 //8.3 (current-output-port)    procedure 
@@ -2400,7 +2483,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
   })
 
-  // write-char [1,2]
+  define_libfunc("write-char", 1, 2, function(ar){
+    var port = ar[1] || Port.current_output;
+    assert_char(ar[0]);
+    port.put_string(ar[0].value);
+    return BiwaScheme.undef;
+  });
   define_libfunc("newline", 0, 1, function(ar){
     var port = ar[0] || Port.current_output;
     port.put_string("\n");
@@ -2421,31 +2509,32 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // Chapter 9 File System
   //
-//(file-exists? filename)    procedure 
+  //(file-exists? filename)    procedure 
   define_libfunc("file-exists?", 1, 1, function(ar){
-		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); //TODO: extract to a function
     assert_string(ar[0]);
-    var fileIn = FileIO.open(ar[0]);
-    return fileIn.exists();
+    return BiwaScheme.NodeJS("file_exists", ar[0]);
   });
-//(delete-file filename)    procedure 
+
+  //(delete-file filename)    procedure 
   define_libfunc("delete-file", 1, 1, function(ar){
-		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); //TODO: extract to a function
     assert_string(ar[0]);
-    var deleted = FileIO.unlink(FileIO.open(ar[0]));
-    if(!deleted){
-      //TODO: raise %i/o-filename if not found or not deletable
-      puts("delete-file: cannot delete " + ar[0]);
-    }
+    BiwaScheme.NodeJS("delete_file", ar[0]);
     return BiwaScheme.undef;
   });
 
   //
   // Chapter 10 Command-line access and exit values
   //
-//(command-line)    procedure
-//(exit)    procedure 
-//(exit obj)    procedure
+  //(command-line)    procedure
+  define_libfunc("command-line", 0, 0, function(ar){
+    return BiwaScheme.List.apply(null, BiwaScheme.NodeJS("command_line"));
+  });
+  //(exit)    procedure 
+  //(exit obj)    procedure
+  define_libfunc("exit", 0, 1, function(ar){
+    var obj = ar[0];
+    BiwaScheme.NodeJS("exit", obj);
+  });
 
   //
   // Chapter 11 Arithmetic
@@ -2612,10 +2701,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0].keys().length;
   });
 
+  // Find a pair from a hashtable with given key.
   //
-  // find_hash_pair: the key of the magic :-)
-  // takes two callback functions i.e, on_found and on_not_found
+  // hash      - a BiwaScheme.Hashtable
+  // key       - an object
+  // callbacks - an object contains callback functions
+  //             .on_found     - function(pair, hashed)
+  //               pair   - [Object key, Object value]
+  //               hashed - Object hashed
+  //             .on_not_found - function(hashed)
+  //               hashed - Object hashed
   //
+  // Returns an instance of BiwaScheme.Call.
   BiwaScheme.find_hash_pair = function(hash, key, callbacks){
     // invoke hash proc 
     return new Call(hash.hash_proc, [key], function(ar){
@@ -2663,6 +2760,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("hashtable-set!", 3, 3, function(ar){
     var hash = ar[0], key = ar[1], value = ar[2];
     assert_hashtable(hash);
+    assert(hash.mutable, "hashtable is not mutable");
 
     return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair){
@@ -2680,6 +2778,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("hashtable-delete!", 2, 2, function(ar){
     var hash = ar[0], key = ar[1];
     assert_hashtable(hash);
+    assert(hash.mutable, "hashtable is not mutable");
 
     return BiwaScheme.find_hash_pair(hash, key, {
       on_found: function(pair, hashed){
@@ -2711,6 +2810,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("hashtable-update!", 4, 4, function(ar){
     var hash = ar[0], key = ar[1], proc = ar[2], ifnone = ar[3];
     assert_hashtable(hash);
+    assert(hash.mutable, "hashtable is not mutable");
     assert_procedure(proc);
 
     return BiwaScheme.find_hash_pair(hash, key, {
@@ -2743,6 +2843,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //(hashtable-clear! hashtable k)    procedure 
   define_libfunc("hashtable-clear!", 0, 1, function(ar){
     assert_hashtable(ar[0]);
+    assert(ar[0].mutable, "hashtable is not mutable");
     ar[0].clear();
     return BiwaScheme.undef;
   });
@@ -2797,22 +2898,159 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // Chapter 14 Enumerators
   //
-//(make-enumeration symbol-list)    procedure 
-//(enum-set-universe enum-set)    procedure 
-//(enum-set-indexer enum-set)    procedure
-//(enum-set-constructor enum-set)    procedure 
-//(enum-set->list enum-set)    procedure
-//(enum-set-member? symbol enum-set)    procedure 
-//(enum-set-subset? enum-set1 enum-set2)    procedure 
-//(enum-set=? enum-set1 enum-set2)    procedure 
-//(enum-set-union enum-set1 enum-set2)    procedure 
-//(enum-set-intersection enum-set1 enum-set2)    procedure 
-//(enum-set-difference enum-set1 enum-set2)    procedure 
-//(enum-set-complement enum-set)    procedure 
-//(enum-set-projection enum-set1 enum-set2)    procedure 
-//(define-enumeration <type-name>    syntax 
-//(<symbol> ...)
-//<constructor-syntax>)
+  //(make-enumeration symbol-list) -> enum-set(new type)
+  define_libfunc("make-enumeration", 1, 1, function(ar){
+    assert_list(ar[0]);
+    var members = ar[0].to_array();
+    var enum_type = new BiwaScheme.Enumeration.EnumType(members);
+    return enum_type.universe();
+  });
+
+  //(enum-set-universe enum-set) -> enum-set(same type as the argument)
+  define_libfunc("enum-set-universe", 1, 1, function(ar){
+    assert_enum_set(ar[0]);
+    return ar[0].enum_type.universe();
+  });
+
+  //(enum-set-indexer enum-set) -> (lambda (sym)) -> integer or #f
+  define_libfunc("enum-set-indexer", 1, 1, function(ar){
+    assert_enum_set(ar[0]);
+    return ar[0].enum_type.indexer();
+  });
+
+  //(enum-set-constructor enum-set) -> (lambda (syms)) -> enum-set(same type as the argument)
+  define_libfunc("enum-set-constructor", 1, 1, function(ar){
+    assert_enum_set(ar[0]);
+    return ar[0].enum_type.constructor();
+  });
+
+  //(enum-set->list enum-set) -> symbol-list
+  define_libfunc("enum-set->list", 1, 1, function(ar){
+    assert_enum_set(ar[0]);
+    return ar[0].symbol_list();
+  });
+
+  //(enum-set-member? symbol enum-set) -> bool
+  define_libfunc("enum-set-member?", 2, 2, function(ar){
+    assert_symbol(ar[0]);
+    assert_enum_set(ar[1]);
+    return ar[1].is_member(ar[0]);
+  });
+
+  //(enum-set-subset? esa esb) -> bool
+  define_libfunc("enum-set-subset?", 2, 2, function(ar){
+    assert_enum_set(ar[0]);
+    assert_enum_set(ar[1]);
+    return ar[0].is_subset(ar[1]);
+  });
+
+  //(enum-set=? esa esb) -> bool
+  define_libfunc("enum-set=?", 2, 2, function(ar){
+    assert_enum_set(ar[0]);
+    assert_enum_set(ar[1]);
+    return ar[0].equal_to(ar[1]);
+  });
+
+  //(enum-set-union es1 es2) -> enum-set
+  define_libfunc("enum-set-union", 2, 2, function(ar){
+    assert_enum_set(ar[0]);
+    assert_enum_set(ar[1]);
+    assert(ar[0].enum_type === ar[1].enum_type,
+           "two enum-sets must be the same enum-type", "enum-set-union");
+    return ar[0].union(ar[1]);
+  });
+
+  //(enum-set-intersection es1 es2) -> enum-set
+  define_libfunc("enum-set-intersection", 2, 2, function(ar){
+    assert_enum_set(ar[0]);
+    assert_enum_set(ar[1]);
+    return ar[0].intersection(ar[1]);
+  });
+
+  //(enum-set-difference es1 es2) -> enum-set
+  define_libfunc("enum-set-difference", 2, 2, function(ar){
+    assert_enum_set(ar[0]);
+    assert_enum_set(ar[1]);
+    return ar[0].difference(ar[1]);
+  });
+
+  //(enum-set-complement enum-set) -> enum-set
+  define_libfunc("enum-set-complement", 1, 1, function(ar){
+    assert_enum_set(ar[0]);
+    return ar[0].complement();
+  });
+
+  //(enum-set-projection esa esb) -> enum-set
+  define_libfunc("enum-set-projection", 2, 2, function(ar){
+    assert_enum_set(ar[0]);
+    assert_enum_set(ar[1]);
+    return ar[0].projection(ar[1]);
+  });
+
+  //(define-enumeration <type-name> (<symbol> ...) <constructor-syntax>)
+  // Example: 
+  //   (define-enumeration color (red green black white) color-set)
+  //   this defines:
+  //     - an EnumType
+  //     - (color red) ;=> 'red
+  //     - (color-set red black) ;=> #<enum-set (red black)>
+  define_syntax("define-enumeration", function(x){
+    // Extract parameters 
+    var type_name = x.cdr.car;
+    assert(BiwaScheme.isSymbol(type_name),
+           "expected symbol for type_name", "define-enumeration");
+    type_name = type_name.name;
+
+    var members = x.cdr.cdr.car;
+    assert(BiwaScheme.isList(members),
+           "expected list of symbol for members", "define-enumeration");
+    members = members.to_array();
+
+    var constructor_name = x.cdr.cdr.cdr.car;
+    assert(BiwaScheme.isSymbol(constructor_name),
+           "expected symbol for constructor_name", "define-enumeration");
+    constructor_name = constructor_name.name;
+
+    // Define EnumType
+    var enum_type = new BiwaScheme.Enumeration.EnumType(members);
+    
+    // Define (color red)
+    define_syntax(type_name, function(x){
+      // (color)
+      assert(!BiwaScheme.isNil(x.cdr),
+             "an argument is needed", type_name);
+
+      var arg = x.cdr.car;
+      assert_symbol(arg, type_name);
+      
+      // Check arg is included in the universe
+      assert(_.include(enum_type.members, arg),
+        arg.name+" is not included in the universe: "+
+          BiwaScheme.to_write(enum_type.members),
+        type_name);
+
+      return BiwaScheme.List(Sym("quote"), arg);
+    });
+
+    // Define (color-set red black)
+    define_syntax(constructor_name, function(x){
+      assert_list(x.cdr, constructor_name);
+
+      var symbols = x.cdr.to_array();
+
+      // Check each argument is included in the universe
+      _.each(symbols, function(arg){
+        assert_symbol(arg, constructor_name);
+        assert(_.include(enum_type.members, arg),
+          arg.name+" is not included in the universe: "+
+            BiwaScheme.to_write(enum_type.members),
+          constructor_name);
+      });
+
+      // Create an EnumSet
+      return new BiwaScheme.Enumeration.EnumSet(enum_type, symbols);
+    });
+  });
 
   //
   // Chapter 15 Composite library

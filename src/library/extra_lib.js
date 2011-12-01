@@ -51,8 +51,30 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //from Gauche
   //
 
+  // (identity obj)
+  // Returns obj.
   define_libfunc("identity", 1, 1, function(ar){
     return ar[0];
+  });
+
+  // (inc! i)
+  // = (set! i (+ i 1))
+  // Increments i (i.e., set i+1 to i).
+  define_syntax("inc!", function(x){
+    var target = x.cdr.car;
+    return List(Sym("set!"),
+                target, 
+                [Sym("+"), target, 1]);
+  });
+  
+  // (dec! i)
+  // = (set! i (- i 1))
+  // Decrements i (i.e., set i-1 to i).
+  define_syntax("dec!", function(x){
+    var target = x.cdr.car;
+    return List(Sym("set!"),
+                target, 
+                [Sym("-"), target, 1]);
   });
 
   // string
@@ -108,6 +130,33 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       result: function(res){ results.push(res); },
       finish: function(){ return array_to_list(results); }
     });
+  });
+
+  // loop
+
+  // (dotimes (variable limit result) body ...)
+  // Iterate with variable 0 to limit-1.
+  // ->
+  //    (do ((tlimit limit)
+  //         (variable 0 (+ variable 1)))
+  //        ((>= variable tlimit) result)
+  //      body ...)
+  define_syntax("dotimes", function(x){
+    var spec = x.cdr.car,
+        bodies = x.cdr.cdr;
+    var variable = spec.car,
+        limit = spec.cdr.car,
+        result = spec.cdr.cdr.car;
+    var tlimit = BiwaScheme.gensym();
+
+    var do_vars = List([tlimit, limit],
+                       [variable, 0, [Sym("+"), variable, 1]]);
+    var do_check = List([Sym(">="), variable, tlimit], result);
+
+    return new Pair(Sym("do"),
+             new Pair(do_vars,
+               new Pair(do_check,
+                 bodies)));
   });
 
   // sorting
@@ -257,6 +306,23 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("port-closed?", 1, 1, function(ar){
     assert_port(ar[0]);
     return !(ar[0].is_open);
+  });
+  //define_libfunc("with-input-from-port", 2, 2, function(ar){
+  //define_libfunc("with-error-to-port", 2, 2, function(ar){
+  define_libfunc("with-output-to-port", 2, 2, function(ar){
+    var port = ar[0], proc = ar[1];
+    assert_port(port);
+    assert_procedure(proc);
+
+    var original_port = BiwaScheme.Port.current_output;
+    BiwaScheme.Port.current_output = port
+
+    return new Call(proc, [port], function(ar){
+      port.close();
+      BiwaScheme.Port.current_output = original_port;
+
+      return ar[0];
+    });
   });
   
   // syntax

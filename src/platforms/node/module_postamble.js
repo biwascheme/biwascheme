@@ -1,18 +1,15 @@
-// loads server/node_preaamble.js first
-
-BiwaScheme.run = function(filename) {
-  var src = require('fs').readFileSync(filename, 'utf8');
+BiwaScheme.run = function(code) {
   var intp = new BiwaScheme.Interpreter(function(e){
     if(e.stack){
-      require('sys').puts(e.stack);
+      require('util').puts(e.stack);
     }
     else{
-      require('sys').puts(e);
+      require('util').puts(e);
     }
 
     process.exit(1);
   });
-  return intp.evaluate(src);
+  return intp.evaluate(code);
 };
 BiwaScheme.define_libfunc("load", 1, 1, function(ar) {
   var relpath = ar[0];

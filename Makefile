@@ -16,6 +16,7 @@ BASIC_FILES =                                     \
   src/system/number.js                            \
   src/system/port.js                              \
   src/system/record.js                            \
+  src/system/enumeration.js                       \
   src/system/hashtable.js                         \
   src/system/syntax.js                            \
   src/system/types.js                             \
@@ -24,6 +25,7 @@ BASIC_FILES =                                     \
   src/system/pause.js                             \
   src/system/call.js                              \
   src/system/interpreter.js                       \
+  src/system/_nodejs.js                           \
   src/library/infra.js                            \
   src/library/r6rs_lib.js                         \
   src/library/js_interface.js                     \
@@ -38,6 +40,7 @@ BROWSER_FILES =                                   \
   src/library/webscheme_lib.js                    \
   src/platforms/browser/dumper.js                 \
   src/platforms/browser/console.js                \
+  src/platforms/browser/platform.js               \
   src/platforms/browser/release_initializer.js
 
 CONSOLE_FILES =                                   \
@@ -45,27 +48,35 @@ CONSOLE_FILES =                                   \
 
 all: build
 
-build: lib/biwascheme.js lib/biwascheme-min.js lib/console_biwascheme.js node_modules/biwascheme/lib/biwascheme.js
+build: release/biwascheme.js release/biwascheme-min.js release/console_biwascheme.js node_modules/biwascheme/lib/biwascheme.js
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) $(CONSOLE_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
-lib/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
+release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
 	cat $(VERSION_FILE) > $@
 	cat $(BROWSER_FILES) >> $@
 	@echo "Wrote " $@
 
-lib/biwascheme-min.js: lib/biwascheme.js
-	java -jar bin/yuicompressor-2.4.2.jar lib/biwascheme.js -o $@
+release/biwascheme-min.js: release/biwascheme.js
+	uglifyjs -o $@ release/biwascheme.js
 	@echo "Wrote " $@
 
-lib/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
+release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
 	cat $(VERSION_FILE) > $@
 	cat $(CONSOLE_FILES) >> $@
 	@echo "Wrote " $@
 
-node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js lib/console_biwascheme.js src/platforms/node/module_postamble.js
+node_modules/biwascheme/lib/biwascheme.js: src/platforms/node/module_preamble.js release/console_biwascheme.js src/platforms/node/platform.js src/platforms/node/module_postamble.js
 	cat src/platforms/node/module_preamble.js > $@
-	cat lib/console_biwascheme.js >> $@
+	cat release/console_biwascheme.js >> $@
+	cat src/platforms/node/platform.js >> $@
 	cat src/platforms/node/module_postamble.js >> $@
 	@echo "Wrote " $@
+
+
+browser_test:
+	cd test/browser_functions; node ./server.js
+
+website:
+	gosh website/converter.scm website/

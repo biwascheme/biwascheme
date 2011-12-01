@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
        "http://www.w3.org/TR/html4/strict.dtd">
-<html><head><title>BiwaScheme : Scheme interpreter for browsers</title
+<html><head><title>BiwaScheme : Scheme interpreter for browser and Node.js</title
 ><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="css/screen.css" rel="stylesheet" type="text/css" /></head
 ><body><div id="menu"><a href="index.html"><img src="images/biwascheme_logo.png" /></a
 ><ul><li><a href="status.html">Status</a
@@ -11,7 +11,7 @@
 ></div
 ><div id="content"><h2>Implementation Status</h2
 ><p>BiwaScheme aims to conform to the latest
-          specification of the Scheme language,<a href="http://www.r6rs.org/">R6RS</a
+          specification of the Scheme language, <a href="http://www.r6rs.org/">R6RS</a
 >.</p
 ><p>Most of the important features are already supported.
           The biggest features not implemented are
@@ -25,7 +25,7 @@
 ><tr><td>11.4</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs/r6rs-Z-H-14.html#node_sec_11.4">Expressions</a
 ></td
-><td><em>almost ok</em
+><td><em>ok</em
 ></td
 ></tr
 ><tr><td>11.5</td
@@ -118,7 +118,7 @@
 ><tr><td>11.20</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs/r6rs-Z-H-14.html#node_sec_11.20">Tail calls and tail contexts</a
 ></td
-><td><em>ok?</em
+><td><em>ok</em
 ></td
 ></tr
 ></table
@@ -142,18 +142,20 @@
 ><tr><td>4</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-5.html#node_chap_4">Sorting</a
 ></td
-><td>not yet</td
+><td><em>partially ok</em
+></td
 ></tr
 ><tr><td>5</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-6.html#node_chap_5">Control structures</a
 ></td
-><td><em>partially ok (when, unless)</em
+><td><em>partially ok (except case-lambda)</em
 ></td
 ></tr
 ><tr><td>6</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-7.html#node_chap_6">Records</a
 ></td
-><td>not yet</td
+><td><em>ok</em
+></td
 ></tr
 ><tr><td>7</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-8.html#node_chap_7">Exceptions and conditions</a
@@ -169,12 +171,14 @@
 ><tr><td>9</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-10.html#node_chap_9">File system</a
 ></td
-><td>(no plan)</td
+><td><em>ok (on Node.js)</em
+></td
 ></tr
 ><tr><td>10</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-11.html#node_chap_10">Command-line access and exit values</a
 ></td
-><td>(no plan)</td
+><td><em>ok (on Node.js)</em
+></td
 ></tr
 ><tr><td>11</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-12.html#node_chap_11">Arithmetic</a
@@ -189,13 +193,14 @@
 ><tr><td>13</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-14.html#node_chap_13">Hashtables</a
 ></td
-><td><em>almost ok</em
+><td><em>ok</em
 ></td
 ></tr
 ><tr><td>14</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-15.html#node_chap_14">Enumerations</a
 ></td
-><td>not yet</td
+><td><em>ok</em
+></td
 ></tr
 ><tr><td>15</td
 ><td><a href="http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-16.html#node_chap_15">Composite library</a
@@ -279,7 +284,7 @@
 ></td
 ></tr
 ></table
-><div id="footer">&copy; 2007-2010 Yutaka HARA and the BiwaScheme team</div
+><div id="footer">&copy; 2007-2011 Yutaka HARA and the BiwaScheme team</div
 ></div
 ></body
 ></html

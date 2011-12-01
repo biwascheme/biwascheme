@@ -43,6 +43,7 @@ var BiwaScheme = BiwaScheme || {};
   document.write(script_tag(dir+"src/system/number.js"));
   document.write(script_tag(dir+"src/system/port.js"));
   document.write(script_tag(dir+"src/system/record.js"));
+  document.write(script_tag(dir+"src/system/enumeration.js"));
   document.write(script_tag(dir+"src/system/hashtable.js"));
   document.write(script_tag(dir+"src/system/syntax.js"));
   document.write(script_tag(dir+"src/system/types.js"));

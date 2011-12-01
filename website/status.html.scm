@@ -36,7 +36,7 @@
       (h2 "Implementation Status")
 
       (p "BiwaScheme aims to conform to the latest
-          specification of the Scheme language,"
+          specification of the Scheme language, "
           (link-to "R6RS" "http://www.r6rs.org/") ".")
 
       (p "Most of the important features are already supported.
@@ -52,7 +52,7 @@
 
         (make-r6rs-base-rows
           '(("11.4" "Expressions"
-             "almost ok")
+             "ok")
             ("11.5" "Equivalence predicates"
              "ok")
             ("11.6" "Procedure predicate"
@@ -84,7 +84,7 @@
             ("11.19" "Macro transformers"
              "not yet")
             ("11.20" "Tail calls and tail contexts"
-             "ok?")
+             "ok")
           )))
 
       (h3 "R6RS Standard Libraries")
@@ -98,27 +98,27 @@
             (3 "List utilities"
              "ok")
             (4 "Sorting"
-             "not yet")
+             "partially ok")
             (5 "Control structures"
-             "partially ok (when, unless)")
+             "partially ok (except case-lambda)")
             (6 "Records"
-             "not yet")
+             "ok")
             (7 "Exceptions and conditions"
              "not yet")
             (8 "I/O"
              "partially ok (output to 'stdout')")
             (9 "File system"
-             "(no plan)")
+             "ok (on Node.js)")
             (10 "Command-line access and exit values"
-             "(no plan)")
+             "ok (on Node.js)")
             (11 "Arithmetic"
              "not yet")
             (12 "syntax-case"
              "not yet")
             (13 "Hashtables"
-             "almost ok")
+             "ok")
             (14 "Enumerations"
-             "not yet")
+             "ok")
             (15 "Composite library"
              "not yet")
             (16 "eval"

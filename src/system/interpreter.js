@@ -348,10 +348,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
   expand: function(x, flag){
     flag || (flag = {})
     var ret = null;
-    if(x instanceof BiwaScheme.Symbol){
-      ret = x;
-    }
-    else if(x instanceof BiwaScheme.Pair){
+    if(x instanceof BiwaScheme.Pair){
       switch(x.car){
       case BiwaScheme.Sym("define"):
         var left = x.cdr.car, exp = x.cdr.cdr;
@@ -389,18 +386,25 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         ret = BiwaScheme.List(BiwaScheme.Sym("call/cc"), this.expand(x, flag));
         break;
       default: //apply
-        // if x is a macro call ...
-        if(x.car instanceof BiwaScheme.Symbol &&
-            BiwaScheme.TopEnv[x.car.name] instanceof BiwaScheme.Syntax){
-          var transformer = BiwaScheme.TopEnv[x.car.name];
+        var transformer = null;
+        if(BiwaScheme.isSymbol(x.car)){
+          if(BiwaScheme.TopEnv[x.car.name] instanceof BiwaScheme.Syntax)
+            transformer = BiwaScheme.TopEnv[x.car.name];
+          else if(BiwaScheme.CoreEnv[x.car.name] instanceof BiwaScheme.Syntax)
+            transformer = BiwaScheme.CoreEnv[x.car.name];
+        }
+
+        if(transformer){
           flag["modified"] = true;
           ret = transformer.transform(x);
 
-          if(BiwaScheme.Debug){
-            var before = BiwaScheme.to_write(x);
-            var after = BiwaScheme.to_write(ret);
-            if(before != after) puts("expand: " + before + " => " + after)
-          }
+//            // Debug
+//            var before = BiwaScheme.to_write(x);
+//            var after = BiwaScheme.to_write(ret);
+//            if(before != after){
+//              console.log("before: " + before)
+//              console.log("expand: " + after)
+//            }
 
           var fl;
           for(;;){
@@ -409,10 +413,12 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
               break;
           }
         }
-        else if(x == BiwaScheme.nil)
-          ret = BiwaScheme.nil;
         else{
-          ret = new BiwaScheme.Pair(this.expand(x.car, flag), BiwaScheme.shallow_array_to_list(_.map(x.cdr.to_array(), _.bind(function(item){ return this.expand(item, flag); }, this))));
+          var expanded_car = this.expand(x.car, flag);
+          var expanded_cdr = BiwaScheme.shallow_array_to_list(
+                               _.map(x.cdr.to_array(),
+                                     _.bind(function(item){ return this.expand(item, flag); }, this)));
+          ret = new BiwaScheme.Pair(expanded_car, expanded_cdr);
         }
       }
     }

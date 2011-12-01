@@ -1,13 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
        "http://www.w3.org/TR/html4/strict.dtd">
 <html><head><title>BiwaScheme : Scheme interpreter for browsers</title
-><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="css/screen.css" rel="stylesheet" type="text/css" /><link href="css/jquery.terminal.css" rel="stylesheet" type="text/css" /><script src="js/jquery-1.4.4.min.js" type="text/javascript"></script
-><script type="text/javascript">jQuery.noConflict();</script
+><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link href="css/screen.css" rel="stylesheet" type="text/css" /><link href="css/jquery.terminal.css" rel="stylesheet" type="text/css" /><script src="repos/release/biwascheme.js" type="text/javascript"></script
 ><script src="js/jquery.mousewheel.min.js" type="text/javascript"></script
 ><script src="js/jquery.timers.min.js" type="text/javascript"></script
 ><script src="js/jquery.cookie.min.js" type="text/javascript"></script
-><script src="js/jquery.terminal-0.2.3.min.js" type="text/javascript"></script
-><script src="repos/lib/biwascheme.js" type="text/javascript"></script
+><script src="js/jquery.terminal-0.3.6.js" type="text/javascript"></script
 ><script src="js/biwascheme_terminal.js" type="text/javascript"></script
 ></head
 ><body><div id="menu"><a href="index.html"><img src="images/biwascheme_logo.png" /></a
@@ -22,13 +20,15 @@
 ><h2>Try it now</h2
 ><div id="term"></div
 ><h2>Download</h2
-><ul><li><a href="repos/lib/biwascheme.js">biwascheme.js</a
+><ul><li><a href="repos/release/biwascheme.js">biwascheme.js</a
 > (version <span id="ver">--</span
 >)</li
+><li><a href="repos/release/biwascheme-min.js">biwascheme-min.js</a
+></li
 ></ul
 ><script type="text/javascript">jQuery('#ver').html(BiwaScheme.Version)</script
-><p><a href="http://github.com/yhara/biwascheme/downloads">Older versions</a
-> and the <a href="http://github.com/yhara/biwascheme">latest version</a
+><p><a href="http://github.com/biwascheme/biwascheme/tags">Older versions</a
+> and the <a href="http://github.com/biwascheme/biwascheme">latest version</a
 > are on github.</p
 ><h2>Example</h2
 ><pre><font color='purple'>&lt;script src="biwascheme.js"&gt;</font>
@@ -47,7 +47,7 @@
 ><h2>Features</h2
 ><ul><li>Most syntax/base library of R6RS (see <a href="status.html">Status</a
 >)</li
-><li>Support for<a title="Wikipedia article about Lisp Macros" href="http://en.wikipedia.org/wiki/Macro_%28computer_science%29#Lisp_macros">Lisp Macros</a
+><li>Support for <a title="Wikipedia article about Lisp Macros" href="http://en.wikipedia.org/wiki/Macro_%28computer_science%29#Lisp_macros">Lisp Macros</a
 > and Quasiquotation</li
 ><li>Functions for web application (Ajax, DOM manipulation, etc.)</li
 ><li>Calling JavaScript functions from Scheme and Scheme from JavaScript</li
@@ -55,6 +55,8 @@
 ><li>Comprehensive <a href="repos/test/spec.html">unit test</a
 ></li
 ><li>Tiny <a href="repos/test/tracer.html">interpreter debugger</a
+></li
+><li><a href="i.html">Mobile version</a
 ></li
 ></ul
 ><h2>Links</h2
@@ -64,7 +66,7 @@
 >)</li
 ></ul
 ><h2>Licence</h2
-><ul><li>BiwaScheme: <a href="http://github.com/yhara/biwascheme/blob/master/MIT-LICENSE.txt">MIT License</a
+><ul><li>BiwaScheme: <a href="http://github.com/biwascheme/biwascheme/blob/master/MIT-LICENSE.txt">MIT License</a
 ></li
 ><li>BiwaScheme Logo (by <a href="http://jcubic.pl/">Jakub Jankiewicz</a
 >): <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0</a
@@ -75,7 +77,7 @@
 > for ITS and mailing lists.</p
 ><p>Yutaka HARA (yutaka.hara.gmail.com)<br /><a href="http://twitter.com/#!/yhara_en">http://twitter.com/#!/yhara_en</a
 ></p
-><div id="footer">&copy; 2007-2010 Yutaka HARA and the BiwaScheme team</div
+><div id="footer">&copy; 2007-2011 Yutaka HARA and the BiwaScheme team</div
 ></div
 ></body
 ></html

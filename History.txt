@@ -1,10 +1,48 @@
-(Future)  v0.6.x
+(not yet)  v0.6.x
 
   * new: add clojure-like JavaScript interop syntaxes
 
-(Future)  v0.6.0
+2011-12-01  v0.6.1
 
-  * change: migrate from prototype.js to jQuery and underscore.js
+  * fix: bin/biwas works on Node 0.6.x
+
+  * change: do not raise error when null or undefined is returned
+            from libfunc
+
+  * new:
+      - R6RS Enumerations
+      - mutable hashtables
+      - new functions
+        - format (srfi-28)
+        - write-char, with-output-to-port, call-with-string-output-port
+
+  * new on Node:
+    - One line program on command-line
+      $ biwas -e "(print 'hello)"
+    - REPL
+      $ biwas   # (no arguments)
+    - file-exists?, delete-file, command-line, exit
+        (R6RS standard library chapter 9 and 10)
+
+2011-11-22  v0.6.0
+
+  * change: migrated from prototype.js to jQuery and underscore.js
+
+  * change: argument for $ is passed to jQuery's $.
+      old: ($ "foo")
+      new: ($ "#foo")
+
+  * new functions:
+      list-copy
+      console-log, console-debug, console-info,
+        console-warn, console-error
+      inc!, dec!
+      dotimes
+      js-function?
+
+  * new demos:
+      demo/raphaeljs/
+      demo/chat_with_socketio_and_node/
 
 2011-08-07  v0.5.7
 
