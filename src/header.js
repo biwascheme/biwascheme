@@ -1,16 +1,21 @@
+// 
+// Heap based scheme from 3imp.pdf
 //
-// Values
+
+// default definition of puts: should be overriden for console interpreters
+
+function puts(str, no_newline){
+    Console.puts(str, no_newline)
+}
+function p(/*args*/){
+    Console.p.apply(this, arguments)
+}
+
 //
-BiwaScheme.Values = BiwaScheme.Class.create({
-  initialize: function(values){
-    this.content = values;
-  },
-  to_write: function(){
-    return "#<Values " +
-             _.map(this.content, BiwaScheme.to_write).join(" ") +
-           ">";
-  }
-});
+// variables
+//
+BiwaScheme.TopEnv = {};
+BiwaScheme.CoreEnv = {};
 
 //
 // Nil
@@ -29,6 +34,3 @@ BiwaScheme.nil = {
 //
 BiwaScheme.undef = new Object();
 BiwaScheme.undef.toString = function(){ return "#<undef>"; }
-
-// (eof-object)
-BiwaScheme.eof = new Object;

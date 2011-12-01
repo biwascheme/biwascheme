@@ -5,12 +5,14 @@ VERSION_FILE_IN =  src/version.js.in
 VERSION_FILE    =  src/version.js
 
 BASIC_FILES =                                     \
+  src/header.js                                   \
   src/system/class.js                             \
-  src/stackbase.js                                \
+  src/system/_writer.js                           \
+  src/system/_types.js                            \
+  src/system/error.js                             \
   src/system/set.js                               \
-  src/system/write.js                             \
+  src/system/values.js                            \
   src/system/pair.js                              \
-  src/system/value.js                             \
   src/system/symbol.js                            \
   src/system/char.js                              \
   src/system/number.js                            \
@@ -19,7 +21,6 @@ BASIC_FILES =                                     \
   src/system/enumeration.js                       \
   src/system/hashtable.js                         \
   src/system/syntax.js                            \
-  src/system/types.js                             \
   src/system/parser.js                            \
   src/system/compiler.js                          \
   src/system/pause.js                             \

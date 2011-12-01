@@ -96,19 +96,6 @@ Website
 Refactoring and maintenance
 ---------------------------
 
---- move package.json to root and remove node_modules/ ?
-
 --- try http://visionmedia.github.com/mocha/ ?
-
---- rename src/system/foo.js to _foo.js when class Foo is not defined
-    * types.js
-    * value.js
-    * write.js
-    * \_nodejs.js
-
-    * stackbase.js
-      * puts, p
-      * TopEnv, CoreEnv
-      * Error, Bug, UserError
 
 --- remove test/console_test.js
