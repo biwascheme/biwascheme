@@ -91,14 +91,14 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       var l = stk.length - 1;
       s += "<tr><td class='dump_dead'>[" + l + "]</td>" +
            "<td class='dump_dead'>" + 
-           _.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
+           _.str.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
            "</td></tr>";
     }
 
     // show the element in the stack
     for(var i=size-1; i >= 0; i--){
       s += "<tr><td class='dump_stknum'>[" + i + "]</td>" +
-           "<td>" + _.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
+           "<td>" + _.str.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
            "</td></tr>";
     }
     return s + "</table>";
@@ -130,7 +130,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",
       this.dump_obj(c), " <span class='dump_closure'>body :</span> ",
-      _.truncate(this.dump_obj(body), 100)
+      _.str.truncate(this.dump_obj(body), 100)
     ].join("");
   },
 

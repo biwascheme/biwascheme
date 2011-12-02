@@ -13,7 +13,7 @@ BiwaScheme.to_write = function(obj){
     return "null";
   else if(_.isFunction(obj))
     return "#<Function "+(obj.fname ? obj.fname :
-                          obj.toSource ? _.truncate(obj.toSource(), 40) :
+                          obj.toSource ? _.str.truncate(obj.toSource(), 40) :
                           "")+">";
   else if(_.isString(obj))
     return '"' +
