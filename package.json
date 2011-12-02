@@ -9,11 +9,11 @@
         "type": "git",
         "url": "git://github.com/biwascheme/biwascheme.git"
     },
-    "main": "./lib/biwascheme.js",
+    "main": "./release/node_biwascheme.js",
     "dependencies" : {
         "optparse" : "1.0.3",
-        "underscore" : "1.1.7",
-        "underscore.string" : "1.1.5"
+        "underscore" : "1.2.2",
+        "underscore.string" : "2.0.0"
     },
-    "bin": {"biwas": "./bin/biwas"}
+    "bin": { "biwas": "./bin/biwas" }
 }

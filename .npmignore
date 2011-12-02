@@ -1,0 +1,8 @@
+.gitignore
+Makefile
+demo/
+releases/.gitkeep
+src/
+test/
+tuplespace/
+website/
