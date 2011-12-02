@@ -169,7 +169,7 @@ BiwaScheme.inspect = function(object, opts) {
     if (object === false) return '#f';
     if (object.inspect) return object.inspect();
     if (_.isString(object)) {
-      return "'" + object.replace(/'/g, '\\\'') + "'";
+      return '"' + object.replace(/"/g, '\\"') + '"';
     }
     if (_.isArray(object)) {
       return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';

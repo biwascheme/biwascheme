@@ -135,8 +135,8 @@ describe('utilities', {
       expect( inspect(null) ).should_be("null");
       expect( inspect(true) ).should_be("#t");
       expect( inspect(false) ).should_be("#f");
-      expect( inspect("foo") ).should_be("'foo'");
-      expect( inspect("s' d\"") ).should_be("'s\\' d\"'");
+      expect( inspect("foo") ).should_be("\"foo\"");
+      expect( inspect("s' d\"") ).should_be("\"s' d\\\"\"");
       //expect( inspect("foo\n") ).should_be("foo\\n")
       expect( inspect([0,0,0]) ).should_be("[0, 0, 0]");
 
