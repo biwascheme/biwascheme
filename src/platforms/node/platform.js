@@ -19,7 +19,7 @@ _.extend(BiwaScheme.NodeJS, {
   // Returns true or false.
   file_exists: function(filename){
     return this.path.existsSync(filename);
-  };
+  },
 
   // Delete a file.
   //
@@ -27,7 +27,7 @@ _.extend(BiwaScheme.NodeJS, {
   // Returns undefined.
   delete_file: function(filename){
     this.fs.unlinkSync(filename);
-  };
+  },
 
   //
   // R6RS Stdlib 10 Command-line access and exit values
@@ -37,7 +37,7 @@ _.extend(BiwaScheme.NodeJS, {
   // First element is the process name, rest are command-line arguments.
   command_line: function(){
     return this.process.argv;
-  };
+  },
 
   // Exits the running program.
   // obj - Exit code (default: 0)
@@ -48,10 +48,18 @@ _.extend(BiwaScheme.NodeJS, {
                Number(obj);
 
     this.process.exit(code);
-  }
+  },
 
   //
   // SRFI 98 - get-environment-variable(s)
   //
-  //BiwaScheme.NodeJS.
-}
+  
+  get_environment_variable: function(name){
+    var val = this.process.env[name];
+    return _.isUndefined(val) ? false : val;
+  },
+
+  get_environment_variables: function(){
+    return BiwaScheme.js_obj_to_alist(process.env);
+  }
+});

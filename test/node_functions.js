@@ -19,38 +19,56 @@ var puts = util.puts;
 
 puts("Running tests...");
 
-// R6RS stdlib 9
+var tests = {
+  // R6RS stdlib 9
 
-puts("- file-exists? (#t)");
-assert.ok(ev('(file-exists? "Makefile")'));
+  "file-exists? (#t)": function(){
+    assert.ok(ev('(file-exists? "Makefile")'));
+  },
 
-puts("- file-exists? (#f)");
-assert.ok(!ev('(file-exists? "a file do not exist")'));
+  "file-exists? (#f)": function(){
+    assert.ok(!ev('(file-exists? "a file do not exist")'));
+  },
 
-puts("- delete-file");
-var test_file_path = "./test/test_file_for_delete_file.txt"
-fs.writeFileSync(test_file_path, "hi");
-ev('(delete-file "'+test_file_path+'")');
-assert.ok(!path.existsSync(test_file_path));
+  "delete-file": function(){
+    var test_file_path = "./test/test_file_for_delete_file.txt";
 
-// R6RS stdlib 10
+    fs.writeFileSync(test_file_path, "hi");
 
-puts("- command-line");
-var list = ev('(command-line)');
-assert.ok(BiwaScheme.isList(list));
-list.foreach(function(item){
-  assert.ok(_.isString(item));
-});
+    ev('(delete-file "'+test_file_path+'")');
 
-puts("- exit");
-var orig_exit = process.exit;
-var expected_code;
-process.exit = function(given_code){
-  assert.strictEqual(given_code, expected_code);
+    assert.ok(!path.existsSync(test_file_path));
+  },
+
+  // R6RS stdlib 10
+
+  "command-line": function(){
+    var list = ev('(command-line)');
+    assert.ok(BiwaScheme.isList(list));
+    list.foreach(function(item){
+      assert.ok(_.isString(item));
+    });
+  },
+
+  "exit": function(){
+    var orig_exit = process.exit;
+    var expected_code;
+    process.exit = function(given_code){
+      assert.strictEqual(given_code, expected_code);
+    };
+
+    expected_code = 0;   ev("(exit)");
+    expected_code = 0;   ev("(exit 0)");
+    expected_code = 123; ev("(exit 123)");
+    expected_code = 1;   ev("(exit #f)");
+
+    process.exit = orig_exit;
+  }
 };
-expected_code = 0;   ev("(exit)");
-expected_code = 0;   ev("(exit 0)");
-expected_code = 123; ev("(exit 123)");
-expected_code = 1;   ev("(exit #f)");
+
+_.each(tests, function(func, name){
+  util.puts("- "+name);
+  func();
+});
 
 util.puts("test ok");
