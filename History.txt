@@ -11,6 +11,7 @@
   * fix:
       - added underscore & underscore.string to deps (fixed unit tests & parts of webscheme lib)
       - fixed HTML escaping
+      - fixed Node load function
 
 2011-12-01  v0.6.1
 
