@@ -21,7 +21,6 @@ puts("Running tests...");
 
 var tests = {
   // R6RS stdlib 9
-
   "file-exists? (#t)": function(){
     assert.ok(ev('(file-exists? "Makefile")'));
   },
@@ -41,7 +40,6 @@ var tests = {
   },
 
   // R6RS stdlib 10
-
   "command-line": function(){
     var list = ev('(command-line)');
     assert.ok(BiwaScheme.isList(list));
@@ -63,6 +61,21 @@ var tests = {
     expected_code = 1;   ev("(exit #f)");
 
     process.exit = orig_exit;
+  },
+
+  // SRFI 98
+  "get-environment-variable": function(){
+    var path = ev('(get-environment-variable "PATH")');
+    assert.ok(_.isString(path));
+    assert.equal(ew('(get-environment-variable "NON EXIST")'),
+                 "#f");
+  },
+
+  "get-environment-variables": function(){
+    var first_env = ev('(car (get-environment-variables))');
+    assert.ok(BiwaScheme.isPair(first_env));
+    assert.ok(_.isString(first_env.car));
+    assert.ok(_.isString(first_env.cdr));
   }
 };
 

@@ -105,6 +105,9 @@ Low priority
    * #b, #o
    * a program "1;;" raises error: unbound symbol: '1;;'
 
+--- list-sort with compare function 
+    implement quick sort in CPS
+
 Website 
 -------
 
@@ -132,3 +135,35 @@ Refactoring and maintenance
 --- try http://visionmedia.github.com/mocha/ ?
 
 --- remove test/console_test.js
+
+Interesting SRFI
+----------------
+
+http://srfi.schemers.org/final-srfis.html
+(ja: http://www.chino-js.com/ja/tech/srfi/final-srfis.html )
+
+Partially implemented:
+
+- 1 list libraries
+- 13 string libraries
+- 19 time 
+- 27 (random-integer) 
+- 38 (write-with-shared-structure) 
+- 43 vector libraries 
+
+Not yet:
+
+- 8 (receive)
+- 22 shebang [Node]
+- 26 (cut) 
+- 39 (parameterize) is it identical to the one in R7RS?
+
+Maybe:
+
+-- 17 generalized set! 
+-- 40 stream 
+-- 42 (list-ec) 
+-- 44 collection
+-- 48 (format) (intermediate, ~d, ~b, etc.)
+-- 78 (check) -> list-ec
+-- 88 keyword (like 'test:')
