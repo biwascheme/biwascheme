@@ -1,6 +1,3 @@
-release/biwascheme-min.js
-release/biwascheme.js
-release/console_biwascheme.js
-node_modules/biwascheme/lib/biwascheme.js
+release/
 src/version.js
 test/browser_functions/node_modules/

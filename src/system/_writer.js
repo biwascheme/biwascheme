@@ -13,7 +13,7 @@ BiwaScheme.to_write = function(obj){
     return "null";
   else if(_.isFunction(obj))
     return "#<Function "+(obj.fname ? obj.fname :
-                          obj.toSource ? _.truncate(obj.toSource(), 40) :
+                          obj.toSource ? _.str.truncate(obj.toSource(), 40) :
                           "")+">";
   else if(_.isString(obj))
     return '"' +
@@ -169,7 +169,7 @@ BiwaScheme.inspect = function(object, opts) {
     if (object === false) return '#f';
     if (object.inspect) return object.inspect();
     if (_.isString(object)) {
-      return "'" + object.replace(/'/g, '\\\'') + "'";
+      return '"' + object.replace(/"/g, '\\"') + '"';
     }
     if (_.isArray(object)) {
       return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';

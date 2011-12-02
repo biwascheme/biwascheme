@@ -1,2 +1,2 @@
 #!/bin/sh
-./node_modules/.bin/biwas server.scm
+./node_modules/biwascheme/bin/biwas server.scm

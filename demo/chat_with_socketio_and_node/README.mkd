@@ -1,5 +1,9 @@
 Install node.js (http://nodejs.org/) if you don't already have it.
 
+Install BiwaScheme & other dependencies:
+
+    $ npm install
+
 Start the server:
 
     $ ./start_server

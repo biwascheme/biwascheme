@@ -107,17 +107,20 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     throw new Bug("not yet implemented");
   });
   define_libfunc("element-has-class-name?", 2, 2, function(ar){
-    throw new Bug("not yet implemented");
+    assert_string(ar[1]);
+    return $(ar[0]).hasClass(ar[1]);
   });
   define_libfunc("element-add-class-name", 2, 2, function(ar){
     assert_string(ar[1]);
-    return $(ar[0]).addClass(ar[1], ar[2]);
+    return $(ar[0]).addClass(ar[1]);
   });
   define_libfunc("element-remove-class-name", 2, 2, function(ar){
-    throw new Bug("not yet implemented");
+    assert_string(ar[1]);
+    return $(ar[0]).removeClass(ar[1]);
   });
   define_libfunc("element-toggle-class-name", 2, 2, function(ar){
-    throw new Bug("not yet implemented");
+    assert_string(ar[1]);
+    return $(ar[0]).toggleClass(ar[1]);
   });
   define_libfunc("element-clean-whitespace!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
@@ -255,7 +258,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if ($(selector).attr("value")) {
       return $(selector).val();
     } else {
-      return _.escapeHTML($(selector).html());
+      return _.escape($(selector).html());
     }
   };
   define_libfunc("element-content", 1, 1, function(ar){
