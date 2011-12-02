@@ -4,6 +4,14 @@
 //
 
 (function(){
+  if(BiwaScheme.on_node){
+    var node = {
+      fs: require('fs'),
+      path: require('path'),
+      process: process
+    };
+  }
+
   // Defines library functions which only works on Node.
   // - On Node: same as define_libfunc
   // - On Browser: defines a stub libfunc which just raises Error
@@ -29,31 +37,38 @@
   //
   // Chapter 9 File System
   //
+
   //(file-exists? filename)    procedure 
   define_node_libfunc("file-exists?", 1, 1, function(ar){
     assert_string(ar[0]);
-    return BiwaScheme.NodeJS("file_exists", ar[0]);
+    return node.path.existsSync(ar[0]);
   });
 
   //(delete-file filename)    procedure 
   define_node_libfunc("delete-file", 1, 1, function(ar){
     assert_string(ar[0]);
-    BiwaScheme.NodeJS("delete_file", ar[0]);
+    node.fs.unlinkSync(ar[0]);
     return BiwaScheme.undef;
   });
 
   //
   // Chapter 10 Command-line access and exit values
   //
+  
   //(command-line)    procedure
   define_node_libfunc("command-line", 0, 0, function(ar){
-    return BiwaScheme.List.apply(null, BiwaScheme.NodeJS("command_line"));
+    return BiwaScheme.List.apply(null, node.process.argv);
   });
+
   //(exit)    procedure 
   //(exit obj)    procedure
   define_node_libfunc("exit", 0, 1, function(ar){
     var obj = ar[0];
-    BiwaScheme.NodeJS("exit", obj);
+    var code = _.isUndefined(obj) ? 0 :
+               (obj === false)    ? 1 :
+               Number(obj);
+
+    node.process.exit(code);
   });
 
   //
@@ -63,12 +78,13 @@
   // (get-environment-variable name) -> string or #f
   define_node_libfunc("get-environment-variable", 1, 1, function(ar){
     assert_string(ar[0]);
-    return BiwaScheme.NodeJS("get_environment_variable", ar[0]);
+    var val = node.process.env[ar[0]];
+    return _.isUndefined(val) ? false : val;
   });
 
   // (get-environment-variables) -> alist of string (("key" . "value")"
   define_node_libfunc("get-environment-variables", 0, 0, function(ar){
-    return BiwaScheme.NodeJS("get_environment_variables", ar[0]);
+    return BiwaScheme.js_obj_to_alist(node.process.env);
   });
 
 })();
