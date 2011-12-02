@@ -2,6 +2,7 @@
 
   * new:
       - add clojure-like JavaScript interop syntaxes
+      - upgraded from jQuery 1.6.2 to 1.7.1
       - new functions:
         - element-has-class-name?, element-add-class-name (fixed), element-remove-class-name, element-toggle-class-name
         - js-load (in Node)
