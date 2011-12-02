@@ -1,6 +1,15 @@
 (not yet)  v0.6.x
 
-  * new: add clojure-like JavaScript interop syntaxes
+  * new:
+      - add clojure-like JavaScript interop syntaxes
+      - new functions:
+        - element-has-class-name?, element-add-class-name (fixed), element-remove-class-name, element-toggle-class-name
+        - js-load (in Node)
+      - switched inspected strings to be double-quoted instead of single-quoted
+
+  * fix:
+      - added underscore & underscore.string to deps (fixed unit tests & parts of webscheme lib)
+      - fixed HTML escaping
 
 2011-12-01  v0.6.1
 
