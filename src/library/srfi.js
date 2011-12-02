@@ -327,17 +327,7 @@ with(BiwaScheme) {
   });
 
   //
-  // srfi-98 (get-environment-variable)
+  // see src/library/node_functions.js for:
+  // - srfi-98 (get-environment-variable)
   //
-
-  // (get-environment-variable name) -> string or #f
-  define_libfunc("get-environment-variable", 1, 1, function(ar){
-    assert_string(ar[0]);
-    return BiwaScheme.NodeJS("get_environment_variable", ar[0]);
-  });
-  
-  // (get-environment-variables) -> alist of string (("key" . "value")"
-  define_libfunc("get-environment-variables", 0, 0, function(ar){
-    return BiwaScheme.NodeJS("get_environment_variables", ar[0]);
-  });
 }

@@ -31,6 +31,7 @@ BASIC_FILES =                                     \
   src/library/r6rs_lib.js                         \
   src/library/js_interface.js                     \
   src/library/extra_lib.js                        \
+  src/library/node_functions.js                   \
   src/library/srfi.js
 
 BROWSER_FILES =                                   \

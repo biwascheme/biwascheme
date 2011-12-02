@@ -1,5 +1,3 @@
-BiwaScheme.on_node = true;
-
 //
 // Node.js interface
 // see also: src/system/_nodejs.js
