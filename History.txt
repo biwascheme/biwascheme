@@ -1,25 +1,22 @@
-(not yet)  v0.6.x
+(not yet)  v0.6.2
+
+  * change:
+      - upgraded from jQuery 1.6.2 to 1.7.1
+      - switched inspected strings to be double-quoted instead of single-quoted
 
   * new:
-      - add clojure-like JavaScript interop syntaxes
-      - upgraded from jQuery 1.6.2 to 1.7.1
-      - new functions:
-        - element-has-class-name?, element-add-class-name (fixed), element-remove-class-name, element-toggle-class-name
+      - functions and syntaxes:
+        - element-has-class-name?, element-add-class-name (fixed),
+          element-remove-class-name, element-toggle-class-name
         - js-load (in Node)
-      - switched inspected strings to be double-quoted instead of single-quoted
+        - receive
+      - Node:
+        - BiwaScheme.run_file
 
   * fix:
       - added underscore & underscore.string to deps (fixed unit tests & parts of webscheme lib)
       - fixed HTML escaping
       - fixed Node load function
-
-(not yet)  v0.6.2
-
-  * new on Node:
-    - BiwaScheme.run_file
-
-  * internal:
-    - Moved website to Heroku
 
 2011-12-01  v0.6.1
 

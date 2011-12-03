@@ -102,6 +102,7 @@ Low priority
    * #\vtab, etc.
    * #b, #o
    * a program "1;;" raises error: unbound symbol: '1;;'
+   * Regexp literal (#/foo/)
 
 --- list-sort with compare function 
     implement quick sort in CPS
@@ -151,7 +152,6 @@ Partially implemented:
 
 Not yet:
 
-- 8 (receive)
 - 26 (cut) 
 - 39 (parameterize) is it identical to the one in R7RS?
 

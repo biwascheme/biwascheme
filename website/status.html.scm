@@ -160,7 +160,10 @@
             (43 "vector"
              "partially (vector-append)")
             (62 "s-expr comment"
-             "ok"))))
+             "ok")
+            (98 "get-environment-variable(s)"
+             "ok (on Node.js)")
+            )))
 
       (convert-file "_footer.html.scm")
     )))
