@@ -27,6 +27,7 @@ BiwaScheme.isPair = function(obj){
   return (obj instanceof BiwaScheme.Pair);
 };
 
+// Returns true if obj is '() or all the cdr's are list.
 // Note: isList returns true for '()
 BiwaScheme.isList = function(obj){
     if(obj === BiwaScheme.nil) return true; // null base case

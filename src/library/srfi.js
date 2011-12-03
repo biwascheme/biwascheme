@@ -59,6 +59,28 @@ with(BiwaScheme) {
     return ar[0].output_string();
   })
 
+  //
+  // srfi-8 (receive)
+  //
+
+  // (receive <formals> <expression> <body>...)
+  // -> (call-with-values (lambda () expression)
+  //                        (lambda formals body ...))
+  define_syntax("receive", function(x){
+    assert(BiwaScheme.isPair(x.cdr),
+           "missing formals", "receive");
+    var formals = x.cdr.car;
+    assert(BiwaScheme.isPair(x.cdr.cdr),
+           "missing expression", "receive");
+    var expression = x.cdr.cdr.car;
+    var body       = x.cdr.cdr.cdr;
+    
+    return BiwaScheme.List(Sym("call-with-values"),
+      [Sym("lambda"), BiwaScheme.nil, expression],
+      new BiwaScheme.Pair(Sym("lambda"),
+        new BiwaScheme.Pair(formals, body)));
+  });
+
   // srfi-19 (time)
   //
 //  // constants

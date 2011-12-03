@@ -1864,6 +1864,12 @@ describe('srfi-6 string ports', {
   }
 });
 
+describe('srfi-8 receive', {
+  'receive' : function(){
+    ev("(receive (x y) (values 1 2) (+ x y))").should_be(3);
+  }
+});
+
 describe('srfi-27 random', {
   'random-integer' : function(){
     ev("(integer? (random-integer 3))").should_be(true);

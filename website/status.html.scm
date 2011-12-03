@@ -145,6 +145,8 @@
              "partially (iota)")
             (6 "string port"
              "ok")
+            (8 "receive"
+             "ok")
             (13 "string utilities"
              "not yet")
             (19 "time"
