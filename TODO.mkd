@@ -152,13 +152,11 @@ Partially implemented:
 Not yet:
 
 - 8 (receive)
-- 22 shebang [Node]
 - 26 (cut) 
 - 39 (parameterize) is it identical to the one in R7RS?
 
 Maybe:
 
--- 17 generalized set! 
 -- 40 stream 
 -- 42 (list-ec) 
 -- 44 collection
