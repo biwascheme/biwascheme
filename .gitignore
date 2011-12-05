@@ -1,3 +1,4 @@
+node_modules/
 release/
 src/version.js
 test/browser_functions/node_modules/
