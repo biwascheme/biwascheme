@@ -15,15 +15,26 @@ Inbox
     (set-cdr! (list-tail y 5) y)
     (equal? x y))
 
+Next release (0.6.2)
+--------------------
+
+- id=biwa-script
+
+- div id=biwa-console
+
+- .. syntax
+
 High priority
 -------------
-
-- release 0.6.2
 
 - LICENCE to biwascheme(-min).js
 
 - [r6rs] Errors and conditions
 - [r6rs] library definition and loading
+
+- biwas(repl) should 'write' the result
+    > #(1 2)
+    1,2
 
 - (print (js-eval "null")) raises error (only on Node?)
   -- should think more about .to_display, .to_write, .toString, .inspect
@@ -71,10 +82,6 @@ Middle priority
 -- check uses of assert_closure
    - maybe should use assert_procedure
    - rename assert_closure to assert_lambda?
-
--- new syntax: ..
-
--- id="biwa-script"
 
 -- fix leaking variables
 
@@ -127,11 +134,7 @@ Website
 Refactoring and maintenance
 ---------------------------
 
---- add ./biwas
-
 --- remove _types.js
-
---- try http://visionmedia.github.com/mocha/ ?
 
 --- remove test/console_test.js
 
@@ -146,7 +149,6 @@ Partially implemented:
 - 1 list libraries
 - 13 string libraries
 - 19 time 
-- 27 (random-integer) 
 - 38 (write-with-shared-structure) 
 - 43 vector libraries 
 
@@ -157,7 +159,7 @@ Not yet:
 
 Maybe:
 
--- 40 stream 
+-- 41 stream 
 -- 42 (list-ec) 
 -- 44 collection
 -- 48 (format) (intermediate, ~d, ~b, etc.)
