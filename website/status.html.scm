@@ -152,7 +152,7 @@
             (19 "time"
              "partially")
             (27 "random"
-             "partially (random-integer)")
+             "partially (random-integer, random-real)")
             (30 "multi-line comment"
              "ok")
             (38 "write/ss"
