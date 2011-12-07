@@ -1,20 +1,6 @@
 TODO for BiwaScheme
 ===================
 
-Inbox
------
-
-* passign multiple values to continuation
-  (receive a (call/cc (lambda (c) (c 1 2 3))) (display a))
-  should be (1 2 3)
-
-* equal should stop
-  (let ((x (list 'a 'b 'c 'a))
-      (y (list 'a 'b 'c 'a 'b 'c 'a)))
-    (set-cdr! (list-tail x 2) x)
-    (set-cdr! (list-tail y 5) y)
-    (equal? x y))
-
 Next release (0.6.2)
 --------------------
 
@@ -127,8 +113,7 @@ Website
 
 -- provide compiled older versions of biwascheme.js
 
---- better design
-  * css
+--- better css 
   * same header for demos, tracer, etc (frame?)
 
 Refactoring and maintenance
@@ -138,30 +123,17 @@ Refactoring and maintenance
 
 --- remove test/console_test.js
 
-Interesting SRFI
-----------------
+May need fix
+------------
 
-http://srfi.schemers.org/final-srfis.html
-(ja: http://www.chino-js.com/ja/tech/srfi/final-srfis.html )
+* passing multiple values to continuation
+  (receive a (call/cc (lambda (c) (c 1 2 3))) (display a))
+  should be (1 2 3)
 
-Partially implemented:
+* equal should stop
+  (let ((x (list 'a 'b 'c 'a))
+      (y (list 'a 'b 'c 'a 'b 'c 'a)))
+    (set-cdr! (list-tail x 2) x)
+    (set-cdr! (list-tail y 5) y)
+    (equal? x y))
 
-- 1 list libraries
-- 13 string libraries
-- 19 time 
-- 38 (write-with-shared-structure) 
-- 43 vector libraries 
-
-Not yet:
-
-- 26 (cut) 
-- 39 (parameterize) is it identical to the one in R7RS?
-
-Maybe:
-
--- 41 stream 
--- 42 (list-ec) 
--- 44 collection
--- 48 (format) (intermediate, ~d, ~b, etc.)
--- 78 (check) -> list-ec
--- 88 keyword (like 'test:')
