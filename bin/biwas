@@ -12,6 +12,7 @@ function Options(argv){
   var parser = new optparse.OptionParser([
     //[      '--encoding', 'Specify encoding (default: utf8)'],
     ['-e', '--eval CODE', 'Evaluate the given string'],
+    ['-v', '--version', 'Show version'],
     ['-h', '--help', 'Show this message']
   ]);
 
@@ -25,6 +26,11 @@ function Options(argv){
 
   parser.on('eval', function(name, value) {
     opts.code = value;
+  });
+
+  parser.on('version', function() {
+    util.puts("BiwaScheme version "+BiwaScheme.Version);
+    process.exit(0);
   });
 
   parser.on('help', function() {
