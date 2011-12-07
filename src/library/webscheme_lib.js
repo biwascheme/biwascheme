@@ -317,15 +317,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
 
   BiwaScheme.getelem = function(ar){
-    var x = $(ar[0]);
+    var x = $.apply(this, ar);
     if (x.length > 0) {
       return x;
     } else {
       return false;
     }
   };
-  define_libfunc("$",       1, 1, BiwaScheme.getelem);
-  define_libfunc("getelem", 1, 1, BiwaScheme.getelem);
+  define_libfunc("$",       1, 2, BiwaScheme.getelem);
+  define_libfunc("getelem", 1, 2, BiwaScheme.getelem);
   define_libfunc("dom-element", 1, 1, function(ar) {
     return $(ar[0])[0];
   });
