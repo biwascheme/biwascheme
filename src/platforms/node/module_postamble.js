@@ -7,7 +7,7 @@ BiwaScheme.run = function(code) {
       require('util').puts(e);
     }
 
-    process.exit(1);
+    throw e;
   });
   return intp.evaluate(code);
 };

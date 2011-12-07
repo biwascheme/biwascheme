@@ -45,9 +45,18 @@ function Options(argv){
 function repl(){
   var rl = require('readline').createInterface(process.stdin,
                                                process.stdout);
+  var erred = new Object();
+
   rl.on('line', function(line) {
-    var result = BiwaScheme.run(line);
-    util.puts(BiwaScheme.to_write(result));
+    try{
+      var result = BiwaScheme.run(line);
+    } catch (e) {
+      var result = erred;
+    }
+
+    if (result !== erred) {
+      util.puts(BiwaScheme.to_write(result));
+    }
 
     rl.prompt();
   });
