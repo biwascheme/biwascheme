@@ -7,11 +7,13 @@
         - element-has-class-name?, element-add-class-name (fixed), element-remove-class-name, element-toggle-class-name
         - js-load (in Node)
       - switched inspected strings to be double-quoted instead of single-quoted
+      - $ and getelem functions can now take 1 or 2 arguments like in jQuery (second optional argument is the scope to search for the selector in)
 
   * fix:
       - added underscore & underscore.string to deps (fixed unit tests & parts of webscheme lib)
       - fixed HTML escaping
       - fixed Node load function
+      - fixed some functions converting nested arrays & vectors to lists
 
 2011-12-01  v0.6.1
 
