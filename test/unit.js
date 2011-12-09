@@ -154,19 +154,27 @@ describe('utilities', {
       expect( inspect(obj2) ).should_be("obj2");
     }
   },
-  'array_to_list' : function(){
-    with(BiwaScheme){
-      expect( array_to_list([1,2,3]).to_write() ).should_be("(1 2 3)");
-    }
-  },
   'List()' : function(){
     with(BiwaScheme){
       expect( List(1,2,3) instanceof Pair ).should_be(true);
       expect( List(1,2,3).to_write() ).should_be("(1 2 3)");
-      expect( List(1,2,[3,4]).to_write() ).should_be("(1 2 (3 4))");
-      expect( List(
+      expect( List(1,2,[3,4]).to_write() ).should_be("(1 2 #(3 4))");
+    }
+  },
+  'array_to_list' : function(){
+    with(BiwaScheme){
+      expect( array_to_list([1,2,3]).to_write() ).should_be("(1 2 3)");
+      expect( array_to_list([1,2,[3,4]]).to_write() ).should_be("(1 2 #(3 4))");
+    }
+  },
+  'deep_array_to_list' : function(){
+    with(BiwaScheme){
+      expect( deep_array_to_list([1,2,3]).to_write() ).should_be("(1 2 3)");
+      expect( deep_array_to_list([1,2,[3,4]]).to_write() ).should_be("(1 2 (3 4))");
+      expect( deep_array_to_list([
         Sym("define"), Sym("x"), [Sym("+"), 1, 2]
-      ).to_write() ).should_be("(define x (+ 1 2))");
+      ]).to_write() ).should_be("(define x (+ 1 2))");
+      expect( deep_array_to_list([[1,2],[3,[4,[5,6]]]]).to_write() ).should_be("((1 2) (3 (4 (5 6))))");
     }
   },
   'reduce_cyclic_info' : function(){

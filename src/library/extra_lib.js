@@ -149,9 +149,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         result = spec.cdr.cdr.car;
     var tlimit = BiwaScheme.gensym();
 
-    var do_vars = List([tlimit, limit],
-                       [variable, 0, [Sym("+"), variable, 1]]);
-    var do_check = List([Sym(">="), variable, tlimit], result);
+    var do_vars = deep_array_to_list([[tlimit, limit],
+                                      [variable, 0, [Sym("+"), variable, 1]]]);
+    var do_check = deep_array_to_list([[Sym(">="), variable, tlimit], result]);
 
     return new Pair(Sym("do"),
              new Pair(do_vars,

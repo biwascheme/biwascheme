@@ -1980,7 +1980,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     //     (define set-square-h!
     //       (record-mutator (record-type-descriptor square) 1)))
     //
-    return List.apply(null,
+    return deep_array_to_list(
       [Sym("begin"),
         registration,
         [Sym("define"), constructor_name, [Sym("record-constructor"), cd]],
@@ -2000,7 +2000,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   //(record-type-descriptor <record name>)    syntax 
   define_syntax("record-type-descriptor", function(x){
-    return List(Sym("_record-type-descriptor"), [Sym("quote"), x.cdr.car]);
+    return deep_array_to_list([Sym("_record-type-descriptor"), [Sym("quote"), x.cdr.car]]);
   });
   define_libfunc("_record-type-descriptor", 1, 1, function(ar){
     assert_symbol(ar[0]);
@@ -2013,7 +2013,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   //(record-constructor-descriptor <record name>)    syntax 
   define_syntax("record-constructor-descriptor", function(x){
-    return List(Sym("_record-constructor-descriptor"), [Sym("quote"), x.cdr.car]);
+    return deep_array_to_list([Sym("_record-constructor-descriptor"), [Sym("quote"), x.cdr.car]]);
   });
   define_libfunc("_record-constructor-descriptor", 1, 1, function(ar){
     assert_symbol(ar[0]);

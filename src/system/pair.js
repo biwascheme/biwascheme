@@ -102,27 +102,35 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
   }
 });
 
-// Creates a list out of the arguments, converting any nested arrays into nested lists.
+// Creates a list out of the arguments, optionally converting any nested arrays into nested lists if the deep argument is true.
 // Example:
-//   BiwaScheme.List(1, 2, [3, 4]) ;=> (1 2 (3 4))
+//   BiwaScheme.List(1, 2, [3, 4]) ;=> (list 1 2 (vector 3 4))
+//   BiwaScheme.deep_array_to_list(1, 2, [3, 4]) ;=> (list 1 2 (list 3 4))
 var array_to_list = function(ary, deep) {
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
     if(deep && _.isArray(obj) && !obj.is_vector){
-      obj = BiwaScheme.array_to_list(obj);
+      obj = array_to_list(obj, deep);
     }
     list = new BiwaScheme.Pair(obj, list);
   }
   return list;
 }
+
+// Shallow: List(1, 2, [3]) == (list 1 2 (vector 3 4))
 BiwaScheme.List = function() {
   var ary = _.toArray(arguments);
-  return array_to_list(ary, true);
-};
-BiwaScheme.array_to_list = function(array) {
-  return BiwaScheme.List.apply(null, array);
-};
-BiwaScheme.shallow_array_to_list = function(ary) {
   return array_to_list(ary, false);
+};
+
+// Shallow: array_to_list(1, 2, [3]) == (list 1 2 (vector 3 4))
+BiwaScheme.array_to_list = function(ary) {
+  return array_to_list(ary, false);
+};
+
+// Deep: deep_array_to_list(1, 2, [3, 4]) == (list 1 2 (list 3 4))
+// deep_array_to_list([1, 2, 3]) - deep
+BiwaScheme.deep_array_to_list = function(ary) {
+  return array_to_list(ary, true);
 };

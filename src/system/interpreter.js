@@ -415,7 +415,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         }
         else{
           var expanded_car = this.expand(x.car, flag);
-          var expanded_cdr = BiwaScheme.shallow_array_to_list(
+          var expanded_cdr = BiwaScheme.array_to_list(
                                _.map(x.cdr.to_array(),
                                      _.bind(function(item){ return this.expand(item, flag); }, this)));
           ret = new BiwaScheme.Pair(expanded_car, expanded_cdr);
