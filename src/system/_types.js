@@ -18,6 +18,11 @@ BiwaScheme.isSymbol = function(obj){
   return (obj instanceof BiwaScheme.Symbol);
 };
 
+BiwaScheme.isTheSymbol = function(name, obj){
+  return (obj instanceof BiwaScheme.Symbol) &&
+         (obj.name == name);
+};
+
 BiwaScheme.isPort = function(obj){
   return (obj instanceof BiwaScheme.Port);
 };
