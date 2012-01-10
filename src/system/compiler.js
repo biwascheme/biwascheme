@@ -425,6 +425,9 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
       next = ["assign-global", first.name, next];
     }
     else if(first instanceof BiwaScheme.Pair){ // 4. (define (f x) ...)
+      // Note: define of this form may contain internal define.
+      // They are handled in compilation of "lambda".
+
       var fname=first.car, args=first.cdr;
       var lambda = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"), new BiwaScheme.Pair(args, rest));
       x = lambda;
@@ -448,14 +451,29 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
       throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
 
     var vars = x.cdr.car;
-    var body = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr);
+    var body = x.cdr.cdr;
+
+    // Handle internal defines
+    var tbody = BiwaScheme.Compiler.transform_internal_define(body);
+    if(BiwaScheme.isPair(tbody) &&
+       BiwaScheme.isSymbol(tbody.car) &&
+       tbody.car.name == "letrec*"){
+      // The body has internal defines.
+      // Expand letrec* macro
+      var cbody = BiwaScheme.Interpreter.expand(tbody);
+    }
+    else{
+      // The body has no internal defines.
+      // Just wrap the list with begin 
+      var cbody = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr);
+    }
 
     var dotpos = this.find_dot_pos(vars);
     var proper = this.dotted2proper(vars);
-    var free = this.find_free(body, proper.to_set(), f); //free variables
-    var sets = this.find_sets(body, proper.to_set());    //local variables
+    var free = this.find_free(cbody, proper.to_set(), f); //free variables
+    var sets = this.find_sets(cbody, proper.to_set());    //local variables
 
-    var do_body = this.compile(body,
+    var do_body = this.compile(cbody,
                     [proper.to_set(), free],
                     sets.set_union(s.set_intersect(free)),
                     f.set_union(proper.to_set()),
@@ -478,3 +496,69 @@ BiwaScheme.Compiler.compile = function(expr, next){
   expr = BiwaScheme.Interpreter.expand(expr);
   return (new BiwaScheme.Compiler).run(expr, next);
 };
+
+// Transform internal defines to letrec*.
+//
+// Example
+//   (let ((a 1))
+//     (define (b) a)
+//     (b))
+//
+//   (let ((a 1))
+//     (letrec* ((b (lambda () a)))
+//       (b)))
+//
+// x - expression starts with (define ...)
+// 
+// Returns a letrec* expression, or
+// just returns x, when x does not contain definitions.
+(function(){
+// Returns true if x is a definition
+var is_definition = function(x){
+  return BiwaScheme.isPair(x) &&
+         BiwaScheme.isTheSymbol("define", x.car);
+  // TODO: support "begin", nested "begin", "let(rec)-syntax"
+};
+
+// Convert function definition to lambda binding
+//   (define a ..)         -> (a ..)
+//   (define (f) ..)       -> (f (lambda () ..))
+//   (define (f x . y) ..) -> (f (lambda (x . y) ..))
+//   (define (f . a) ..)   -> (f (lambda a ..))
+var define_to_lambda_bind = function(def){
+  var sig  = def.cdr.car;
+  var body = def.cdr.cdr;
+
+  if (BiwaScheme.isSymbol(sig)) {
+    var variable = sig;
+
+    return new BiwaScheme.Pair(variable, body);
+  }
+  else {
+    var variable = sig.car;
+    var value = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"),
+                  new BiwaScheme.Pair(sig.cdr, body));
+
+    return BiwaScheme.List(variable, value);
+  }
+};
+
+BiwaScheme.Compiler.transform_internal_define = function(x){
+  // 1. Split x into definitions and expressions
+  var defs = [], item = x;
+  while (is_definition(item.car)){
+    defs.push(item.car);
+    item = item.cdr;
+  }
+  var exprs = item;
+
+  // 2. Return x if there is no definitions
+  if (defs.length == 0)
+    return x;
+  
+  // 3. Return (letrec* <bindings> <expressions>)
+  var bindings = BiwaScheme.List.apply(null, _.map(defs, define_to_lambda_bind));
+  return new BiwaScheme.Pair(BiwaScheme.Sym("letrec*"),
+           new BiwaScheme.Pair(bindings, exprs));
+};
+})();

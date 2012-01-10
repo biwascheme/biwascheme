@@ -423,6 +423,18 @@ describe('11.2 Definitions', {
   'function define (empty optional args)' : function(){
     ew("(define (f x y . z) z) (f 3 4)").should_be("()");
   },
+  'internal define' : function(){
+    ew("(define a 1) (define b 2) \
+        (define (x) (define a 3) (define b 4) (list a b)) \
+        (let1 result (x) \
+          (list a b result))").should_be("(1 2 (3 4))");
+  },
+  'internal define (nested)' : function(){
+    ew("(define a 1) \
+        (define (x) (define (y) (define (z) (define a 2) a) (z)) (y)) \
+        (let1 result (x) \
+          (list result a)").should_be("(2 1)");
+  }
 })
 
 
