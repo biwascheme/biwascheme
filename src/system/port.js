@@ -1,6 +1,10 @@
 //
 // Port
 //
+
+// (eof-object)
+BiwaScheme.eof = new Object;
+
 BiwaScheme.Port = BiwaScheme.Class.create({
   initialize: function(is_in, is_out){
     this.is_open = true;

@@ -1,6 +1,7 @@
 ///
 /// Compiler
 ///
+/// Note: macro expansion is done by Intepreter#expand
 
 BiwaScheme.Compiler = BiwaScheme.Class.create({
   initialize: function(){
@@ -214,6 +215,10 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
       return ret;
   },
 
+  // Returns the position of the dot pair.
+  // Returns -1 if x is a proper list.
+  //
+  // eg. (a b . c) -> 2
   find_dot_pos: function(x){
     var idx = 0;
     for (; x instanceof BiwaScheme.Pair; x = x.cdr, ++idx)
@@ -233,7 +238,9 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
     return x;
   },
 
-  // dotted list -> proper list
+  // Takes an dotted list and returns proper list.
+  //
+  // eg. (x y . z) -> (x y z)
   dotted2proper: function(ls){
     var nreverse = function(ls){
       var res = BiwaScheme.nil;
@@ -278,55 +285,17 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
 
     while(1){
       if(x instanceof BiwaScheme.Symbol){
+        // Variable reference
+        // compiled into refer-(local|free|global)
         return this.compile_refer(x, e, (s.member(x) ? ["indirect", next] : next));
       }
       else if(x instanceof BiwaScheme.Pair){
         switch(x.first()){
         case BiwaScheme.Sym("define"):
-          // (define) ; => error
-          // (define x 1 2) ; => error
-          // x = (define <variable> <expression>)        : defines a variable
-          // x = (define <variable>)                     : defines a variable with unspecified value
-          // x = (define (<variable> <formals>) <body>)  : defines a function
-          // x = (define (<variable> . <formal>) <body>) : defines a function with arbitary numbers of args
+          ret = this._compile_define(x, next);
 
-          if(x.length() == 1) { // i.e. (define)
-            throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
-          }
-
-          var left = x.cdr.car;
-          var exp  = x.cdr.cdr;
-          
-          //define variable
-          if(left instanceof BiwaScheme.Symbol){    
-            if (exp === BiwaScheme.nil) {
-              // eg. (define a)
-              x = BiwaScheme.undef;
-            }
-            else {
-              if (exp.cdr !== BiwaScheme.nil) {
-                // eg. (define a 1 2)
-                throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
-              }
-              // eg. (define a 1)
-              x = exp.car;
-            }
-
-            BiwaScheme.TopEnv[left.name] = BiwaScheme.undef;
-            next = ["assign-global", left.name, next]; //should raise for improper list?
-          }
-          //define function 
-          else if(left instanceof BiwaScheme.Pair){ 
-            var fname=left.car, args=left.cdr;
-            var lambda = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"), new BiwaScheme.Pair(args, exp));
-            x = lambda;
-            BiwaScheme.TopEnv[fname.name] = BiwaScheme.undef;
-            next = ["assign-global", fname.name, next];
-          }
-          //error
-          else{                          
-            throw new BiwaScheme.Error("compile: define needs a leftbol or pair: got "+left);
-          }
+          x = ret[0];
+          next = ret[1];
           break;
 
         case BiwaScheme.Sym("begin"):
@@ -349,30 +318,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
           return ["constant", obj, next];
 
         case BiwaScheme.Sym("lambda"):
-          // x = '(lambda (x y) x y)
-          // x = '(lambda vars x y)
-          if(x.length() < 3)
-              throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
-
-          var vars = x.cdr.car;
-          var body = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr); //tenuki
-
-          var dotpos = this.find_dot_pos(vars);
-          var proper = this.dotted2proper(vars);
-          var free = this.find_free(body, proper.to_set(), f); //free variables
-          var sets = this.find_sets(body, proper.to_set()); //local variables
-
-          var do_body = this.compile(body,
-                          [proper.to_set(), free],
-                          sets.set_union(s.set_intersect(free)),
-                          f.set_union(proper.to_set()),
-                          ["return"]);
-          var do_close = ["close", 
-                           free.size(),
-                           this.make_boxes(sets, proper, do_body),
-                           next,
-                           dotpos];
-          return this.collect_free(free, e, do_close);
+          return this._compile_lambda(x, e, s, f, next);
 
         case BiwaScheme.Sym("if"):
           if(x.length() < 3 || x.length() > 4)
@@ -443,11 +389,176 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
 //      else
 //        return ret;
   },
+
+  // Compile define.
+  //
+  // 0. (define) ; => error
+  // 1. (define a)
+  // 2. (define a 1)
+  // 3. (define a 1 2) ; => error
+  // 4. (define (f x) x), (define (f . a) a)
+  // 5. (define 1 2) 
+  //
+  // Note: define may appear in lambda, let, let*, let-values,
+  // let*-values, letrec, letrec*. These definitions are local to the
+  // <body> of these forms.
+  _compile_define: function(x, next){
+    if(x.length() == 1) { // 0. (define)
+      throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
+    }
+
+    var first = x.cdr.car;
+    var rest = x.cdr.cdr;
+    
+    if(first instanceof BiwaScheme.Symbol){    
+      if (rest === BiwaScheme.nil) { // 1. (define a)
+        x = BiwaScheme.undef;
+      }
+      else {
+        if (rest.cdr === BiwaScheme.nil) // 2. (define a 1)
+          x = rest.car;
+        else // 3. (define a 1 2)
+          throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
+      }
+
+      BiwaScheme.TopEnv[first.name] = BiwaScheme.undef;
+      next = ["assign-global", first.name, next];
+    }
+    else if(first instanceof BiwaScheme.Pair){ // 4. (define (f x) ...)
+      // Note: define of this form may contain internal define.
+      // They are handled in compilation of "lambda".
+
+      var fname=first.car, args=first.cdr;
+      var lambda = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"), new BiwaScheme.Pair(args, rest));
+      x = lambda;
+      BiwaScheme.TopEnv[fname.name] = BiwaScheme.undef;
+      next = ["assign-global", fname.name, next];
+    }
+    else{ // 5. (define 1 2)
+      throw new BiwaScheme.Error("define: symbol or pair expected but got "+first);
+    }
+
+    return [x, next];
+  },
+
+  // Compiles various forms of "lambda".
+  //
+  // * (lambda (x y) ...)
+  // * (lambda (x y . rest) ...)
+  // * (lambda args ...)
+  _compile_lambda: function(x, e, s, f, next){
+    if(x.length() < 3)
+      throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
+
+    var vars = x.cdr.car;
+    var body = x.cdr.cdr;
+
+    // Handle internal defines
+    var tbody = BiwaScheme.Compiler.transform_internal_define(body);
+    if(BiwaScheme.isPair(tbody) &&
+       BiwaScheme.isSymbol(tbody.car) &&
+       tbody.car.name == "letrec*"){
+      // The body has internal defines.
+      // Expand letrec* macro
+      var cbody = BiwaScheme.Interpreter.expand(tbody);
+    }
+    else{
+      // The body has no internal defines.
+      // Just wrap the list with begin 
+      var cbody = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr);
+    }
+
+    var dotpos = this.find_dot_pos(vars);
+    var proper = this.dotted2proper(vars);
+    var free = this.find_free(cbody, proper.to_set(), f); //free variables
+    var sets = this.find_sets(cbody, proper.to_set());    //local variables
+
+    var do_body = this.compile(cbody,
+                    [proper.to_set(), free],
+                    sets.set_union(s.set_intersect(free)),
+                    f.set_union(proper.to_set()),
+                    ["return"]);
+    var do_close = ["close", 
+                     free.size(),
+                     this.make_boxes(sets, proper, do_body),
+                     next,
+                     dotpos];
+    return this.collect_free(free, e, do_close);
+  },
+
   run: function(expr){
     return this.compile(expr, [new BiwaScheme.Set(), new BiwaScheme.Set()], new BiwaScheme.Set(), new BiwaScheme.Set(), ["halt"]);
   }
 });
+
+// Compile an expression with new compiler
 BiwaScheme.Compiler.compile = function(expr, next){
-  expr = (new BiwaScheme.Interpreter).expand(expr);
+  expr = BiwaScheme.Interpreter.expand(expr);
   return (new BiwaScheme.Compiler).run(expr, next);
 };
+
+// Transform internal defines to letrec*.
+//
+// Example
+//   (let ((a 1))
+//     (define (b) a)
+//     (b))
+//
+//   (let ((a 1))
+//     (letrec* ((b (lambda () a)))
+//       (b)))
+//
+// x - expression starts with (define ...)
+// 
+// Returns a letrec* expression, or
+// just returns x, when x does not contain definitions.
+(function(){
+// Returns true if x is a definition
+var is_definition = function(x){
+  return BiwaScheme.isPair(x) &&
+         BiwaScheme.isTheSymbol("define", x.car);
+  // TODO: support "begin", nested "begin", "let(rec)-syntax"
+};
+
+// Convert function definition to lambda binding
+//   (define a ..)         -> (a ..)
+//   (define (f) ..)       -> (f (lambda () ..))
+//   (define (f x . y) ..) -> (f (lambda (x . y) ..))
+//   (define (f . a) ..)   -> (f (lambda a ..))
+var define_to_lambda_bind = function(def){
+  var sig  = def.cdr.car;
+  var body = def.cdr.cdr;
+
+  if (BiwaScheme.isSymbol(sig)) {
+    var variable = sig;
+
+    return new BiwaScheme.Pair(variable, body);
+  }
+  else {
+    var variable = sig.car;
+    var value = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"),
+                  new BiwaScheme.Pair(sig.cdr, body));
+
+    return BiwaScheme.List(variable, value);
+  }
+};
+
+BiwaScheme.Compiler.transform_internal_define = function(x){
+  // 1. Split x into definitions and expressions
+  var defs = [], item = x;
+  while (is_definition(item.car)){
+    defs.push(item.car);
+    item = item.cdr;
+  }
+  var exprs = item;
+
+  // 2. Return x if there is no definitions
+  if (defs.length == 0)
+    return x;
+  
+  // 3. Return (letrec* <bindings> <expressions>)
+  var bindings = BiwaScheme.List.apply(null, _.map(defs, define_to_lambda_bind));
+  return new BiwaScheme.Pair(BiwaScheme.Sym("letrec*"),
+           new BiwaScheme.Pair(bindings, exprs));
+};
+})();

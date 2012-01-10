@@ -24,7 +24,8 @@
 <body>
   <h1><a href='http://www.biwascheme.org/'>BiwaScheme</a> tracer</h1>
 
-  <div id="editor">;; write your code here</div>
+  <div id="editor">;; write your code here
+</div>
   <input type=button value="eval" onclick="eval_it()">
 
   <div id='bs-console'></div>
@@ -64,7 +65,10 @@
 
     dumper = new BiwaScheme.Dumper();
     BiwaScheme.Interpreter.dumper = dumper;
+
+    eval_it();
   });
+
   </script>
 </body>
 </html>

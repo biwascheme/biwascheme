@@ -431,6 +431,18 @@ describe('11.2 Definitions', {
   'function define (empty optional args)' : function(){
     ew("(define (f x y . z) z) (f 3 4)").should_be("()");
   },
+  'internal define' : function(){
+    ew("(define a 1) (define b 2) \
+        (define (x) (define a 3) (define b 4) (list a b)) \
+        (let1 result (x) \
+          (list a b result))").should_be("(1 2 (3 4))");
+  },
+  'internal define (nested)' : function(){
+    ew("(define a 1) \
+        (define (x) (define (y) (define (z) (define a 2) a) (z)) (y)) \
+        (let1 result (x) \
+          (list result a)").should_be("(2 1)");
+  }
 })
 
 
@@ -1574,9 +1586,10 @@ describe('14 Enumerators', {
           (make-enumeration '(a b c b)))").should_be("(a b c)");
   },
   'enum-set-universe': function(){
-    ew("(enum-set->list \
-          (enum-set-universe \
-            (make-enumeration '(a b c b))))").should_be("(a b c)");
+    ew("(let1 e (make-enumeration '(a b c b)) \
+          (map enum-set->list \
+            (list (enum-set-universe e) \
+                  (enum-set-universe e))))").should_be("((a b c) (a b c))");
   },
   'enum-set-indexer': function(){
     ev("((enum-set-indexer (make-enumeration '(a b c b))) \
@@ -1868,6 +1881,12 @@ describe('srfi-6 string ports', {
     ev('(let1 s (open-output-string) \
           (display "hello" s) \
           (get-output-string s))').should_be("hello");
+  }
+});
+
+describe('srfi-8 receive', {
+  'receive' : function(){
+    ev("(receive (x y) (values 1 2) (+ x y))").should_be(3);
   }
 });
 

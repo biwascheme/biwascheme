@@ -7,10 +7,17 @@ BiwaScheme.run = function(code) {
       require('util').puts(e);
     }
 
-    process.exit(1);
+    throw e;
   });
   return intp.evaluate(code);
 };
+
+BiwaScheme.run_file = function(filename, encoding/*optional*/) {
+  var enc = encoding || 'utf8';
+  var src = require('fs').readFileSync(filename, enc);
+  return BiwaScheme.run(src);
+};
+
 BiwaScheme.define_libfunc("load", 1, 1, function(ar) {
   var relpath = ar[0];
   assert_string(relpath);

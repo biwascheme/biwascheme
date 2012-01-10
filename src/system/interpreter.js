@@ -344,90 +344,6 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return a
   },
 
-  // expand macro forms (recursively)
-  expand: function(x, flag){
-    flag || (flag = {})
-    var ret = null;
-    if(x instanceof BiwaScheme.Pair){
-      switch(x.car){
-      case BiwaScheme.Sym("define"):
-        var left = x.cdr.car, exp = x.cdr.cdr;
-        ret = new BiwaScheme.Pair(BiwaScheme.Sym("define"),
-                new BiwaScheme.Pair(left, this.expand(exp, flag)));
-        break;
-      case BiwaScheme.Sym("begin"):
-        ret = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), this.expand(x.cdr, flag));
-        break;
-      case BiwaScheme.Sym("quote"):
-        ret = x;
-        break;
-      case BiwaScheme.Sym("lambda"):
-        var vars=x.cdr.car, body=x.cdr.cdr;
-        ret = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"),
-                new BiwaScheme.Pair(vars, this.expand(body, flag)));
-        break;
-      case BiwaScheme.Sym("if"):
-        var testc=x.second(), thenc=x.third(), elsec=x.fourth();
-        if (elsec == BiwaScheme.inner_of_nil){
-          elsec = BiwaScheme.undef;
-        }
-        ret = BiwaScheme.List(BiwaScheme.Sym("if"),
-                              this.expand(testc, flag),
-                              this.expand(thenc, flag),
-                              this.expand(elsec, flag));
-        break;
-      case BiwaScheme.Sym("set!"):
-        var v=x.second(), x=x.third();
-        ret = BiwaScheme.List(BiwaScheme.Sym("set!"), v, this.expand(x, flag));
-        break;
-      case BiwaScheme.Sym("call-with-current-continuation"): 
-      case BiwaScheme.Sym("call/cc"): 
-        var x=x.second();
-        ret = BiwaScheme.List(BiwaScheme.Sym("call/cc"), this.expand(x, flag));
-        break;
-      default: //apply
-        var transformer = null;
-        if(BiwaScheme.isSymbol(x.car)){
-          if(BiwaScheme.TopEnv[x.car.name] instanceof BiwaScheme.Syntax)
-            transformer = BiwaScheme.TopEnv[x.car.name];
-          else if(BiwaScheme.CoreEnv[x.car.name] instanceof BiwaScheme.Syntax)
-            transformer = BiwaScheme.CoreEnv[x.car.name];
-        }
-
-        if(transformer){
-          flag["modified"] = true;
-          ret = transformer.transform(x);
-
-//            // Debug
-//            var before = BiwaScheme.to_write(x);
-//            var after = BiwaScheme.to_write(ret);
-//            if(before != after){
-//              console.log("before: " + before)
-//              console.log("expand: " + after)
-//            }
-
-          var fl;
-          for(;;){
-            ret = this.expand(ret, fl={});
-            if(!fl["modified"]) 
-              break;
-          }
-        }
-        else{
-          var expanded_car = this.expand(x.car, flag);
-          var expanded_cdr = BiwaScheme.array_to_list(
-                               _.map(x.cdr.to_array(),
-                                     _.bind(function(item){ return this.expand(item, flag); }, this)));
-          ret = new BiwaScheme.Pair(expanded_car, expanded_cdr);
-        }
-      }
-    }
-    else{
-      ret = x;
-    }
-    return ret;
-  },
-
   evaluate: function(str, after_evaluate){
     this.parser = new BiwaScheme.Parser(str);
     this.compiler = new BiwaScheme.Compiler();
@@ -455,7 +371,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         if(expr === BiwaScheme.Parser.EOS) break;
 
         // expand
-        expr = this.expand(expr);
+        expr = BiwaScheme.Interpreter.expand(expr);
 
         // compile
         var opc = this.compiler.run(expr);
@@ -493,8 +409,99 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return opc;
   }
 });
+
+// Take a string and returns an expression.
 BiwaScheme.Interpreter.read = function(str){
   var parser = new BiwaScheme.Parser(str);
   var r      = parser.getObject();
   return (r == BiwaScheme.Parser.EOS)? BiwaScheme.eof: r;
+};
+
+// Expand macro calls in a expression recursively.
+//
+// x - expression
+// flag - used internally. do not specify this
+BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
+  var expand = BiwaScheme.Interpreter.expand;
+  flag || (flag = {})
+  var ret = null;
+
+  if(x instanceof BiwaScheme.Pair){
+    switch(x.car){
+    case BiwaScheme.Sym("define"):
+      var left = x.cdr.car, exp = x.cdr.cdr;
+      ret = new BiwaScheme.Pair(BiwaScheme.Sym("define"),
+              new BiwaScheme.Pair(left, expand(exp, flag)));
+      break;
+    case BiwaScheme.Sym("begin"):
+      ret = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), expand(x.cdr, flag));
+      break;
+    case BiwaScheme.Sym("quote"):
+      ret = x;
+      break;
+    case BiwaScheme.Sym("lambda"):
+      var vars=x.cdr.car, body=x.cdr.cdr;
+      ret = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"),
+              new BiwaScheme.Pair(vars, expand(body, flag)));
+      break;
+    case BiwaScheme.Sym("if"):
+      var testc=x.second(), thenc=x.third(), elsec=x.fourth();
+      if (elsec == BiwaScheme.inner_of_nil){
+        elsec = BiwaScheme.undef;
+      }
+      ret = BiwaScheme.List(BiwaScheme.Sym("if"),
+                            expand(testc, flag),
+                            expand(thenc, flag),
+                            expand(elsec, flag));
+      break;
+    case BiwaScheme.Sym("set!"):
+      var v=x.second(), x=x.third();
+      ret = BiwaScheme.List(BiwaScheme.Sym("set!"), v, expand(x, flag));
+      break;
+    case BiwaScheme.Sym("call-with-current-continuation"): 
+    case BiwaScheme.Sym("call/cc"): 
+      var x=x.second();
+      ret = BiwaScheme.List(BiwaScheme.Sym("call/cc"), expand(x, flag));
+      break;
+    default: //apply
+      var transformer = null;
+      if(BiwaScheme.isSymbol(x.car)){
+        if(BiwaScheme.TopEnv[x.car.name] instanceof BiwaScheme.Syntax)
+          transformer = BiwaScheme.TopEnv[x.car.name];
+        else if(BiwaScheme.CoreEnv[x.car.name] instanceof BiwaScheme.Syntax)
+          transformer = BiwaScheme.CoreEnv[x.car.name];
+      }
+
+      if(transformer){
+        flag["modified"] = true;
+        ret = transformer.transform(x);
+
+//            // Debug
+//            var before = BiwaScheme.to_write(x);
+//            var after = BiwaScheme.to_write(ret);
+//            if(before != after){
+//              console.log("before: " + before)
+//              console.log("expand: " + after)
+//            }
+
+        var fl;
+        for(;;){
+          ret = expand(ret, fl={});
+          if(!fl["modified"]) 
+            break;
+        }
+      }
+      else{
+        var expanded_car = expand(x.car, flag);
+        var expanded_cdr = BiwaScheme.array_to_list(
+                             _.map(x.cdr.to_array(),
+                                   function(item){ return expand(item, flag); }));
+        ret = new BiwaScheme.Pair(expanded_car, expanded_cdr);
+      }
+    }
+  }
+  else{
+    ret = x;
+  }
+  return ret;
 };

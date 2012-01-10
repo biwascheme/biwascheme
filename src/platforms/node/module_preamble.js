@@ -16,3 +16,6 @@ Console.p = function() {
 if(typeof(ev) != 'function') {
   eval("function ev(str){ puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }");
 }
+
+if(typeof(BiwaScheme) == "undefined") BiwaScheme = {};
+BiwaScheme.on_node = true;

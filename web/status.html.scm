@@ -145,12 +145,14 @@
              "partially (iota)")
             (6 "string port"
              "ok")
+            (8 "receive"
+             "ok")
             (13 "string utilities"
              "not yet")
             (19 "time"
              "partially")
             (27 "random"
-             "partially (random-integer)")
+             "partially (random-integer, random-real)")
             (30 "multi-line comment"
              "ok")
             (38 "write/ss"
@@ -158,7 +160,10 @@
             (43 "vector"
              "partially (vector-append)")
             (62 "s-expr comment"
-             "ok"))))
+             "ok")
+            (98 "get-environment-variable(s)"
+             "ok (on Node.js)")
+            )))
 
       (convert-file "_footer.html.scm")
     )))

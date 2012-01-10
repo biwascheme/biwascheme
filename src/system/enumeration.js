@@ -34,7 +34,6 @@ BiwaScheme.Enumeration.EnumType = BiwaScheme.Class.create({
   },
 
   // Returns an EnumSet.
-  // TODO: memoize
   universe: function(){
     return new BiwaScheme.Enumeration.EnumSet(this, this.members);
   }, 
@@ -43,7 +42,6 @@ BiwaScheme.Enumeration.EnumType = BiwaScheme.Class.create({
   // the symbol is out of the universe).
   // 
   // Implementation note: don't forget this.members may have duplicates.
-  // TODO: memoize
   indexer: function(){
     // ar[0] - a symbol
     // Returns an integer or #f.
@@ -56,7 +54,6 @@ BiwaScheme.Enumeration.EnumType = BiwaScheme.Class.create({
 
   // Retuns a function which creates an enum_set from a list of
   // symbols (Symbols may be duplicate.)
-  // TODO: memoize
   constructor: function(){
     // ar[0] - a list of symbol
     // Returns a enum_set.
@@ -71,6 +68,8 @@ BiwaScheme.Enumeration.EnumType = BiwaScheme.Class.create({
     }, this);
   }
 });
+BiwaScheme.Class.memoize(BiwaScheme.Enumeration.EnumType,
+  ["universe", "indexer", "constructor"]); 
 
 // Represents an enum_set of an enum_type.
 //
@@ -96,7 +95,6 @@ BiwaScheme.Enumeration.EnumSet = BiwaScheme.Class.create({
   },
 
   // Returns a list of symbols.
-  // TODO: memoize
   symbol_list: function(){
     return BiwaScheme.array_to_list(this.symbols); 
   },
@@ -196,6 +194,7 @@ BiwaScheme.Enumeration.EnumSet = BiwaScheme.Class.create({
     return "#<EnumSet "+BiwaScheme.inspect(this.symbols)+">";
   }
 });
+BiwaScheme.Class.memoize(BiwaScheme.Enumeration.EnumSet, "symbol_list");
 
 BiwaScheme.isEnumSet = function(obj){
   return (obj instanceof BiwaScheme.Enumeration.EnumSet);

@@ -1,30 +1,26 @@
 TODO for BiwaScheme
 ===================
 
-Inbox
------
+Next release (0.6.2)
+--------------------
 
-* passign multiple values to continuation
-  (receive a (call/cc (lambda (c) (c 1 2 3))) (display a))
-  should be (1 2 3)
+- id=biwa-script
 
-* equal should stop
-  (let ((x (list 'a 'b 'c 'a))
-      (y (list 'a 'b 'c 'a 'b 'c 'a)))
-    (set-cdr! (list-tail x 2) x)
-    (set-cdr! (list-tail y 5) y)
-    (equal? x y))
+- div id=biwa-console
+
+- .. syntax
 
 High priority
 -------------
-
-- release 0.6.1
-  - biwas (precisely, old optparse it uses) does not work on node 0.6.2
 
 - LICENCE to biwascheme(-min).js
 
 - [r6rs] Errors and conditions
 - [r6rs] library definition and loading
+
+- biwas(repl) should 'write' the result
+    > #(1 2)
+    1,2
 
 - (print (js-eval "null")) raises error (only on Node?)
   -- should think more about .to_display, .to_write, .toString, .inspect
@@ -32,6 +28,34 @@ High priority
      BiwaScheme.to_write : used by (write), etc.
      BiwaScheme.inspect : used by BiwaScheme.inspect
      .toString : used by Firebug?
+
+     display -> write <- inspect
+                 |
+                 v
+                 toString
+
+||Type   ||Source||write  ||display||inspect||toString
+||boolean||#t    ||'#t'   ||       ||       ||'true' (js)
+||nil    ||()    ||'()'   ||       ||       ||'nil'
+||number ||1     ||'1'    ||       ||       ||'1' (js)
+||symbol ||'a    ||'a'    ||       ||       ||'\'a'
+||string ||"a"   ||'"a"'  ||'a'    ||       ||'"a"' or "'a'" (js)
+||char   ||#\a   ||'#\a'  ||'a'    ||[write]||
+
+||vector ||#(1 2)||"#(1 2)"||      ||       ||"1,2" (js)
+||pair   ||'("a")||'("a"')"||      ||inspect||[inspect]
+
+||function||(js-clojure f)||"#<...>"||
+
+||enum-set ||e||          ||       ||       ||"#<...>"
+||hashtable||h||"#<...>"  ||       ||       ||
+||record   ||r||"#<...>"  ||       ||       ||
+||port     ||p||"#<...>"  ||       ||"#<...>"||
+
+||undef  ||     ||        ||       ||       ||"#<undef>"
+
+||null   ||(js-eval "null")||"#<null>" || || ||<js error>
+||undefined||(js-eval "undefined")||"#<undefined>" || || ||<js error>
 
 - unbound variable reference in define-macro returns undefined
   (yhara/#15)
@@ -45,18 +69,11 @@ Middle priority
    - maybe should use assert_procedure
    - rename assert_closure to assert_lambda?
 
--- new syntax: ..
-
--- better parser (for missing syntaxes)
-   * #\vtab, etc.
-   * #b, #o
-   * a program "1;;" raises error: unbound symbol: '1;;'
-
--- id="biwa-script"
-
 -- fix leaking variables
 
 -- dynamic-wind
+
+-- handle error on biwas(REPL)
 
 Low priority
 ------------
@@ -74,54 +91,49 @@ Low priority
 
 --- combination of with-output-to-port and values
 
-Things other than code
-----------------------
+--- better parser (for missing syntaxes)
+   * #\vtab, etc.
+   * #b, #o
+   * a program "1;;" raises error: unbound symbol: '1;;'
+   * Regexp literal (#/foo/)
+
+--- list-sort with compare function 
+    implement quick sort in CPS
+
+Website 
+-------
 
 -- reference
 
---- move website to Heroku?
- --- because some tests needs server-side program
+--- make test/browser_functions/ online
+  --- merge server.js to web.js?
+
+-- better example for index.html
+  (display "hello") does not work without #bs-console
+
+-- provide compiled older versions of biwascheme.js
+
+--- better css 
+  * same header for demos, tracer, etc (frame?)
 
 Refactoring and maintenance
 ---------------------------
 
---- move package.json to root and remove node_modules/ ?
-
---- try http://visionmedia.github.com/mocha/ ?
-
---- rename src/system/foo.js to _foo.js when class Foo is not defined
-    * types.js
-    * value.js
-    * write.js
-    * \_nodejs.js
-
-    * stackbase.js
-      * puts, p
-      * TopEnv, CoreEnv
-      * Error, Bug, UserError
-
---- BiwaScheme.memoize
-    eg.
-      BiwaScheme.memoize(BiwaScheme.Enumeration.EnumType.prototype, "_universe"); 
-
-      Original function:
-        constructor: function(){
-          return function(ar){
-          };
-        }
-
-      Memoizer:
-        memoize = function(obj, name){
-          obj["compute_"+name] = obj[name];
-          obj[name] = function(/*arguments*/){
-            if(!obj.hasOwnProperty("cached_"+name)){
-              obj["cached_"+name] = obj["compute_"+name].apply(TODO, arguments);
-            }
-            return obj["cached_"+name];
-          }
-        }
-
-     File:
-       src/system/class.js?
+--- remove _types.js
 
 --- remove test/console_test.js
+
+May need fix
+------------
+
+* passing multiple values to continuation
+  (receive a (call/cc (lambda (c) (c 1 2 3))) (display a))
+  should be (1 2 3)
+
+* equal should stop
+  (let ((x (list 'a 'b 'c 'a))
+      (y (list 'a 'b 'c 'a 'b 'c 'a)))
+    (set-cdr! (list-tail x 2) x)
+    (set-cdr! (list-tail y 5) y)
+    (equal? x y))
+

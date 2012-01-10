@@ -18,6 +18,11 @@ BiwaScheme.isSymbol = function(obj){
   return (obj instanceof BiwaScheme.Symbol);
 };
 
+BiwaScheme.isTheSymbol = function(name, obj){
+  return (obj instanceof BiwaScheme.Symbol) &&
+         (obj.name == name);
+};
+
 BiwaScheme.isPort = function(obj){
   return (obj instanceof BiwaScheme.Port);
 };
@@ -27,6 +32,7 @@ BiwaScheme.isPair = function(obj){
   return (obj instanceof BiwaScheme.Pair);
 };
 
+// Returns true if obj is '() or all the cdr's are list.
 // Note: isList returns true for '()
 BiwaScheme.isList = function(obj){
     if(obj === BiwaScheme.nil) return true; // null base case
