@@ -34,3 +34,9 @@ BiwaScheme.nil = {
 //
 BiwaScheme.undef = new Object();
 BiwaScheme.undef.toString = function(){ return "#<undef>"; }
+
+// Prints the arguments to console.debug.
+BiwaScheme.debug = function(/*arguments*/){
+  var args = _.toArray(arguments);
+  console.debug.apply(console, _.map(args, BiwaScheme.inspect));
+}
