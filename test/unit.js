@@ -1773,6 +1773,12 @@ describe('js interface', {
 describe(';; src/library/webscheme_lib.js', {});
 
 describe('browser functions', {
+  '$' : function(){
+    ev('($ "#div1")').should_be($("#div1"));
+    ev('($ ".inner" ($ "#div1"))').should_be($(".inner", $("#div1")));
+    ev('($ "#div17")').should_be(false);
+    ev('($ ".inner" ($ "#div17"))').should_be(false);
+  },
   'element-empty!' : function(){
     scm_eval('(element-empty! ($ "#div1"))');
     expect( $("#div1").html() ).should_be("");

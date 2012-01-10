@@ -317,6 +317,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
 
   BiwaScheme.getelem = function(ar){
+    // account for getelem returning false when no results (and that getting passed back in)
+    if (ar.length > 1 && ar[1] === false) {
+      ar[1] = [];
+    }
+
     var x = $.apply(this, ar);
     if (x.length > 0) {
       return x;
