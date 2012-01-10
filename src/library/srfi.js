@@ -75,10 +75,10 @@ with(BiwaScheme) {
     var expression = x.cdr.cdr.car;
     var body       = x.cdr.cdr.cdr;
     
-    return BiwaScheme.List(Sym("call-with-values"),
+    return deep_array_to_list([Sym("call-with-values"),
       [Sym("lambda"), BiwaScheme.nil, expression],
       new BiwaScheme.Pair(Sym("lambda"),
-        new BiwaScheme.Pair(formals, body)));
+        new BiwaScheme.Pair(formals, body))]);
   });
 
   // srfi-19 (time)
