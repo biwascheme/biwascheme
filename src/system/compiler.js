@@ -312,30 +312,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
           return ["constant", obj, next];
 
         case BiwaScheme.Sym("lambda"):
-          // x = '(lambda (x y) x y)
-          // x = '(lambda vars x y)
-          if(x.length() < 3)
-              throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
-
-          var vars = x.cdr.car;
-          var body = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr); //tenuki
-
-          var dotpos = this.find_dot_pos(vars);
-          var proper = this.dotted2proper(vars);
-          var free = this.find_free(body, proper.to_set(), f); //free variables
-          var sets = this.find_sets(body, proper.to_set()); //local variables
-
-          var do_body = this.compile(body,
-                          [proper.to_set(), free],
-                          sets.set_union(s.set_intersect(free)),
-                          f.set_union(proper.to_set()),
-                          ["return"]);
-          var do_close = ["close", 
-                           free.size(),
-                           this.make_boxes(sets, proper, do_body),
-                           next,
-                           dotpos];
-          return this.collect_free(free, e, do_close);
+          return this._compile_lambda(x, e, s, f, next);
 
         case BiwaScheme.Sym("if"):
           if(x.length() < 3 || x.length() > 4)
@@ -453,6 +430,34 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
     }
 
     return [x, next];
+  },
+
+  // Compiles "lambda".
+  _compile_lambda: function(x, e, s, f, next){
+    // x = '(lambda (x y) x y)
+    // x = '(lambda vars x y)
+    if(x.length() < 3)
+        throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
+
+    var vars = x.cdr.car;
+    var body = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr); //tenuki
+
+    var dotpos = this.find_dot_pos(vars);
+    var proper = this.dotted2proper(vars);
+    var free = this.find_free(body, proper.to_set(), f); //free variables
+    var sets = this.find_sets(body, proper.to_set()); //local variables
+
+    var do_body = this.compile(body,
+                    [proper.to_set(), free],
+                    sets.set_union(s.set_intersect(free)),
+                    f.set_union(proper.to_set()),
+                    ["return"]);
+    var do_close = ["close", 
+                     free.size(),
+                     this.make_boxes(sets, proper, do_body),
+                     next,
+                     dotpos];
+    return this.collect_free(free, e, do_close);
   },
 
   run: function(expr){
