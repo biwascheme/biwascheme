@@ -215,6 +215,10 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
       return ret;
   },
 
+  // Returns the position of the dot pair.
+  // Returns -1 if x is a proper list.
+  //
+  // eg. (a b . c) -> 2
   find_dot_pos: function(x){
     var idx = 0;
     for (; x instanceof BiwaScheme.Pair; x = x.cdr, ++idx)
@@ -234,7 +238,9 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
     return x;
   },
 
-  // dotted list -> proper list
+  // Takes an dotted list and returns proper list.
+  //
+  // eg. (x y . z) -> (x y z)
   dotted2proper: function(ls){
     var nreverse = function(ls){
       var res = BiwaScheme.nil;
@@ -432,20 +438,22 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
     return [x, next];
   },
 
-  // Compiles "lambda".
+  // Compiles various forms of "lambda".
+  //
+  // * (lambda (x y) ...)
+  // * (lambda (x y . rest) ...)
+  // * (lambda args ...)
   _compile_lambda: function(x, e, s, f, next){
-    // x = '(lambda (x y) x y)
-    // x = '(lambda vars x y)
     if(x.length() < 3)
-        throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
+      throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
 
     var vars = x.cdr.car;
-    var body = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr); //tenuki
+    var body = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr);
 
     var dotpos = this.find_dot_pos(vars);
     var proper = this.dotted2proper(vars);
     var free = this.find_free(body, proper.to_set(), f); //free variables
-    var sets = this.find_sets(body, proper.to_set()); //local variables
+    var sets = this.find_sets(body, proper.to_set());    //local variables
 
     var do_body = this.compile(body,
                     [proper.to_set(), free],
