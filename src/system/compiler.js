@@ -1,6 +1,7 @@
 ///
 /// Compiler
 ///
+/// Note: macro expansion is done by Intepreter#expand
 
 BiwaScheme.Compiler = BiwaScheme.Class.create({
   initialize: function(){
@@ -278,55 +279,17 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
 
     while(1){
       if(x instanceof BiwaScheme.Symbol){
+        // Variable reference
+        // compiled into refer-(local|free|global)
         return this.compile_refer(x, e, (s.member(x) ? ["indirect", next] : next));
       }
       else if(x instanceof BiwaScheme.Pair){
         switch(x.first()){
         case BiwaScheme.Sym("define"):
-          // (define) ; => error
-          // (define x 1 2) ; => error
-          // x = (define <variable> <expression>)        : defines a variable
-          // x = (define <variable>)                     : defines a variable with unspecified value
-          // x = (define (<variable> <formals>) <body>)  : defines a function
-          // x = (define (<variable> . <formal>) <body>) : defines a function with arbitary numbers of args
+          ret = this._compile_define(x, next);
 
-          if(x.length() == 1) { // i.e. (define)
-            throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
-          }
-
-          var left = x.cdr.car;
-          var exp  = x.cdr.cdr;
-          
-          //define variable
-          if(left instanceof BiwaScheme.Symbol){    
-            if (exp === BiwaScheme.nil) {
-              // eg. (define a)
-              x = BiwaScheme.undef;
-            }
-            else {
-              if (exp.cdr !== BiwaScheme.nil) {
-                // eg. (define a 1 2)
-                throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
-              }
-              // eg. (define a 1)
-              x = exp.car;
-            }
-
-            BiwaScheme.TopEnv[left.name] = BiwaScheme.undef;
-            next = ["assign-global", left.name, next]; //should raise for improper list?
-          }
-          //define function 
-          else if(left instanceof BiwaScheme.Pair){ 
-            var fname=left.car, args=left.cdr;
-            var lambda = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"), new BiwaScheme.Pair(args, exp));
-            x = lambda;
-            BiwaScheme.TopEnv[fname.name] = BiwaScheme.undef;
-            next = ["assign-global", fname.name, next];
-          }
-          //error
-          else{                          
-            throw new BiwaScheme.Error("compile: define needs a leftbol or pair: got "+left);
-          }
+          x = ret[0];
+          next = ret[1];
           break;
 
         case BiwaScheme.Sym("begin"):
@@ -443,10 +406,62 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
 //      else
 //        return ret;
   },
+
+  // Compile (define ...)
+  //
+  // (define) ; => error
+  // (define x 1 2) ; => error
+  // x = (define <variable> <expression>)        : defines a variable
+  // x = (define <variable>)                     : defines a variable with unspecified value
+  // x = (define (<variable> <formals>) <body>)  : defines a function
+  // x = (define (<variable> . <formal>) <body>) : defines a function with arbitary numbers of args
+  _compile_define: function(x, next){
+    if(x.length() == 1) { // i.e. (define)
+      throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
+    }
+
+    var left = x.cdr.car;
+    var exp  = x.cdr.cdr;
+    
+    //define variable
+    if(left instanceof BiwaScheme.Symbol){    
+      if (exp === BiwaScheme.nil) {
+        // eg. (define a)
+        x = BiwaScheme.undef;
+      }
+      else {
+        if (exp.cdr !== BiwaScheme.nil) {
+          // eg. (define a 1 2)
+          throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
+        }
+        // eg. (define a 1)
+        x = exp.car;
+      }
+
+      BiwaScheme.TopEnv[left.name] = BiwaScheme.undef;
+      next = ["assign-global", left.name, next]; //should raise for improper list?
+    }
+    //define function 
+    else if(left instanceof BiwaScheme.Pair){ 
+      var fname=left.car, args=left.cdr;
+      var lambda = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"), new BiwaScheme.Pair(args, exp));
+      x = lambda;
+      BiwaScheme.TopEnv[fname.name] = BiwaScheme.undef;
+      next = ["assign-global", fname.name, next];
+    }
+    //error
+    else{                          
+      throw new BiwaScheme.Error("compile: define needs a leftbol or pair: got "+left);
+    }
+
+    return [x, next];
+  },
+
   run: function(expr){
     return this.compile(expr, [new BiwaScheme.Set(), new BiwaScheme.Set()], new BiwaScheme.Set(), new BiwaScheme.Set(), ["halt"]);
   }
 });
+
 BiwaScheme.Compiler.compile = function(expr, next){
   expr = (new BiwaScheme.Interpreter).expand(expr);
   return (new BiwaScheme.Compiler).run(expr, next);
