@@ -9,6 +9,7 @@
       - functions and syntaxes:
         - element-has-class-name?, element-add-class-name (fixed),
           element-remove-class-name, element-toggle-class-name
+          element-select
         - js-load (in Node)
         - receive
       - Node:

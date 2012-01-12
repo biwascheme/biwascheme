@@ -80,8 +80,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("element-next", 3, 3, function(ar){
     throw new Bug("not yet implemented");
   });
-  define_libfunc("element-select", 0, 0, function(ar){
-    throw new Bug("not yet implemented");
+  define_libfunc("element-select", 1, 1, function(ar){
+    $(ar[0]).select();
   });
   define_libfunc("element-adjacent", 0, 0, function(ar){
     throw new Bug("not yet implemented");
