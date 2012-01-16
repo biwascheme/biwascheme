@@ -4,6 +4,7 @@
       - upgraded from jQuery 1.6.2 to 1.7.1
       - switched inspected strings to be double-quoted instead of single-quoted
       - $ and getelem functions can now take 1 or 2 arguments like in jQuery (second optional argument is the scope to search for the selector in)
+      - scoped assertion helpers to BiwaScheme (assert_string, etc)
 
   * new:
       - functions and syntaxes:

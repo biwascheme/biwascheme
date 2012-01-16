@@ -59,16 +59,16 @@ BiwaScheme.define_scmfunc = function(fname, min, max, str){
 //
 // assertions - type checks
 //
-var make_assert = function(check){
+BiwaScheme.make_assert = function(check){
   return function(/*args*/){
     var fname = arguments.callee.caller
-                  ? arguments.callee.caller.fname 
+                  ? arguments.callee.caller.fname
                   : "";
     check.apply(this, [fname].concat(_.toArray(arguments)));
   }
 }
-var make_simple_assert = function(type, test, _fname){
-  return make_assert(function(fname, obj, opt){
+BiwaScheme.make_simple_assert = function(type, test, _fname){
+  return BiwaScheme.make_assert(function(fname, obj, opt){
     if(_fname) fname = _fname;
     option = opt ? ("("+opt+")") : ""
     if(!test(obj)){
@@ -79,19 +79,19 @@ var make_simple_assert = function(type, test, _fname){
   })
 }
 
-var assert_number = make_simple_assert("number", function(obj){
+BiwaScheme.assert_number = BiwaScheme.make_simple_assert("number", function(obj){
   return typeof(obj) == 'number' || (obj instanceof BiwaScheme.Complex);
 });
 
-var assert_integer = make_simple_assert("integer", function(obj){
+BiwaScheme.assert_integer = BiwaScheme.make_simple_assert("integer", function(obj){
   return typeof(obj) == 'number' && (obj % 1 == 0)
 });
 
-var assert_real = make_simple_assert("real number", function(obj){
+BiwaScheme.assert_real = BiwaScheme.make_simple_assert("real number", function(obj){
   return typeof(obj) == 'number';
 });
 
-var assert_between = make_assert(function(fname, obj, from, to){
+BiwaScheme.assert_between = BiwaScheme.make_assert(function(fname, obj, from, to){
   if( typeof(obj) != 'number' || obj != Math.round(obj) ){
     throw new BiwaScheme.Error(fname + ": " +
                                "number required, but got " +
@@ -99,51 +99,51 @@ var assert_between = make_assert(function(fname, obj, from, to){
   }
 
   if( obj < from || to < obj ){
-    throw new BiwaScheme.Error(fname + ": " + 
-                               "number must be between " + 
+    throw new BiwaScheme.Error(fname + ": " +
+                               "number must be between " +
                                from + " and " + to + ", but got " +
                                BiwaScheme.to_write(obj));
   }
 });
 
-var assert_string = make_simple_assert("string", _.isString);
+BiwaScheme.assert_string = BiwaScheme.make_simple_assert("string", _.isString);
 
-var assert_char = make_simple_assert("character", BiwaScheme.isChar);
-var assert_symbol = make_simple_assert("symbol", BiwaScheme.isSymbol);
-var assert_port = make_simple_assert("port", BiwaScheme.isPort);
-var assert_pair = make_simple_assert("pair", BiwaScheme.isPair);
-var assert_list = make_simple_assert("list", BiwaScheme.isList);
-var assert_vector = make_simple_assert("vector", BiwaScheme.isVector);
+BiwaScheme.assert_char = BiwaScheme.make_simple_assert("character", BiwaScheme.isChar);
+BiwaScheme.assert_symbol = BiwaScheme.make_simple_assert("symbol", BiwaScheme.isSymbol);
+BiwaScheme.assert_port = BiwaScheme.make_simple_assert("port", BiwaScheme.isPort);
+BiwaScheme.assert_pair = BiwaScheme.make_simple_assert("pair", BiwaScheme.isPair);
+BiwaScheme.assert_list = BiwaScheme.make_simple_assert("list", BiwaScheme.isList);
+BiwaScheme.assert_vector = BiwaScheme.make_simple_assert("vector", BiwaScheme.isVector);
 
-var assert_hashtable = make_simple_assert("hashtable",
+BiwaScheme.assert_hashtable = BiwaScheme.make_simple_assert("hashtable",
                                           BiwaScheme.isHashtable);
-var assert_mutable_hashtable = make_simple_assert("mutable hashtable", 
+BiwaScheme.assert_mutable_hashtable = BiwaScheme.make_simple_assert("mutable hashtable",
                                             BiwaScheme.isMutableHashtable);
 
-var assert_record = make_simple_assert("record",
+BiwaScheme.assert_record = BiwaScheme.make_simple_assert("record",
                                           BiwaScheme.isRecord);
-var assert_record_td = make_simple_assert("record type descriptor",
+BiwaScheme.assert_record_td = BiwaScheme.make_simple_assert("record type descriptor",
                                           BiwaScheme.isRecordTD);
-var assert_record_cd = make_simple_assert("record constructor descriptor",
+BiwaScheme.assert_record_cd = BiwaScheme.make_simple_assert("record constructor descriptor",
                                           BiwaScheme.isRecordCD);
-var assert_enum_set = make_simple_assert("enum_set",
+BiwaScheme.assert_enum_set = BiwaScheme.make_simple_assert("enum_set",
                                           BiwaScheme.isEnumSet);
 
-var assert_function = make_simple_assert("JavaScript function", 
+BiwaScheme.assert_function = BiwaScheme.make_simple_assert("JavaScript function",
                                          _.isFunction);
-var assert_closure = make_simple_assert("scheme function", 
+BiwaScheme.assert_closure = BiwaScheme.make_simple_assert("scheme function",
                                         BiwaScheme.isClosure);
-var assert_procedure = make_simple_assert("scheme/js function", function(obj){
+BiwaScheme.assert_procedure = BiwaScheme.make_simple_assert("scheme/js function", function(obj){
   return BiwaScheme.isClosure(obj) || _.isFunction(obj);
 });
 
-var assert_date = make_simple_assert("date", function(obj){
+BiwaScheme.assert_date = BiwaScheme.make_simple_assert("date", function(obj){
   // FIXME: this is not accurate (about cross-frame issue)
   // https://prototype.lighthouseapp.com/projects/8886/tickets/443
   return obj instanceof Date;
 });
 
-//var assert_instance_of = make_assert(function(fname, type, obj, klass){
+//var assert_instance_of = BiwaScheme.make_assert(function(fname, type, obj, klass){
 //  if(!(obj instanceof klass)){
 //    throw new BiwaScheme.Error(fname + ": " +
 //                               type + " required, but got " +
@@ -151,7 +151,7 @@ var assert_date = make_simple_assert("date", function(obj){
 //  }
 //});
 
-var assert = make_assert(function(fname, success, message, _fname){
+BiwaScheme.assert = BiwaScheme.make_assert(function(fname, success, message, _fname){
   if(!success){
     throw new BiwaScheme.Error((_fname || fname)+": "+message);
   }

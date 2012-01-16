@@ -20,7 +20,7 @@ BiwaScheme.run_file = function(filename, encoding/*optional*/) {
 
 BiwaScheme.define_libfunc("load", 1, 1, function(ar) {
   var relpath = ar[0];
-  assert_string(relpath);
+  BiwaScheme.assert_string(relpath);
   // assume path is relative to node_modules directory
   var filename = __dirname + "/../../../" + relpath;
   var code = require("fs").readFileSync(filename, "utf8");
@@ -29,7 +29,7 @@ BiwaScheme.define_libfunc("load", 1, 1, function(ar) {
 
 BiwaScheme.define_libfunc("js-load", 1, 1, function(ar) {
   var relpath = ar[0];
-  assert_string(relpath);
+  BiwaScheme.assert_string(relpath);
   // assume path is relative to node_modules directory
   return require(__dirname + "/../../../" + relpath);
 });

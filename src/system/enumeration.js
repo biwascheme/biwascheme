@@ -46,7 +46,7 @@ BiwaScheme.Enumeration.EnumType = BiwaScheme.Class.create({
     // ar[0] - a symbol
     // Returns an integer or #f.
     return _.bind(function(ar){
-      assert_symbol(ar[0], "(enum-set indexer)");
+      BiwaScheme.assert_symbol(ar[0], "(enum-set indexer)");
       var idx = _.indexOf(this.members, ar[0]);
       return (idx === -1) ? false : idx;
     }, this);
@@ -58,10 +58,10 @@ BiwaScheme.Enumeration.EnumType = BiwaScheme.Class.create({
     // ar[0] - a list of symbol
     // Returns a enum_set.
     return _.bind(function(ar){
-      assert_list(ar[0], "(enum-set constructor)");
+      BiwaScheme.assert_list(ar[0], "(enum-set constructor)");
       var symbols = ar[0].to_array();
       _.each(symbols, function(arg){
-        assert_symbol(arg, "(enum-set constructor)");
+        BiwaScheme.assert_symbol(arg, "(enum-set constructor)");
       });
 
       return new BiwaScheme.Enumeration.EnumSet(this, symbols);

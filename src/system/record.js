@@ -11,7 +11,7 @@
 //
 BiwaScheme.Record = BiwaScheme.Class.create({
   initialize: function(rtd, values){
-    assert_record_td(rtd, "new Record");
+    BiwaScheme.assert_record_td(rtd, "new Record");
 
     this.rtd = rtd;
     this.fields = values;
@@ -143,7 +143,7 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
     // called with `p' as an argument
     return function(ar){
       var p = ar[0];
-      assert_procedure(p, "_default_protocol/base");
+      BiwaScheme.assert_procedure(p, "_default_protocol/base");
       return p;
     };
   },
@@ -156,7 +156,7 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
     var rtd = this.rtd;
     return function(ar){
       var n = ar[0];
-      assert_procedure(n, "_default_protocol/n");
+      BiwaScheme.assert_procedure(n, "_default_protocol/n");
 
       var ctor = function(args){
         var my_argc = rtd.fields.length;
@@ -168,12 +168,12 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
         // (n a b x y) => p
         return new BiwaScheme.Call(n, ancestor_values, function(ar){
           var p = ar[0];
-          assert_procedure(p, "_default_protocol/p");
+          BiwaScheme.assert_procedure(p, "_default_protocol/p");
 
           // (p s t) => record
           return new BiwaScheme.Call(p, my_values, function(ar){
             var record = ar[0];
-            assert_record(record, "_default_protocol/result");
+            BiwaScheme.assert_record(record, "_default_protocol/result");
 
             return record;
           });
@@ -194,7 +194,7 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
 
     return new BiwaScheme.Call(this.protocol, [arg_for_protocol], function(ar){
       var ctor = ar[0];
-      assert_procedure(ctor, "record_constructor");
+      BiwaScheme.assert_procedure(ctor, "record_constructor");
       return ctor;
     });
   },
@@ -224,11 +224,11 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
 
           return new BiwaScheme.Call(parent_cd.protocol, [parent_n], function(ar){
             var ctor = ar[0];
-            assert_procedure(ctor, "_make_n");
+            BiwaScheme.assert_procedure(ctor, "_make_n");
 
             return new BiwaScheme.Call(ctor, args_for_n, function(ar){
               var record = ar[0];
-              assert_record(record);
+              BiwaScheme.assert_record(record);
               return record;
             });
           });
