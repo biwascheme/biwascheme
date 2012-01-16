@@ -1,5 +1,5 @@
 var _ = require('underscore');
-_.mixin(require('underscore.string'));
+_.str = require('underscore.string');
 
 var Console = {};
 Console.puts = function(str, no_newline) {
@@ -19,3 +19,5 @@ if(typeof(ev) != 'function') {
 
 if(typeof(BiwaScheme) == "undefined") BiwaScheme = {};
 BiwaScheme.on_node = true;
+BiwaScheme._ = _;
+BiwaScheme.Console = Console;

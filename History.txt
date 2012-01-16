@@ -15,6 +15,7 @@
         - receive
       - Node:
         - BiwaScheme.run_file
+        - underscore.js is available at BiwaScheme._, underscore.string at BiwaScheme._.str
 
   * fix:
       - added underscore & underscore.string to deps (fixed unit tests & parts of webscheme lib)
