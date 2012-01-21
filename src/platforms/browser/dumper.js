@@ -26,10 +26,11 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
   },
 
   dump_pad: "&nbsp;&nbsp;&nbsp;",
-  dump_opc: function(obj, level){
+  dump_opc: function(obj, level, nested){
     var s="";
     var pad1="", pad2="";
     var level = level || 0;
+    var nested = nested || false;
     _.times(level, _.bind(function(){ pad1 += this.dump_pad; }, this));
     _.times((level+1), _.bind(function(){ pad2 += this.dump_pad; }, this));
 
@@ -46,7 +47,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     if(i < obj.length) s += '<br>\n';
     for(; i<obj.length; i++){
       if(this.is_opc(obj[i])){
-        s += this.dump_opc(obj[i], (i == obj.length-1 ? level : level+1));
+        s += this.dump_opc(obj[i], (i == obj.length-1 ? level : level+1), true);
       }
       else{
         s += (i == obj.length-1) ? pad1 : pad2;
@@ -55,7 +56,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       if(i != obj.length-1) s += "<br>\n";
     }
     s += "]";
-    return (level==0 ? this.add_fold(s) : s);
+    return (nested ? s : this.add_fold(s));
   },
 
   fold_limit: 20,
