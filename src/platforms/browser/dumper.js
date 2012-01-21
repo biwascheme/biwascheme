@@ -66,7 +66,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     if(lines.length > this.fold_limit){
       var fold_btn   = " <span style='text-decoration:underline; color:blue; cursor:pointer;'" +
                            "onclick='BiwaScheme.Dumper.toggle_fold("+this.n_folds+")'>more</span>";
-      var fold_start = "<div style='display:none' id='fold"+this.n_folds+"'>";
+      var fold_start = "<div style='display:none' class='fold"+this.n_folds+"'>";
       var fold_end   = "</div>";
       this.n_folds++;
       return [
@@ -152,7 +152,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
 
       // header
       s += "<tr><td colspan='4'>" + 
-           "<a href='#' id='dump_" + this.n_dumps + "_header'>" +
+           "<a href='#' class='header'>" +
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
@@ -179,11 +179,11 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     else{
       s = _.escape(BiwaScheme.inspect(obj)) + "<br>\n";
     }
-    var dumpitem = $("<div/>", { id: ("dump" + this.n_dumps) });
+    var dumpitem = $("<div/>", { class: ("dump" + this.n_dumps) });
     dumpitem.html(s);
     $(this.dumparea).append(dumpitem);
     (_.bind(function(n){
-      $("#dump_"+this.n_dumps+"_header").click(_.bind(function(){
+        $(".header", this.dump_el(this.n_dumps)).click(_.bind(function(){
         this.dump_move_to(n);
         this.dump_fold();
       }, this));
@@ -195,34 +195,37 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
   //
   // UI
   //
+  dump_el: function(n) {
+    return $(".dump"+n, this.dumparea);
+  },
   dump_move_to: function(n){
     if (0 <= n && n <= this.n_dumps){
-      $("#dump"+this.cur).hide();
+      this.dump_el(this.cur).hide();
       this.cur = n;
-      $("#dump"+this.cur).show();
+      this.dump_el(this.cur).show();
     }
   },
 
   dump_move: function(dir){
     if(0 <= this.cur && this.cur < this.n_dumps)
-      $("#dump"+this.cur).hide();
+      this.dump_el(this.cur).hide();
 
     if(0 <= this.cur+dir && this.cur+dir < this.n_dumps)
       this.cur += dir;
 
-    $("#dump"+this.cur).show();
+    this.dump_el(this.cur).show();
   },
 
   dump_fold: function(){
     for(var i=0; i<this.n_dumps; i++)
-      if(i!=this.cur) $("#dump"+i).hide();
+      if(i!=this.cur) this.dump_el(i).hide();
 
     this.is_folded = true;
   },
 
   dump_unfold: function(){
     for(var i=0; i<this.n_dumps; i++)
-      $("#dump"+i).show();
+      this.dump_el(i).show();
 
     this.is_folded = false;
   },
@@ -237,5 +240,5 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
 } // with(BiwaScheme);
 
 BiwaScheme.Dumper.toggle_fold = function(n){
-  $("#fold"+n).toggle();
+  $(".fold"+n, this.dumparea).toggle();
 };
