@@ -70,7 +70,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       this.n_folds++;
       return [
         lines.slice(0, this.fold_limit).join("<br>"), fold_btn,
-        fold_start, lines.slice(this.fold_limit+1).join("<br>"), fold_end
+        fold_start, lines.slice(this.fold_limit).join("<br>"), fold_end
       ].join("");
     }
     else{
