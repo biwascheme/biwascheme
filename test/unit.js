@@ -1797,6 +1797,25 @@ describe('browser functions', {
     $("#div1").hide();
     scm_eval('(element-show! ($ "#div1"))');
     expect( $("#div1").is(":visible") ).should_be(true);
+  },
+  'add-handler!' : function(){
+    root.call_count = 0;
+    root.record_call = function() { root.call_count += 1 };
+    scm_eval('(add-handler! ($ "#div1") "click" (lambda () (js-eval "record_call()")))');
+    expect( root.call_count ).should_be(0);
+    $("#div1").click();
+    expect( root.call_count ).should_be(1);
+    $("#div1").click();
+    expect( root.call_count ).should_be(2);
+    $("#div1").unbind("click");
+  },
+  'remove-handler!' : function(){
+    root.call_count = 0;
+    root.record_call = function() { console.log("click"); root.call_count += 1 };
+    scm_eval('(remove-handler! ($ "#div1") "click" (add-handler! ($ "#div1") "click" (lambda () (js-eval "record_call()"))))');
+    expect( root.call_count ).should_be(0);
+    $("#div1").click();
+    expect( root.call_count ).should_be(0);
   }
 });
 

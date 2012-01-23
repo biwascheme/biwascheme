@@ -13,6 +13,7 @@
           element-select
         - js-load (in Node)
         - receive
+        - remove-handler! (also, add-handler! now returns a reference to the handler function so that it can be passed to remove-handler!)
       - Node:
         - BiwaScheme.run_file
         - underscore.js is available at BiwaScheme._, underscore.string at BiwaScheme._.str

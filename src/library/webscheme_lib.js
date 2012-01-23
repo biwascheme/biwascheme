@@ -363,10 +363,17 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("add-handler!", 3, 3, function(ar, intp){
     var selector = ar[0], evtype = ar[1], proc = ar[2];
     var on_error = intp.on_error;
-    $(selector).bind(evtype, function(event){
+    var handler = function(event){
       var intp = new Interpreter(on_error);
       return intp.invoke_closure(proc, [event]);
-    });
+    };
+    $(selector).bind(evtype, handler);
+    return handler;
+  });
+  define_libfunc("remove-handler!", 3, 3, function(ar, intp){
+    var selector = ar[0], evtype = ar[1], handler = ar[2];
+    var on_error = intp.on_error;
+    $(selector).unbind(evtype, handler);
     return BiwaScheme.undef;
   });
   define_libfunc("wait-for", 2, 2, function(ar){
