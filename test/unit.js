@@ -1789,12 +1789,12 @@ describe('browser functions', {
     expect( $("#div1").html() ).should_be("");
   },
   'element-hide!' : function(){
-    $("div1").show();
+    $("#div1").show();
     scm_eval('(element-hide! ($ "#div1"))');
     expect( $("#div1").is(":visible") ).should_be(false);
   },
   'element-show!' : function(){
-    $("div1").hide();
+    $("#div1").hide();
     scm_eval('(element-show! ($ "#div1"))');
     expect( $("#div1").is(":visible") ).should_be(true);
   }
