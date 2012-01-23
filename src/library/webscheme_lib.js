@@ -372,7 +372,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("remove-handler!", 3, 3, function(ar, intp){
     var selector = ar[0], evtype = ar[1], handler = ar[2];
-    var on_error = intp.on_error;
     $(selector).unbind(evtype, handler);
     return BiwaScheme.undef;
   });
