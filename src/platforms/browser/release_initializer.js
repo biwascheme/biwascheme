@@ -15,6 +15,8 @@
     if (dumper) {
       dumper.dump(state);
       dumper.dump_move(1);
+    } else if (typeof(console) !== "undefined" && console.error) {
+      console.error(e.message);
     } else {
       throw(e);
     }
