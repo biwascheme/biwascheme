@@ -7,6 +7,9 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     this.stack = [] //(make-vector 1000)
     this.on_error = on_error || function(e){};
     this.after_evaluate = function(){};
+    this.last_refer = null;
+    this.call_stack = [];
+    this.tco_counter = [];
   },
 
   inspect: function(){
@@ -96,6 +99,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
       ret = this._execute(a, x, f, c, s);
     }
     catch(e){
+      e.message = e.message + " [" + this.call_stack.join(", ") + "]";
       var state = {a:a, x:x, f:f, c:c, s:s, stack:this.stack};
       return this.on_error(e, state);
     }
@@ -141,10 +145,12 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
       case "refer-local":
         var n=x[1], x=x[2];
         a = this.index(f, n);
+        this.last_refer = "(anon)";
         break;
       case "refer-free":
         var n=x[1], x=x[2];
         a = c[n+1];
+        this.last_refer = "(anon)";
         break;
       case "refer-global":
         var sym=x[1], x=x[2];
@@ -156,6 +162,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
           throw new BiwaScheme.Error("execute: unbound symbol: "+BiwaScheme.inspect(sym));
 
         a = val;
+        this.last_refer = sym || "(anon)";
         break;
       case "indirect":
         var x=x[1];
@@ -212,6 +219,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         var ret = x[2];
         x = x[1];
         s = this.push(ret, this.push(f, this.push(c, s)));
+        this.tco_counter[this.tco_counter.length] = 0;
         break;
       case "argument":
         var x=x[1];
@@ -225,8 +233,13 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
 
         s = this.shift_args(n, n_args, s);
         break;
+      case "tco_hinted_apply": // just like a regular apply, except we need to trace the # of TCO calls so we can generate a stacktrace
+        this.tco_counter[this.tco_counter.length - 1]++;
+        x = ["apply"].concat(_.rest(x));
+        break;
       case "apply": //extended: n_args as second argument
         var func = a; //, n_args = x[1];
+        this.call_stack.push(this.last_refer);
 
         // the number of arguments in the last call is
         // pushed to the stack.
@@ -331,6 +344,9 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         f = this.index(ss, 1),
         c = this.index(ss, 2),
         s = ss-3-1;
+        var num_call_stack_pops = 1 + this.tco_counter[this.tco_counter.length - 1];
+        _.times(num_call_stack_pops, _.bind(function() { this.call_stack.pop() }, this));
+        this.tco_counter.pop();
         break;
       default:
         throw new BiwaScheme.Bug("unknown opecode type: "+x[0]);

@@ -353,7 +353,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
                     ["constant", 1,
                     ["argument",
                       this.compile(x, e, s,f,  
-                        (this.is_tail(next) ? ["shift", 1, ["apply"]]
+                        (this.is_tail(next) ? ["shift", 1, ["tco_hinted_apply"]]
                                             : ["apply"]))]]]];
                   //note: proc for call/cc takes 1 argument (= ["apply", 1])
           return this.is_tail(next) ? c : ["frame", c, next];
@@ -366,7 +366,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
           var func = x.car;
           var args = x.cdr;
           var c = this.compile(func, e, s,f,  
-                    this.is_tail(next) ? ["shift", args.length(), ["apply"]]
+                    this.is_tail(next) ? ["shift", args.length(), ["tco_hinted_apply"]]
                                        : ["apply"]);
 
           // VM will push the number of arguments to the stack.
