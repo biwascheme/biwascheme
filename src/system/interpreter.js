@@ -34,16 +34,20 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     for(var i=0; i<s; i++){
       v[i] = this.stack[i];
     }
-    return v;
+    return { stack: v, last_refer: this.last_refer, call_stack: _.clone(this.call_stack), tco_counter: _.clone(this.tco_counter) };
   },
 
   //v: stack array to restore
   //ret: lenght of restored stack
-  restore_stack: function(v){
+  restore_stack: function(stuff){
+    v = stuff.stack;
     var s = v.length;
     for(var i=0; i<s; i++){
       this.stack[i] = v[i];
     }
+    this.last_refer = stuff.last_refer;
+    this.call_stack = _.clone(stuff.call_stack);
+    this.tco_counter = _.clone(stuff.tco_counter);
     return s;
   },
 
