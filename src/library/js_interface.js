@@ -180,10 +180,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   BiwaScheme.js_closure = function(proc, intp){
-    var on_error = intp.on_error;
+    var intp2 = new Interpreter(intp);
     return function(/*args*/){
-      var intp = new Interpreter(on_error);
-      return intp.invoke_closure(proc, _.toArray(arguments));
+      return intp2.invoke_closure(proc, _.toArray(arguments));
     };
   };
   // (js-closure (lambda (event) ..))
@@ -254,14 +253,16 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var proc = ar[0], sec = ar[1];
     assert_closure(proc);
     assert_real(sec);
-    setTimeout(function(){ (new Interpreter(intp.on_error)).invoke_closure(proc); }, sec * 1000);
+    var intp2 = new Interpreter(intp);
+    setTimeout(function(){ intp2.invoke_closure(proc); }, sec * 1000);
     return BiwaScheme.undef;
   });
   define_libfunc("set-timer!", 2, 2, function(ar, intp){
     var proc = ar[0], sec = ar[1];
     assert_closure(proc);
     assert_real(sec);
-    return setInterval(function(){ (new Interpreter(intp.on_error)).invoke_closure(proc); }, sec * 1000);
+    var intp2 = new Interpreter(intp);
+    return setInterval(function(){ intp2.invoke_closure(proc); }, sec * 1000);
   });
   define_libfunc("clear-timer!", 1, 1, function(ar){
     var timer_id = ar[0];

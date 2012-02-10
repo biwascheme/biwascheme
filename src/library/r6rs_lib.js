@@ -3042,9 +3042,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     //TODO: this implementation has a bug that
     //  expressions which contains #<undef>, etc. cannot be evaluated.
     var expr = ar[0];
-    var intp = new BiwaScheme.Interpreter(intp.on_error);
-    
-    return intp.evaluate(expr.to_write());
+    var intp2 = new Interpreter(intp);
+    return intp2.evaluate(expr.to_write());
   });
 //(environment import-spec ...)    procedure
 

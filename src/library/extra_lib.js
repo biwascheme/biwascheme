@@ -174,30 +174,30 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   // utility function. takes a JS Array and a Scheme procedure,
   // returns sorted array
-  var sort_with_comp = function(ary, proc){
+  var sort_with_comp = function(ary, proc, intp){
     return ary.sort(function(a, b){
-        var intp2 = new BiwaScheme.Interpreter();
+        var intp2 = new BiwaScheme.Interpreter(intp);
         return intp2.invoke_closure(proc, [a, b]);
       });
   };
 
-  define_libfunc("list-sort/comp", 1, 2, function(ar){
+  define_libfunc("list-sort/comp", 1, 2, function(ar, intp){
     assert_procedure(ar[0]);
     assert_list(ar[1]);
 
-    return array_to_list(sort_with_comp(ar[1].to_array(), ar[0]));
+    return array_to_list(sort_with_comp(ar[1].to_array(), ar[0], intp));
   });
-  define_libfunc("vector-sort/comp", 1, 2, function(ar){
+  define_libfunc("vector-sort/comp", 1, 2, function(ar, intp){
     assert_procedure(ar[0]);
     assert_vector(ar[1]);
 
-    return sort_with_comp(_.clone(ar[1]), ar[0]);
+    return sort_with_comp(_.clone(ar[1]), ar[0], intp);
   });
-  define_libfunc("vector-sort/comp!", 1, 2, function(ar){
+  define_libfunc("vector-sort/comp!", 1, 2, function(ar, intp){
     assert_procedure(ar[0]);
     assert_vector(ar[1]);
 
-    sort_with_comp(ar[1], ar[0]);
+    sort_with_comp(ar[1], ar[0], intp);
     return BiwaScheme.undef;
   });
   

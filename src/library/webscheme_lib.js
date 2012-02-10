@@ -271,15 +271,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("load", 1, 1, function(ar, intp){
     var path = ar[0];
     assert_string(path);
+    var intp2 = new Interpreter(intp);
     return new BiwaScheme.Pause(function(pause){
       $.ajax(path, {
         success: function(data) {
           // create new interpreter not to destroy current stack.
-          var local_intp = new Interpreter(intp.on_error);
-          local_intp.evaluate(data,
-                              function(){
-                                return pause.resume(BiwaScheme.undef);
-                              });
+          intp2.evaluate(data,
+                         function(){
+                           return pause.resume(BiwaScheme.undef);
+                         });
         },
         error: function() {
           throw new Error("load: network error: failed to load"+path);
@@ -362,10 +362,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("add-handler!", 3, 3, function(ar, intp){
     var selector = ar[0], evtype = ar[1], proc = ar[2];
-    var on_error = intp.on_error;
+    var intp2 = new Interpreter(intp);
     var handler = function(event){
-      var intp = new Interpreter(on_error);
-      return intp.invoke_closure(proc, [event]);
+      return _.clone(intp2).invoke_closure(proc, [event]);
     };
     $(selector).bind(evtype, handler);
     return handler;
