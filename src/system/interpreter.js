@@ -3,12 +3,27 @@
 ///
 
 BiwaScheme.Interpreter = BiwaScheme.Class.create({
-  initialize: function(on_error){
+  // new BiwaScheme.Interpreter()
+  // new BiwaScheme.Interpreter(lastInterpreter)
+  // new BiwaScheme.Interpreter(errorHandler)
+  // new BiwaScheme.Interpreter(lastInterpreter, errorHandler)
+  initialize: function(){
+    var last_interpreter = null;
+    var on_error = null;
+    if (arguments.length == 2) {
+      last_interpreter = arguments[0];
+      on_error = arguments[1];
+    } else if (arguments.length == 1 && arguments[0] instanceof BiwaScheme.Interpreter) {
+      last_interpreter = arguments[0];
+    } else if (arguments.length == 1 && typeof(arguments[0]) == "function") {
+      on_error = arguments[0];
+    }
+
     this.stack = [] //(make-vector 1000)
-    this.on_error = on_error || function(e){};
+    this.on_error = on_error || (last_interpreter ? last_interpreter.on_error : function(e){});
     this.after_evaluate = function(){};
-    this.last_refer = null;
-    this.call_stack = [];
+    this.last_refer = last_interpreter ? last_interpreter.last_refer : null;
+    this.call_stack = last_interpreter ? _.clone(last_interpreter.call_stack) : [];
     this.tco_counter = [];
   },
 
@@ -175,6 +190,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
       case "constant":
         var obj=x[1], x=x[2];
         a = obj;
+        this.last_refer = "(anon)";
         break;
       case "close":
         var ox=x;
