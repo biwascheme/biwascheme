@@ -41,7 +41,7 @@
   //(file-exists? filename)    procedure 
   define_node_libfunc("file-exists?", 1, 1, function(ar){
     assert_string(ar[0]);
-    return node.path.existsSync(ar[0]);
+    return node.fs.existsSync(ar[0]);
   });
 
   //(delete-file filename)    procedure 

@@ -36,7 +36,7 @@ var tests = {
 
     ev('(delete-file "'+test_file_path+'")');
 
-    assert.ok(!path.existsSync(test_file_path));
+    assert.ok(!fs.existsSync(test_file_path));
   },
 
   // R6RS stdlib 10
