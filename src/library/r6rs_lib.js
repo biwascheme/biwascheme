@@ -1216,16 +1216,23 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
              x.cdr);
   })
   define_libfunc("values", 0, null, function(ar){
-    return new Values(ar);
+    if (ar.length == 1) // eg. (values 3)
+      return ar[0];
+    else
+      return new Values(ar);
   })
   define_libfunc("call-with-values", 2, 2, function(ar){
     var producer = ar[0], consumer = ar[1];
     return new Call(producer, [], function(ar){
-      var values = ar[0];
-      if(!(values instanceof Values))
-        throw new Error("values expected, but got "+to_write(values));
-
-      return new Call(consumer, values.content);
+      var result = ar[0];
+      if(result instanceof Values){
+        return new Call(consumer, result.content);
+      }
+      else{
+        // eg. (call-with-values (lambda () 3)
+        //                       (lambda (x) x))
+        return new Call(consumer, [result]);
+      }
     })
   })
 

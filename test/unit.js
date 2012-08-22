@@ -1030,12 +1030,10 @@ describe('11.15  Control features', {
 //
   },
   'values, call-with-values' : function(){
-    ev("(call-with-values (lambda () (values 1 2)) (lambda (x y) (+ x y)))").should_be(3);
-//(call-with-values (lambda () (values 4 5))
-//                  (lambda (a b) b))
-//                                                           ⇒  5
-//
-//(call-with-values * -)                                     ⇒  -1
+    ev("(values 1)").should_be(1);
+    ev("(call-with-values (lambda () (values 4 5)) \
+                          (lambda (a b) b))").should_be(5);
+    ev("(call-with-values * -)").should_be(-1);
   }
   //dynamic-wind
 })
