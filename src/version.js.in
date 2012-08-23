@@ -1,3 +1,10 @@
+/*
+ * BiwaScheme @VERSION@ - R6RS Scheme in JavaScript
+ *
+ * Copyright (c) 2007-2012 Yutaka HARA (http://www.biwascheme.org/)
+ * Licensed under the MIT license.
+ */
+
 var BiwaScheme = BiwaScheme || {};
 
 BiwaScheme.Version = "@VERSION@";
