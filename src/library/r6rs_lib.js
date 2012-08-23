@@ -1223,6 +1223,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("call-with-values", 2, 2, function(ar){
     var producer = ar[0], consumer = ar[1];
+    assert_procedure(producer);
+    assert_procedure(consumer);
     return new Call(producer, [], function(ar){
       var result = ar[0];
       if(result instanceof Values){
