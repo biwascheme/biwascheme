@@ -1253,14 +1253,14 @@ describe('6 Records', {
 
   //(define-record-type <name spec> <record clause>*)    syntax 
   'define-record-type': function(){
-    ew("(define-record-type (point new-point is-point) \
-          (fields x \
-                  (mutable y get-y set-y) \
-                  (immutable c get-c set-c))) \
+    ew("(define-record-type point (fields x (mutable y) (immutable c))) \
+        (define p (make-point 1 2 'red)) \
+        (point-y-set! p 3) \
         (list \
-          (is-point (new-point 1 2)) \
-          (point-x (new-point 1 2)) \
-          (get-y (new-point 1 2)))").should_be("(#t 1 2)");
+          (point? p) \
+          (point-x p) \
+          (point-y p) \
+          (point-c p)").should_be("(#t 1 3 red)");
   },
   'define-record-type (parent)': function(){
     ew("(define-record-type point2d (fields x y)) \

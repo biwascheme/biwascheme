@@ -1958,7 +1958,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
     mutator_defs = _.map(mutator_defs, function(field){
       var name = field.mutator_name ||
-                   Sym("set-"+record_name.name+"-"+field.name.name+"!");
+                   Sym(record_name.name+"-"+field.name.name+"-set!");
 
       return [Sym("define"), name, [Sym("record-mutator"), rtd, field.idx]];
     });
