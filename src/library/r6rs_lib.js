@@ -1874,11 +1874,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
                   else
                     return {name: field_name, idx: idx, mutable: true,
                             accessor_name: field_spec.cdr.cdr.car,
-                            mutator_name: field_spec.cdr.cdr.cdr.car};
+                            mutator_name:  field_spec.cdr.cdr.cdr.car};
                   break;
                 default:
                   throw new Error("define-record-type: field definition "+
-                              "must start with `immutable' or 'mutable'");
+                              "must start with `immutable' or `mutable' "+
+                              "but got "+BiwaScheme.inspect(field_spec.car));
               }
             }
           });
