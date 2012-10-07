@@ -1262,6 +1262,17 @@ describe('6 Records', {
           (point-y p) \
           (point-c p)").should_be("(#t 1 3 red)");
   },
+  'define-record-type (customize names)': function(){
+    ew("(define-record-type (point new-point is-point) \
+          (fields (immutable x x-accessor) \
+                  (mutable   y y-accessor y-mutator))) \
+        (define p (new-point 1 2)) \
+        (y-mutator p 3) \
+        (list \
+          (is-point p) \
+          (x-accessor p) \
+          (y-accessor p))").should_be("(#t 1 3)");
+  },
   'define-record-type (parent)': function(){
     ew("(define-record-type point2d (fields x y)) \
         (define-record-type point3d \
