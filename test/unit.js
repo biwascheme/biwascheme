@@ -1911,6 +1911,12 @@ describe('extra library', {
   'identity': function(){
     ev("(identity 1)").should_be(1);
   },
+  'inc!': function(){
+    ev("(let1 x 1 (inc! x) x)").should_be(2);
+  },
+  'dec!': function(){
+    ev("(let1 x 1 (dec! x) x)").should_be(0);
+  },
   'gensym': function(){
     ev("(symbol? (gensym))").should_be(true);
     ev("(eq? (gensym) (gensym))").should_be(false);

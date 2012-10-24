@@ -73,7 +73,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var target = x.cdr.car;
     return List(Sym("set!"),
                 target, 
-                [Sym("+"), target, 1]);
+                List(Sym("+"), target, 1));
   });
   
   // (dec! i)
@@ -83,7 +83,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var target = x.cdr.car;
     return List(Sym("set!"),
                 target, 
-                [Sym("-"), target, 1]);
+                List(Sym("-"), target, 1));
   });
 
   // string
