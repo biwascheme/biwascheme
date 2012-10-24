@@ -2042,7 +2042,7 @@ describe('srfi-28 format', {
   }
 });
 
-describe('srfi-30 comment syntax', {
+describe('srfi-30 multi-line comment', {
   'simple(1)' : function(){
     ev("#| abc |# (+ 1 3)").should_be(4);
   },
@@ -2068,5 +2068,23 @@ describe('srfi-30 comment syntax', {
     ev("\"#| abc |#|#\"").should_be("#| abc |#|#");
   }
 });
+
+// describe('srfi-38 write/ss', {
+// describe('srfi-43 vector', {
+
+describe('srfi-62 s-expr comment', {
+  'number': function(){
+    ev("(+ 1 #;2 3)").should_be(4);
+  },
+  'string': function(){
+    ew('(string-append "foo" #;"bar" "baz")').should_be('"foobaz"');
+  },
+  'list': function(){
+    ev('(+ 1 #;(+ 2 (* 3 4)) 5)').should_be("6");
+  }
+});
+
+// describe('srfi-98 get-environment-variable(s)', {
+// Node.js only
 
 };
