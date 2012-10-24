@@ -392,6 +392,9 @@ describe('regexp', {
   'regexp-exec' : function(){
     ew('(regexp-exec (string->regexp "(s)d(f)") "sdf")').should_be('("sdf" "s" "f")');
     ew('(regexp-exec "(s)d(f)" "sdf")').should_be('("sdf" "s" "f")');
+  },
+  'regexp-replace-all': function(){
+    ev('(regexp-replace-all "\\\\d" "Feb 25" "_")').should_be("Feb __");
   }
 })
 

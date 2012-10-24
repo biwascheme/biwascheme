@@ -399,7 +399,21 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //Generic application: regmatch 'before &optional index 
   //Generic application: regmatch 'after &optional index 
   //Function: regexp-replace regexp string substitution 
-  //Function: regexp-replace-all regexp string substitution 
+  
+  // regexp-replace-all regexp string substitution 
+  define_libfunc("regexp-replace-all", 3, 3, function(ar){
+    var pat = ar[0];
+    if(_.isString(pat)){
+      var rexp = new RegExp(pat, "g")
+    }
+    else{
+      assert_regexp(pat);
+      var rexp = new RegExp(pat.source, "g")
+    }
+    assert_string(ar[1]);
+    assert_string(ar[2]);
+    return ar[1].replace(rexp, ar[2])
+  })
   //Function: regexp-replace* string rx1 sub1 rx2 sub2 ... 
   //Function: regexp-replace-all* string rx1 sub1 rx2 sub2 ... 
   //Function: regexp-quote string 
