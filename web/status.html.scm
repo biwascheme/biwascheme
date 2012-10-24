@@ -153,6 +153,8 @@
              "partially")
             (27 "random"
              "partially (random-integer, random-real)")
+            (28 "simple `format`"
+             "ok")
             (30 "multi-line comment"
              "ok")
             (38 "write/ss"
