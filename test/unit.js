@@ -1905,6 +1905,9 @@ describe('extra library', {
   'let1' : function(){
     ev("(let1 a (+ 1 2) (* a 3))").should_be(9);
   },
+  'vector-push': function(){
+    ew("(let1 a #(1) (vector-push! a 2 3) a)").should_be("#(1 2 3)");
+  },
   'identity': function(){
     ev("(identity 1)").should_be(1);
   },

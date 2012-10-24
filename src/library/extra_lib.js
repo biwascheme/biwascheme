@@ -47,6 +47,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return json2sexp(ar[0]);
   })
 
+  // (vector-push! v item1 item2 ...)
+  define_libfunc("vector-push!", 2, null, function(ar){
+    assert_vector(ar[0]);
+    for(var i=1; i<ar.length; i++){
+      ar[0].push(ar[i]);
+    }
+    return ar[0];
+  });
+
   //
   //from Gauche
   //
