@@ -9,15 +9,16 @@
   * new:
       - added stack traces to exceptions
       - functions and syntaxes:
-        - element-has-class-name?, element-add-class-name (fixed),
+        o element-has-class-name?, element-add-class-name (fixed),
           element-remove-class-name, element-toggle-class-name
           element-select
-        - js-load (in Node)
-        - receive
-        - remove-handler! (also, add-handler! now returns a reference to the handler function so that it can be passed to remove-handler!)
+        o receive
+        o remove-handler! (also, add-handler! now returns a reference to the handler function so that it can be passed to remove-handler!)
+        o bitwise-* 
       - Node:
-        - BiwaScheme.run_file
-        - underscore.js is available at BiwaScheme._, underscore.string at BiwaScheme._.str
+        o js-load
+        o BiwaScheme.run_file
+        o underscore.js is available at BiwaScheme._, underscore.string at BiwaScheme._.str
 
   * fix:
       - added underscore & underscore.string to deps (fixed unit tests & parts of webscheme lib)

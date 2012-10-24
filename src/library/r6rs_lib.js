@@ -2626,27 +2626,131 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //&no-infinities    condition type 
 //&no-nans    condition type 
 //(fixnum->flonum fx)    procedure 
-//
-////        11.4  Exact bitwise arithmetic
-//(bitwise-not ei)    procedure
-//(bitwise-and ei1 ...)    procedure 
-//(bitwise-ior ei1 ...)    procedure 
-//(bitwise-xor ei1 ...)    procedure 
-//(bitwise-if ei1 ei2 ei3)    procedure
-//(bitwise-bit-count ei)    procedure 
-//(bitwise-length ei)    procedure
-//(bitwise-first-bit-set ei)    procedure 
-//(bitwise-bit-set? ei1 ei2)    procedure 
-//(bitwise-copy-bit ei1 ei2 ei3)    procedure
-//(bitwise-bit-field ei1 ei2 ei3)    procedure
-//(bitwise-copy-bit-field ei1 ei2 ei3 ei4)    procedure 
-//(bitwise-arithmetic-shift ei1 ei2)    procedure
-//(bitwise-arithmetic-shift-left ei1 ei2)    procedure 
-//(bitwise-arithmetic-shift-right ei1 ei2)    procedure 
-//(bitwise-arithmetic-shift-right ei1 ei2)
-//(bitwise-rotate-bit-field ei1 ei2 ei3 ei4)    procedure 
-//(bitwise-reverse-bit-field ei1 ei2 ei3)    procedure 
 
+  ////        11.4  Exact bitwise arithmetic
+  //(bitwise-not ei)    procedure
+  define_libfunc("bitwise-not", 1, 1, function(ar){
+    return ~(ar[0]);
+  });
+
+  //(bitwise-and ei1 ...)    procedure 
+  define_libfunc("bitwise-and", 1, null, function(ar){
+    return _.reduce(ar, function(ret, item){ return ret & item; });
+  });
+
+  //(bitwise-ior ei1 ...)    procedure 
+  define_libfunc("bitwise-ior", 1, null, function(ar){
+    return _.reduce(ar, function(ret, item){ return ret | item; });
+  });
+
+  //(bitwise-xor ei1 ...)    procedure 
+  define_libfunc("bitwise-xor", 1, null, function(ar){
+    return _.reduce(ar, function(ret, item){ return ret ^ item; });
+  });
+
+  //(bitwise-if ei1 ei2 ei3)    procedure
+  define_libfunc("bitwise-if", 3, 3, function(ar){
+    return (ar[0] & ar[1]) | (~ar[0] & ar[2]);
+  });
+
+  //(bitwise-bit-count ei)    procedure 
+  define_libfunc("bitwise-bit-count", 1, 1, function(ar){
+    var e = Math.abs(ar[0]), ret = 0;
+    for (; e != 0; e >>= 1) {
+      if(e & 1) ret++;
+    }
+    return ret;
+  });
+
+  //(bitwise-length ei)    procedure
+  define_libfunc("bitwise-length", 1, 1, function(ar){
+    var e = Math.abs(ar[0]), ret = 0;
+    for (; e != 0; e >>= 1) {
+      ret++;
+    }
+    return ret;
+  });
+
+  //(bitwise-first-bit-set ei)    procedure 
+  define_libfunc("bitwise-first-bit-set", 1, 1, function(ar){
+    var e = Math.abs(ar[0]), ret = 0;
+    if (e == 0) return -1;
+    for (; e != 0; e >>= 1) {
+      if (e & 1) return ret;
+      ret++;
+    }
+  });
+
+  //(bitwise-bit-set? ei1 ei2)    procedure 
+  define_libfunc("bitwise-bit-set?", 2, 2, function(ar){
+    return !!(ar[0] & (1 << ar[1]));
+  });
+
+  //(bitwise-copy-bit ei1 n b)    procedure
+  define_libfunc("bitwise-copy-bit", 3, 3, function(ar){
+    var mask = (1 << ar[1]);
+    return (mask & (ar[2] << ar[1])) |   // Set n-th bit to b
+           (~mask & ar[0]);              // and use ei1 for rest of the bits
+  });
+
+  //(bitwise-bit-field ei1 start end)    procedure
+  define_libfunc("bitwise-bit-field", 3, 3, function(ar){
+    var mask = ~(-1 << ar[2]);  // Has 1 at 0...end
+    return (mask & ar[0]) >> ar[1];
+  });
+
+  //(bitwise-copy-bit-field dst start end src)    procedure 
+  define_libfunc("bitwise-copy-bit-field", 4, 4, function(ar){
+    var dst=ar[0], start=ar[1], end=ar[2], src=ar[3];
+    var mask = ~(-1 << end) &   // Has 1 at 0...end
+                (-1 << start)   // Clear 0...start
+    return (mask & (src << start)) |
+           (~mask & dst);
+  });
+
+  //(bitwise-arithmetic-shift ei1 ei2)    procedure
+  define_libfunc("bitwise-arithmetic-shift", 2, 2, function(ar){
+    return (ar[1] >= 0) ? (ar[0] << ar[1]) : (ar[0] >> -ar[1]);
+  });
+
+  //(bitwise-arithmetic-shift-left ei1 ei2)    procedure 
+  define_libfunc("bitwise-arithmetic-shift-left", 2, 2, function(ar){
+    return ar[0] << ar[1];
+  });
+
+  //(bitwise-arithmetic-shift-right ei1 ei2)    procedure 
+  define_libfunc("bitwise-arithmetic-shift-right", 2, 2, function(ar){
+    return ar[0] >> ar[1];
+  });
+
+  //(bitwise-rotate-bit-field ei1 start end count)    procedure 
+  define_libfunc("bitwise-rotate-bit-field", 4, 4, function(ar){
+    var n=ar[0], start=ar[1], end=ar[2], count=ar[3];
+    var width = end - start;
+    if (width <= 0) return n;
+
+    count %= width;
+    var orig_field = (~(-1 << end) & n) >> start;
+    var rotated_field = (orig_field << count) |
+                        (orig_field >> (width - count))
+    
+    var mask = ~(-1 << end) & (-1 << start);
+    return (mask & (rotated_field << start)) |
+           (~mask & n);
+  });
+  
+  //(bitwise-reverse-bit-field ei1 ei2 ei3)    procedure 
+  define_libfunc("bitwise-reverse-bit-field", 3, 3, function(ar){
+    var ret=n=ar[0], start=ar[1], end=ar[2];
+    var orig_field = ((~(-1 << end) & n) >> start);
+    for (var i=0; i<(end-start); i++, orig_field>>=1) {
+      var bit = orig_field & 1;
+      var setpos = end - 1 - i;
+      var mask = (1 << setpos);
+      ret = (mask & (bit << setpos)) | (~mask & ret);
+    }
+    return ret;
+  });
 
   //
   // Chapter 12 syntax-case

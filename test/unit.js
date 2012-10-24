@@ -1110,6 +1110,76 @@ describe('1 Unicode', {
 });
 
 describe('2 Bytevectors', {
+  'bitwise-not': function(){
+    ev("(bitwise-not 12)").should_be(-13);
+    ev("(bitwise-not -12)").should_be(11);
+    ev("(bitwise-not -1)").should_be(0);
+    ev("(bitwise-not 0)").should_be(-1);
+  },
+  'bitwise-and': function(){
+    ev("(bitwise-and 0 17 0)").should_be(0);
+    ev("(bitwise-and -1 17 -1)").should_be(17);
+  },
+  'bitwise-ior': function(){
+    ev("(bitwise-ior 0 17 0)").should_be(17);
+    ev("(bitwise-ior -1 17 0)").should_be(-1);
+  },
+  'bitwise-xor': function(){
+    ev("(bitwise-xor 18 17 19)").should_be(16);
+    ev("(bitwise-xor 1024 17)").should_be(1024+17);
+    ev("(bitwise-xor -1 17)").should_be(-18);
+  },
+  'bitwise-if': function(){
+    ev("(bitwise-if  5 -1 0)").should_be(5); 
+    ev("(bitwise-if -5 -1 0)").should_be(-5); 
+  },
+  'bitwise-bit-count': function(){
+    ev("(bitwise-bit-count  5)").should_be(2);
+    ev("(bitwise-bit-count -7)").should_be(3);
+  },
+  'bitwise-length': function(){
+    ev("(bitwise-length 5)").should_be(3);
+    ev("(bitwise-length -9)").should_be(4);
+  },
+  'bitwise-first-bit-set': function(){
+    ev("(bitwise-first-bit-set 6)").should_be(1);
+    ev("(bitwise-first-bit-set -8)").should_be(3);
+    ev("(bitwise-first-bit-set 0)").should_be(-1);
+  },
+  'bitwise-bit-set?': function(){
+    ev("(bitwise-bit-set? 5 0)").should_be(true);
+    ev("(bitwise-bit-set? 5 1)").should_be(false);
+    ev("(bitwise-bit-set? -5 1)").should_be(true);
+    ev("(bitwise-bit-set? -5 2)").should_be(false);
+  },
+  'bitwise-copy-bit': function(){
+    ev("(bitwise-copy-bit 5 1 1)").should_be(7);
+    ev("(bitwise-copy-bit 5 0 0)").should_be(4);
+    ev("(bitwise-copy-bit -5 2 1)").should_be(-1);
+    ev("(bitwise-copy-bit -5 0 0)").should_be(-6);
+  },
+  'bitwise-bit-field': function(){
+    ev("(bitwise-bit-field 19 2 5)").should_be(4);
+  },
+  'bitwise-copy-bit-field': function(){
+    ev("(bitwise-copy-bit-field 10 2 5 19)").should_be(14);
+  },
+  'bitwise-arithmetic-shift': function(){
+    ev("(bitwise-arithmetic-shift 2 4)").should_be(32);
+    ev("(bitwise-arithmetic-shift -6 -1)").should_be(-3);
+  },
+  'bitwise-arithmetic-shift-left': function(){
+    ev("(bitwise-arithmetic-shift-left 2 4)").should_be(32);
+  },
+  'bitwise-arithmetic-shift-right': function(){
+    ev("(bitwise-arithmetic-shift-right 32 4)").should_be(2);
+  },
+  'bitwise-rotate-bit-field': function(){
+    ev("(bitwise-rotate-bit-field 116 1 6 3)").should_be(108);
+  },
+  'bitwise-reverse-bit-field': function(){
+    ev("(bitwise-reverse-bit-field 92 3 6)").should_be(116);
+  }
 })
 
 describe('3 List utilities', {
