@@ -9,6 +9,7 @@ with(BiwaScheme) {
   //
   // srfi-1 (list)
   //
+  // (iota count start? step?)
   define_libfunc("iota", 1, 3, function(ar){
     var count = ar[0];
     var start = ar[1] || 0;
@@ -246,7 +247,7 @@ with(BiwaScheme) {
     })
   }
   
-  // date->string
+  // date->string date template
   define_libfunc("date->string", 1, 2, function(ar){
     assert_date(ar[0]);
 
@@ -259,6 +260,7 @@ with(BiwaScheme) {
   })
   // string->date
 
+  // parse-date date
   define_libfunc("parse-date", 1, 1, function(ar){ // not srfi-19
     assert_string(ar[0]);
     return new Date(Date.parse(ar[0]));
@@ -287,6 +289,10 @@ with(BiwaScheme) {
   // (format #f format-str ...) -> string
   // (format #t format-str ...) -> output to current port 
   // (format port format-str ...) -> output to the port 
+  //   ~a: display
+  //   ~s: write
+  //   ~%: newline
+  //   ~~: tilde
   define_libfunc("format", 1, null, function(ar){
     if (_.isString(ar[0])) {
       var port = null, format_str = ar.shift();
