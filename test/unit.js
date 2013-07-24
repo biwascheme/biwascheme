@@ -865,13 +865,13 @@ describe('11.11  Characters', {
 //    ev('(char? #\\esc)').should_be(true);
 //    ev('(char? #\\space)').should_be(true);
 //    ev('(char? #\\delete)').should_be(true);
-//    ev('(char? #\\xFF)').should_be(true);
-//    ev('(char? #\\x03BB)').should_be(true);
+    ev('(char? #\\xFF)').should_be(true);
+    ev('(char? #\\x03BB)').should_be(true);
 //    ev('(char? #\\00006587)').should_be(true);
 //    ev('(char? #\\λ)').should_be(true);
-//    ev('(char? #\\xA)').should_be(true);
-//    ev('(char? #\\xFF)').should_be(true);
-//    ev('(char? #\\xff)').should_be(true);
+    ev('(char? #\\xA)').should_be(true);
+    ev('(char? #\\xFF)').should_be(true);
+    ev('(char? #\\xff)').should_be(true);
 //    ev('(char? #\\000000001)').should_be(true);
 //    ev('(char? #\\space)').should_be(true);
   },
