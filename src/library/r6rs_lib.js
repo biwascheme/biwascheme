@@ -875,6 +875,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ret;
   });
   define_libfunc("reverse", 1, 1, function(ar){
+    // (reverse '()) => '()
+    if(ar[0] == nil)
+      return nil;
     assert_pair(ar[0]);
 
     var l = nil;

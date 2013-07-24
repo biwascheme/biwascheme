@@ -798,6 +798,7 @@ describe('11.9 Pairs and lists', {
   'reverse' : function(){
     ew("(reverse '(a b c))").should_be("(c b a)");
     ew("(reverse '(a (b c) d (e (f))))").should_be("((e (f)) d (b c) a)");
+    ew("(reverse '())").should_be("()");
   },
   'list-tail' : function(){
     ew("(list-tail '(a b c d) 2)").should_be("(c d)");
