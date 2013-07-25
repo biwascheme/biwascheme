@@ -167,6 +167,20 @@
           return BiwaScheme.Char.get('\t');
         } else if( /^#\\.$/.test(t) ) {
           return BiwaScheme.Char.get( t.charAt(2) );
+        } else if( /^#\\x[a-zA-Z0-9]+$/.test(t) ) {
+          var scalar = parseInt(t.slice(3), 16);
+          // R6RS 11.11 (surrogate codepoints)
+          if (scalar >= 0xD800 && scalar <= 0xDFFF) {
+            throw new BiwaScheme.Error("Character in Unicode excluded range.");
+          }
+          // ECMA-262 4.3.16 -- Basically, strings are sequences of 16-bit
+          // unsigned integers, so anything greater than 0xFFFF won't fit.
+          // NOTE: This violates R6RS which requires the full Unicode range!
+          else if (scalar > 0xFFFF) {
+            throw new BiwaScheme.Error("Character literal out of range.");
+          } else {
+            return BiwaScheme.Char.get(String.fromCharCode(scalar));
+          }
         } else if( /^\"(\\(.|$)|[^\"\\])*\"?$/.test(t) ) {
           return t.replace(/(\r?\n|\\n)/g, "\n").replace( /^\"|\\(.|$)|\"$/g, function($0,$1) {
             return $1 ? $1 : '';
