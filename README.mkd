@@ -107,6 +107,7 @@ Links
 - [Repository](https://github.com/biwascheme/biwascheme)
 - [Issues](https://github.com/biwascheme/biwascheme/issues)
 - [Mailing-list](http://groups.google.co.jp/group/biwascheme)
+- [Mailing-list(Japanese)](http://groups.google.co.jp/group/biwascheme-ja)
 
 Development memos
 =================
@@ -119,8 +120,6 @@ How to add a new file
 
 How to release
 --------------
-
-TODO: fix this after migration to Heroku
 
 1. Edit History.txt
 2. Edit VERSION
@@ -167,15 +166,7 @@ underscore.string:
 Website
 -------
 
-www.biwascheme.org is (going to be) hosted by Heroku.
-
-Files for website is stored in the branch 'website'.
-This is almost same as master, but:
-
-* contains compiled release/*.js and src/version.js
-* contains Procfile for Heroku cedar
-* has different package.json for Heroku
-* has different favicon.ico (master: black, website: white)
+repo: [biwascheme/biwascheme.github.io](https://github.com/biwascheme/biwascheme.github.io).
 
 ### Run local website
 
