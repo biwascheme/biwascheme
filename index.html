@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link href="website/css/screen.css" rel="stylesheet" type="text/css">
     <title>BiwaScheme</title>
+    <link href="website/css/screen.css" rel="stylesheet" type="text/css">
     <link href="website/css/jquery.terminal.css" rel="stylesheet" type="text/css"></script>
     <script src="release/biwascheme.js" type="text/javascript"></script>
     <script src="website/js/jquery.mousewheel.min.js" type="text/javascript"></script>
@@ -22,68 +22,82 @@
       </a>
     </div>
 
-    <h2>About</h2>
+    <div id="content">
+      <h2>About</h2>
 
-    <p>BiwaScheme is a Scheme interpreter written in JavaScript.</p>
+      <p>BiwaScheme is a Scheme interpreter written in JavaScript.</p>
 
-    <h2>Try it now</h2>
+      <h2>Try it now</h2>
 
-    <div id="term"></div>
+      <div id="term"></div>
 
-    <h2>Download</h2>
+      <h2>Download</h2>
 
-    <ul>
-      <li><a href="/release/biwascheme.js">biwascheme.js</a>
-      version <span id="ver">--</span></li>
-      <li><a href="/release/biwascheme-min.js">biwascheme-min.js</a></li>
-    </ul>
+      <ul>
+        <li><a href="/release/biwascheme.js">biwascheme.js</a>
+        version <span id="ver">--</span></li>
+        <li><a href="/release/biwascheme-min.js">biwascheme-min.js</a></li>
+      </ul>
 
-    <script type="text/javascript">
-      jQuery('#ver').html(BiwaScheme.Version);
-    </script>
+      <script type="text/javascript">
+        jQuery('#ver').html(BiwaScheme.Version);
+      </script>
 
-    <p>
-    <a href="http://github.com/biwascheme/biwascheme/tags">Older versions</a>
-    and <a href="http://github.com/biwascheme/biwascheme%22">latest version</a> are on github.
-    </p>
+      <p>
+      <a href="http://github.com/biwascheme/biwascheme/tags">Older versions</a> are on github.
+      </p>
 
-    <h2>Example</h2>
+      <h2>Example</h2>
 
-    <pre><code><font color='purple'>&lt;script src="biwascheme.js"&gt;</font>
-(<font color='blue'>console-log</font> <font color='red'>"Hello, world!"</font>)
-<font color='purple'>&lt;/script&gt;</font></code></pre>
+      <pre><code><font color='purple'>&lt;script src="biwascheme.js"&gt;</font>
+  (<font color='blue'>console-log</font> <font color='red'>"Hello, world!"</font>)
+  <font color='purple'>&lt;/script&gt;</font></code></pre>
 
-    <h2>Demo</h2>
+      <h2>Demo</h2>
 
-    <ul>
-      <li><a href="repl.html">REPL</a></li>
-      <li><a href="demo/pictlang.html">Picture language (from SICP)</a></li>
-      <li><a href="http://lambda.bugyo.tk/cdr/hockey/">Hockey (a pong-like game)</a></li>
-      <li><a href="http://lambda.bugyo.tk/cdr/dobon/">Dobon (a card game)</a></li>
-    </ul>
+      <ul>
+        <li><a href="demo/pictlang.html">Picture language (from SICP)</a></li>
+        <li><a href="website/i.html">Biwascheme for Mobile</a></li>
 
-    <!--<h2>Features</h2>
+        <li>Games
+          <ul>
+            <li><a href="http://lambda.bugyo.tk/cdr/hockey/">Hockey (a pong-like game)</a></li>
+            <li><a href="http://lambda.bugyo.tk/cdr/dobon/">Dobon (a card game)</a></li>
+          </ul>
+        </li>
 
-    <ul>
-      <li>Most syntax/base library of R6RS</li>
-      <li>define-macrokkk
-           :href &quot;http://en.wikipedia.org/wiki/Macro_%28computer_science%29#Lisp_macros&quot;
-           &quot;Lisp Macros&quot;)
-        &quot; and Quasiquotation&quot;)
-    (li &quot;Functions for web application (Ajax, DOM manipulation, etc.)&quot;)
-    (li &quot;Calling JavaScript functions from Scheme and Scheme from JavaScript&quot;)
-    (li &quot;Extending scheme interpreter in Javascipt&quot;)
-    (li &quot;Comprehensive &quot; (link-to &quot;unit test&quot; &quot;repos/test/spec.html&quot;))
-    (li &quot;Tiny &quot; (link-to &quot;interpreter debugger&quot; &quot;repos/test/tracer.html&quot;))
-    (li (link-to &quot;Mobile version&quot; &quot;i.html&quot;)))</code></pre>
-    -->
+        <li>Development
+          <ul>
+            <li><a href="demo/repl.html">REPL with IL inspector</a></li>
+            <li><a href="test/spec.html">Unit test</a></li>
+            <li><a href="test/tracer.html">Tiny interpreter debugger</a></li>
+          </ul>
+        </li>
+      </ul>
 
-    <h2>Contact</h2>
+      <!--<h2>Features</h2>
 
-    <ul>
-      <li><a href="http://github.com/biwascheme/biwascheme/issues">Issues (GitHub)</a></li>
-      <li><a href="http://groups.google.co.jp/group/biwascheme">Mailling list</a></li>
-      <li><a href="http://groups.google.co.jp/group/biwascheme-ja">Mailling list(Japanese)</a></li>
-    </ul>
+      <ul>
+        <li>Most syntax/base library of R6RS</li>
+        <li>define-macrokkk
+             :href &quot;http://en.wikipedia.org/wiki/Macro_%28computer_science%29#Lisp_macros&quot;
+             &quot;Lisp Macros&quot;)
+          &quot; and Quasiquotation&quot;)
+      (li &quot;Functions for web application (Ajax, DOM manipulation, etc.)&quot;)
+      (li &quot;Calling JavaScript functions from Scheme and Scheme from JavaScript&quot;)
+      (li &quot;Extending scheme interpreter in Javascipt&quot;)
+      (li &quot;Comprehensive &quot; (link-to &quot;unit test&quot; &quot;repos/test/spec.html&quot;))
+      (li &quot;Tiny &quot; (link-to &quot;interpreter debugger&quot; &quot;repos/test/tracer.html&quot;))
+      (li (link-to &quot;Mobile version&quot; &quot;i.html&quot;)))</code></pre>
+      -->
+
+      <h2>Contact</h2>
+
+      <ul>
+        <li><a href="http://github.com/biwascheme/biwascheme/issues">Issues (GitHub)</a></li>
+        <li><a href="http://groups.google.co.jp/group/biwascheme">Mailling list</a></li>
+        <li><a href="http://groups.google.co.jp/group/biwascheme-ja">Mailling list(Japanese)</a></li>
+      </ul>
+    </div>
   </body>
 </html>

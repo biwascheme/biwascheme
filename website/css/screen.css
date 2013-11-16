@@ -70,8 +70,12 @@ h3 {
 
 /* paragraphs */
 
-#content ul {
+ul {
   margin-left: 1em;
+}
+
+li {
+  margin-bottom: 0.2em;
 }
 
 p {
