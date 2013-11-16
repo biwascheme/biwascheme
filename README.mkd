@@ -1,7 +1,7 @@
 BiwaScheme
 ==========
 
-[![biwascheme logo](http://www.biwascheme.org/images/biwascheme_logo.png)](http://www.biwascheme.org)
+[![biwascheme logo](http://www.biwascheme.org/website/images/biwascheme_logo.png)](http://www.biwascheme.org)
 
 BiwaScheme is a Scheme interpreter written in JavaScript.
 
