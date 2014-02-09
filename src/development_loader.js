@@ -31,7 +31,6 @@ var BiwaScheme = BiwaScheme || {};
   document.write(script_tag(dir+"src/deps/jquery.js"));
   document.write(script_tag(dir+"src/deps/underscore.js"));
   document.write(script_tag(dir+"src/deps/underscore.string.js"));
-  document.write(script_tag(dir+"src/platforms/browser/console.js"));
   document.write(script_tag(dir+"src/header.js"));
   document.write(script_tag(dir+"src/system/class.js"));
   document.write(script_tag(dir+"src/system/_writer.js"));
@@ -61,6 +60,7 @@ var BiwaScheme = BiwaScheme || {};
   document.write(script_tag(dir+"src/library/node_functions.js"));
   document.write(script_tag(dir+"src/library/srfi.js"));
   document.write(script_tag(dir+"src/platforms/browser/dumper.js"));
+  document.write(script_tag(dir+"src/platforms/browser/console.js"));
   document.write("<script type='text/javascript'>" +
     script.innerHTML +
     "<\/script>");

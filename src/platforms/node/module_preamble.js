@@ -3,18 +3,17 @@ _.str = require('underscore.string');
 
 var Console = {};
 Console.puts = function(str, no_newline) {
-  require('util').print(str);
-  if (!no_newline) {
-    require('util').print("\n");
-  }
+  BiwaScheme.Port.current_output.put_string(str + (no_newline ? "" : "\n"))
 };
 
 Console.p = function() {
-  require('util').print.apply(this, arguments);
+  [].slice.call(arguments).forEach(BiwaScheme.Port.current_output.put_string);
 };
 
 if(typeof(ev) != 'function') {
-  eval("function ev(str){ puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }");
+  eval(
+    "function ev(str){ Console.puts(str); return (new BiwaScheme.Interpreter()).evaluate(str); }"
+  );
 }
 
 if(typeof(BiwaScheme) == "undefined") BiwaScheme = {};

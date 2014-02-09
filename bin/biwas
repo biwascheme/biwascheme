@@ -4,7 +4,7 @@
 var util = require('util'),
     fs = require('fs'),
     path = require('path'),
-    BiwaScheme = require('biwascheme'),
+    BiwaScheme = require('../release/node_biwascheme'),
     optparse = require('optparse');
 
 function Options(argv){
@@ -43,8 +43,10 @@ function Options(argv){
 }
 
 function repl(){
-  var rl = require('readline').createInterface(process.stdin,
-                                               process.stdout);
+  var rl = require('readline').createInterface(
+    process.stdin,
+    process.stdout
+  );
   var erred = new Object();
 
   rl.on('line', function(line) {
@@ -54,15 +56,13 @@ function repl(){
       var result = erred;
     }
 
-    if (result !== erred) {
+    if (result !== erred && !(result instanceof BiwaScheme.Pause)) {
       util.puts(BiwaScheme.to_write(result));
     }
 
-    rl.prompt();
-  });
-
-  rl.on('close', function() {
-    process.exit(0);
+    if (!(result instanceof BiwaScheme.Pause)) {
+      rl.prompt();
+    }
   });
 
   var prompt = "> ";
@@ -70,6 +70,16 @@ function repl(){
 
   util.puts('BiwaScheme version ' + BiwaScheme.Version);
   util.puts('try (+ 1 2), etc. (Ctrl-D to exit)');
+
+  BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(
+    function (callback) {
+      rl.question('', function (line) {
+        callback(line);
+        rl.prompt()
+      })
+    }
+  );
+
   rl.prompt();
 }
 
