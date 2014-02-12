@@ -50,8 +50,8 @@
 (define square-new! make-square)
 
 (define (square-move! sq x y)
-  (set-square-x! sq x)
-  (set-square-y! sq y)
+  (square-x-set! sq x)
+  (square-y-set! sq y)
   (js-invocation (square-rect sq)
       `(attr ((x . ,(* x 20))
               (y . ,(* y 20))))))
@@ -101,8 +101,8 @@
     bl))
 
 (define (block-move! bl x y)
-  (set-block-x! bl x)
-  (set-block-y! bl y)
+  (block-x-set! bl x)
+  (block-y-set! bl y)
   (for-each (lambda (pos sq)
               (square-move! sq (+ x (car pos))
                                (+ y (cdr pos))))
@@ -125,7 +125,7 @@
        (block-shape bl)))
 
 (define (block-rotate! bl) 
-  (set-block-shape! bl (block-rotated-place bl 0 0)))
+  (block-shape-set! bl (block-rotated-place bl 0 0)))
 
 ;; field - represents the 20x10 field
 ;;   width: 10
