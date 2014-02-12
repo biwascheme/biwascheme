@@ -3,11 +3,14 @@
   * change:
       - upgraded from jQuery 1.6.2 to 1.7.1
       - switched inspected strings to be double-quoted instead of single-quoted
-      - $ and getelem functions can now take 1 or 2 arguments like in jQuery (second optional argument is the scope to search for the selector in)
+      - define-record-type was defining mutator with wrong name like
+        'set-book-name!', but fixed to define 'book-name-set!'
       - scoped assertion helpers to BiwaScheme (assert_string, etc)
 
   * new:
-      - added stack traces to exceptions
+      - added stack traces to exceptions (GH #9)
+      - Support hex character literals (eg. #\x41 => #\A) (GH #17)
+      - $ and getelem functions can now take 1 or 2 arguments like in jQuery (second optional argument is the scope to search for the selector in)
       - functions and syntaxes:
         o element-has-class-name?, element-add-class-name (fixed),
           element-remove-class-name, element-toggle-class-name
@@ -15,16 +18,15 @@
         o receive
         o remove-handler! (also, add-handler! now returns a reference to the handler function so that it can be passed to remove-handler!)
         o bitwise-* 
+        o regexp-replace-all
+        o vector-push! (= Array#push in JS)
       - Node:
         o js-load
         o BiwaScheme.run_file
         o underscore.js is available at BiwaScheme._, underscore.string at BiwaScheme._.str
+        o srfi-98 get-environment-variable(s)
 
-  * fix:
-      - added underscore & underscore.string to deps (fixed unit tests & parts of webscheme lib)
-      - fixed HTML escaping
-      - fixed Node load function
-      - fixed some functions converting nested arrays & vectors to lists
+  * some bug fixes
 
 2011-12-01  v0.6.1
 
