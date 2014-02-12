@@ -35,7 +35,10 @@
 </head>
 <body>
 
-  <h1><a href='../index.html'>BiwaScheme</a> REPL</h1>
+  <h1>
+    <a href='../index.html'>BiwaScheme</a> REPL
+    <small id="biwa_ver"></small>
+  </h1>
 
   <!--<button id="test">foo</button>-->
 
@@ -109,6 +112,7 @@ function bs_eval(){
 $(".bs-snippet").click(function(e){
   $("#bs-input").html($(this).html());
 });
+$("#biwa_ver").append("("+BiwaScheme.Version+")");
 // ]]></script>
 
 </body>

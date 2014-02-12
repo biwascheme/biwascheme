@@ -22,7 +22,10 @@
     </style>
   </head>
 <body>
-  <h1><a href='http://www.biwascheme.org/'>BiwaScheme</a> tracer</h1>
+  <h1>
+    <a href='../index.html'>BiwaScheme</a> tracer
+    <small id="biwa_ver"></small>
+  </h1>
 
   <div id="editor">;; write your code here
 </div>
@@ -45,6 +48,8 @@
 
 
   $(function(){
+    $("#biwa_ver").append("("+BiwaScheme.Version+")");
+
     // init ace
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/dawn");
