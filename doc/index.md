@@ -7,7 +7,11 @@ http://www.biwascheme.org/
 * [conformance.md](conformance.md)
 * [r7rs.md](r7rs.md)
 
-## Development
+## BiwaScheme internals
 
-* [website](dev/website.md)
+* [internal/opecodes.md](internal/opecodes.md)
+
+## Development docs
+
+* [dev/website.md](dev/website.md)
 
