@@ -98,6 +98,34 @@ describe('Set', {
 
 });
 
+describe('Interpreter', {
+  'stack trace (no cap)': function(){
+    var intp = new BiwaScheme.Interpreter();
+    intp.evaluate("(define (g) 8) \
+                   (define (f) (g) (raise 7)) \
+                   (f)");
+    expect( BiwaScheme.inspect(intp.call_stack) ).should_be('["f", "raise"]');
+  },
+
+  'stack trace (capped)': function(){
+    var intp = new BiwaScheme.Interpreter();
+    intp.max_trace_size = 1;
+    intp.evaluate("(define (g) 8) \
+                   (define (f) (g) (raise 7)) \
+                   (f)");
+    expect( BiwaScheme.inspect(intp.call_stack) ).should_be('["raise"]');
+  },
+
+  'stack trace (capped to 0)': function(){
+    var intp = new BiwaScheme.Interpreter();
+    intp.max_trace_size = 0;
+    intp.evaluate("(define (g) 7) \
+                   (define (f) (g) 8) \
+                   (f) (alert 1)");
+    expect( BiwaScheme.inspect(intp.call_stack) ).should_be('[]');
+  }
+});
+
 describe('utilities', {
   'to_write' : function(){
     with(BiwaScheme){

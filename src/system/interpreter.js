@@ -34,6 +34,9 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     // Counts number of tail calls (= how many times should we pop call_stack
     // in op_return)
     this.tco_counter = [];
+    // Maximum length of call_stack
+    // (Note: we should cap call_stack for inifinite loop with recursion)
+    this.max_trace_size = last_interpreter ? last_interpreter.max_trace_size : BiwaScheme.max_trace_size;
   },
 
   inspect: function(){
@@ -268,7 +271,16 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         break;
       case "apply": //extended: n_args as second argument
         var func = a; //, n_args = x[1];
+
+        // Save stack trace
         this.call_stack.push(this.last_refer);
+        if (this.call_stack.length > this.max_trace_size) {
+          // Remove old memory if it grows too long
+          // Note: this simple way may be inconvenient (e.g. no trace
+          // will be shown when an error occurred right after returning
+          // from a large function)
+          this.call_stack.shift();
+        }
 
         // the number of arguments in the last call is
         // pushed to the stack.
@@ -373,6 +385,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         f = this.index(ss, 1),
         c = this.index(ss, 2),
         s = ss-3-1;
+
         var num_call_stack_pops = 1 + this.tco_counter[this.tco_counter.length - 1];
         _.times(num_call_stack_pops, _.bind(function() { this.call_stack.pop() }, this));
         this.tco_counter.pop();

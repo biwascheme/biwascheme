@@ -478,6 +478,10 @@ Here is the difference between normal call and tail call.
   - op_return pops stack frame, tco_counter and call_stack.
     call_stack may be popped more than once if value of tco_counter >= 1.
 
+Length of call_stack is capped to Interpreter#max_trace_size (which defaults
+to BiwaScheme.max_trace_size). We do not cap length of tco_counter
+because it does not grow with tail calls.
+
 #### example
 
 program:

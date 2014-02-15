@@ -40,3 +40,11 @@ BiwaScheme.debug = function(/*arguments*/){
   var args = _.toArray(arguments);
   console.debug.apply(console, _.map(args, BiwaScheme.inspect));
 }
+
+//
+// Configurations
+//
+
+// Maximum depth of stack trace
+// (You can also set Interpreter#max_trace_size for each Interpreter)
+BiwaScheme.max_trace_size = 40;
