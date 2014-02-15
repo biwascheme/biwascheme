@@ -356,6 +356,8 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
                         (this.is_tail(next) ? ["shift", 1, ["tco_hinted_apply"]]
                                             : ["apply"]))]]]];
                   //note: proc for call/cc takes 1 argument (= ["apply", 1])
+
+          // Do not push stack frame when call/cc is in a tail context
           return this.is_tail(next) ? c : ["frame", c, next];
 
         default: 
@@ -374,6 +376,8 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
           for(var p=args; p instanceof BiwaScheme.Pair; p=p.cdr){
             c = this.compile(p.car, e, s, f, ["argument", c]);
           }
+
+          // Do not push stack frame for tail calls
           return this.is_tail(next) ? c : ["frame", c, next];
         }
       }

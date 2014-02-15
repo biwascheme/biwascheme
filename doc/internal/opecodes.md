@@ -12,7 +12,7 @@ Registers:
 * f [integer] : [TODO: denotes start position of free variables in the stack?]
 * c [closure] : closure object which is currently executed (set to [] in toplevel)
   * Closure object contains information about freevars (outer variables). When closure requires value of a free variable, it is retrieved from this register.
-  * Used by op_refer_free, op_assign_free
+  * Used by op_refer-free, op_assign-free
 * s [integer] : denotes stack size (TODO: can we remove this by using ary.push()/ary.pop()?)
 
 Opecodes
@@ -30,6 +30,7 @@ Opecodes
 * Function call
   * [op_frame](#op_frame) : Push stack frame
   * [op_apply](#op_apply) : Invoke procedure (Scheme closure or JS function)
+  * [op_tco_hinted_apply](#op_tco_hinted_apply) : op_apply for tail call (Used for stack trace)
   * [op_return](#op_return) : Terminate execution of a procedure
   * [op_shift](#op_shift) : Quick stack frame discard for tail call optimization
 * Variable reference/assignment
@@ -371,7 +372,9 @@ Note that op_frame itself does not touch 'f' register. Since function arguments 
 ### op_apply
 <a name="op_apply" />
 
-Invoke a function-like object, i.e. Scheme closure, BiwaScheme library JS function or native JS function.
+Invoke a function-like object, i.e. Scheme closure or BiwaScheme library JS function.
+
+(Use `js-call` for native JS functions.)
 
 #### format
 
@@ -394,7 +397,7 @@ Before calling op_apply, you must put these values onto stack:
 * f
 * c
 
-h2. applicable things
+##### applicable things
 
 * Scheme closure
   * a JS array
@@ -422,6 +425,79 @@ compiled:
    [refer-global "+"  // load function '+' to 'a' register
    [apply]]]]]]]]     // invoke the function with arguments 11 and 22
 [halt]]
+```
+
+### op_tco_hinted_apply
+<a name="op_tco_hinted_apply" />
+
+Same as op_apply, but used for tail calls. Added for stack trace.
+
+#### format
+
+```
+["tco_hinted_apply"]
+```
+
+#### description
+
+See op_apply for how it retrieves the funcion and its arguments.
+
+#### Stack trace
+
+BiwaScheme.Interpreter has three variables to handle stack trace:
+
+* this.last_refer (String)
+  - Name of the last variable referred by op_refer-global, etc. 
+  - BiwaScheme IL does not contain names of local variables, so
+    they are shown as "(anon)".
+
+* this.call_stack (Array of String) 
+  - Stack of function name
+
+* this.tco_counter (Array of Integer)
+  - Number of tail calls happened
+  - tco_counter.length is equal to number of stack frames
+    (Note that this is different from stack.length,
+     because this.stack is one-dimentional array).
+  - However, call_stack.length may not be the same as number of frames
+    because tail call does not push stack frame.
+  - tco_counter holds this difference, i.e. how many funcalls have occured
+    without pushing stack frame.
+
+Here is the difference between normal call and tail call.
+
+- Normal funcall
+  - op_frame pushes frame onto this.stack, pushes 0 onto tco_counter
+  - op_apply pushes function name onto this.call_stack
+  - op_return pops stack frame, tco_counter and call_stack
+- Tail call
+  - (op_frame is not called)
+  - (op_shift is called)
+  - tco_hinted_apply increments the value on top of tco_counter
+  - op_apply pushes function name onto this.call_stack
+  - op_return pops stack frame, tco_counter and call_stack.
+    call_stack may be popped more than once if value of tco_counter >= 1.
+
+#### example
+
+program:
+```
+(define (f) (print 7))
+```
+
+compiled:
+```
+[close 0                      // Create a Scheme closure
+   [constant 7                // Body of f
+   [argument
+   [constant 1
+   [argument
+   [refer-global "print"
+   [shift 1
+   [tco_hinted_apply]]]]]]]   // Invoke print with tco_hinted_apply
+   [assign-global "f"
+   [halt]]
+-1]
 ```
 
 ### op_return
@@ -793,4 +869,3 @@ compiled:
    -1]]]]]
 [halt]]
 ```
-

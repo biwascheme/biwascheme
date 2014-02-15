@@ -19,11 +19,20 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
       on_error = arguments[0];
     }
 
-    this.stack = [] //(make-vector 1000)
+    // Interpreter stack
+    this.stack = [];
+    // JS function to handle error
     this.on_error = on_error || (last_interpreter ? last_interpreter.on_error : function(e){});
+    // JS function to handle result
     this.after_evaluate = function(){};
+
+    // (Variables for stack trace)
+    // Name of the last variable read by refer-xx
     this.last_refer = last_interpreter ? last_interpreter.last_refer : null;
+    // Call stack (array of last_refer)
     this.call_stack = last_interpreter ? _.clone(last_interpreter.call_stack) : [];
+    // Counts number of tail calls (= how many times should we pop call_stack
+    // in op_return)
     this.tco_counter = [];
   },
 
