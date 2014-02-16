@@ -121,33 +121,7 @@ How to add a new file
 How to release
 --------------
 
-1. Edit History.txt
-2. Edit VERSION
-3. Edit node_modules/biwascheme/package.json
-4. $ make -B
-5. Make sure it is working:
-   + run tests
-     - open test/spec.html
-     - open test/spec.html#release
-     - open test/spec.html#min
-     - run test/browser_functions/
-       - $ cd test/browser_functions && node server.js && open http://localhost:7001/
-   + run demos
-     - demo/*
-     - open repl.html
-     - open website/i.html
-     - open test/tracer.html
-     - open test/tracer_auto.html
-   + try npm package
-       - $ npm install node_modules/biwascheme/ -g
-       - $ biwas -v
-6. Commit and create tag ($ git tag x.y.z)
-7. Push changes to github with --tags
-8. Update website on web server (git pull)
-9. Publish npm package
-  - $ npm publish node_modules/biwascheme/
-10. Copy generated files (release/*.js, src/version.js) to web server
-  - copy src/deps/underscore(.string).js, too
+(moved to doc/dev/release.md)
 
 How to upgrade dependencies
 ---------------------------
@@ -174,33 +148,8 @@ You can run the website locally with Node and express.
 
     $ make
     $ npm install
-    $ node www.biwascheme.org.js
+    $ node local_website.js
     $ open http://localhost:7001
-
-Interesting [SRFIs](http://srfi.schemers.org/final-srfis.html)
--------------------
-
-Partially implemented:
-
-- 1 list libraries
-- 13 string libraries
-- 19 time 
-- 38 (write-with-shared-structure) 
-- 43 vector libraries 
-
-Not yet:
-
-- 26 (cut) 
-- 39 (parameterize) is it identical to the one in R7RS?
-
-Maybe:
-
-- 41 stream 
-- 42 (list-ec) 
-- 44 collection
-- 48 (format) (intermediate, ~d, ~b, etc.)
-- 78 (check) -> list-ec
-- 88 keyword (like 'test:')
 
 License
 =======

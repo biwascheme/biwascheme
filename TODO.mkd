@@ -1,7 +1,7 @@
 TODO for BiwaScheme
 ===================
 
-Next release (0.6.2)
+Next release (0.6.3)
 --------------------
 
 - id=biwa-script
@@ -137,3 +137,27 @@ May need fix
     (set-cdr! (list-tail y 5) y)
     (equal? x y))
 
+Interesting [SRFIs](http://srfi.schemers.org/final-srfis.html)
+-------------------
+
+Partially implemented:
+
+- 1 list libraries
+- 13 string libraries
+- 19 time 
+- 38 (write-with-shared-structure) 
+- 43 vector libraries 
+
+Not yet:
+
+- 26 (cut) 
+- 39 (parameterize) is it identical to the one in R7RS?
+
+Maybe:
+
+- 41 stream 
+- 42 (list-ec) 
+- 44 collection
+- 48 (format) (intermediate, ~d, ~b, etc.)
+- 78 (check) -> list-ec
+- 88 keyword (like 'test:')
