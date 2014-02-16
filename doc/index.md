@@ -14,4 +14,5 @@ http://www.biwascheme.org/
 ## Development docs
 
 * [dev/website.md](dev/website.md)
+* [dev/release.md](dev/release.md)
 
