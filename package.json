@@ -11,7 +11,7 @@
     },
     "main": "./release/node_biwascheme.js",
     "dependencies" : {
-        "optparse" : "1.0.3",
+        "optparse" : "1.0.5",
         "underscore" : "1.2.2",
         "underscore.string" : "2.0.0"
     },
