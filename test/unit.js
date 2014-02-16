@@ -121,7 +121,7 @@ describe('Interpreter', {
     intp.max_trace_size = 0;
     intp.evaluate("(define (g) 7) \
                    (define (f) (g) 8) \
-                   (f) (alert 1)");
+                   (f)");
     expect( BiwaScheme.inspect(intp.call_stack) ).should_be('[]');
   }
 });
