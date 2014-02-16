@@ -379,6 +379,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         }
         break;
       case "return":
+        // Pop stack frame
         var n=this.index(s, -1);
         var ss=s-n;
         x = this.index(ss, 0),
@@ -386,8 +387,9 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         c = this.index(ss, 2),
         s = ss-3-1;
 
-        var num_call_stack_pops = 1 + this.tco_counter[this.tco_counter.length - 1];
-        _.times(num_call_stack_pops, _.bind(function() { this.call_stack.pop() }, this));
+        // Pop stack trace (> 1 times if tail calls are done)
+        var n_pops = 1 + this.tco_counter[this.tco_counter.length - 1];
+        this.call_stack.splice(-n_pops);
         this.tco_counter.pop();
         break;
       default:
