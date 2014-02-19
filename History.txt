@@ -1,4 +1,6 @@
-(not yet)  v0.6.2
+(not yet) v0.6.3
+
+2013-02-16  v0.6.2
 
   * change:
       - upgraded from jQuery 1.6.2 to 1.7.1

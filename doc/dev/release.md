@@ -33,3 +33,4 @@ How to make a release
   - $ push bs-web web:master
 8. Publish npm package
   - $ npm publish
+9. Update VERSION to x.y.z.dev
