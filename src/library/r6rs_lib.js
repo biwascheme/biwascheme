@@ -667,7 +667,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
   define_libfunc("atan", 1, 2, function(ar){
     assert_number(ar[0]);
-    if(ar[1]){
+    if(ar.length == 2){
       assert_number(ar[1]);
       return Math.atan2(ar[0], ar[1]);
     }
