@@ -59,7 +59,7 @@ release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
 	@echo "Wrote " $@
 
 release/biwascheme-min.js: release/biwascheme.js
-	uglifyjs -o $@ release/biwascheme.js
+	uglifyjs -o $@ release/biwascheme.js --comments
 	@echo "Wrote " $@
 
 release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile

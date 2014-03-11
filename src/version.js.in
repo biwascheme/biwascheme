@@ -1,8 +1,8 @@
 /*
  * BiwaScheme @VERSION@ - R6RS Scheme in JavaScript
  *
- * Copyright (c) 2007-2012 Yutaka HARA (http://www.biwascheme.org/)
- * Licensed under the MIT license.
+ * Copyright (c) 2007-2014 Yutaka HARA (http://www.biwascheme.org/)
+ * @license Licensed under the MIT license.
  */
 
 var BiwaScheme = BiwaScheme || {};
