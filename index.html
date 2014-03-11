@@ -40,16 +40,48 @@
       </ul>
 
       <script type="text/javascript">
-        jQuery('#ver').html(BiwaScheme.Version);
-        jQuery('#rel').attr("href", "/release/biwascheme-"+BiwaScheme.Version+".js");
-        jQuery('#rel').text("biwascheme-"+BiwaScheme.Version+".js");
-        jQuery('#relmin').attr("href", "/release/biwascheme-"+BiwaScheme.Version+"-min.js");
-        jQuery('#relmin').text("biwascheme-"+BiwaScheme.Version+"-min.js");
+        $('#ver').html(BiwaScheme.Version);
+        $('#rel').attr("href", "/release/biwascheme-"+BiwaScheme.Version+".js");
+        $('#rel').text("biwascheme-"+BiwaScheme.Version+".js");
+        $('#relmin').attr("href", "/release/biwascheme-"+BiwaScheme.Version+"-min.js");
+        $('#relmin').text("biwascheme-"+BiwaScheme.Version+"-min.js");
       </script>
 
       <p>
       <a href="https://github.com/biwascheme/biwascheme/tree/master/release">Older versions</a> are on github.
       </p>
+
+      <h2>News</h2>
+
+      <ul id="newsList">
+      </ul>
+
+      <p><a href='https://github.com/biwascheme/biwascheme/issues?direction=desc&labels=announce&page=1&sort=updated&state=closed'>more...</a></p>
+
+      <script type="text/javascript">
+        // Pick news from github issues labeled 'announce'
+        $.ajax({
+          type: 'GET',
+          url: 'https://api.github.com/repos/biwascheme/biwascheme/issues?labels=announce&state=all&per_page=10',
+          dataType: 'jsonp',
+          success: function(json){
+            $.each(json['data'], function(idx, entry){
+              $('#newsList').append([
+                "<li>",
+                "<a href='",
+                  entry.html_url,
+                "'>",
+                  entry.title,
+                "</a>",
+                " (",
+                  entry.created_at,
+                ")",
+                "</li>"
+              ].join(''))
+            });
+          }
+        });
+      </script>
 
       <h2>Example</h2>
 
