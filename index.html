@@ -34,17 +34,21 @@
       <h2>Download</h2>
 
       <ul>
-        <li><a href="/release/biwascheme.js">biwascheme.js</a>
+        <li><a id="rel" href="/release/biwascheme.js">biwascheme.js</a>
         version <span id="ver">--</span></li>
-        <li><a href="/release/biwascheme-min.js">biwascheme-min.js</a></li>
+        <li><a id="relmin" href="/release/biwascheme-min.js">biwascheme-min.js</a></li>
       </ul>
 
       <script type="text/javascript">
         jQuery('#ver').html(BiwaScheme.Version);
+        jQuery('#rel').attr("href", "/release/biwascheme-"+BiwaScheme.Version+".js");
+        jQuery('#rel').text("biwascheme-"+BiwaScheme.Version+".js");
+        jQuery('#relmin').attr("href", "/release/biwascheme-"+BiwaScheme.Version+"-min.js");
+        jQuery('#relmin').text("biwascheme-"+BiwaScheme.Version+"-min.js");
       </script>
 
       <p>
-      <a href="http://github.com/biwascheme/biwascheme/tags">Older versions</a> are on github.
+      <a href="https://github.com/biwascheme/biwascheme/tree/master/release">Older versions</a> are on github.
       </p>
 
       <h2>Example</h2>
