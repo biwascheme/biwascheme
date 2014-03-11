@@ -725,6 +725,44 @@ describe('11.7 Arithmetic', {
     ev("(abs -7)").should_be(7);
     ev("(abs 7)").should_be(7);
   },
+  // div-and-mod
+  // div
+  // mod
+  // div0-and-mod0
+  // div0
+  // mod0
+  // gcd
+  // lcm
+  // numerator
+  // denominator
+  // floor
+  // ceiling
+  // truncate
+  // round
+  // rationalize
+  // exp
+  // log
+  // sin
+  // cos
+  // tan
+  // asin
+  // acos
+  // atan
+  'atan' : function() {
+    ev('(atan 1)').should_be(0.7853981633974483);
+    ev('(atan 1 2)').should_be(0.4636476090008061);
+  },
+  // sqrt
+  // exact-integer-sqrt
+  // expt
+  // make-rectangular
+  // make-polar
+  // real-part
+  // imag-part
+  'magnitude' : function() {
+    ev('(magnitude (make-rectangular 3 4))').should_be(5)
+  },
+  // angle
   'number->string' : function(){
     ev('(number->string 100)').should_be("100");
     ev('(number->string 32 16)').should_be("20");
@@ -738,9 +776,6 @@ describe('11.7 Arithmetic', {
     ev('(string->number "+inf.0")').should_be(Infinity)
     ev('(string->number "-inf.0")').should_be(-Infinity)
     ew('(string->number "+nan.0")').should_be("+nan.0")
-  },
-  'complex' : function() {
-    ev('(magnitude (make-rectangular 3 4))').should_be(5)
   }
 })
 
