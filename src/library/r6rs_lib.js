@@ -1671,32 +1671,42 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // so that setTimeout in compare procedures work well
   //
   //(list-sort list)
-  define_libfunc("list-sort", 1, 2, function(ar){
-    if(ar[1]){
-      throw new Bug("list-sort: cannot take compare proc now");
-    }
-    assert_list(ar[0]);
-    return array_to_list(ar[0].to_array().sort());
-  });
+  (function(){
+    // comparison function to prevent lexicographic ordering per Javascript default
+    var compareFn = function(a,b){ 
+      if(typeof a !== typeof b){
+        return compareFn(typeof a, typeof b); 	
+      }
+      return a > b ? 1 : a < b ? -1 : 0;
+    };
+    
+    define_libfunc("list-sort", 1, 2, function(ar){
+      if(ar[1]){
+        throw new Bug("list-sort: cannot take compare proc now");
+      }
+      assert_list(ar[0]);
+      return array_to_list(ar[0].to_array().sort(compareFn));
+    });
 
-  //(vector-sort proc vector)    procedure
-  define_libfunc("vector-sort", 1, 2, function(ar){
-    if(ar[1]){
-      throw new Bug("vector-sort: cannot take compare proc now");
-    }
-    assert_vector(ar[0]);
-      return _.clone(ar[0]).sort();
-  });
+    //(vector-sort proc vector)    procedure
+    define_libfunc("vector-sort", 1, 2, function(ar){
+      if(ar[1]){
+        throw new Bug("vector-sort: cannot take compare proc now");
+      }
+      assert_vector(ar[0]);
+        return _.clone(ar[0]).sort(compareFn);
+    });
 
-  //(vector-sort! proc vector)    procedure 
-  define_libfunc("vector-sort!", 1, 2, function(ar){
-    if(ar[1]){
-      throw new Bug("vector-sort!: cannot take compare proc now");
-    }
-    assert_vector(ar[0]);
-    ar[0].sort();
-    return BiwaScheme.undef;
-  });
+    //(vector-sort! proc vector)    procedure 
+    define_libfunc("vector-sort!", 1, 2, function(ar){
+      if(ar[1]){
+        throw new Bug("vector-sort!: cannot take compare proc now");
+      }
+      assert_vector(ar[0]);
+      ar[0].sort(compareFn);
+      return BiwaScheme.undef;
+    });
+  })();
 
   //
   // Chapter 5 Control Structures
