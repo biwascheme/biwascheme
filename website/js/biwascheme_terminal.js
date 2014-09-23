@@ -42,13 +42,13 @@ jQuery(document).ready(function($, undefined) {
                 });
             } catch(e) {
                 term.error(e.message);
+                code_to_evaluate = '';
                 throw(e);
             }
             term.set_prompt('biwascheme>');
             code_to_evaluate = '';
         } else {
             term.set_prompt('...            ');
-            
         }
     }, {
         greetings: 'BiwaScheme Interpreter version ' + BiwaScheme.Version +
