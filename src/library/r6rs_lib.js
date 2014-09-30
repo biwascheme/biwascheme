@@ -1659,7 +1659,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       })
       return ret;
     }
-  })
+  });
 
   //
   // Chapter 4 Sorting
