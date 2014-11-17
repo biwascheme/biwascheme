@@ -840,8 +840,13 @@ describe('11.9 Pairs and lists', {
   'list?' : function(){
     ev("(list? '(a b c))").should_be(true);
     ev("(list? '())").should_be(true);
+    ev("(list? 1)").should_be(false);
     ev("(list? '(a . b))").should_be(false);
-    //TODO: test for cyclic list
+    ev("(define l '(a)) (list? (cons l l))").should_be(true);
+    // Bug #36
+    ev("(list? '(1 1))").should_be(true);
+    // cyclic list
+    ev("(define l '(a)) (set-cdr! l l) (list? (cons 1 l))").should_be(false);
   },
   'list' : function(){
     ew("(list 'a (+ 3 4) 'c)").should_be("(a 7 c)");
