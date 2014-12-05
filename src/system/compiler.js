@@ -372,9 +372,16 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
                                        : ["apply"]);
 
           // VM will push the number of arguments to the stack.
-          c = this.compile(args.length(), e, s, f, ["argument", c]);
-          for(var p=args; p instanceof BiwaScheme.Pair; p=p.cdr){
-            c = this.compile(p.car, e, s, f, ["argument", c]);
+          if(args.length){
+            // args is Pair or nil
+            c = this.compile(args.length(), e, s, f, ["argument", c]);
+            for(var p=args; p instanceof BiwaScheme.Pair; p=p.cdr){
+              c = this.compile(p.car, e, s, f, ["argument", c]);
+            }
+          }
+          else{
+            c = this.compile(1, e, s, f, ["argument", c]);
+            c = this.compile(args, e, s, f, ["argument", c]);
           }
 
           // Do not push stack frame for tail calls

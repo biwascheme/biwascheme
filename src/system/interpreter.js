@@ -553,9 +553,15 @@ BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
       }
       else{
         var expanded_car = expand(x.car, flag);
-        var expanded_cdr = BiwaScheme.array_to_list(
-                             _.map(x.cdr.to_array(),
-                                   function(item){ return expand(item, flag); }));
+        var expanded_cdr;
+        if(x.cdr instanceof BiwaScheme.Pair){
+          expanded_cdr = BiwaScheme.array_to_list(
+                           _.map(x.cdr.to_array(),
+                                 function(item){ return expand(item, flag); }));
+        }
+        else{
+          expanded_cdr = expand(x.cdr, flag);
+        }
         ret = new BiwaScheme.Pair(expanded_car, expanded_cdr);
       }
     }
