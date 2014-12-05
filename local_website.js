@@ -5,13 +5,11 @@
 //
 
 var express = require('express'),
-    app = require('express').createServer(),
+    app = require('express')(),
     fs = require('fs');
 
-app.configure(function(){
-  app.use(express.static(__dirname));
-  //app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
+app.use(express.static(__dirname));
+//app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 //app.get('/', function(req, res){
 //  res.send('hello world');
