@@ -844,19 +844,33 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return (ar[0] === nil);
   });
   define_libfunc("list?", 1, 1, function(ar){
-    var contents = [];
-    for(var o=ar[0]; o != nil; o=o.cdr){
-      if(!(o instanceof Pair)){
-        // ar[0] is not a Pair, or terminated with something other than nil
+    var tortoise = ar[0];
+    if (tortoise === nil) // Empty list
+      return true;
+    if (!(tortoise instanceof Pair)) // ar[0] isn't even a pair
+      return false;
+    if (tortoise.cdr === nil) // 1-element list
+      return true;
+    if (!(tortoise.cdr instanceof Pair)) // Other kind of cons cell
+      return false;
+
+    var hare = tortoise.cdr.cdr;
+    while (true) {
+      if (hare === nil) // End of list
+        return true;
+      if (hare === tortoise) // Cycle
         return false;
-      }
-      contents.push(o);
-      if(_.detect(contents, function(item){ return item === o.cdr; })) {
-        return false; //cyclic
-      }
+      if (!(hare instanceof Pair)) // Improper list
+        return false;
+
+      if (hare.cdr === nil) // End of list
+        return true;
+      if (!(hare.cdr instanceof Pair)) // Improper list
+        return false;
+
+      hare = hare.cdr.cdr;
+      tortoise = tortoise.cdr;
     }
-    // Terminated with nil
-    return true;
   });
   define_libfunc("list", 0, null, function(ar){
     var l = nil;
