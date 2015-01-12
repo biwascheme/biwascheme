@@ -32,13 +32,38 @@ BiwaScheme.isPair = function(obj){
   return (obj instanceof BiwaScheme.Pair);
 };
 
-// Returns true if obj is '() or all the cdr's are list.
+// Returns true if obj is a proper list
 // Note: isList returns true for '()
 BiwaScheme.isList = function(obj){
-    if(obj === BiwaScheme.nil) return true; // null base case
-    if(!(obj instanceof BiwaScheme.Pair)) return false;
-    return BiwaScheme.isList(obj.cdr);
-  //TODO: should check if it is not cyclic..
+  var nil = BiwaScheme.nil, Pair = BiwaScheme.Pair;
+
+  var tortoise = obj;
+  if (tortoise === nil) // Empty list
+    return true;
+  if (!(tortoise instanceof Pair)) // Argument isn't even a pair
+    return false;
+  if (tortoise.cdr === nil) // 1-element list
+    return true;
+  if (!(tortoise.cdr instanceof Pair)) // Other kind of cons cell
+    return false;
+
+  var hare = tortoise.cdr.cdr;
+  while (true) {
+    if (hare === nil) // End of list
+      return true;
+    if (hare === tortoise) // Cycle
+      return false;
+    if (!(hare instanceof Pair)) // Improper list
+      return false;
+
+    if (hare.cdr === nil) // End of list
+      return true;
+    if (!(hare.cdr instanceof Pair)) // Improper list
+      return false;
+
+    hare = hare.cdr.cdr;
+    tortoise = tortoise.cdr;
+  }
 };
 
 BiwaScheme.isVector = function(obj){

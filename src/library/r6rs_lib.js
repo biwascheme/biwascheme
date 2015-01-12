@@ -844,33 +844,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return (ar[0] === nil);
   });
   define_libfunc("list?", 1, 1, function(ar){
-    var tortoise = ar[0];
-    if (tortoise === nil) // Empty list
-      return true;
-    if (!(tortoise instanceof Pair)) // ar[0] isn't even a pair
-      return false;
-    if (tortoise.cdr === nil) // 1-element list
-      return true;
-    if (!(tortoise.cdr instanceof Pair)) // Other kind of cons cell
-      return false;
-
-    var hare = tortoise.cdr.cdr;
-    while (true) {
-      if (hare === nil) // End of list
-        return true;
-      if (hare === tortoise) // Cycle
-        return false;
-      if (!(hare instanceof Pair)) // Improper list
-        return false;
-
-      if (hare.cdr === nil) // End of list
-        return true;
-      if (!(hare.cdr instanceof Pair)) // Improper list
-        return false;
-
-      hare = hare.cdr.cdr;
-      tortoise = tortoise.cdr;
-    }
+    return isList(ar[0]);
   });
   define_libfunc("list", 0, null, function(ar){
     var l = nil;
