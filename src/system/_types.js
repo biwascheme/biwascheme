@@ -37,25 +37,32 @@ BiwaScheme.isPair = function(obj){
 BiwaScheme.isList = function(obj){
   var nil = BiwaScheme.nil, Pair = BiwaScheme.Pair;
 
-  if (obj === nil) // Empty list
+  if (obj === nil) { // Empty list
     return true;
-  if (!(obj instanceof Pair)) // Argument isn't even a pair
+  }
+  if (!(obj instanceof Pair)) { // Argument isn't even a pair
     return false;
+  }
 
   var tortoise = obj;
   var hare = obj.cdr;
   while (true) {
-    if (hare === nil) // End of list
+    if (hare === nil) { // End of list
       return true;
-    if (hare === tortoise) // Cycle
+    }
+    if (hare === tortoise) { // Cycle
       return false;
-    if (!(hare instanceof Pair)) // Improper list
+    }
+    if (!(hare instanceof Pair)) { // Improper list
       return false;
+    }
 
-    if (hare.cdr === nil) // End of list
+    if (hare.cdr === nil) { // End of list
       return true;
-    if (!(hare.cdr instanceof Pair)) // Improper list
+    }
+    if (!(hare.cdr instanceof Pair)) { // Improper list
       return false;
+    }
 
     hare = hare.cdr.cdr;
     tortoise = tortoise.cdr;
