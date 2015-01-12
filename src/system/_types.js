@@ -37,17 +37,13 @@ BiwaScheme.isPair = function(obj){
 BiwaScheme.isList = function(obj){
   var nil = BiwaScheme.nil, Pair = BiwaScheme.Pair;
 
-  var tortoise = obj;
-  if (tortoise === nil) // Empty list
+  if (obj === nil) // Empty list
     return true;
-  if (!(tortoise instanceof Pair)) // Argument isn't even a pair
-    return false;
-  if (tortoise.cdr === nil) // 1-element list
-    return true;
-  if (!(tortoise.cdr instanceof Pair)) // Other kind of cons cell
+  if (!(obj instanceof Pair)) // Argument isn't even a pair
     return false;
 
-  var hare = tortoise.cdr.cdr;
+  var tortoise = obj;
+  var hare = obj.cdr;
   while (true) {
     if (hare === nil) // End of list
       return true;
