@@ -527,7 +527,7 @@ BiwaScheme.Compiler.compile = function(expr, next){
 // Returns true if x is a definition
 var is_definition = function(x){
   return BiwaScheme.isPair(x) &&
-         BiwaScheme.isTheSymbol("define", x.car);
+         BiwaScheme.Sym("define") === x.car;
   // TODO: support "begin", nested "begin", "let(rec)-syntax"
 };
 
