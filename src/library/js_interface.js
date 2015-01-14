@@ -58,7 +58,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //   '((a . b) (c . 4)) to
   //   {a: "b", c: 4}
   //
-  // TODO: provide corresponding macro ".." 
   define_libfunc("js-invocation", 2, null, function(ar, intp){
     var receiver = ar.shift();
     // TODO: convert lambdas by js-closure 
@@ -113,6 +112,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       });
 
     return v;
+  });
+
+  // TODO: provide corresponding macro ".." 
+  define_syntax("..", function(x){
+    if (x.cdr == nil) {
+      throw new Error("malformed ..");
+    }
+    return new Pair(Sym("js-invocation"), x.cdr);
   });
 
   // (js-new "Date" 2005 1 1)
