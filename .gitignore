@@ -5,3 +5,5 @@ release/console_biwascheme.js
 release/node_biwascheme.js
 src/version.js
 test/browser_functions/node_modules/
+/doc/**/*.html
+/index.html

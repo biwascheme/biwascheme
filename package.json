@@ -16,7 +16,8 @@
         "underscore.string" : "2.0.0"
     },
     "devDependencies": {
-        "express": "~4.10.4"
+        "express": "~4.10.4",
+        "marked": "~0.3.2"
     },
     "bin": { "biwas": "./bin/biwas" }
 }

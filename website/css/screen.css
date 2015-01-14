@@ -39,7 +39,7 @@ h1 a{
 
 #menu {
   float: left;
-  margin-left: -150px;
+  margin-left: -200px;
   padding: 1em;
   z-index: -1;
 }
@@ -70,7 +70,7 @@ h3 {
 
 /* paragraphs */
 
-ul {
+ul, ol {
   margin-left: 1em;
 }
 
@@ -83,9 +83,9 @@ p {
   margin-bottom: 1em;
 }
 
-pre, pre font {
-  font-family: monospace;
-  font-size: 1.2em;
+code {
+  font-family: Monaco, monospace;
+  font-size: 90%;
 }
 
 /* tables */

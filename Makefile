@@ -73,9 +73,22 @@ release/node_biwascheme.js: src/platforms/node/module_preamble.js release/consol
 	cat src/platforms/node/module_postamble.js >> $@
 	@echo "Wrote " $@
 
+#
+# Test
+#
 
 browser_test:
 	cd test/browser_functions; node ./server.js
 
-website:
-	gosh website/converter.scm website/
+#
+# Website
+#
+
+index.html: doc/_header.html doc/_footer.html
+	cat doc/_header.html index_.html doc/_footer.html > index.html
+
+website: index.html
+	node bin/biwas tools/make_doc.scm
+
+watch_website:
+	ifchanged -d 'make website -B' doc/**/*.md doc/_*

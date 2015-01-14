@@ -1,18 +1,13 @@
-# BiwaScheme
-
-http://www.biwascheme.org/
-
 ## Development status
 
-* [conformance.md](conformance.md)
-* [r7rs.md](r7rs.md)
+* [conformance](/doc/conformance.html)
+* [r7rs](/doc/r7rs.html)
 
 ## BiwaScheme internals
 
-* [internal/opecodes.md](internal/opecodes.md)
+* [internal/opecodes](/doc/internal/opecodes.html)
 
 ## Development docs
 
-* [dev/website.md](dev/website.md)
-* [dev/release.md](dev/release.md)
-
+* [dev/website](/doc/dev/website.html)
+* [dev/release](/doc/dev/release.html)
