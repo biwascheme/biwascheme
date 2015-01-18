@@ -844,19 +844,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return (ar[0] === nil);
   });
   define_libfunc("list?", 1, 1, function(ar){
-    var contents = [];
-    for(var o=ar[0]; o != nil; o=o.cdr){
-      if(!(o instanceof Pair)){
-        // ar[0] is not a Pair, or terminated with something other than nil
-        return false;
-      }
-      contents.push(o);
-      if(_.detect(contents, function(item){ return item === o.cdr; })) {
-        return false; //cyclic
-      }
-    }
-    // Terminated with nil
-    return true;
+    return isList(ar[0]);
   });
   define_libfunc("list", 0, null, function(ar){
     var l = nil;
