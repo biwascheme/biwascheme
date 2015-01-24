@@ -1,5 +1,10 @@
 (not yet) v0.6.3
 
+  * new:
+    - macro `..`
+
+  * some bug fixes
+
 2013-02-16  v0.6.2
 
   * change:
