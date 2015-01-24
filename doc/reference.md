@@ -116,11 +116,6 @@ Other macro-related functions:
 * `format`
 * `write/ss`
 
-### System functions (Node.js only)
-
-* `file-exists?` `delete-file` `command-line` `exit`
-* `get-environment-variable` `get-environment-variables`
-
 ### Syntax
 
 * Comment
@@ -166,3 +161,26 @@ Other macro-related functions:
   * `(console-info obj1 ...)`
   * `(console-warn obj1 ...)`
   * `(console-error obj1 ...)`
+
+### System functions (Node.js only)
+
+* R6RS
+  * `(file-exists? filepath)` 
+  * `(delete-file filepath)` 
+  * `(command-line)`
+  * `(exit)` `(exit num)`
+
+* srfi-98
+  * `(get-environment-variable name)` -> string or #f
+  * `(get-environment-variables)` -> alist of string (("key" . "value"))
+
+You can also use Node.js libraries via `js-eval`, etc.
+
+```
+(define fs (js-eval "require('fs')"))
+
+(define path ".")
+(print (js-invoke fs 'readdirSync path))
+; Alternatively you can use `..` macro syntax:
+; (print (.. fs `(readdirSync ,path)))
+```

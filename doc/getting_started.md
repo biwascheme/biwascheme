@@ -52,7 +52,8 @@ Using Node.js functions
 ```
 (define fs (js-eval "require('fs')"))
 
-(print (js-invoke fs 'readdirSync "."))
+(define path ".")
+(print (js-invoke fs 'readdirSync path))
 ; Alternatively you can use `..` macro syntax:
 ; (print (.. fs `(readdirSync ,path)))
 ```
