@@ -131,4 +131,38 @@ Other macro-related functions:
   * quote (')
   * quasiquote (\`) unquote (,) unquote-splicing (,@)
 
+### JavaScript language interface
 
+* `(js-eval str)` evaluate `str` as JavaScript code
+* `(js-ref jsobj str)` = `a.b`
+* `(js-set! jsobj str value)` = `a.b = c`
+* `(js-call jsfunc args...)` = `a()`
+* `(js-invoke jsobj methodname args...)` = `a.b()`
+
+* `(js-new ctorname args...)` = `new a`
+  * eg. `(js-new "Date" 2008 1 2)`
+* `(js-obj key1 value1 key2 value2...)
+  * eg. `(js-obj "foo" 1 "bar" 2)` → `{"foo": 1, "bar": 2}`
+* `(js-closure proc)` returns a JS function that executes a Scheme function `proc`
+
+* `(js-null? x)`
+* `(js-undefined? x)`
+* `(js-function? x)`
+
+* `js-invocation`
+* macro `..`
+
+* Timer
+  * `(timer proc sec)` = setTimeout
+  * `(set-timer! proc sec)` = setInterval
+  * `(clear-timer! timer-id)` = clearInterval
+  * `(sleep sec)`
+      * Blocking sleep. `(sleep 3)` will wait 3 seconds and then 
+        BiwaScheme resumes running the rest of the code. 
+
+* Console
+  * `(console-debug obj1 ...)` = console.debug
+  * `(console-log obj1 ...)`
+  * `(console-info obj1 ...)`
+  * `(console-warn obj1 ...)`
+  * `(console-error obj1 ...)`
