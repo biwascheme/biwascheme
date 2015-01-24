@@ -2,7 +2,6 @@
 
 ### Basic types
 
-
 * List
   * `length` `append` `reverse` `list-tail` `list-ref` `map` `for-each`
   * `find` `for-all` `exists` `filter` `partition` `fold-left` `fold-righ`
@@ -66,6 +65,25 @@
 * `apply`
 * `eval`
 * `eq?` `eqv?` `equal?`
+
+### Macro
+
+<a name="macro">
+
+BiwaScheme does not have `syntax-ruels` or `syntax-case`, but has `define-macro`.
+
+```
+(define-macro (test expr)
+  `(if ,expr
+    #t
+    (print (format "test failed: ~a" ,expr))))
+
+(test (= 1 2)) ;=> test failed: (= 1 2)
+```
+
+Other macro-related functions:
+
+* `macroexpand` `macroexpand-1` `%macroexpand` `%macroexpand-1` `gensym`
 
 ### Advanced types
 

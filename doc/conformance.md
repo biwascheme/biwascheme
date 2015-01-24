@@ -6,7 +6,7 @@ BiwaScheme has most features of [R6RS](http://www.r6rs.org/) Base library.
 The biggest features not implemented are errors and `syntax-rules`
 (you can use `define-macro` instead).
 
-### R6RS Base library)
+### R6RS Base library
 
 * 11.4 Expressions
   * ok

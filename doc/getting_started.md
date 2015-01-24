@@ -37,3 +37,23 @@ $ biwas
 > (+ 1 2)
 3
 ```
+
+Running a script file
+
+```
+$ cat hello.scm
+(print "Hello, world!")
+$ biwas hello.scm
+Hello, world!
+```
+
+Using Node.js functions
+
+```
+(define fs (js-eval "require('fs')"))
+
+(print (js-invoke fs 'readdirSync "."))
+; Alternatively you can use `..` macro syntax:
+; (print (.. fs `(readdirSync ,path)))
+```
+
