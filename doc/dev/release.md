@@ -1,5 +1,4 @@
-How to make a release
-=====================
+## How to make a release
 
 1. Edit History.txt
 2. Edit VERSION
