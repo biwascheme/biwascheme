@@ -82,7 +82,7 @@
     return _.isUndefined(val) ? false : val;
   });
 
-  // (get-environment-variables) -> alist of string (("key" . "value")"
+  // (get-environment-variables) -> alist of string (("key" . "value"))
   define_node_libfunc("get-environment-variables", 0, 0, function(ar){
     return BiwaScheme.js_obj_to_alist(node.process.env);
   });
