@@ -209,7 +209,7 @@ with(BiwaScheme) {
       j: function(x){ throw new Bug("not implemented: day of year") },
       k: function(x){ return spacepad(x.getHours()) },
       l: function(x){ var h = x.getHours(); return spacepad(h<13 ? h : h-12) },
-      m: function(x){ return zeropad(x.getMonth()) },
+      m: function(x){ return zeropad(x.getMonth()+1) },
       M: function(x){ return zeropad(x.getMinutes()) },
       n: function(x){ return "\n" },
       N: function(x){ throw new Bug("not implemented: nanoseconds") },
