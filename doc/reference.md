@@ -10,15 +10,20 @@
   * `assp` `assoc` `assv` `assq`
   * `cons*`
   * `list-sort`
+  * `(iota count start? step?)` (srfi-1)
+  * `(list-copy list)` (srfi-1)
 * String
   * `string?` `make-string` `string` `string-length` `string-ref`
   * `string=?` `string<?` `string>?` `string<=?` `string>=?`
   * `substring` `string-append` `string->list` `list->string`
   * `string-for-each` `string-copy`
+  * `(open-input-string s)` (srfi-6)
+  * `(open-output-string)` (srfi-6)
+  * `(get-output-string strport)` (srfi-6)
 * Vector
   * `vector?` `vector` `vector-length` `vector-ref` `vector-set!`
   * `vector->list` `list->vector` `vector-fill!` `vector-map` `vector-for-each`
-  * `vector-append` `vector-copy`
+  * `(vector-append v1 v2...)` `(vector-copy v)` (srfi-43)
   * `vector-sort` `vector-sort!`
 * Boolean
   * `boolean?` `boolean=` `not` `and` `or`
@@ -48,7 +53,8 @@
   * `numerator` `denominator` `floor` `ceiling` `truncate` `round` `(rationalize)`
   * `exp` `log` `sin` `cos` `tan` `asin` `acos` `atan` `sqrt` `exact-integer-sqrt` `expt`
   * `number->string` `string->number`
-
+  * `(random-integer n)` => 0..n-1 (srfi-27)
+  * `(random-real)` => 0.0...1.0 (srfi-27)
 
 ### Control structure
 
@@ -61,7 +67,8 @@
 * Assignment
   * `let` `let1` `let\*` `letrec` `letrec\*`
 * Values
-  * `values` `call-with-values` `let-values` `let\*-values` `receive`
+  * `values` `call-with-values` `let-values` `let\*-values`
+  * `(receive <formals> <expression> <body>...)` (srfi-8)
 * `apply`
 * `eval`
 * `eq?` `eqv?` `equal?`
@@ -102,19 +109,37 @@ Other macro-related functions:
   * `enum-set-member?` `enum-set-subset?` `snum-set=?` `enum-set->list`
   * `enum-set-union` `enum-set-intersection` `enum-set-difference`
      `enum-set-complement` `enum-set-projection`
-* Date
-  * `current-date`
-  * `date?` `date-nanosecond` `date-millisecond` `date-second` `date-minute`
-     `date-hour` `date-day` `date-month` `date-year` `date-week-day`
-  * `date->string` `parse-date`
+* Date (srfi-19)
+  * `(current-date [tz-offset])`
+    * Note: tz-offset is currently ignored and always local time is returned
+  * `(date? x)` `(date-nanosecond d)` `(date-millisecond d)`
+    `(date-second d)` `(date-minute d)` `(date-hour d)` `(date-day d)`
+    `(date-month d)` `(date-year d)` `(date-week-day d)`
+      * Note: `date-month` returns 1..12, not 0..11
+  * `(date->string date [template])`
+    * eg. `(date->string (current-date) "~Y-~m-~d ~H:~M:~S")`
+    * See [srfi-19](http://srfi.schemers.org/srfi-19/srfi-19.html) 
+      for full list of `~?`
+  * `(parse-date date)` = `Date.parse`
 * Regexp
   * `regexp-exec` `(regexp-exec)` `(regexp-replace-all)`
   * `string->regexp` `regexp?` `regexp->string`
 
 ### Utilities
 
-* `format`
-* `write/ss`
+* Simple format (srfi-28)
+  * eg. `(format "Result: ~s" (some-calculation))`
+  * `(format format-str obj1 obj2 ...)` -> string
+  * `(format #f format-str ...)` -> string
+  * `(format #t format-str ...)` -> output to current port 
+  * `(format port format-str ...)` -> output to the port 
+      * `~a`: display
+      * `~s`: write
+      * `~%`: newline
+      * `~~`: tilde
+* Write with shared structure (srfi-38)
+  * `(write/ss x)`
+  * alias: `write-with-shared-structure`, `write*`
 
 ### Syntax
 
