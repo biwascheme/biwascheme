@@ -1911,13 +1911,21 @@ describe('js interface', {
     ev('(js-function? 0)').should_be(false);
     ev('(js-function? {})').should_be(false);
   },
-  'alist-to-js-obj' : function(){
-    ev('(alist-to-js-obj \'()').should_be({});
-    ev('(alist-to-js-obj \'(("a" . 1) ("b" . 2)))').should_be({a: 1, b: 2});
+  'list->js-array' : function(){
+    ev('(list->js-array \'()').should_be([]);
+    ev('(list->js-array \'(1 2))').should_be([1, 2]);
   },
-  'js-obj-to-alist' : function(){
-    ev('(equal? \'() (js-obj-to-alist (js-eval "{}")))').should_be(true);
-    ev('(equal? \'(("a" . 1) ("b" . 2)) (js-obj-to-alist (js-eval "var o = {a: 1, b: 2}; o;")))').should_be(true);
+  'js-array->list' : function(){
+    ev('(equal? \'() (js-array->list (js-eval "[]")))').should_be(true);
+    ev('(equal? \'(1 2) (js-array->list (js-eval "[1,2]")))').should_be(true);
+  },
+  'alist->js-obj' : function(){
+    ev('(alist->js-obj \'()').should_be({});
+    ev('(alist->js-obj \'(("a" . 1) ("b" . 2)))').should_be({a: 1, b: 2});
+  },
+  'js-obj->alist' : function(){
+    ev('(equal? \'() (js-obj->alist (js-eval "{}")))').should_be(true);
+    ev('(equal? \'(("a" . 1) ("b" . 2)) (js-obj->alist (js-eval "var o = {a: 1, b: 2}; o;")))').should_be(true);
   }
 });
 

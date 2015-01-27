@@ -133,6 +133,9 @@ Other macro-related functions:
 * `(js-set! jsobj str value)` = `a.b = c`
 * `(js-call jsfunc args...)` = `a()`
 * `(js-invoke jsobj methodname args...)` = `a.b()`
+* `js-invocation`
+* macro `..`
+  * TODO: write doc
 
 * `(js-new ctorname args...)` = `new a`
   * eg. `(js-new "Date" 2008 1 2)`
@@ -140,12 +143,16 @@ Other macro-related functions:
   * eg. `(js-obj "foo" 1 "bar" 2)` → `{"foo": 1, "bar": 2}`
 * `(js-closure proc)` returns a JS function that executes a Scheme function `proc`
 
-* `(js-null? x)`
-* `(js-undefined? x)`
-* `(js-function? x)`
+* Predicates
+  * `(js-null? x)`
+  * `(js-undefined? x)`
+  * `(js-function? x)`
 
-* `js-invocation`
-* macro `..`
+* Conversion
+  * `(js-array->list)`
+  * `(list->js-array)`
+  * `(js-obj->alist)`
+  * `(alist->js-obj)`
 
 * Timer
   * `(timer proc sec)` = setTimeout

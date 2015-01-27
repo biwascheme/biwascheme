@@ -215,10 +215,20 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   define_libfunc("js-array-to-list", 1, 1, function(ar){
+    BiwaScheme.deprecate("js-array-to-list", "1.0", "js-array->list");
+    return BiwaScheme.array_to_list(ar[0]);
+  });
+
+  define_libfunc("js-array->list", 1, 1, function(ar){
     return BiwaScheme.array_to_list(ar[0]);
   });
 
   define_libfunc("list-to-js-array", 1, 1, function(ar){
+    BiwaScheme.deprecate("list-to-js-array", "1.0", "list->js-array");
+    return ar[0].to_array();
+  });
+
+  define_libfunc("list->js-array", 1, 1, function(ar){
     return ar[0].to_array();
   });
 
@@ -235,6 +245,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return obj;
   };
   define_libfunc("alist-to-js-obj", 1, 1, function(ar) {
+    BiwaScheme.deprecate("alist-to-js-obj", "1.0", "alist->js-obj");
+    return BiwaScheme.alist_to_js_obj(ar[0]);
+  });
+
+  define_libfunc("alist->js-obj", 1, 1, function(ar) {
     return BiwaScheme.alist_to_js_obj(ar[0]);
   });
 
@@ -250,6 +265,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return alist;
   };
   define_libfunc("js-obj-to-alist", 1, 1, function(ar) {
+    BiwaScheme.deprecate("js-obj-to-alist", "1.0", "js-obj->alist");
+    return BiwaScheme.js_obj_to_alist(ar[0]);
+  });
+  define_libfunc("js-obj->alist", 1, 1, function(ar) {
     return BiwaScheme.js_obj_to_alist(ar[0]);
   });
 

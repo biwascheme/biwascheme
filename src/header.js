@@ -48,3 +48,6 @@ BiwaScheme.debug = function(/*arguments*/){
 // Maximum depth of stack trace
 // (You can also set Interpreter#max_trace_size for each Interpreter)
 BiwaScheme.max_trace_size = 40;
+
+// Stop showing deprecation warning
+BiwaScheme.suppress_deprecation_warning = false;

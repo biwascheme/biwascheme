@@ -157,4 +157,18 @@ BiwaScheme.assert = BiwaScheme.make_assert(function(fname, success, message, _fn
   }
 });
 
+//
+// deprecation
+//
 
+// Show deprecation warnig
+// @param {string} title - feature to be deprecated
+// @param {string} ver - when it will be removed (eg. "1.0")
+// @param {string} alt - alternatives
+BiwaScheme.deprecate = function(title, ver, alt){
+  if(BiwaScheme.suppress_deprecation_warning) return;
+
+  var msg = title+" is deprecated and will be removed in BiwaScheme "+ver+ ". "+
+            "Please use "+alt+" instead";
+  console.warn(msg); 
+};
