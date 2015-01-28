@@ -92,6 +92,7 @@ with(BiwaScheme) {
 //time-thread
 //time-utc
   // Current time and clock resolution
+  // (current-date [tz-offset])
   define_libfunc("current-date", 0, 1, function(ar){
     //todo: tz-offset (ar[1])
     return new Date();

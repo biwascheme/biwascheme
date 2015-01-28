@@ -112,6 +112,8 @@ Other macro-related functions:
 * Date (srfi-19)
   * `(current-date [tz-offset])`
     * Note: tz-offset is currently ignored and always local time is returned
+    * Note: If you need a JavaScript `Date` object, use `js-eval` or 
+      `(js-new Date)`.
   * `(date? x)` `(date-nanosecond d)` `(date-millisecond d)`
     `(date-second d)` `(date-minute d)` `(date-hour d)` `(date-day d)`
     `(date-month d)` `(date-year d)` `(date-week-day d)`
