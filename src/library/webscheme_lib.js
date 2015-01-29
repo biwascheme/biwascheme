@@ -94,15 +94,20 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return $(ar[0]).attr(ar[1]);
   });
   define_libfunc("element-write-attribute", 3, 3, function(ar){
+    // Forgot to suffix "!" :-(
+    BiwaScheme.deprecate("element-write-attribute", "1.0",
+                         "element-write-attribute!");
     assert_string(ar[1]);
     return $(ar[0]).attr(ar[1], ar[2]);
   });
+  alias_libfunc("element-write-attribute!", "element-write-attribute");
   define_libfunc("element-height", 1, 1, function(ar){
     return $(ar[0]).height();
   });
   define_libfunc("element-width", 1, 1, function(ar){
     return $(ar[0]).width();
   });
+
   define_libfunc("element-class-names", 1, 1, function(ar){
     throw new Bug("not yet implemented");
   });
@@ -111,17 +116,27 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return $(ar[0]).hasClass(ar[1]);
   });
   define_libfunc("element-add-class-name", 2, 2, function(ar){
+    BiwaScheme.deprecate("element-add-class-name", "1.0",
+                         "element-add-class-name!");
     assert_string(ar[1]);
     return $(ar[0]).addClass(ar[1]);
   });
+  alias_libfunc("element-add-class-name!", "element-add-class-name");
   define_libfunc("element-remove-class-name", 2, 2, function(ar){
+    BiwaScheme.deprecate("element-remove-class-name", "1.0",
+                         "element-remove-class-name!");
     assert_string(ar[1]);
     return $(ar[0]).removeClass(ar[1]);
   });
+  alias_libfunc("element-remove-class-name!", "element-remove-class-name");
   define_libfunc("element-toggle-class-name", 2, 2, function(ar){
+    BiwaScheme.deprecate("element-toggle-class-name", "1.0",
+                         "element-toggle-class-name!");
     assert_string(ar[1]);
     return $(ar[0]).toggleClass(ar[1]);
   });
+  alias_libfunc("element-toggle-class-name!", "element-toggle-class-name");
+
   define_libfunc("element-clean-whitespace!", 1, 1, function(ar){
     throw new Bug("not yet implemented");
   });
@@ -288,6 +303,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
   });
 
+  // Load javascript file on the server
   _require = function(src, check, proc){
     var script = $("<script/>", { src: src });
     $("body").append(script);
@@ -297,7 +313,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if(checker()) proc();
     else          setTimeout(function(){ checker() ? proc() : setTimeout(arguments.callee, 10); }, 10);
   };
-
   // (js-load "lib/foo.js" "Foo")
   define_libfunc("js-load", 2, 2, function(ar){
     var path = ar[0];
