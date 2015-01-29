@@ -39,11 +39,12 @@
 ### Numeric types
 
 * Integer (1, -2, etc.)
-  * `integer?` `odd?` `even?` `random-integer`
+  * `integer?` `odd?` `even?`
+  * `(random-integer n)` => 0..n-1 (srfi-27)
 * Rational (literal not supported yet)
   * `rational?`
 * Real (1.2, -2.3, etc.)
-  * `real?` `random-real`
+  * `(random-real)` => 0.0...1.0 (srfi-27)
 * Complex // literal not supported yet
   * `complex?` `make-rectangular` `make-polar` `real-part` `imag-part` `magnitude` `angle`
 * Number
@@ -53,8 +54,6 @@
   * `numerator` `denominator` `floor` `ceiling` `truncate` `round` `(rationalize)`
   * `exp` `log` `sin` `cos` `tan` `asin` `acos` `atan` `sqrt` `exact-integer-sqrt` `expt`
   * `number->string` `string->number`
-  * `(random-integer n)` => 0..n-1 (srfi-27)
-  * `(random-real)` => 0.0...1.0 (srfi-27)
 
 ### Control structure
 
@@ -155,6 +154,8 @@ Other macro-related functions:
 
 ### JavaScript language interface
 
+<a name="js-interface" />
+
 * `(js-eval str)` evaluate `str` as JavaScript code
 * `(js-ref jsobj str)` = `a.b`
 * `(js-set! jsobj str value)` = `a.b = c`
@@ -195,6 +196,96 @@ Other macro-related functions:
   * `(console-info obj1 ...)`
   * `(console-warn obj1 ...)`
   * `(console-error obj1 ...)`
+
+### Browser functions
+
+These functions are only available in browsers (i.e. does not work on Node.js.)
+
+* Dialog
+  * `(alert msg)`
+    * = window.alert
+  * `(confirm msg)` => boolean
+    * = window.confirm
+
+* Element
+  * `(element-empty! elem)` = `(element-clear! elem)`
+  * `(element-visible? elem)`
+  * `(element-toggle! elem)`
+  * `(element-hide! elem)`
+  * `(element-show! elem)`
+  * `(element-remove! elem)`
+  * `(element-update! elem html)`
+  * `(element-replace! elem x)`
+  * `(element-insert! elem x)`
+  * `(element-select elem)`
+  * `(element-read-attribute elem attr)`
+  * `(element-write-attribute! elem attr value)`
+  * `(element-height elem)`
+  * `(element-width elem)`
+  * `(element-has-class-name? elem class)`
+  * `(element-add-class-name! elem class)`
+  * `(element-remove-class-name! elem class)`
+  * `(element-toggle-class-name! elem class)`
+  * `(element-dimensions elem)` => (values width height)
+  * `(element-focus! elem)`
+  * `(element-content elem)` => string (html content or input value)
+  * `(element-append-child! elem child)`
+  * `(element-new spec`)
+
+```
+  (element-new '(div "foo"))        => <div>foo</div>
+  (element-new '("div#main" "foo")) => <div id='main'>foo</div>
+  (element-new '("div.red" "foo"))  => <div class='red'>foo</div>
+  (element-new '(div align "right" "foo"))  => <div align='right'>foo</div>
+  (element-new '(div (span "foo"))  => <div><span>foo</span></div>
+```
+
+* `(getelem selector)` = `($ selector)`
+  * Same as `jQuery(selector)` except returns `#f` when no element is found
+* `(set-style! selector prop value)`
+  * eg. `(set-style! "#box" "left" 300)`
+* `(get-style! selector prop)`
+* `(set-content! selector text)` 
+  * Replace content of `selector` with `text`
+  * Newlines in `text` are replaced with `<br>`
+  * Tabs in `text` are replaced with `&nbsp;&nbsp;&nbsp;`
+* `(get-content selector)` => string
+
+* Event
+  * `(add-handler! selector event proc)` => js-handler
+  * `(remove-handler! selector event js-handler)`
+    * eg. `(define h (add-handler! "#button1" "click" (lambda (ev) ...)))`
+    * eg. `(remove-handler! "#button1" "click" h)`
+  * `(wait-for selector event)`
+    * eg. `(wait-for "#button1" "click") (alert "pushed")`
+    * Synchronously wait for the event
+      (rest of the program will be evaluated after the event)
+
+* Ajax
+  * `(http-request path)` => string
+    * eg. `(http-get "/foo")`
+    * Synchronously issue GET request 
+      (rest of the program will be evaluated after server responded)
+  * `(http-post path params)` => string
+    * eg. `(http-post "/foo" '(("x" . 1) ("y" . 2)))`
+    * Synchronously issue POST request 
+      (rest of the program will be evaluated after server responded)
+  * `(receive-jsonp url)` => string
+    * eg. `(receive-jsonp "http://server/x")` will issue GET to
+      `http://server/x?callback=BiwaScheme.jsonp_receiver[123]`
+
+* Load Scheme or JS file on the server
+  * `(load path)`
+    * (eg. `(load "lib/foo.scm")`)
+    * Synchronously load the Scheme program
+      (rest of the program will be evaluated after server responded)
+  * `(js-load js-path check)`
+    * (eg. `(js-load "lib/foo.js" "Foo")`)
+    * Synchronously load the JavaScript file
+      (rest of the program will be evaluated after server responded)
+    * Implemented with `script` tag. The argument `check` is used
+      for detecting the end of loading. In the above example,
+      BiwaScheme waits until `window.Foo` is defined.
 
 ### System functions (Node.js only)
 
