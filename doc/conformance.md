@@ -88,22 +88,4 @@ The biggest features not implemented are errors and `syntax-rules`
 
 ### SRFIs
 
-BiwaScheme implements some SRFIs ([Scheme Requests for Implementation](http://srfi.schemers.org/)).
-
-* 1 List Utilities 
-  * partially - `iota`
-* 6 string port
-* 8 receive
-* 19 time 
-  * partially
-* 27 random 
-  * partially - `random-integer`, `random-real`
-* 28 simple `format`
-* 30 multi-line comment
-* 38 write/ss 
-  * partially - `write/ss`
-* 43 vector 
-  * partially - `vector-append`
-* 62 s-expr comment
-* 98 get-environment-variable(s) 
-  * Node.js only
+(Moved to [doc/features](/doc/features.html))

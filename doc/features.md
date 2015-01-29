@@ -5,6 +5,8 @@
   (see [doc/conformance](/doc/conformance.html) )
 * First-class continuation (`call/cc`)
 
+See [doc/reference](/doc/reference.html) for full list of functions.
+
 ### Macro
 
 BiwaScheme does not have `syntax-ruels` or `syntax-case`, but has [`define-macro`](/doc/reference.html#macro).
@@ -12,28 +14,88 @@ BiwaScheme does not have `syntax-ruels` or `syntax-case`, but has [`define-macro
 ### Javascript language interface
 
 * JavaScript object
-    * js-eval js-ref js-set! js-call js-invoke
-    * js-new js-obj js-closure
-    * js-null? js-undefined? js-function?
-* macro `..`
+    * js-eval js-ref, etc.
 * Timer
-  * `(timer proc sec)` = setTimeout
-  * `(set-timer! proc sec)` = setInterval
-  * `(clear-timer! timer-id)` = clearInterval
+  * `(timer proc sec)` = setTimeout, etc.
   * `(sleep sec)`
       * Blocking sleep. `(sleep 3)` will wait 3 seconds and then 
         BiwaScheme resumes running the rest of the code. 
 * Console
   * `(console-debug obj1 ...)` = console.debug
-  * `(console-log obj1 ...)`
-  * `(console-info obj1 ...)`
-  * `(console-warn obj1 ...)`
-  * `(console-error obj1 ...)`
 
 * Browser functions
+  * DOM manipulation
+  * Events
+  * Ajax
   * load js-load
-  * http-request http-post receive-jsonp
-  * alert confirm
-  * add-handler! remove-handler!
-  * set-style! get-style set-content! get-content
 
+[more...](/doc/reference.html#js-interface)
+
+### Synchronous interface
+
+Some of the BiwaScheme library functions are implemented as "Synchronous"
+funcitons.
+
+For example, `(sleep sec)` will stop evaluation of Scheme program
+for `sec` seconds, and then the rest of the program will be evaluated.
+
+```
+(alert "Hello")
+(sleep 3)
+(alert "World")  ; Evaluated after 3 seconds
+```
+
+Other synchronous functions are listed below.
+
+* `(http-request path)` => string
+* `(http-post path params)` => string
+* `(receive-jsonp url)` => string
+* `(load path)`
+* `(js-load js-path check)`
+* `(wait-for selector event)`
+
+You can get rid of JavaScript's "callback hell" using these APIs.
+
+```
+// JavaScript (nested callback)
+$.get("/a", function(a){
+  $.get("/b", function(b){
+    $.get("/c", function(c){
+      ...
+    }
+  }
+}
+
+// BiwaScheme
+(define a (http-request "/a"))
+(define b (http-request "/b"))
+(define c (http-request "/c"))
+...
+```
+
+### SRFIs
+
+BiwaScheme implements some SRFIs ([Scheme Requests for Implementation](http://srfi.schemers.org/)).
+
+* 1 List Utilities 
+  * partially - `iota`
+* 6 string port
+* 8 receive
+* 19 time 
+  * partially
+* 27 random 
+  * partially - `random-integer`, `random-real`
+* 28 simple `format`
+* 30 multi-line comment (`#| ... |#`)
+* 38 write/ss 
+  * partially - `write/ss`
+* 43 vector 
+  * partially - `vector-append`
+* 62 s-expr comment (`#;`)
+* 98 get-environment-variable(s) 
+  * Node.js only
+
+### Node.js support
+
+You can use BiwaScheme on the server-side with `npm install biwascheme`
+([more...](/doc/getting_started.html#nodejs))
