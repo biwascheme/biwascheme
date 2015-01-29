@@ -36,13 +36,13 @@ BiwaScheme.alias_libfunc = function(fname, aliases) {
     } else if (_.isString(aliases)) {
       BiwaScheme.CoreEnv[aliases] = BiwaScheme.CoreEnv[fname];
     } else {
-      throw new BiwaScheme.Bug("bad alias for library function " +
-                               "`" + fname + "': " + aliases.toString());
+      console.error("[BUG] bad alias for library function " +
+                    "`" + fname + "': " + aliases.toString());
     }
   } else {
-    throw new BiwaScheme.Bug("library function " +
-                             "`" + fname + "'" +
-                             " does not exist, so can't alias it.");
+    console.error("[BUG] library function " +
+                  "`" + fname + "'" +
+                  " does not exist, so can't alias it.");
   }
 };
 BiwaScheme.define_syntax = function(sname, func) {
