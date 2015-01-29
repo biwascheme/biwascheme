@@ -1,6 +1,19 @@
 ## List of functions
 
+* [Basic types](#basic)
+* [Numeric types](#numeric)
+* [Control structure](#control)
+* [Macro](#macro)
+* [Advanced types](#advanced)
+* [Utilities](#utilities)
+* [Syntax](#syntax)
+* [JavaScript language interface](#js-interface)
+* [Browser functions](#browser)
+* [System functions (Node.js only)](#nodejs)
+
 ### Basic types
+
+<a name="basic"/>
 
 * List
   * `length` `append` `reverse` `list-tail` `list-ref` `map` `for-each`
@@ -38,6 +51,8 @@
 
 ### Numeric types
 
+<a name="numeric"/>
+
 * Integer (1, -2, etc.)
   * `integer?` `odd?` `even?`
   * `(random-integer n)` => 0..n-1 (srfi-27)
@@ -57,6 +72,8 @@
 
 ### Control structure
 
+<a name="control"/>
+
 * Conditional
   * `if` `when` `unless` `cond` `case`
 * Loop
@@ -74,7 +91,7 @@
 
 ### Macro
 
-<a name="macro">
+<a name="macro"/>
 
 BiwaScheme does not have `syntax-ruels` or `syntax-case`, but has `define-macro`.
 
@@ -92,6 +109,8 @@ Other macro-related functions:
 * `macroexpand` `macroexpand-1` `%macroexpand` `%macroexpand-1` `gensym`
 
 ### Advanced types
+
+<a name="advanced"/>
 
 * Port (I/O)
 * Record
@@ -128,6 +147,8 @@ Other macro-related functions:
 
 ### Utilities
 
+<a name="utilities"/>
+
 * Simple format (srfi-28)
   * eg. `(format "Result: ~s" (some-calculation))`
   * `(format format-str obj1 obj2 ...)` -> string
@@ -144,13 +165,15 @@ Other macro-related functions:
 
 ### Syntax
 
+<a name="syntax"/>
+
 * Comment
-  * Single line comment (;)
-  * Multi line comment (#| ... |#)
-  * One sexp comment (#;)
+  * Single line comment (`;`)
+  * Multi line comment (`#| ... |#`) (srfi-30)
+  * One sexp comment (`#;`) (srfi-62)
 * Quote
-  * quote (')
-  * quasiquote (\`) unquote (,) unquote-splicing (,@)
+  * quote (`'`)
+  * quasiquote (\`) unquote (`,`) unquote-splicing (`,@`)
 
 ### JavaScript language interface
 
@@ -198,6 +221,8 @@ Other macro-related functions:
   * `(console-error obj1 ...)`
 
 ### Browser functions
+
+<a name="browser" />
 
 These functions are only available in browsers (i.e. does not work on Node.js.)
 
@@ -288,6 +313,8 @@ These functions are only available in browsers (i.e. does not work on Node.js.)
       BiwaScheme waits until `window.Foo` is defined.
 
 ### System functions (Node.js only)
+
+<a name="nodejs" />
 
 * R6RS
   * `(file-exists? filepath)` 
