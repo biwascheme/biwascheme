@@ -414,7 +414,13 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
      
     this.is_top = true;
     this.file_stack = [];
-    return this.resume(false);
+
+    try{
+      return this.resume(false);
+    }
+    catch(ex){
+      return this.on_error(ex);
+    }
   },
 
   resume: function(is_resume, a, x, f, c, s){
@@ -481,6 +487,8 @@ BiwaScheme.Interpreter.read = function(str){
 //
 // x - expression
 // flag - used internally. do not specify this
+//
+// @throws {BiwaScheme.Error} when x has syntax error
 BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
   var expand = BiwaScheme.Interpreter.expand;
   flag || (flag = {})
@@ -554,14 +562,13 @@ BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
       else{
         var expanded_car = expand(x.car, flag);
         var expanded_cdr;
-        if(x.cdr instanceof BiwaScheme.Pair){
-          expanded_cdr = BiwaScheme.array_to_list(
-                           _.map(x.cdr.to_array(),
-                                 function(item){ return expand(item, flag); }));
+        if(!(x.cdr instanceof BiwaScheme.Pair) && (x.cdr !== BiwaScheme.nil)){
+          throw new Error("proper list required for function application "+
+                          "or macro use: "+BiwaScheme.to_write(x));
         }
-        else{
-          expanded_cdr = expand(x.cdr, flag);
-        }
+        expanded_cdr = BiwaScheme.array_to_list(
+                         _.map(x.cdr.to_array(),
+                               function(item){ return expand(item, flag); }));
         ret = new BiwaScheme.Pair(expanded_car, expanded_cdr);
       }
     }
