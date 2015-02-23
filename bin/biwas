@@ -5,8 +5,7 @@ var util = require('util'),
     fs = require('fs'),
     path = require('path'),
     BiwaScheme = require('../release/node_biwascheme'),
-    optparse = require('optparse'),
-    _ = require('underscore');
+    optparse = require('optparse');
 
 function Options(argv){
   var opts = this;
