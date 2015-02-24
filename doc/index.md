@@ -5,6 +5,7 @@
 
 ## BiwaScheme internals
 
+* [internal/js_api](/doc/internal/js_api.html)
 * [internal/opecodes](/doc/internal/opecodes.html)
 
 ## Development docs

@@ -10,6 +10,7 @@
 * [JavaScript language interface](#js-interface)
 * [Browser functions](#browser)
 * [System functions (Node.js only)](#nodejs)
+* [BiwaScheme JavaScript API](#js-api)
 
 ### Basic types
 
@@ -336,3 +337,9 @@ You can also use Node.js libraries via `js-eval`, etc.
 ; Alternatively you can use `..` macro syntax:
 ; (print (.. fs `(readdirSync ,path)))
 ```
+
+### BiwaScheme JavaScript API
+
+<a name="js-api" />
+
+See [internal/js_api.md](/doc/internal/js_api.html) for BiwaScheme JavaScript API (eg. writing BiwaScheme library function in JavaScript)
