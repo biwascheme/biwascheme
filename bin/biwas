@@ -42,20 +42,52 @@ function Options(argv){
   opts.parser = parser;
 }
 
+function unbalanced_parentheses(text_code) {
+    var tokens = (new BiwaScheme.Parser(text_code)).tokens;
+    var parentheses = 0;
+    var brakets = 0;
+    for(var i=0; i<tokens.length; ++i) {
+        switch(tokens[i]) {
+            case "[": ++brakets; break;
+            case "]": --brakets; break;
+            case "(": ++parentheses; break;
+            case ")": --parentheses; break;
+        }
+    }
+    return parentheses != 0 || brakets != 0;
+}
+
 function repl(){
   var rl = require('readline').createInterface(process.stdin,
                                                process.stdout);
   var erred = new Object();
 
-  rl.on('line', function(line) {
-    try{
-      var result = BiwaScheme.run(line);
-    } catch (e) {
-      var result = erred;
-    }
+  var prompts = {
+    base: 'biwascheme> ',
+    cont: '...           '
+  };
 
-    if (result !== erred) {
-      util.puts(BiwaScheme.to_write(result));
+  var code_to_evaluate = '';
+
+  rl.on('line', function(line) {
+    code_to_evaluate += ' ' + line;
+
+    if (!unbalanced_parentheses(code_to_evaluate)) {
+      try{
+        var result = BiwaScheme.run(code_to_evaluate);
+      } catch (e) {
+        var result = erred;
+      }
+
+      if (result !== erred) {
+        util.puts(BiwaScheme.to_write(result));
+      }
+
+      code_to_evaluate = '';
+      rl.setPrompt(prompts.base);
+    }
+    else {
+      rl.setPrompt(prompts.cont);
     }
 
     rl.prompt();
@@ -65,8 +97,8 @@ function repl(){
     process.exit(0);
   });
 
-  var prompt = "> ";
-  rl.setPrompt(prompt, prompt.length);
+  var prompt = prompts.base;
+  rl.setPrompt(prompt);
 
   util.puts('BiwaScheme version ' + BiwaScheme.Version);
   util.puts('try (+ 1 2), etc. (Ctrl-D to exit)');
