@@ -100,7 +100,7 @@ BiwaScheme does not have `syntax-ruels` or `syntax-case`, but has `define-macro`
 (define-macro (test expr)
   `(if ,expr
     #t
-    (print (format "test failed: ~a" ,expr))))
+    (print (format "test failed: ~a" (quote ,expr)))))
 
 (test (= 1 2)) ;=> test failed: (= 1 2)
 ```
