@@ -64,7 +64,14 @@
       dumper.reset();
       $("#bs-console").html("");
       var src = editor.getSession().getValue();
-      puts(";=> " + BiwaScheme.to_write((new BiwaScheme.Interpreter(show_error)).evaluate(src)));
+      var intp = new BiwaScheme.Interpreter(show_error);
+      try{
+        var ret = intp.evaluate(src);
+        puts(";=> " + BiwaScheme.to_write(ret));
+      }
+      catch(e){
+        console.error(e);
+      }
       dumper.dump_move(1);
     }
 
