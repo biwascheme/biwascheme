@@ -389,7 +389,7 @@ In contrast to other opecodes, op_apply takes no arguments. Instead it retrieves
 Before calling op_apply, you must put these values onto stack:
 
 * func: closure or function to apply
-* n_args: number of arguments
+* n_args: number of actual arguments
 * arg1: first argument
 * arg2: second argument
 * arg3: third argument
