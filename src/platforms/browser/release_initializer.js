@@ -23,15 +23,21 @@
   };
 
   // Start user's program
-  var script = $("script[src$='biwascheme.js']").html() ||
-               $("script[src$='biwascheme-min.js']").html();
-  if (script) {
-    var intp = new BiwaScheme.Interpreter(onError);
-    try{
-      intp.evaluate(script, function(){});
-    }
-    catch(e){
-      onError(e);
-    }
-  }
+  var intp = new BiwaScheme.Interpreter(onError);
+
+    var scripts = $("script[type=\"text/scheme\"]");
+    console.log(scripts);
+    scripts.each(function(index, script) {
+        var scheme = $.ajax({
+            type: "GET",
+            url: $(script).attr('src'),
+            async: false
+        }).responseText;
+        try{
+            intp.evaluate(scheme, function(){});
+        }
+        catch(e){
+            onError(e);
+        }
+    });
 })();
