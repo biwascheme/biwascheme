@@ -17,6 +17,7 @@
     },
     "devDependencies": {
         "express": "~4.10.4",
+        "body-parser": ">0",
         "marked": "~0.3.2"
     },
     "bin": { "biwas": "./bin/biwas" }

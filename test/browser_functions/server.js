@@ -4,26 +4,21 @@
 var PORT = 7001;
 
 var express = require('express'),
-    app = require('express').createServer(),
+    app = require('express')(),
+    bodyParser = require('body-parser'),
     fs = require('fs');
 
-app.configure(function(){
-  app.use(express.static(__dirname + '/public'));
-  app.use(express.bodyParser());
-  app.use(express.errorHandler({
-    dumpExceptions: true,
-    showStack: true 
-  }));
-});
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/fs/spec.js', function(req, res){
-  res.send(fs.readFileSync("spec.js"),
-           { 'Content-Type': 'text/javascript' });
+  res.set('Content-Type', 'text/javascript');
+  res.send(fs.readFileSync("spec.js"))
 });
 
 app.get('/fs/biwascheme-min.js', function(req, res){
-  res.send(fs.readFileSync("../../release/biwascheme-min.js"),
-           { 'Content-Type': 'text/javascript' });
+  res.set('Content-Type', 'text/javascript');
+  res.send(fs.readFileSync("../../release/biwascheme-min.js"));
 });
 
 // GET /greet (name)
@@ -33,7 +28,7 @@ app.get('/greet', function(req, res){
 
 // POST /length (str)
 app.post('/length', function(req, res){
-  var str = req.param("str");
+  var str = req.body["str"];
   if(str){
     res.send(String(str.length));
   }
@@ -57,4 +52,4 @@ app.get('/jsonp', function(req, res){
 
 app.listen(PORT);
 
-require('util').puts("Open http://localhost:"+PORT+"/");
+console.log("Open http://localhost:"+PORT+"/");
