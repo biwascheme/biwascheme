@@ -1,11 +1,20 @@
-(not yet) v0.6.3
+(not yet) v0.6.4
+
+2015-12-25 v0.6.3
 
   * new:
-    - macro `..`
+    - macro `..` (expands to `js-invocation`)
+  * change:
+    - added `element-write-attribute!`, `element-add-class-name!`,
+      `element-remove-class-name!`, `element-toggle-class-name!`
+      and deprecated these without `!`
+    - added `list->js-array`, `js-array->list`,
+      `js-obj->alist`, `alist->js-obj` and deprecated
+      `list-to-js-array`, etc.
+  * Add reference http://www.biwascheme.org/doc/reference.html
+  * Some bug fixes
 
-  * some bug fixes
-
-2013-02-16  v0.6.2
+2014-02-16  v0.6.2
 
   * change:
       - upgraded from jQuery 1.6.2 to 1.7.1

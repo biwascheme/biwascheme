@@ -23,9 +23,9 @@
     - `$ npm pack`
     - `$ npm install biwascheme-x.y.z.tgz -g`
     - `$ biwas -v`
-6. Push tag
-  - `$ git tag x.y.z`
-  - `$ git push origin x.y.z`
+6. Push changes and make a release on github
+  - Copy changelog from History.txt
+  - Push "Publish" to make a git tag
 7. Update website
   - see website.md
 8. Publish npm package
