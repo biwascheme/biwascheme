@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 // vim: set ft=javascript:
 
-var util = require('util'),
-    fs = require('fs'),
+var fs = require('fs'),
     path = require('path'),
     BiwaScheme = require('../release/node_biwascheme'),
     optparse = require('optparse');
@@ -29,12 +28,12 @@ function Options(argv){
   });
 
   parser.on('version', function() {
-    util.puts("BiwaScheme version "+BiwaScheme.Version);
+    console.log("BiwaScheme version "+BiwaScheme.Version);
     process.exit(0);
   });
 
   parser.on('help', function() {
-    util.puts(parser.toString());
+    console.log(parser.toString());
     process.exit(0);
   });
 
@@ -80,7 +79,7 @@ function repl(){
       }
 
       if (result !== erred) {
-        util.puts(BiwaScheme.to_write(result));
+        console.log(BiwaScheme.to_write(result));
       }
 
       code_to_evaluate = '';
@@ -100,8 +99,8 @@ function repl(){
   var prompt = prompts.base;
   rl.setPrompt(prompt);
 
-  util.puts('BiwaScheme version ' + BiwaScheme.Version);
-  util.puts('try (+ 1 2), etc. (Ctrl-D to exit)');
+  console.log('BiwaScheme version ' + BiwaScheme.Version);
+  console.log('try (+ 1 2), etc. (Ctrl-D to exit)');
   rl.prompt();
 }
 
