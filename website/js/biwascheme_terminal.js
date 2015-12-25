@@ -51,8 +51,7 @@ jQuery(document).ready(function($, undefined) {
             term.set_prompt('...            ');
         }
     }, {
-        greetings: 'BiwaScheme Interpreter version ' + BiwaScheme.Version +
-                   '\nCopyright (C) 2007-2014 Yutaka HARA and the BiwaScheme team',
+        greetings: 'BiwaScheme Interpreter version ' + BiwaScheme.Version,
         width: 500,
         height: 250,
         name: 'biwa',
