@@ -8,28 +8,26 @@
   - Commit as release/biwascheme-x.y.z.js
 5. Make sure it is working:
   - run tests
-    - open test/spec.html
-    - open test/spec.html#release
-    - open test/spec.html#min
+    - open http://localhost:7001/test/spec.html
+    - open http://localhost:7001/test/spec.html#release
+    - open http://localhost:7001/test/spec.html#min
     - run test/browser_functions/
-      - $ cd test/browser_functions && node server.js && open http://localhost:7001/
+      - `$ cd test/browser_functions && node server.js && open http://localhost:7001/`
   - run demos
     - demo/*
-    - open repl.html
-    - open website/i.html
-    - open test/tracer.html
-    - open test/tracer_auto.html
+    - open http://localhost:7001/demo/repl.html
+    - open http://localhost:7001/website/i.html
+    - open http://localhost:7001/test/tracer.html
+    - open http://localhost:7001/test/tracer_auto.html
   - try npm package
-    - $ npm install node_modules/biwascheme/ -g
-    - $ biwas -v
+    - `$ npm pack`
+    - `$ npm install biwascheme-x.y.z.tgz -g`
+    - `$ biwas -v`
 6. Push tag
-  - $ git tag x.y.z
-  - $ git push origin x.y.z
+  - `$ git tag x.y.z`
+  - `$ git push origin x.y.z`
 7. Update website
-  - checkout biwascheme/biwascheme.github.io
-  - Merge master
-  - Copy release/biwascheme-x.y.z.js to release/biwascheme.js
-  - $ push bs-web web:master
+  - see website.md
 8. Publish npm package
-  - $ npm publish
-9. Update VERSION to x.y.z.dev
+  - `$ npm publish`
+9. Update `VERSION` to x.y.z.dev
