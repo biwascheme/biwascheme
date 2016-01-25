@@ -89,7 +89,7 @@ index.html: doc/_header.html index_.html doc/_footer.html
 
 website: index.html
 	# TODO: automate this
-	cp release/biwascheme-0.6.2.js release/biwascheme.js
+	cp release/biwascheme-0.6.3.js release/biwascheme.js
 	node bin/biwas tools/make_doc.scm
 
 watch_website:
