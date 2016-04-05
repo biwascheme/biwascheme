@@ -33,24 +33,27 @@ BASIC_FILES =                                     \
   src/library/node_functions.js                   \
   src/library/srfi.js
 
-BROWSER_FILES =                                   \
-  src/deps/jquery.js                              \
-  src/deps/underscore.js                          \
-  src/deps/underscore.string.js                   \
+CONSOLE_FILES =                                   \
+  $(BASIC_FILES)
+
+PLAIN_FILES =                                     \
   $(BASIC_FILES)                                  \
   src/library/webscheme_lib.js                    \
   src/platforms/browser/dumper.js                 \
   src/platforms/browser/console.js                \
   src/platforms/browser/release_initializer.js
 
-CONSOLE_FILES =                                   \
-  $(BASIC_FILES)
+BROWSER_FILES =                                   \
+  src/deps/jquery.js                              \
+  src/deps/underscore.js                          \
+  src/deps/underscore.string.js                   \
+  $(PLAIN_FILES)
 
 all: build
 
-build: release/biwascheme.js release/console_biwascheme.js release/node_biwascheme.js release/biwascheme-min.js
+build: release/biwascheme.js release/console_biwascheme.js release/node_biwascheme.js release/biwascheme-min.js release/biwascheme-plain.js release/biwascheme-plain-min.js
 
-$(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) $(CONSOLE_FILES) VERSION Makefile
+$(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
 release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
@@ -60,6 +63,15 @@ release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
 
 release/biwascheme-min.js: release/biwascheme.js
 	uglifyjs -o $@ release/biwascheme.js --comments
+	@echo "Wrote " $@
+
+release/biwascheme-plain.js: $(VERSION_FILE) $(PLAIN_FILES) Makefile
+	cat $(VERSION_FILE) > $@
+	cat $(PLAIN_FILES) >> $@
+	@echo "Wrote " $@
+
+release/biwascheme-plain-min.js: release/biwascheme-plain.js
+	uglifyjs -o $@ release/biwascheme-plain.js --comments
 	@echo "Wrote " $@
 
 release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
