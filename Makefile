@@ -26,6 +26,7 @@ BASIC_FILES =                                     \
   src/system/pause.js                             \
   src/system/call.js                              \
   src/system/interpreter.js                       \
+  src/system/promise.js                           \
   src/library/infra.js                            \
   src/library/r6rs_lib.js                         \
   src/library/js_interface.js                     \

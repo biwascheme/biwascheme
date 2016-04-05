@@ -1873,6 +1873,28 @@ describe('19 R5RS compatibility', {
 //(scheme-report-environment n)    procedure 
 })
 
+describe('R6RS Promise', {
+  'delay' : function() {
+    ev('(define i 0) (define d (delay (begin (inc! i) i))) \
+        (force d) (force d) (force d) \
+       ').should_be(1);
+  },
+
+  'force' : function() {
+    ev('(force 99)').should_be(99);
+  },
+
+  'promise?' : function() {
+    ev('(promise? 99)').should_be(false);
+    ev('(promise? (delay 99))').should_be(true);
+  }
+//,
+//  'make-promise' : function() {
+//    ev('(force (make-promise 99))').should_be(99);
+//    ev('(force (make-promise (make-promise 98)))').should_be(98);
+//  }
+})
+
 describe(';; src/library/js_interface.js', {});
 
 describe('js interface', {

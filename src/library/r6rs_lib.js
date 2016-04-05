@@ -3,8 +3,6 @@
 //
 
 if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
-  /* --------------------------------------- namespace webscheme */ 
-
   ///
   /// R6RS Base library
   ///
@@ -3198,5 +3196,74 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(null-environment n)    procedure 
 //(scheme-report-environment n)    procedure 
 
-  /* --------------------------------------- namespace webscheme */ 
+  //
+  // R7RS (TODO: split file?)
+  //
+
+  // R7RS Promise
+  //
+  // (delay expression)
+  define_syntax("delay", function(x){
+    if (x.cdr === BiwaScheme.nil) {
+      throw new Error("malformed delay: no argument");
+    }
+    if (x.cdr.cdr !== nil) {
+      throw new Error("malformed delay: too many arguments: "+
+                      BiwaScheme.to_write_ss(x));
+    }
+    var expr = x.cdr.car;
+    // (procedure->promise (lambda () expr))
+    return new Pair(Sym("procedure->promise"),
+             new Pair(new Pair(Sym("lambda"),
+                        new Pair(BiwaScheme.nil,
+                          new Pair(expr, BiwaScheme.nil))), BiwaScheme.nil));
+  });
+
+  // (delay-force expression)
+  define_syntax("delay-force", function(x){
+    throw new Bug("not implemented yet");
+  });
+
+  // (force promise)
+  define_libfunc("force", 1, 1, function(ar, intp){
+    if (!(ar[0] instanceof BiwaScheme.Promise)) {
+      return ar[0];
+    }
+    var promise = ar[0];
+    if (!promise.fresh) {
+      return promise.value;
+    }
+
+    return new Call(promise.proc, [], function(ar) {
+      var result = ar[0];
+      promise.set_value(result);
+    });
+  });
+
+  // (promise? obj)
+  define_libfunc("promise?", 1, 1, function(ar, intp){
+    return (ar[0] instanceof BiwaScheme.Promise);
+  });
+
+  // (make-promise obj)
+  define_libfunc("make-promise", 1, 1, function(ar, intp){
+    throw new Bug("not yet implemented");
+
+    var obj = ar[0];
+    if (obj instanceof BiwaScheme.Promise) {
+      return obj;
+    }
+    else {
+      // This is equivalent to `(lambda () obj)`
+      var proc = [["constant", obj, ["return"]], -1];
+      proc.closure_p = true;
+      return new BiwaScheme.Promise(proc);
+    }
+  });
+
+  // (procedure->promise (lambda ...))
+  define_libfunc("procedure->promise", 1, 1, function(ar, intp){
+    assert_procedure(ar[0]);
+    return new BiwaScheme.Promise(ar[0]);
+  });
 }
