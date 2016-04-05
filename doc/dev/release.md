@@ -4,6 +4,7 @@
 2. Edit VERSION
 3. Edit package.json
 4. Build
+  - $ npm install uglifyjs -g
   - $ make -B
   - Commit as release/biwascheme-x.y.z.js
 5. Make sure it is working:
