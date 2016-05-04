@@ -1,5 +1,7 @@
 (not yet) v0.6.4
 
+  * new: R7RS promise (delay, force, etc.)
+
 2015-12-25 v0.6.3
 
   * new:

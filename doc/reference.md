@@ -145,6 +145,21 @@ Other macro-related functions:
 * Regexp
   * `regexp-exec` `(regexp-exec)` `(regexp-replace-all)`
   * `string->regexp` `regexp?` `regexp->string`
+* Promise (R7RS)
+  * syntax `(delay expression)`
+    - Return a promise
+  * syntax `(delay-force promise-expr)`
+    - Return a promise
+    - `promise-expr` must evaluates to a promise 
+    - Mostly the same as `(delay (force promise-expr))`, but runs effectively
+  * `(force promise)`
+    - If no value has been computed for the promise, a value is computed and returned.
+    - If the promise is forced a second time, the cached value is returned.
+  * `(promise? obj)`
+    - Return #t if obj is a promise
+  * `(make-promise obj)`
+    - Return a promise which, when `force`d, will return obj
+    - Just return obj if obj is already a promise
 
 ### Utilities
 

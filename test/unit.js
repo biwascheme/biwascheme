@@ -1865,10 +1865,6 @@ describe('19 R5RS compatibility', {
 //(remainder n1 n2)    procedure 
 //(modulo n1 n2)    procedure
 //
-//(delay <expression>)    syntax  
-//(force promise)    procedure 
-//(make-promise (lambda () <expression>))
-//
 //(null-environment n)    procedure 
 //(scheme-report-environment n)    procedure 
 })
@@ -1880,19 +1876,34 @@ describe('R6RS Promise', {
        ').should_be(1);
   },
 
+  'delay-force' : function() {
+    ev('(define x 0) \
+        (define np (delay (inc! x))) \
+        (define op (delay-force np)) \
+        (force op) (force np)').should_be(1);
+  },
+
   'force' : function() {
-    ev('(force 99)').should_be(99);
+    ev('(force (delay 99))').should_be(99);
+  },
+
+  'force (reentrant)' : function() {
+    ev('(define x 5) \
+        (define p (delay (if (= x 0) 0 (begin (dec! x) (force p) 99)))) \
+        (force p)').should_be(0);
   },
 
   'promise?' : function() {
     ev('(promise? 99)').should_be(false);
     ev('(promise? (delay 99))').should_be(true);
+    ev('(promise? (delay-force (delay 99)))').should_be(true);
+    ev('(promise? (make-promise 99))').should_be(true);
+  },
+
+  'make-promise' : function() {
+    ev('(force (make-promise 99))').should_be(99);
+    ev('(force (make-promise (make-promise 98)))').should_be(98);
   }
-//,
-//  'make-promise' : function() {
-//    ev('(force (make-promise 99))').should_be(99);
-//    ev('(force (make-promise (make-promise 98)))').should_be(98);
-//  }
 })
 
 describe(';; src/library/js_interface.js', {});

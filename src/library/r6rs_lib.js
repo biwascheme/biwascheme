@@ -3189,10 +3189,6 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(remainder n1 n2)    procedure 
 //(modulo n1 n2)    procedure
 //
-//(delay <expression>)    syntax  
-//(force promise)    procedure 
-//(make-promise (lambda () <expression>))
-//
 //(null-environment n)    procedure 
 //(scheme-report-environment n)    procedure 
 
@@ -3212,32 +3208,54 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
                       BiwaScheme.to_write_ss(x));
     }
     var expr = x.cdr.car;
-    // (procedure->promise (lambda () expr))
-    return new Pair(Sym("procedure->promise"),
+    // Expand into call of internal function
+    // ( procedure->promise (lambda () (make-promise expr)))
+    return new Pair(Sym(" procedure->promise"),
+             new Pair(new Pair(Sym("lambda"),
+                        new Pair(BiwaScheme.nil,
+                          new Pair(new Pair(Sym("make-promise"),
+                                     new Pair(expr, BiwaScheme.nil)),
+                            BiwaScheme.nil)))));
+  });
+
+  // (delay-force promise-expr)
+  define_syntax("delay-force", function(x){
+    if (x.cdr === BiwaScheme.nil) {
+      throw new Error("malformed delay-force: no argument");
+    }
+    if (x.cdr.cdr !== nil) {
+      throw new Error("malformed delay-force: too many arguments: "+
+                      BiwaScheme.to_write_ss(x));
+    }
+    var expr = x.cdr.car;
+    // Expand into call of internal function
+    // ( procedure->promise (lambda () expr))
+    return new Pair(Sym(" procedure->promise"),
              new Pair(new Pair(Sym("lambda"),
                         new Pair(BiwaScheme.nil,
                           new Pair(expr, BiwaScheme.nil))), BiwaScheme.nil));
   });
 
-  // (delay-force expression)
-  define_syntax("delay-force", function(x){
-    throw new Bug("not implemented yet");
-  });
-
   // (force promise)
-  define_libfunc("force", 1, 1, function(ar, intp){
-    if (!(ar[0] instanceof BiwaScheme.Promise)) {
-      return ar[0];
+  var force = function(promise) {
+    if (promise.is_done()) {
+      return promise.value();
     }
-    var promise = ar[0];
-    if (!promise.fresh) {
-      return promise.value;
-    }
-
-    return new Call(promise.proc, [], function(ar) {
-      var result = ar[0];
-      promise.set_value(result);
+    return new Call(promise.thunk(), [], function(ar) {
+      assert_promise(ar[0]);
+      var new_promise = ar[0];
+      if (promise.is_done()) {  // reentrant!
+        return promise.value();
+      }
+      else {
+        promise.update_with(new_promise);
+        return force(new_promise);
+      }
     });
+  };
+  define_libfunc("force", 1, 1, function(ar, intp){
+    assert_promise(ar[0]);
+    return force(ar[0]);
   });
 
   // (promise? obj)
@@ -3247,23 +3265,20 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   // (make-promise obj)
   define_libfunc("make-promise", 1, 1, function(ar, intp){
-    throw new Bug("not yet implemented");
-
     var obj = ar[0];
     if (obj instanceof BiwaScheme.Promise) {
       return obj;
     }
     else {
-      // This is equivalent to `(lambda () obj)`
-      var proc = [["constant", obj, ["return"]], -1];
-      proc.closure_p = true;
-      return new BiwaScheme.Promise(proc);
+      return BiwaScheme.Promise.done(obj);
     }
   });
 
-  // (procedure->promise (lambda ...))
-  define_libfunc("procedure->promise", 1, 1, function(ar, intp){
+  // internal function
+  // ( procedure->promise proc)
+  // proc must be a procedure with no argument and return a promise
+  define_libfunc(" procedure->promise", 1, 1, function(ar, intp){
     assert_procedure(ar[0]);
-    return new BiwaScheme.Promise(ar[0]);
+    return BiwaScheme.Promise.fresh(ar[0]);
   });
 }
