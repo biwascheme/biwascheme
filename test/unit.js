@@ -2013,10 +2013,10 @@ describe('extra library', {
     ev("(identity 1)").should_be(1);
   },
   'inc!': function(){
-    ev("(let1 x 1 (inc! x) x)").should_be(2);
+    ev("(let1 x 1 (inc! x))").should_be(2);
   },
   'dec!': function(){
-    ev("(let1 x 1 (dec! x) x)").should_be(0);
+    ev("(let1 x 1 (dec! x))").should_be(0);
   },
   'gensym': function(){
     ev("(symbol? (gensym))").should_be(true);

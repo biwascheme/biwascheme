@@ -67,23 +67,27 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   // (inc! i)
-  // = (set! i (+ i 1))
+  // = (begin (set! i (+ i 1)) i)
   // Increments i (i.e., set i+1 to i).
   define_syntax("inc!", function(x){
     var target = x.cdr.car;
-    return List(Sym("set!"),
-                target, 
-                List(Sym("+"), target, 1));
+    return List(Sym("begin"),
+                List(Sym("set!"),
+                     target, 
+                     List(Sym("+"), target, 1)),
+                target);
   });
   
   // (dec! i)
-  // = (set! i (- i 1))
+  // = (begin (set! i (- i 1)) i)
   // Decrements i (i.e., set i-1 to i).
   define_syntax("dec!", function(x){
     var target = x.cdr.car;
-    return List(Sym("set!"),
-                target, 
-                List(Sym("-"), target, 1));
+    return List(Sym("begin"),
+                List(Sym("set!"),
+                     target, 
+                     List(Sym("-"), target, 1)),
+                target);
   });
 
   // string
