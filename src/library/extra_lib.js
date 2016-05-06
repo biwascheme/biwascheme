@@ -216,7 +216,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   
   // macros
 
-  //(define-macro (foo x) body ...)
+  //(define-macro (foo x y) body ...)
   //(define-macro foo lambda)
 
   var rearrange_args = function (expected, given) {
