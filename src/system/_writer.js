@@ -50,7 +50,11 @@ BiwaScheme.to_write = function(obj){
 //
 
 BiwaScheme.to_display = function(obj){
-  if(typeof(obj.valueOf()) == "string")
+  if(_.isUndefined(obj))
+    return 'undefined';
+  else if(_.isNull(obj))
+    return 'null';
+  else if(typeof(obj.valueOf()) == "string")
     return obj;
   else if(obj instanceof BiwaScheme.Symbol)
     return obj.name;
