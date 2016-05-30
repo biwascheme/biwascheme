@@ -2,11 +2,10 @@
 
 ### HTML and Browser
 
-1. Download biwascheme.js
-2. Save the following as foo.html and open it
+1. Download [biwascheme.js](../release/biwascheme.js)
+2. Save the following as hello.html and open it
 
 ```
-
 <!DOCTYPE html> 
 <html> 
   <head> 
@@ -24,6 +23,8 @@
   </body>
 </html>
 ```
+
+NOTE: The .js file name must be `biwascheme.js` or `biwascheme-min.js` to make the Scheme program to be loaded.
 
 ### Node.js
 
