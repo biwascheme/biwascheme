@@ -405,7 +405,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var handler = function(event){
         elem.biwascheme_wait_for[evtype] = undefined;
         elem.unbind(evtype, handler);
-        return pause.resume(BiwaScheme.undef);
+        return pause.resume(event);
       };
 
       elem.biwascheme_wait_for[evtype] = handler;
