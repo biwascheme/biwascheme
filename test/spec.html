@@ -15,18 +15,20 @@
 
 <script type="text/javascript">// <![CDATA[
 var loader_development = function(){
-  document.write("<script src='../src/development_loader.js'>" +
-    "if(console) console.log('BiwaScheme '+BiwaScheme.VERSION);" +
-    "BiwaScheme.register_tests();" +
-    "JSSpec.start_test();" +
+  document.write("<script src='../src/development_initializer.js'><\/script>" +
+    "<script type='text/javascript'>"+
+      "if(console) console.log('BiwaScheme '+BiwaScheme.VERSION);" +
+      "BiwaScheme.register_tests();" +
+      "JSSpec.start_test();" +
     "<\/script>");
 };
 
 var loader_production = function(name){
-  document.write("<script src='../release/"+name+"'>" +
-    '(js-eval "if(console) console.log(\'BiwaScheme \'+BiwaScheme.VERSION);' +
-    '          BiwaScheme.register_tests();' +
-    '          JSSpec.start_test();")' +
+  document.write("<script src='../release/"+name+"'><\/script>" +
+    "<script type='text/javascript'>"+
+      "if(console) console.log(\'BiwaScheme \'+BiwaScheme.VERSION);" +
+      "BiwaScheme.register_tests();" +
+      "JSSpec.start_test();" +
     "<\/script>");
 };
 

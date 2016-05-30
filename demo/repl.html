@@ -87,7 +87,8 @@
     </td></tr></table>
   </div>
 
-<script type="text/javascript" src="../src/development_loader.js">// <![CDATA[
+<script type="text/javascript" src="../src/development_initializer.js"></script>
+<script type="text/javascript">
 var on_error = function(e){
   puts(e.message);
   throw(e);
@@ -113,7 +114,7 @@ $(".bs-snippet").click(function(e){
   $("#bs-input").html($(this).html());
 });
 $("#biwa_ver").append("("+BiwaScheme.Version+")");
-// ]]></script>
+</script>
 
 </body>
 </html>

@@ -20,7 +20,7 @@ var BiwaScheme = BiwaScheme || {};
   var script = find_script_tag(document);
 
   var src = script.getAttribute("src");
-  var dir = src.match(/(.*)src\/development_loader.js/)[1];
+  var dir = src.match(/(.*)src\/development_initializer.js/)[1];
 
   var script_tag = function(path){
     return '<script type="text/javascript" src="' +
@@ -62,7 +62,12 @@ var BiwaScheme = BiwaScheme || {};
   document.write(script_tag(dir+"src/library/node_functions.js"));
   document.write(script_tag(dir+"src/library/srfi.js"));
   document.write(script_tag(dir+"src/platforms/browser/dumper.js"));
-  document.write("<script type='text/javascript'>" +
-    script.innerHTML +
-    "<\/script>");
+  document.write("<script type='text/javascript'>BiwaScheme.startDev()<\/script>");
+
+  // Start user's program
+  BiwaScheme.startDev = function(){
+    var onError = function(e){ throw e; }
+    var intp = new BiwaScheme.Interpreter(onError);
+    intp.evaluate(script.innerHTML);
+  };
 })();
