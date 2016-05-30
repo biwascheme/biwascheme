@@ -49,11 +49,13 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     ].join("");
   },
 
+  // private
   push: function(x, s){
     this.stack[s] = x;
     return s+1;
   },
 
+  // private
   //s: depth of stack to save
   //ret: saved(copied) stack 
   save_stack: function(s){
@@ -64,6 +66,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return { stack: v, last_refer: this.last_refer, call_stack: _.clone(this.call_stack), tco_counter: _.clone(this.tco_counter) };
   },
 
+  // private
   //v: stack array to restore
   //ret: lenght of restored stack
   restore_stack: function(stuff){
@@ -78,6 +81,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return s;
   },
 
+  // private
   //s: depth of stack to save
   //n: number of args(for outer lambda) to remove (= 0 unless tail position)
   //ret: closure array
@@ -92,6 +96,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
                         -1);   // dotpos
   },
 
+  // private
   // shift stack 
   // n: number of items to skip (from stack top)
   // m: number of items to shift
@@ -107,10 +112,12 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return this.stack[s-i-2];
   },
 
+  // private
   index_set: function(s, i, v){
     this.stack[s-i-2] = v;
   },
 
+  // private
   //ret: [body, stack[s-1], stack[s-2], .., stack[s-n], dotpos]
   closure: function(body, n, s, dotpos){
     var v = []; //(make-vector n+1+1)
@@ -124,19 +131,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return v;
   },
 
-  execute: function(a, x, f, c, s){
-    var ret = null;
-    try{
-      ret = this._execute(a, x, f, c, s);
-    }
-    catch(e){
-      e.message = e.message + " [" + this.call_stack.join(", ") + "]";
-      var state = {a:a, x:x, f:f, c:c, s:s, stack:this.stack};
-      return this.on_error(e, state);
-    }
-    return ret;
-  },
-
+  // private
   run_dump_hook: function(a, x, f, c, s) {
     var dumper;
     var state;
@@ -162,6 +157,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     }
   },
 
+  // private
   _execute: function(a, x, f, c, s){
     var ret = null;
     //puts("executing "+x[0]);
@@ -404,6 +400,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return a
   },
 
+  // Compile and evaluate Scheme program
   evaluate: function(str, after_evaluate){
     this.parser = new BiwaScheme.Parser(str);
     this.compiler = new BiwaScheme.Compiler();
@@ -418,17 +415,20 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     try{
       return this.resume(false);
     }
-    catch(ex){
-      return this.on_error(ex);
+    catch(e){
+      e.message = e.message + " [" + this.call_stack.join(", ") + "]";
+      return this.on_error(e);
     }
   },
 
+  // Resume evaluation
+  // (internally used from Interpreter#execute and Pause#resume)
   resume: function(is_resume, a, x, f, c, s){
     var ret = BiwaScheme.undef;
 
     for(;;){
       if(is_resume){
-        ret = this.execute(a, x, f, c, s);
+        ret = this._execute(a, x, f, c, s);
         is_resume = false;
       }
       else{
@@ -444,7 +444,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         //if(BiwaScheme.Debug) p(opc);
 
         // execute
-        ret = this.execute(expr, opc, 0, [], 0);
+        ret = this._execute(expr, opc, 0, [], 0);
       }
 
       if(ret instanceof BiwaScheme.Pause){ //suspend evaluation
@@ -457,6 +457,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return ret;
   },
 
+  // Invoke a scheme closure
   invoke_closure: function(closure, args){
     args || (args = []);
     var n_args  = args.length;
@@ -465,7 +466,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     for(var i=0; i<n_args; i++)
       x = ["constant", args[i], ["argument", x]]
 
-    return this.execute(closure, ["frame", x, ["halt"]], 0, closure, 0);
+    return this._execute(closure, ["frame", x, ["halt"]], 0, closure, 0);
   },
 
   // only compiling (for debug use only)
