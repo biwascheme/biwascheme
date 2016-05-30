@@ -3,14 +3,14 @@ _.str = require('underscore.string');
 
 var Console = {};
 Console.puts = function(str, no_newline) {
-  require('util').print(str);
+  process.stdout.write(str);
   if (!no_newline) {
-    require('util').print("\n");
+    process.stdout.write("\n");
   }
 };
 
 Console.p = function() {
-  require('util').print.apply(this, arguments);
+  process.stdout.write(this, arguments);
 };
 
 if(typeof(BiwaScheme) == "undefined") BiwaScheme = {};

@@ -1,10 +1,10 @@
 BiwaScheme.run = function(code) {
   var intp = new BiwaScheme.Interpreter(function(e){
     if(e.stack){
-      require('util').puts(e.stack);
+      console.error(e.stack);
     }
     else{
-      require('util').puts(e);
+      console.error(e.toString ? e.toString() : e);
     }
 
     throw e;
