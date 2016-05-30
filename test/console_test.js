@@ -1,7 +1,7 @@
 //
 // test code (also used by browser_test.html)
 //
-p("BiwaScheme" + " version " + BiwaScheme.Version + ".git" + BiwaScheme.GitCommit)
+p("BiwaScheme" + " version " + BiwaScheme.VERSION + ".git" + BiwaScheme.GitCommit)
 //p(ev("(macroexpand-1 '(define-record-type point (fields xx)))").to_write());
 //p(ev("(define-record-type point (fields xx))"));
 //p(ev("(make-point 1)"));

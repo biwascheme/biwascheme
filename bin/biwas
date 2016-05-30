@@ -16,7 +16,7 @@ function Options(argv){
   ]);
 
   parser.banner = [
-    ('BiwaScheme version ' + BiwaScheme.Version),
+    ('BiwaScheme version ' + BiwaScheme.VERSION),
     'Usage: biwas [options] foo.scm',
     'Example:',
     '  ;; foo.scm',
@@ -28,7 +28,7 @@ function Options(argv){
   });
 
   parser.on('version', function() {
-    console.log("BiwaScheme version "+BiwaScheme.Version);
+    console.log("BiwaScheme version "+BiwaScheme.VERSION);
     process.exit(0);
   });
 
@@ -99,7 +99,7 @@ function repl(){
   var prompt = prompts.base;
   rl.setPrompt(prompt);
 
-  console.log('BiwaScheme version ' + BiwaScheme.Version);
+  console.log('BiwaScheme version ' + BiwaScheme.VERSION);
   console.log('try (+ 1 2), etc. (Ctrl-D to exit)');
   rl.prompt();
 }
