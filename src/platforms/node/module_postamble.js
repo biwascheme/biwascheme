@@ -1,10 +1,13 @@
-BiwaScheme.run = function(code) {
+BiwaScheme.run = function(code, opts) {
+  opts = opts || {};
   var intp = new BiwaScheme.Interpreter(function(e){
-    if(e.stack){
-      console.error(e.stack);
-    }
-    else{
-      console.error(e.toString ? e.toString() : e);
+    if(!opts["no_print"]) {
+      if(e.stack){
+        console.error(e.stack);
+      }
+      else{
+        console.error(e.toString ? e.toString() : e);
+      }
     }
 
     throw e;

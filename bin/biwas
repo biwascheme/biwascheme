@@ -108,7 +108,7 @@ function main(){
   var opts = new Options(process.argv.slice(2));
 
   if (opts.code) {
-    BiwaScheme.run(opts.code);
+    BiwaScheme.run(opts.code, {no_print: true});
   }
   else {
     if(opts.args.length >= 1){
