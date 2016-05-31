@@ -26,7 +26,7 @@
     - `$ biwas -v`
 6. Push changes and make a release on github
   - Copy changelog from History.txt
-  - Push "Publish" to make a git tag
+  - Press the "Publish" button to make a git tag
 7. Update website
   - see website.md
 8. Publish npm package

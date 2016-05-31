@@ -23,6 +23,9 @@ $ ln -s . ~/.pow/biwascheme
 $ open http://biwascheme.dev/index.html
 ```
 
-### Memo: how to publish changes
+### Memo for me: how to publish changes
 
-`$ rake publish`
+```
+$ rake publish        # only doc/ and index.html
+$ rake publish ALL=1  # all files including js (used for releases)
+```

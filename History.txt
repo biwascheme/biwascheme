@@ -1,6 +1,10 @@
-(not yet) v0.6.4
+2016-05-31 v0.6.4
 
-  * new: R7RS promise (delay, force, etc.)
+  * new: R7RS promise (delay, force, delay-force, etc.)
+  * change:
+    - Add BiwaScheme.VERSION (BiwaScheme.Version is still available
+      but deprecated)
+    - `wait-for` returns event object instead of `#<undef>`
 
 2015-12-25 v0.6.3
 
