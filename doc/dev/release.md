@@ -1,13 +1,12 @@
 ## How to make a release
 
 1. Edit History.txt
-2. Edit VERSION
-3. Edit package.json
-4. Build
+1. Edit VERSION
+1. Edit package.json
+1. Build
   - $ npm install uglifyjs -g
   - $ make -B
-  - Commit as release/biwascheme-x.y.z.js
-5. Make sure it is working:
+1. Make sure it is working:
   - run tests
     - open http://localhost:7001/test/spec.html
     - open http://localhost:7001/test/spec.html#release
@@ -24,11 +23,14 @@
     - `$ npm pack`
     - `$ npm install biwascheme-x.y.z.tgz -g`
     - `$ biwas -v`
-6. Push changes and make a release on github
+1. Create biwascheme-x.y.z.js
+  - $ cp release/biwascheme{,-x.y.z}js
+  - $ cp release/biwascheme{,-x.y.z}-min.js
+1. Push changes and make a release on github
   - Copy changelog from History.txt
   - Press the "Publish" button to make a git tag
-7. Update website
+1. Update website
   - see website.md
-8. Publish npm package
+1. Publish npm package
   - `$ npm publish`
-9. Update `VERSION` to x.y.z.dev
+1. Update `VERSION` to x.y.z.dev
