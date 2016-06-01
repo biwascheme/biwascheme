@@ -285,7 +285,7 @@ These functions are only available in browsers (i.e. does not work on Node.js.)
   * Same as `jQuery(selector)` except returns `#f` when no element is found
 * `(set-style! selector prop value)`
   * eg. `(set-style! "#box" "left" 300)`
-* `(get-style! selector prop)`
+* `(get-style selector prop)`
 * `(set-content! selector text)` 
   * Replace content of `selector` with `text`
   * Newlines in `text` are replaced with `<br>`
