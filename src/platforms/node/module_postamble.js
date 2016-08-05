@@ -37,6 +37,29 @@ BiwaScheme.define_libfunc("js-load", 1, 1, function(ar) {
   return require(__dirname + "/../../../" + relpath);
 });
 
+BiwaScheme.Port.current_error =
+BiwaScheme.Port.current_output = new BiwaScheme.Port.CustomOutput(
+  function (str) {
+    require('util').print(str);
+  }
+);
+
+var readline = require('readline');
+BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(
+  function (callback) {
+    var rl = readline.createInterface(
+      process.stdin,
+      process.stdout
+    );
+    rl.on('line', function (line) {
+      rl.close();
+      callback(line);
+    });
+    rl.setPrompt('', 0);
+    rl.prompt()
+  }
+);
+
 for(x in BiwaScheme){
   exports[x] = BiwaScheme[x];
 }

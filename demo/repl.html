@@ -90,7 +90,7 @@
 <script type="text/javascript" src="../src/development_initializer.js"></script>
 <script type="text/javascript">
 var on_error = function(e){
-  puts(e.message);
+  BiwaScheme.Port.current_error.put_string(e.message);
   throw(e);
 };
 var biwascheme = new BiwaScheme.Interpreter(on_error);
@@ -105,7 +105,7 @@ function bs_eval(){
   biwascheme.evaluate(str, function(result){
     var after = new Date();
     $("#time").html("Time: " + (after-before)/1000 + "sec");
-    puts(BiwaScheme.to_write(result));
+    BiwaScheme.Port.current_output.put_string(BiwaScheme.to_write(result));
   });
 
   return false;

@@ -57,8 +57,10 @@ function unbalanced_parentheses(text_code) {
 }
 
 function repl(){
-  var rl = require('readline').createInterface(process.stdin,
-                                               process.stdout);
+  var rl = require('readline').createInterface(
+    process.stdin,
+    process.stdout
+  );
   var erred = new Object();
 
   var prompts = {
@@ -78,7 +80,7 @@ function repl(){
         var result = erred;
       }
 
-      if (result !== erred) {
+      if (result !== erred && !(result instanceof BiwaScheme.Pause)) {
         console.log(BiwaScheme.to_write(result));
       }
 
@@ -89,11 +91,9 @@ function repl(){
       rl.setPrompt(prompts.cont);
     }
 
-    rl.prompt();
-  });
-
-  rl.on('close', function() {
-    process.exit(0);
+    if (!(result instanceof BiwaScheme.Pause)) {
+      rl.prompt();
+    }
   });
 
   var prompt = prompts.base;
@@ -101,6 +101,16 @@ function repl(){
 
   console.log('BiwaScheme version ' + BiwaScheme.VERSION);
   console.log('try (+ 1 2), etc. (Ctrl-D to exit)');
+
+  BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(
+    function (callback) {
+      rl.question('', function (line) {
+        callback(line);
+        rl.prompt()
+      })
+    }
+  );
+
   rl.prompt();
 }
 

@@ -420,7 +420,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     throw new Error("obsolete");
   });
   define_libfunc("dom-remove-children!", 1, 1, function(ar){
-    puts("warning: dom-remove-children! is obsolete. use element-empty! instead");
+    Console.puts("warning: dom-remove-children! is obsolete. use element-empty! instead");
     $(ar[0]).empty();
     return BiwaScheme.undef;
   });

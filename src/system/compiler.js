@@ -23,7 +23,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
     for(var i=0; i<arr.length; i++){
       opc = this.compile_refer(arr[i], e, ["argument", opc]);
     }
-    //puts("collect_free "+free.inspect()+" / "+e.inspect()+" => "+opc.inspect());
+    //Console.puts("collect_free "+free.inspect()+" / "+e.inspect()+" => "+opc.inspect());
     return opc;
   },
 
@@ -40,11 +40,11 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
   compile_lookup: function(x, e, return_local, return_free, return_global){
     var locals = e[0], free = e[1];
     if((n = locals.index(x)) != null){
-      //puts("compile_refer:"+x.inspect()+" in "+e.inspect()+" results refer-local "+n);
+      //Console.puts("compile_refer:"+x.inspect()+" in "+e.inspect()+" results refer-local "+n);
       return return_local(n);
     }
     else if((n = free.index(x)) != null){
-      //puts("compile_refer:"+x.inspect()+" in "+e.inspect()+" results refer-free "+n);
+      //Console.puts("compile_refer:"+x.inspect()+" in "+e.inspect()+" results refer-free "+n);
       return return_free(n);
     }
     else{
@@ -81,7 +81,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
   // v: set(vars)
   // ret: set
   find_sets: function(x, v){
-    //puts("find_sets: " + to_write(x) + " " + to_write(v))
+    //Console.puts("find_sets: " + to_write(x) + " " + to_write(v))
     var ret=null;
     if(x instanceof BiwaScheme.Symbol){
       ret = new BiwaScheme.Set();
@@ -207,7 +207,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
     else{
       ret = new BiwaScheme.Set();
     }
-    //p("find_free "+x.inspect()+" / "+b.inspect()+" => "+ret.inspect());
+    //Console.p("find_free "+x.inspect()+" / "+b.inspect()+" => "+ret.inspect());
 
     if(ret == null)
       throw new BiwaScheme.Bug("find_free() exited in unusual way");
@@ -280,7 +280,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
   // next: opc
   // ret: opc
   compile: function(x, e, s, f, next){
-    //p(x);
+    //Console.p(x);
     var ret = null;
 
     while(1){
@@ -385,8 +385,8 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
         return ["constant", x, next];
       }
     }
-    //p("result of " + x.inspect() + ":");
-    //p(ret);
+    //Console.p("result of " + x.inspect() + ":");
+    //Console.p(ret);
     //dump({"ret":ret, "x":x, "e":e, "s":s, "next":next, "stack":[]});
 //      if(ret == null)
 //        throw new BiwaScheme.Bug("compile() exited in unusual way");

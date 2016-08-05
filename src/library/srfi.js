@@ -334,7 +334,7 @@ with(BiwaScheme) {
   // srfi-38 (write/ss)
   //
   var user_write_ss = function(ar){
-    puts(write_ss(ar[0]), true);
+    Console.puts(write_ss(ar[0]), true);
     return BiwaScheme.undef;
   }
   define_libfunc("write/ss", 1, 2, user_write_ss);

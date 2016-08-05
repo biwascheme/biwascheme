@@ -11,7 +11,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return BiwaScheme.inspect_objs(ar);
   });
   define_libfunc("inspect!", 1, null, function(ar){
-    puts(BiwaScheme.inspect_objs(ar));
+    Console.puts(BiwaScheme.inspect_objs(ar));
     return BiwaScheme.undef;
   });
 
@@ -304,9 +304,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   define_libfunc("print", 1, null, function(ar){
     _.map(ar, function(item){
-      puts(to_display(item), true);
+      Console.puts(to_display(item), true);
     })
-    puts(""); //newline
+    Console.puts(""); //newline
     return BiwaScheme.undef;
   })
   define_libfunc("write-to-string", 1, 1, function(ar){
