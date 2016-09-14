@@ -1,6 +1,6 @@
 ## Features
 
-* Most of basic features of R6RS Base
+* Most of basic features of R7RS
 * Some of R6RS Standard Libraries and SRFIs
   (see [doc/conformance](/doc/conformance.html) )
 * First-class continuation (`call/cc`)
