@@ -800,7 +800,16 @@ describe('11.7 Arithmetic', {
   'magnitude' : function() {
     ev('(magnitude (make-rectangular 3 4))').should_be(5)
   },
-  // angle
+  'angle' : function(){
+    ev('(angle (make-polar 0 0))').should_be(0);
+    ev('(angle (make-polar 0 1))').should_be(0);
+    ev('(angle (make-polar 10 0))').should_be(0);
+    ev('(angle (make-polar 10 1))').should_be(1);
+    ev('(angle (make-rectangular 1 1))').should_be(Math.PI/4);
+    ev('(angle (make-rectangular 0 1))').should_be(Math.PI/2);
+    ev('(angle (make-rectangular -1 0))').should_be(Math.PI);
+    ev('(angle (make-rectangular 0 -1))').should_be(-Math.PI/2);
+  },
   'number->string' : function(){
     ev('(number->string 100)').should_be("100");
     ev('(number->string 32 16)').should_be("20");
