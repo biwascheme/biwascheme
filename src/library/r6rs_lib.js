@@ -503,6 +503,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if(imag === 0) return real;
     return new Complex(real,imag);
   }
+  var polar_or_real = function(magnitude, angle){
+      if(angle === 0) return magnitude;
+      return Complex.from_polar(magnitude, angle);
+  }
   define_libfunc("+", 0,null, function(ar){
     var real = 0;
     var imag = 0;
@@ -513,13 +517,23 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     }
     return complex_or_real(real,imag);
   });
+  var the_magnitude = function(n) {
+      if(n instanceof Complex) return n.magnitude();
+      return n;
+  }
+  var the_angle = function(n) {
+      if(n instanceof Complex) return n.angle();
+      return 0;
+  }
   define_libfunc("*", 0,null, function(ar){
-    var n = 1;
+    var magnitude = 1;
+    var angle = 0;
     for(var i=0; i<ar.length; i++){
       assert_number(ar[i]);
-      n*=ar[i];
+      magnitude*=the_magnitude(ar[i]);
+      angle+=the_angle(ar[i]);
     }
-    return n;
+    return polar_or_real(magnitude, angle);
   });
   define_libfunc("-", 1,null, function(ar){
     var len = ar.length;
@@ -545,15 +559,19 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var len = ar.length;
     assert_number(ar[0]);
 
-    if(len == 1)
+    if(len == 1){
+      if (ar[0] instanceof Complex) return Complex.from_polar(1/the_magnitude(ar[0]), -the_angle(ar[0]));
       return 1/ar[0];
+    }
     else{
-      var n = ar[0];
+      var magnitude = the_magnitude(ar[0]);
+      var angle = the_angle(ar[0]);
       for(var i=1; i<len; i++){
         assert_number(ar[i]);
-        n/=ar[i];
+        magnitude/=the_magnitude(ar[i]);
+        angle-=the_angle(ar[i]);
       }
-      return n;
+      return polar_or_real(magnitude, angle);
     }
   });
 

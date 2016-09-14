@@ -23,6 +23,11 @@ function scm_eval(str, func, _on_error){
 function ev(str, func){
   return expect((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function()));
 }
+function evcomp(str, value, func){
+  var epsilon = 0.00001;
+  return expect(((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function()) - value) < epsilon);
+}
+
 function ew(str, func){
   return expect(BiwaScheme.to_write((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function())));
 }
@@ -739,6 +744,20 @@ describe('11.7 Arithmetic', {
     ev("(imag-part (- (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(-18);
     ev("(real-part (- (make-rectangular 1 2) 10))").should_be(-9);
     ev("(imag-part (- (make-rectangular 1 2) 10))").should_be(2);
+  },
+  'complex numbers *': function(){
+    ev("(magnitude (* (make-polar 12 2) (make-polar 10 20)))").should_be(120);
+    evcomp("(angle (* (make-polar 1 .2) (make-polar 10 .3)))",.5).should_be_true();
+    evcomp("(magnitude (* (make-polar 12 2) 10))", 120).should_be_true();
+    ev("(angle (* (make-polar 1 2) 10))").should_be(2);
+  },
+  'complex numbers /': function(){
+    //evcomp("(magnitude (/ (make-polar 12 2)))",1/12).should_be_true();
+    ev("(angle (/ (make-polar 12 2)))").should_be(-2);
+    //evcomp("(magnitude (/ (make-polar 12 2) (make-polar 10 20)))",1.2).should_be_true();
+    //evcomp("(angle (/ (make-polar 1 .2) (make-polar 10 .3)))",-.1).should_be_true();
+    //evcomp("(magnitude (/ (make-polar 12 2) 10))", 1.2).should_be_true();
+    ev("(angle (/ (make-polar 1 2) 10))").should_be(2);
   },
   'abs' : function(){
     ev("(abs -7)").should_be(7);
