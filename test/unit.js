@@ -752,11 +752,11 @@ describe('11.7 Arithmetic', {
     ev("(angle (* (make-polar 1 2) 10))").should_be(2);
   },
   'complex numbers /': function(){
-    //evcomp("(magnitude (/ (make-polar 12 2)))",1/12).should_be_true();
+    evcomp("(magnitude (/ (make-polar 12 2)))",1/12).should_be_true();
     ev("(angle (/ (make-polar 12 2)))").should_be(-2);
-    //evcomp("(magnitude (/ (make-polar 12 2) (make-polar 10 20)))",1.2).should_be_true();
-    //evcomp("(angle (/ (make-polar 1 .2) (make-polar 10 .3)))",-.1).should_be_true();
-    //evcomp("(magnitude (/ (make-polar 12 2) 10))", 1.2).should_be_true();
+    evcomp("(magnitude (/ (make-polar 12 2) (make-polar 10 20)))",1.2).should_be_true();
+    evcomp("(angle (/ (make-polar 1 .2) (make-polar 10 .3)))",-.1).should_be_true();
+    evcomp("(magnitude (/ (make-polar 12 2) 10))", 1.2).should_be_true();
     ev("(angle (/ (make-polar 1 2) 10))").should_be(2);
   },
   'abs' : function(){
