@@ -23,6 +23,11 @@ function scm_eval(str, func, _on_error){
 function ev(str, func){
   return expect((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function()));
 }
+function evcomp(str, value, func){
+  var epsilon = 0.00001;
+  return expect(((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function()) - value) < epsilon);
+}
+
 function ew(str, func){
   return expect(BiwaScheme.to_write((new BiwaScheme.Interpreter(on_error)).evaluate(str, func||new Function())));
 }
@@ -662,6 +667,10 @@ describe('11.7 Arithmetic', {
   '= < > <= >=' : function(){
     ev("(= 1 1 1)").should_be(true);
     ev("(= 1 2)").should_be(false);
+    ev("(= 1 (make-rectangular 1 0)").should_be(true);
+    ev("(= 22 (make-rectangular 1 0)").should_be(false);
+    ev("(= (make-rectangular 1 2) (make-rectangular 1 2)").should_be(true);
+    ev("(= (make-rectangular 1 2) (make-rectangular 1 20)").should_be(false);
     ev("(< 1 2 3)").should_be(true);
     ev("(< 1 4 3)").should_be(false);
     ev("(> 3 2 1)").should_be(true);
@@ -716,10 +725,39 @@ describe('11.7 Arithmetic', {
   '+ * - /' : function(){
     ev("(+)").should_be(0);
     ev("(+ 1 2 3)").should_be(6);
+    ev("(- 6)").should_be(-6);
     ev("(- 6 3 2)").should_be(1);
     ev("(*)").should_be(1);
     ev("(* 2 3 4)").should_be(24);
     ev("(/ 12 2 3)").should_be(2);
+  },
+  'complex numbers +': function(){
+    ev("(real-part (+ (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(11);
+    ev("(imag-part (+ (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(22);
+    ev("(real-part (+ (make-rectangular 1 2) 10))").should_be(11);
+    ev("(imag-part (+ (make-rectangular 1 2) 10))").should_be(2);
+  },
+  'complex numbers -': function(){
+    ev("(real-part (- (make-rectangular 1 2)))").should_be(-1);
+    ev("(imag-part (- (make-rectangular 1 2)))").should_be(-2);
+    ev("(real-part (- (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(-9);
+    ev("(imag-part (- (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(-18);
+    ev("(real-part (- (make-rectangular 1 2) 10))").should_be(-9);
+    ev("(imag-part (- (make-rectangular 1 2) 10))").should_be(2);
+  },
+  'complex numbers *': function(){
+    ev("(magnitude (* (make-polar 12 2) (make-polar 10 20)))").should_be(120);
+    evcomp("(angle (* (make-polar 1 .2) (make-polar 10 .3)))",.5).should_be_true();
+    evcomp("(magnitude (* (make-polar 12 2) 10))", 120).should_be_true();
+    ev("(angle (* (make-polar 1 2) 10))").should_be(2);
+  },
+  'complex numbers /': function(){
+    evcomp("(magnitude (/ (make-polar 12 2)))",1/12).should_be_true();
+    ev("(angle (/ (make-polar 12 2)))").should_be(-2);
+    evcomp("(magnitude (/ (make-polar 12 2) (make-polar 10 20)))",1.2).should_be_true();
+    evcomp("(angle (/ (make-polar 1 .2) (make-polar 10 .3)))",-.1).should_be_true();
+    evcomp("(magnitude (/ (make-polar 12 2) 10))", 1.2).should_be_true();
+    ev("(angle (/ (make-polar 1 2) 10))").should_be(2);
   },
   'abs' : function(){
     ev("(abs -7)").should_be(7);
@@ -762,7 +800,16 @@ describe('11.7 Arithmetic', {
   'magnitude' : function() {
     ev('(magnitude (make-rectangular 3 4))').should_be(5)
   },
-  // angle
+  'angle' : function(){
+    ev('(angle (make-polar 0 0))').should_be(0);
+    ev('(angle (make-polar 0 1))').should_be(0);
+    ev('(angle (make-polar 10 0))').should_be(0);
+    ev('(angle (make-polar 10 1))').should_be(1);
+    ev('(angle (make-rectangular 1 1))').should_be(Math.PI/4);
+    ev('(angle (make-rectangular 0 1))').should_be(Math.PI/2);
+    ev('(angle (make-rectangular -1 0))').should_be(Math.PI);
+    ev('(angle (make-rectangular 0 -1))').should_be(-Math.PI/2);
+  },
   'number->string' : function(){
     ev('(number->string 100)').should_be("100");
     ev('(number->string 32 16)').should_be("20");

@@ -11,7 +11,7 @@ BiwaScheme.Complex = BiwaScheme.Class.create({
     return Math.sqrt(this.real * this.real + this.imag * this.imag);
   },
   angle: function(){
-    return Math.acos(this.real / this.magnitude());
+    return Math.atan2(this.imag, this.real);
   }
 })
 BiwaScheme.Complex.from_polar = function(r, theta){
