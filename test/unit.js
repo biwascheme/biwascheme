@@ -662,6 +662,10 @@ describe('11.7 Arithmetic', {
   '= < > <= >=' : function(){
     ev("(= 1 1 1)").should_be(true);
     ev("(= 1 2)").should_be(false);
+    ev("(= 1 (make-rectangular 1 0)").should_be(true);
+    ev("(= 22 (make-rectangular 1 0)").should_be(false);
+    ev("(= (make-rectangular 1 2) (make-rectangular 1 2)").should_be(true);
+    ev("(= (make-rectangular 1 2) (make-rectangular 1 20)").should_be(false);
     ev("(< 1 2 3)").should_be(true);
     ev("(< 1 4 3)").should_be(false);
     ev("(> 3 2 1)").should_be(true);
@@ -716,10 +720,25 @@ describe('11.7 Arithmetic', {
   '+ * - /' : function(){
     ev("(+)").should_be(0);
     ev("(+ 1 2 3)").should_be(6);
+    ev("(- 6)").should_be(-6);
     ev("(- 6 3 2)").should_be(1);
     ev("(*)").should_be(1);
     ev("(* 2 3 4)").should_be(24);
     ev("(/ 12 2 3)").should_be(2);
+  },
+  'complex numbers +': function(){
+    ev("(real-part (+ (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(11);
+    ev("(imag-part (+ (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(22);
+    ev("(real-part (+ (make-rectangular 1 2) 10))").should_be(11);
+    ev("(imag-part (+ (make-rectangular 1 2) 10))").should_be(2);
+  },
+  'complex numbers -': function(){
+    ev("(real-part (- (make-rectangular 1 2)))").should_be(-1);
+    ev("(imag-part (- (make-rectangular 1 2)))").should_be(-2);
+    ev("(real-part (- (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(-9);
+    ev("(imag-part (- (make-rectangular 1 2) (make-rectangular 10 20)))").should_be(-18);
+    ev("(real-part (- (make-rectangular 1 2) 10))").should_be(-9);
+    ev("(imag-part (- (make-rectangular 1 2) 10))").should_be(2);
   },
   'abs' : function(){
     ev("(abs -7)").should_be(7);

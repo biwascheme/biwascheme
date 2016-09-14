@@ -416,7 +416,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_number(ar[0]);
     for(var i=1; i<ar.length; i++){
       assert_number(ar[i]);
-      if(ar[i] != v) return false;
+      if(real_part(ar[i]) != real_part(v)) return false;
+      if(imag_part(ar[i]) != imag_part(v)) return false;
     }
     return true;
   });
@@ -498,13 +499,19 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return Math.min.apply(null, ar);
   });
 
+  var complex_or_real = function(real,imag){
+    if(imag === 0) return real;
+    return new Complex(real,imag);
+  }
   define_libfunc("+", 0,null, function(ar){
-    var n = 0;
+    var real = 0;
+    var imag = 0;
     for(var i=0; i<ar.length; i++){
       assert_number(ar[i]);
-      n+=ar[i];
+      real+=real_part(ar[i]);
+      imag+=imag_part(ar[i]);
     }
-    return n;
+    return complex_or_real(real,imag);
   });
   define_libfunc("*", 0,null, function(ar){
     var n = 1;
@@ -518,15 +525,19 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var len = ar.length;
     assert_number(ar[0]);
 
-    if(len == 1)
+    if(len == 1) {
+      if(ar[0] instanceof Complex) return new Complex(-real_part(ar[0]),-imag_part(ar[0]));
       return -ar[0];
+    }
     else{
-      var n = ar[0];
+      var real = real_part(ar[0]);
+      var imag = imag_part(ar[0]);
       for(var i=1; i<len; i++){
         assert_number(ar[i]);
-        n-=ar[i];
+        real-=real_part(ar[i]);
+        imag-=imag_part(ar[i]);
       }
-      return n;
+      return complex_or_real(real,imag);
     }
   });
   //for r6rs specification, (/ 0 0) or (/ 3 0) raises '&assertion exception'
@@ -702,9 +713,15 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_number(ar[1]);
     return Complex.from_polar(ar[0], ar[1]);
   })
+  var real_part = function(n) {
+    return Complex.assure(n).real;
+  }
+  var imag_part = function(n) {
+    return Complex.assure(n).imag;
+  }
   define_libfunc("real-part", 1, 1, function(ar){
     assert_number(ar[0]);
-    return Complex.assure(ar[0]).real;
+    return real_part(ar[0]);
   })
   define_libfunc("imag-part", 1, 1, function(ar){
     assert_number(ar[0]);
