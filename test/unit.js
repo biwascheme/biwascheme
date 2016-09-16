@@ -813,6 +813,16 @@ describe('11.7 Arithmetic', {
   'number->string' : function(){
     ev('(number->string 100)').should_be("100");
     ev('(number->string 32 16)').should_be("20");
+    ev('(number->string (make-rectangular 0 0))').should_be("0")
+    ev('(number->string (make-rectangular 1 0))').should_be("1")
+    ev('(number->string (make-rectangular 0 1))').should_be("i")
+    ev('(number->string (make-rectangular 0 -1))').should_be("-i")
+    ev('(number->string (make-rectangular 0 2))').should_be("2i")
+    ev('(number->string (make-rectangular 1 2))').should_be("1+2i")
+    ev('(number->string (make-rectangular 1 -2))').should_be("1-2i")
+    ev('(number->string (make-rectangular 1 1))').should_be("1+i")
+    ev('(number->string (make-rectangular 32 32) 16)').should_be("20+20i")
+    ev('(number->string (make-rectangular 1 1) 32)').should_be("1+i")
   },
   'string->number' : function(){
     ev('(string->number "100")').should_be(100)

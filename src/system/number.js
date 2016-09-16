@@ -12,6 +12,29 @@ BiwaScheme.Complex = BiwaScheme.Class.create({
   },
   angle: function(){
     return Math.atan2(this.imag, this.real);
+  },
+  toString: function(radix){
+    if (this.real === 0 && this.imag === 0)
+      return "0";
+    var img = "";
+    if (this.imag !== 0) {
+      if (this.imag > 0 && this.real !== 0){
+          img+="+";
+      }
+      switch(this.imag) {
+          case 1:
+              break;
+          case -1: img+="-";
+               break;
+          default: img+=this.imag.toString(radix);
+      }
+     img+="i";
+    }
+    var real = "";
+    if (this.real !== 0){
+      real += this.real.toString(radix);
+    }
+    return real+img;
   }
 })
 BiwaScheme.Complex.from_polar = function(r, theta){
