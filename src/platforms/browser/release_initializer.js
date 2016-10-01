@@ -11,7 +11,7 @@
 
   // Error handler (show message to console div)
   var onError = function(e, state){
-    BiwaScheme.Port.current_error.puts(e.message);
+    BiwaScheme.Port.current_error.put_string(e.message + "\n");
     if (dumper) {
       dumper.dump(state);
       dumper.dump_move(1);
