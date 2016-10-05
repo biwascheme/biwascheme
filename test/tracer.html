@@ -58,7 +58,7 @@
 
     eval_it = function(){
       var show_error = function(e){
-        puts("Error: "+e.message);
+        Console.puts("Error: "+e.message);
         throw e;
       };
       dumper.reset();
@@ -67,7 +67,7 @@
       var intp = new BiwaScheme.Interpreter(show_error);
       try{
         var ret = intp.evaluate(src);
-        puts(";=> " + BiwaScheme.to_write(ret));
+        Console.puts(";=> " + BiwaScheme.to_write(ret));
       }
       catch(e){
         console.error(e);
