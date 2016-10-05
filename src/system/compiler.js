@@ -425,7 +425,9 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
           throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
       }
 
-      BiwaScheme.TopEnv[first.name] = BiwaScheme.undef;
+      if (!BiwaScheme.TopEnv.hasOwnProperty(first.name)) {
+        BiwaScheme.TopEnv[first.name] = BiwaScheme.undef;
+      }
       next = ["assign-global", first.name, next];
     }
     else if(first instanceof BiwaScheme.Pair){ // 4. (define (f x) ...)
@@ -435,7 +437,9 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
       var fname=first.car, args=first.cdr;
       var lambda = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"), new BiwaScheme.Pair(args, rest));
       x = lambda;
-      BiwaScheme.TopEnv[fname.name] = BiwaScheme.undef;
+      if (!BiwaScheme.TopEnv.hasOwnProperty(first.name)) {
+        BiwaScheme.TopEnv[fname.name] = BiwaScheme.undef;
+      }
       next = ["assign-global", fname.name, next];
     }
     else{ // 5. (define 1 2)

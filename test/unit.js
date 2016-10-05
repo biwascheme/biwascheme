@@ -281,6 +281,9 @@ describe('basic', {
   'set!' : function(){
     ev("((lambda (x) (set! x 3) x) 4)").should_be(3);
     ev("(define x 1) (set! x 2)").should_be(BiwaScheme.undef);
+  },
+  'define' : function() {
+    ev("(define x 1) (define x (+ 2 x)) x").should_be(3);
   }
 });
 
