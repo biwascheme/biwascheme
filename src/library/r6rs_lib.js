@@ -376,24 +376,19 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   
   //                11.7.4.1  Numerical type predicates
   define_libfunc("number?", 1, 1, function(ar){
-    return (typeof(ar[0]) == 'number') ||
-           (ar[0] instanceof Complex)  ||
-           (ar[0] instanceof Rational);
+    return BiwaScheme.isNumber(ar[0]);
   });
   define_libfunc("complex?", 1, 1, function(ar){
-    return (ar[0] instanceof Complex);
+    return BiwaScheme.isComplex(ar[0]);
   });
   define_libfunc("real?", 1, 1, function(ar){
-    return (typeof(ar[0]) == 'number');
+    return BiwaScheme.isReal(ar[0]);
   });
   define_libfunc("rational?", 1, 1, function(ar){
-    return (ar[0] instanceof Rational);
+    return BiwaScheme.isRational(ar[0]);
   });
   define_libfunc("integer?", 1, 1, function(ar){
-    return typeof(ar[0]) == 'number'  && 
-           ar[0] == Math.round(ar[0]) &&
-           ar[0] != Infinity          &&
-           ar[0] != -Infinity;
+    return BiwaScheme.isInteger(ar[0]);
   });
 
 //(real-valued? obj)    procedure 

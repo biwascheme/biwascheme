@@ -656,12 +656,38 @@ describe('11.6 Procedure predicate' , {
 
 describe('11.7 Arithmetic', {
   'numerical type predicates' : function(){
-    ev("(number? 108)").should_be(true);
-    ev("(number? 42.195)").should_be(true);
-    ev("(number? +nan.0)").should_be(true);
-    ev("(integer? 108)").should_be(true);
-    ev("(integer? 3.0)").should_be(true);
-    ev("(integer? -inf.0)").should_be(false);
+    ev("(number? (make-polar 1 2))").should_be(true);
+    ev("(number? 1.2)").should_be(true);
+    //ev("(number? 1/2)").should_be(true);
+    ev("(number? 12)").should_be(true);
+
+    ev("(complex? (make-polar 1 2))").should_be(true);
+    ev("(complex? 1.2)").should_be(true);
+    //ev("(complex? 1/2)").should_be(true);
+    ev("(complex? 12)").should_be(true);
+
+    ev("(real? (make-polar 1 2))").should_be(false);
+    ev("(real? 1.2)").should_be(true);
+    //ev("(real? 1/2)").should_be(true);
+    ev("(real? 12)").should_be(true);
+
+    //ev("(rational? (make-polar 1 2))").should_be(false);
+    //ev("(rational? 1.2)").should_be(false);
+    //ev("(rational? 1/2)").should_be(true);
+    //ev("(rational? 12)").should_be(true);
+
+    ev("(integer? (make-polar 1 2))").should_be(false);
+    ev("(integer? 1.2)").should_be(false);
+    //ev("(integer? 1/2)").should_be(false);
+    ev("(integer? 12)").should_be(true);
+
+    // Check 2+0i is a integer, etc.
+    ev("(rational? (make-rectangular 2 0))").should_be(true);
+    ev("(real? (make-rectangular 2 0))").should_be(true);
+    //ev("(real? 2/1)").should_be(true);
+    ev("(integer? (make-rectangular 2 0))").should_be(true);
+    //ev("(integer? 2/1)").should_be(true);
+    ev("(integer? 2.0)").should_be(true);
   },
   '= < > <= >=' : function(){
     ev("(= 1 1 1)").should_be(true);

@@ -1,7 +1,10 @@
 //
-// number.js - Complex and Rational
+// number.js
 //
 
+//
+// Complex
+//
 BiwaScheme.Complex = BiwaScheme.Class.create({
   initialize: function(real, imag){
     this.real = real;
@@ -12,6 +15,15 @@ BiwaScheme.Complex = BiwaScheme.Class.create({
   },
   angle: function(){
     return Math.atan2(this.imag, this.real);
+  },
+  isReal: function(){
+    return this.imag == 0;
+  },
+  isRational: function() {
+    return this.imag == 0 && BiwaScheme.isRational(this.real);
+  },
+  isInteger: function(){
+    return this.imag == 0 && BiwaScheme.isInteger(this.real);
   },
   toString: function(radix){
     if (this.real === 0 && this.imag === 0)
@@ -49,11 +61,53 @@ BiwaScheme.Complex.assure = function(num){
     return new BiwaScheme.Complex(num, 0);
 }
 
+//
+// Rational (unfinished)
+//
 BiwaScheme.Rational = BiwaScheme.Class.create({
   initialize: function(numerator, denominator){
     this.numerator = numerator;
     this.denominator = denominator;
+  },
+
+  isInteger: function() {
+     // FIXME
   }
 })
 
-
+//
+// Predicates
+//
+BiwaScheme.isNumber = function(x) {
+  return (x instanceof BiwaScheme.Complex)  ||
+         (x instanceof BiwaScheme.Rational) ||
+         (typeof(x) == 'number');
+};
+BiwaScheme.isComplex = BiwaScheme.isNumber;
+BiwaScheme.isReal = function(x) {
+  if (x instanceof BiwaScheme.Complex || x instanceof BiwaScheme.Rational) {
+    return x.isReal()
+  }
+  else {
+    return (typeof(x) == 'number');
+  }
+};
+BiwaScheme.isRational = function(x) {
+  if (x instanceof BiwaScheme.Complex) {
+    return x.isRational();
+  }
+  else if (x instanceof BiwaScheme.Rational) {
+    return true;
+  }
+  else {
+    return (typeof(x) == 'number');
+  }
+};
+BiwaScheme.isInteger = function(x) {
+  if (x instanceof BiwaScheme.Complex || x instanceof BiwaScheme.Rational) {
+    return x.isInteger();
+  }
+  else {
+    return (typeof(x) == 'number') && (x % 1 == 0);
+  }
+};
