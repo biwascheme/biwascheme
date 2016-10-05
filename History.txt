@@ -1,6 +1,10 @@
 (not yet) v0.6.6
 
   * fix: fixed "BiwaScheme.Port.current_error.puts is not a function" (#75)
+  * fix: error on defining a value based on itself (#74)
+      ; eg.
+      (define a 1)
+      (define a (+ a 1))
   * new: string->number supports complex numbers (#72)
 
 2016-09-15 v0.6.5
