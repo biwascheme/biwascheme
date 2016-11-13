@@ -50,7 +50,7 @@ BiwaScheme.define_syntax = function(sname, func) {
   BiwaScheme.CoreEnv[sname] = s;
 }
 BiwaScheme.define_scmfunc = function(fname, min, max, str){
-  (new Interpreter).evaluate("(define "+fname+" "+str+"\n)");
+  (new BiwaScheme.Interpreter).evaluate("(define "+fname+" "+str+"\n)");
 }
 
 //  define_scmfunc("map+", 2, null, 

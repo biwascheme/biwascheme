@@ -1,6 +1,7 @@
 (not yet) v0.6.7
 
   * fix: surpress deprecation warning for util.print on Node.js
+  * fix: `BiwaScheme.define_scmfunc` was broken
 
 2016-10-06 v0.6.6
 
