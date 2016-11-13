@@ -40,7 +40,7 @@ BiwaScheme.define_libfunc("js-load", 1, 1, function(ar) {
 BiwaScheme.Port.current_error =
 BiwaScheme.Port.current_output = new BiwaScheme.Port.CustomOutput(
   function (str) {
-    require('util').print(str);
+    process.stdout.write(str)
   }
 );
 
