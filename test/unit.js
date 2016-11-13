@@ -128,6 +128,16 @@ describe('Interpreter', {
                    (define (f) (g) 8) \
                    (f)");
     expect( BiwaScheme.inspect(intp.call_stack) ).should_be('[]');
+  },
+
+  'define_scmfunc': function() {
+    BiwaScheme.define_scmfunc('scmfunc-test', 1, 1, 
+            "(lambda (n) \
+                (let iter ((n n) (result 1)) \
+                    (if (= n 0) \
+                        result \
+                        (iter (- n 1) (* result n)))))");
+    ev("(scmfunc-test 3").should_be(6);
   }
 });
 
