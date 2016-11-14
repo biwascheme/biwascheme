@@ -1,5 +1,5 @@
 //
-// types.js - type predicators
+// types.js - type predicators, equality, compare
 //
 
 BiwaScheme.isNil = function(obj){
@@ -84,4 +84,19 @@ BiwaScheme.isClosure = function(obj){
 // valid argument for anywhere function is expected
 BiwaScheme.isProcedure = function(obj){
   return BiwaScheme.isClosure(obj) || _.isFunction(obj);
+};
+
+//
+// equality
+//
+BiwaScheme.eq = function(a, b){
+  return a === b;
+};
+// TODO: Records (etc.)
+BiwaScheme.eqv = function(a, b){
+  return a == b && (typeof(a) == typeof(b));
+};
+BiwaScheme.equal = function(a, b){
+  //TODO: must terminate for cyclic objects
+  return BiwaScheme.to_write(a) == BiwaScheme.to_write(b);
 };
