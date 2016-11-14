@@ -646,7 +646,9 @@ describe('11.5 Equivalence predicates', {
     //ev("(equal? '#vu8(1 2 3 4 5)
     //        (u8-list->bytevector
     //         '(1 2 3 4 5))                  ⇒  #t
-    ev("(let* ((x (list 'a)) (y (list 'a)) (z (list x y))) (vector (equal? z (list y x)) (equal? z (list x x))))").should_be([true,true]);
+    ev("(let* ((x (list 'a)) (y (list 'a)) (z (list x y))) \
+          (vector (equal? z (list y x)) \
+          (equal? z (list x x))))").should_be([true,true]);
   }
 })
 
