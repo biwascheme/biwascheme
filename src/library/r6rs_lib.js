@@ -1688,10 +1688,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   (function(){
     // comparison function to prevent lexicographic ordering per Javascript default
     var compareFn = function(a,b){ 
-      if(typeof a !== typeof b){
-        return compareFn(typeof a, typeof b); 	
-      }
-      return a > b ? 1 : a < b ? -1 : 0;
+      return BiwaScheme.lt(a, b) ? -1 :
+             BiwaScheme.lt(b, a) ? 1 : 0;
     };
     
     define_libfunc("list-sort", 1, 2, function(ar){

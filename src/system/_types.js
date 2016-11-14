@@ -100,3 +100,14 @@ BiwaScheme.equal = function(a, b){
   //TODO: must terminate for cyclic objects
   return BiwaScheme.to_write(a) == BiwaScheme.to_write(b);
 };
+
+//
+// comaprator
+//
+// Return true when a < b
+BiwaScheme.lt = function(a, b) {
+  if(typeof a !== typeof b){
+    return compareFn(typeof a, typeof b); 	
+  }
+  return a < b;
+};
