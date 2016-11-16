@@ -1,5 +1,6 @@
 (not yet) v0.6.7
 
+  * new: list-sort, vector-sort, vector-sort! now can take a comparator proc (#77)
   * fix: surpress deprecation warning for util.print on Node.js
   * fix: `BiwaScheme.define_scmfunc` was broken
 
