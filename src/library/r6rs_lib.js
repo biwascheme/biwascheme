@@ -1678,20 +1678,80 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   // Chapter 4 Sorting
   //
-  // NOTE: compare function is not supported yet.
-  // it is partially implemented as list-sort/comp
-  // (see extra_lib.js).
-  // TODO: implement some sorting algorithm in CPS
-  // so that setTimeout in compare procedures work well
-  //
-  //(list-sort list)
   (function(){
-    // comparison function to prevent lexicographic ordering per Javascript default
+    var mergeSort = function(ary, proc) {
+      if (ary.length <= 1) return ary;
+      return mergeSort_(ary, proc, [[0, ary.length, false]], false);
+    };
+
+    var mergeSort_ = function(ary, proc, stack, up) {
+      while(true) {
+        var start = stack[stack.length-1][0],
+            end   = stack[stack.length-1][1],
+            left  = stack[stack.length-1][2];
+        var len = end - start;
+        //console.debug("mergeSort_", ary, stack.join(' '), up?"u":"d", ""+start+".."+(end-1))
+
+        if (len >= 2 && !up) {
+          // There are parts to be sorted
+          stack.push([start, start+(len>>1), true]); continue;
+        }
+        else if (left) {
+          // Left part sorted. Continue to the right one
+          stack.pop();
+          var rend = stack[stack.length-1][1];
+          stack.push([end, rend, false]); up = false; continue;
+        }
+        else {
+          // Right part sorted. Merge left and right
+          stack.pop();
+          var lstart = stack[stack.length-1][0];
+          var ary1 = ary.slice(lstart, start),
+              ary2 = ary.slice(start, end);
+          return merge_(ary1, ary2, proc, [], 0, 0, function(ret) {
+            //console.debug("mergeSortd", ary, stack.join(' '), up?"u":"d", ary1, ary2, ret, ""+start+".."+(start+len-1)); 
+            for (var i = 0; i < ret.length; i++) {
+              ary[lstart + i] = ret[i];
+            }
+
+            if (stack.length == 1) {
+              return ary;
+            }
+            else {
+              return mergeSort_(ary, proc, stack, true);
+            }
+          });
+        }
+      }
+    };
+
+    var merge_ = function(ary1, ary2, proc, ret, i, j, cont) {
+      //console.debug("merge_", ary1, ary2, ret, i, j);
+      var len1 = ary1.length, len2 = ary2.length;
+      if (i < len1 && j < len2) {
+        return new Call(proc, [ary2[j], ary1[i]], function(ar) {
+          //console.debug("comp", [ary2[j], ary1[i]], ar[0]);
+          if (ar[0]) {
+            ret.push(ary2[j]); j+=1;
+          }
+          else {
+            ret.push(ary1[i]); i+=1;
+          }
+          return merge_(ary1, ary2, proc, ret, i, j, cont);
+        });
+      }
+      else {
+        while (i < len1) { ret.push(ary1[i]); i+=1; }
+        while (j < len2) { ret.push(ary2[j]); j+=1; }
+        return cont(ret)
+      }
+    };
+
     var compareFn = function(a,b){ 
       return BiwaScheme.lt(a, b) ? -1 :
              BiwaScheme.lt(b, a) ? 1 : 0;
     };
-    
+
     define_libfunc("list-sort", 1, 2, function(ar){
       if(ar[1]){
         throw new Bug("list-sort: cannot take compare proc now");
