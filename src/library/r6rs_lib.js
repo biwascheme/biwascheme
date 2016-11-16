@@ -1679,12 +1679,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // Chapter 4 Sorting
   //
   (function(){
-    var mergeSort = function(ary, proc) {
+    // Destructively sort the given array
+    // with scheme function `proc` as comparator
+    var mergeSort = function(ary, proc, finish) {
       if (ary.length <= 1) return ary;
-      return mergeSort_(ary, proc, [[0, ary.length, false]], false);
+      return mergeSort_(ary, proc, finish, [[0, ary.length, false]], false);
     };
 
-    var mergeSort_ = function(ary, proc, stack, up) {
+    var mergeSort_ = function(ary, proc, finish, stack, up) {
       while(true) {
         var start = stack[stack.length-1][0],
             end   = stack[stack.length-1][1],
@@ -1715,10 +1717,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
             }
 
             if (stack.length == 1) {
-              return ary;
+              return finish(ary);
             }
             else {
-              return mergeSort_(ary, proc, stack, true);
+              return mergeSort_(ary, proc, finish, stack, true);
             }
           });
         }
@@ -1754,29 +1756,47 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     define_libfunc("list-sort", 1, 2, function(ar){
       if(ar[1]){
-        throw new Bug("list-sort: cannot take compare proc now");
+        assert_procedure(ar[0]);
+        assert_list(ar[1]);
+        return mergeSort(ar[1].to_array(), ar[0], function(ret) {
+          return array_to_list(ret);
+        });
       }
-      assert_list(ar[0]);
-      return array_to_list(ar[0].to_array().sort(compareFn));
+      else {
+        assert_list(ar[0]);
+        return array_to_list(ar[0].to_array().sort(compareFn));
+      }
     });
 
     //(vector-sort proc vector)    procedure
     define_libfunc("vector-sort", 1, 2, function(ar){
       if(ar[1]){
-        throw new Bug("vector-sort: cannot take compare proc now");
+        assert_procedure(ar[0]);
+        assert_vector(ar[1]);
+        return mergeSort(_.clone(ar[1]), ar[0], function(ret){
+          return ret;
+        });
       }
-      assert_vector(ar[0]);
+      else {
+        assert_vector(ar[0]);
         return _.clone(ar[0]).sort(compareFn);
+      }
     });
 
     //(vector-sort! proc vector)    procedure 
     define_libfunc("vector-sort!", 1, 2, function(ar){
       if(ar[1]){
-        throw new Bug("vector-sort!: cannot take compare proc now");
+        assert_procedure(ar[0]);
+        assert_vector(ar[1]);
+        return mergeSort(ar[1], ar[0], function(ret) {
+          return BiwaScheme.undef;
+        });
       }
-      assert_vector(ar[0]);
-      ar[0].sort(compareFn);
-      return BiwaScheme.undef;
+      else {
+        assert_vector(ar[0]);
+        ar[0].sort(compareFn);
+        return BiwaScheme.undef;
+      }
     });
   })();
 

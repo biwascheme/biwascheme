@@ -172,18 +172,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
                  bodies)));
   });
 
-  // sorting
-  
-  // These functions takes a Scheme proc and sort the given
-  // list or vector using the proc as the compare function.
-  //
-  // Limitations:
-  //  - you should not use Ajax or sleep inside the proc
-  //  - you cannot access to the free variables outside the proc
-  //
-  // (list-sort/comp proc list)
-  // (vector-sort/comp proc vector)
-  // (vector-sort/comp! proc vector)
+  // sorting (Obsolete: use list-sort, etc. instead of these.)
 
   // utility function. takes a JS Array and a Scheme procedure,
   // returns sorted array

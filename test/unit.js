@@ -1450,16 +1450,23 @@ describe('3 List utilities', {
 describe('4 Sorting', {
   'list-sort': function(){
     ew("(list-sort '(1 3 4 2 5))").should_be("(1 2 3 4 5)");
+    ew("(list-sort > '(1 3 4 2 5))").should_be("(5 4 3 2 1)");
   },
   'vector-sort': function(){
-    ew("(let* ((v '#(1 3 2)) \
+    ew("(let* ((v '#(1 3 2 5 4)) \
                (vv (vector-sort v))) \
-          (cons v vv))").should_be("(#(1 3 2) . #(1 2 3))");
+          (cons v vv))").should_be("(#(1 3 2 5 4) . #(1 2 3 4 5))");
+    ew("(let* ((v '#(1 3 2 5 4)) \
+               (vv (vector-sort > v))) \
+          (cons v vv))").should_be("(#(1 3 2 5 4) . #(5 4 3 2 1))");
   },
   'vector-sort!': function(){
     ew("(let* ((v '#(1 3 2)) \
                (ret (vector-sort! v))) \
           (cons v ret))").should_be("(#(1 2 3) . #<undef>)");
+    ew("(let* ((v '#(1 3 2)) \
+               (ret (vector-sort! > v))) \
+          (cons v ret))").should_be("(#(3 2 1) . #<undef>)");
   }
 })
 
