@@ -1682,7 +1682,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     // Destructively sort the given array
     // with scheme function `proc` as comparator
     var mergeSort = function(ary, proc, finish) {
-      if (ary.length <= 1) return ary;
+      if (ary.length <= 1) return finish(ary);
       return mergeSort_(ary, proc, finish, [[0, ary.length, false]], false);
     };
 
