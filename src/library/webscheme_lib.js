@@ -297,7 +297,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
                          });
         },
         error: function() {
-          throw new Error("load: network error: failed to load"+path);
+          throw new Error("load: network error: failed to load "+path);
         }
       });
     });
