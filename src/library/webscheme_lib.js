@@ -289,6 +289,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var intp2 = new Interpreter(intp);
     return new BiwaScheme.Pause(function(pause){
       $.ajax(path, {
+        dataType: "text",
         success: function(data) {
           // create new interpreter not to destroy current stack.
           intp2.evaluate(data,
