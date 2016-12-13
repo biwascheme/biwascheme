@@ -2086,6 +2086,20 @@ describe('browser functions', {
     scm_eval('(element-hide! ($ "#div1"))');
     expect( $("#div1").is(":visible") ).should_be(false);
   },
+  'element attributes' : function() {
+    scm_eval('(element-write-attribute! ($ "#div1") "data-x" "asdf")');
+    ev('(element-read-attribute ($ "#div1") "data-x")').should_be("asdf");
+  },
+  'element class name' : function() {
+    scm_eval('(element-add-class-name! ($ "#div1") "foo")')
+    ev('(element-has-class-name? ($ "#div1") "foo")').should_be(true);
+    scm_eval('(element-remove-class-name! ($ "#div1") "foo")')
+    ev('(element-has-class-name? ($ "#div1") "foo")').should_be(false);
+    scm_eval('(element-toggle-class-name! ($ "#div1") "bar")')
+    ev('(element-has-class-name? ($ "#div1") "bar")').should_be(true);
+    scm_eval('(element-toggle-class-name! ($ "#div1") "bar")')
+    ev('(element-has-class-name? ($ "#div1") "bar")').should_be(false);
+  },
   'element-show!' : function(){
     $("#div1").hide();
     scm_eval('(element-show! ($ "#div1"))');

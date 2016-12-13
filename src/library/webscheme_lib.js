@@ -93,14 +93,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_string(ar[1]);
     return $(ar[0]).attr(ar[1]);
   });
-  define_libfunc("element-write-attribute", 3, 3, function(ar){
-    // Forgot to suffix "!" :-(
-    BiwaScheme.deprecate("element-write-attribute", "1.0",
-                         "element-write-attribute!");
+
+  var element_write_attribute = function(ar) {
     assert_string(ar[1]);
     return $(ar[0]).attr(ar[1], ar[2]);
+  };
+  define_libfunc("element-write-attribute", 3, 3, function(ar){
+    BiwaScheme.deprecate("element-write-attribute", "1.0",
+                         "element-write-attribute!");
+    return element_write_attribute(ar);
   });
-  alias_libfunc("element-write-attribute", "element-write-attribute!");
+  define_libfunc("element-write-attribute!", 3, 3, element_write_attribute);
+
   define_libfunc("element-height", 1, 1, function(ar){
     return $(ar[0]).height();
   });
@@ -115,27 +119,39 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_string(ar[1]);
     return $(ar[0]).hasClass(ar[1]);
   });
+
+  var element_add_class_name = function(ar) {
+    assert_string(ar[1]);
+    return $(ar[0]).addClass(ar[1]);
+  };
   define_libfunc("element-add-class-name", 2, 2, function(ar){
     BiwaScheme.deprecate("element-add-class-name", "1.0",
                          "element-add-class-name!");
-    assert_string(ar[1]);
-    return $(ar[0]).addClass(ar[1]);
+    return element_add_class_name(ar);
   });
-  alias_libfunc("element-add-class-name", "element-add-class-name!");
+  define_libfunc("element-add-class-name!", 2, 2, element_add_class_name);
+
+  var element_remove_class_name = function(ar) {
+    assert_string(ar[1]);
+    return $(ar[0]).removeClass(ar[1]);
+  };
   define_libfunc("element-remove-class-name", 2, 2, function(ar){
     BiwaScheme.deprecate("element-remove-class-name", "1.0",
                          "element-remove-class-name!");
-    assert_string(ar[1]);
-    return $(ar[0]).removeClass(ar[1]);
+    return element_remove_class_name(ar);
   });
-  alias_libfunc("element-remove-class-name", "element-remove-class-name!");
+  define_libfunc("element-remove-class-name!", 2, 2, element_remove_class_name);
+
+  var element_toggle_class_name = function(ar) {
+    assert_string(ar[1]);
+    return $(ar[0]).toggleClass(ar[1]);
+  };
   define_libfunc("element-toggle-class-name", 2, 2, function(ar){
     BiwaScheme.deprecate("element-toggle-class-name", "1.0",
                          "element-toggle-class-name!");
-    assert_string(ar[1]);
-    return $(ar[0]).toggleClass(ar[1]);
+    return element_toggle_class_name(ar);
   });
-  alias_libfunc("element-toggle-class-name", "element-toggle-class-name!");
+  define_libfunc("element-toggle-class-name!", 2, 2, element_toggle_class_name);
 
   define_libfunc("element-clean-whitespace!", 1, 1, function(ar){
     throw new Bug("not yet implemented");

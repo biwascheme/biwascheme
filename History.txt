@@ -2,7 +2,8 @@
 
   * new: list-sort, vector-sort, vector-sort! now can take a comparator proc (#77)
   * fix: surpress deprecation warning for util.print on Node.js
-  * fix: `BiwaScheme.define_scmfunc` was broken
+  * fix: `BiwaScheme.define_scmfunc` was broken (#76)
+  * fix: element-toggle-class-name!, etc. shows deprecation warning unintentionally (#80)
 
 2016-10-06 v0.6.6
 
