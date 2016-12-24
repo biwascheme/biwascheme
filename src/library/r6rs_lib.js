@@ -1876,23 +1876,50 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
   //(case-lambda <case-lambda clause> ...)    syntax
   define_syntax("case-lambda", function(x){
-    // (case-lambda (() body0 ...)
-    //              ((a) body1 ...)
-    //              ((a b . cc) body2 ...)
-    //              (rest bodyn ...))
-    //=> (lambda args`
-    //     (let1 len` (length args`)
-    //       (if (= len` (length '()))
-    //         ((lambda () body0 ...) args`)
-    //         (if (= len` (length '(a)))
-    //           ((lambda (a) body1 ...) args`)
-    //           (if (>= len` (length '(a b)))
-    //             ((lambda (a b . cc) body2 ...) args`)
-    //             ((lambda rest bodyn ...) args`)
-//    var len = BiwaScheme.gensym();
-//    if(!BiwaScheme.isPair(x.cdr))
-//      throw new Error("do: no variables of do");
+    if(!BiwaScheme.isPair(x.cdr))
+      throw new Error("case-lambda: at least 1 clause required");
+    var clauses = x.cdr.to_array();
+    
+    var args_ = BiwaScheme.gensym();
+    var exec = List(Sym("raise"), "case-lambda: no matching clause found");
 
+    clauses.reverse().forEach(function(clause) {
+      if(!BiwaScheme.isPair(clause))
+        throw new Error("case-lambda: clause must be a pair: "+
+                        BiwaScheme.to_write(clause));
+      var formals = clause.car, clause_body = clause.cdr;
+
+      if (formals === BiwaScheme.nil) {
+        exec = List(Sym("if"),
+                    List(Sym("null?"), args_),
+                    new Pair(Sym("begin"), clause_body),
+                    exec);
+      }
+      else if (BiwaScheme.isPair(formals)) {
+        var len = formals.length(), last_cdr = formals.last_cdr();
+        var pred = (last_cdr === BiwaScheme.nil ? Sym("=") : Sym(">="));
+        var lambda = new Pair(Sym("lambda"),
+                       new Pair(formals,
+                         clause_body));
+        exec = List(Sym("if"),
+                    List(pred, List(Sym("length"), args_), len),
+                    List(Sym("apply"), lambda, args_),
+                    exec);
+      }
+      else if (BiwaScheme.isSymbol(formals)) {
+        exec = new Pair(Sym("let1"),
+                 new Pair(formals,
+                   new Pair(args_,
+                     clause_body)));
+        // Note: previous `exec` is just discarded because this is a wildcard pattern.
+      }
+      else {
+        throw new Error("case-lambda: invalid formals: "+
+                        BiwaScheme.to_write(formals));
+      }
+    });
+
+    return List(Sym("lambda"), args_, exec);
   });
 
   //

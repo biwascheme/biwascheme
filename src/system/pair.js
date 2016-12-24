@@ -47,6 +47,14 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
     return n;
   },
 
+  // Return the last cdr
+  last_cdr: function(){
+    var o;
+    for(o = this; o instanceof BiwaScheme.Pair; o = o.cdr)
+      ;
+    return o;
+  },
+
   // calls the given func passing each car of list
   // returns cdr of last Pair
   foreach: function(func){

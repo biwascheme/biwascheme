@@ -1488,6 +1488,13 @@ describe('5 Control structures', {
           (do ((x x (cdr x)) \
                (sum 0 (+ sum (car x)))) \
               ((null? x) sum)))").should_be(25);
+  },
+  'case-lambda': function(){
+    ev("((case-lambda (() 0)))").should_be(0);
+    ev("((case-lambda ((a) a)) 1)").should_be(1);
+    ev("((case-lambda ((a b) (+ a b))) 0.5 1.5)").should_be(2);
+    ev("((case-lambda ((a b . c) (+ a b (car c)))) 1 1 1)").should_be(3);
+    ev("((case-lambda (all (apply + all))) 1 1 1 1)").should_be(4);
   }
 })
 
