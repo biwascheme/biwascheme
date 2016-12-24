@@ -514,10 +514,11 @@ BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
               new BiwaScheme.Pair(vars, expand(body, flag)));
       break;
     case BiwaScheme.Sym("if"):
-      var testc=x.second(), thenc=x.third(), elsec=x.fourth();
-      if (elsec == BiwaScheme.inner_of_nil){
-        elsec = BiwaScheme.undef;
+      if (!BiwaScheme.isPair(x.cdr.cdr.cdr)) {
+        throw new Error("if: missing else clause: "+
+                        BiwaScheme.to_write(x))
       }
+      var testc=x.second(), thenc=x.third(), elsec=x.fourth();
       ret = BiwaScheme.List(BiwaScheme.Sym("if"),
                             expand(testc, flag),
                             expand(thenc, flag),
