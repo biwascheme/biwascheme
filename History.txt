@@ -1,8 +1,11 @@
-(not yet) v0.6.7
+2016-12-25 v0.6.7
 
-  * new: list-sort, vector-sort, vector-sort! now can take a comparator proc (#77)
+  * new: list-sort, vector-sort, vector-sort! now can take a comparator proc (#77, #78)
+  * new: case-lambda (#81)
+  * new: <script type="text/biwascheme"> also interpreted as Scheme program (#82)
   * fix: surpress deprecation warning for util.print on Node.js
   * fix: `BiwaScheme.define_scmfunc` was broken (#76)
+  * fix: fixed error on `load` on Firefox (#79)
   * fix: element-toggle-class-name!, etc. shows deprecation warning unintentionally (#80)
 
 2016-10-06 v0.6.6
