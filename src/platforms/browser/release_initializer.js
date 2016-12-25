@@ -22,10 +22,7 @@
     }
   };
 
-  // Start user's program
-  var script = $("script[src$='biwascheme.js']").html() ||
-               $("script[src$='biwascheme-min.js']").html();
-  if (script) {
+  var run = function(script) {
     var intp = new BiwaScheme.Interpreter(onError);
     try{
       intp.evaluate(script, function(){});
@@ -33,5 +30,17 @@
     catch(e){
       onError(e);
     }
-  }
+  };
+
+  // Start user's program (old style)
+  var script = $("script[src$='biwascheme.js']").html() ||
+               $("script[src$='biwascheme-min.js']").html();
+  if (script) run(script);
+
+  // Start user's program (new style)
+  $(function(){
+    $("script[type='text/biwascheme']").each(function(){
+      run($(this).html());
+    });
+  });
 })();
