@@ -1,22 +1,7 @@
 ## BiwaScheme JavaScript API
 
-### Defining library function
+Moved to [reference.md](http://www.biwascheme.org/doc/reference.html#js-api)
 
-You can write JavaScript library function with `BiwaScheme.define_libfunc`.
-
-```
-// 1st argument: function name
-// 2nd argument: minimum number of arguments
-// 3rd argument: maximum number of arguments (pass null for infinite)
-// 4th argument: function body
-BiwaScheme.define_libfunc("add", 2, 2, function(ar){
-  BiwaScheme.assert_integer(ar[0]);
-  BiwaScheme.assert_integer(ar[1]);
-  return ar[0] + ar[1];
-};
-
-// (add 123 456) ;=> 579
-```
 
 ### Type conversion
 

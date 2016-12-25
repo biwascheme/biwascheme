@@ -357,4 +357,34 @@ You can also use Node.js libraries via `js-eval`, etc.
 
 <a name="js-api" />
 
-See [internal/js_api.md](/doc/internal/js_api.html) for BiwaScheme JavaScript API (eg. writing BiwaScheme library function in JavaScript)
+#### Evaluate Scheme program
+
+```js
+<script type="text/javascript" src="biwascheme.js"></script>
+<script type="text/javascript">
+var onError = function(e){ console.error(e); }
+var biwa = new BiwaScheme.Interpreter(onError)
+biwa.evaluate("(+ 1 2)", function(result) {
+  alert(result);  //=> 3
+});
+</script>
+```
+
+#### Define library function
+
+You can write JavaScript library function with `BiwaScheme.define_libfunc`.
+
+- 1st argument: function name
+- 2nd argument: minimum number of arguments
+- 3rd argument: maximum number of arguments (pass null for infinite)
+- 4th argument: function body
+
+```js
+BiwaScheme.define_libfunc("add", 2, 2, function(ar){
+  BiwaScheme.assert_integer(ar[0]);
+  BiwaScheme.assert_integer(ar[1]);
+  return ar[0] + ar[1];
+});
+```
+
+See `src/library/*.js` for more examples.
