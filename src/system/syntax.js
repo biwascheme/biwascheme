@@ -20,9 +20,9 @@ BiwaScheme.Syntax = BiwaScheme.Class.create({
 
 // A built-in syntax did not have associated Syntax object.
 // Following code installed dummy Syntax objects to built-in syntax.
-BiwaScheme.TopEnv["define"] = new BiwaScheme.Syntax("define");
-BiwaScheme.TopEnv["begin"]  = new BiwaScheme.Syntax("begin");
-BiwaScheme.TopEnv["quote"]  = new BiwaScheme.Syntax("quote");
-BiwaScheme.TopEnv["lambda"] = new BiwaScheme.Syntax("lambda");
-BiwaScheme.TopEnv["if"]     = new BiwaScheme.Syntax("if");
-BiwaScheme.TopEnv["set!"]   = new BiwaScheme.Syntax("set!");
+BiwaScheme.CoreEnv["define"] = new BiwaScheme.Syntax("define");
+BiwaScheme.CoreEnv["begin"]  = new BiwaScheme.Syntax("begin");
+BiwaScheme.CoreEnv["quote"]  = new BiwaScheme.Syntax("quote");
+BiwaScheme.CoreEnv["lambda"] = new BiwaScheme.Syntax("lambda");
+BiwaScheme.CoreEnv["if"]     = new BiwaScheme.Syntax("if");
+BiwaScheme.CoreEnv["set!"]   = new BiwaScheme.Syntax("set!");
