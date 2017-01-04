@@ -47,10 +47,9 @@ BiwaScheme.Port.current_output = new BiwaScheme.Port.CustomOutput(
 var readline = require('readline');
 BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(
   function (callback) {
-    var rl = readline.createInterface(
-      process.stdin,
-      process.stdout
-    );
+    var rl = readline.createInterface({
+      input: process.stdin
+    });
     rl.on('line', function (line) {
       rl.close();
       callback(line);
