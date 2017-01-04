@@ -1956,6 +1956,7 @@ describe('15 Composite library', {
 describe('16 eval', {
   'eval' : function(){
     ev("(eval '(+ 1 2))").should_be(3); 
+    ev("(eval 123)").should_be(123); 
   }
 })
 

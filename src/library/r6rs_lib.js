@@ -3289,7 +3289,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     //  expressions which contains #<undef>, etc. cannot be evaluated.
     var expr = ar[0];
     var intp2 = new Interpreter(intp);
-    return intp2.evaluate(expr.to_write());
+    return intp2.evaluate(BiwaScheme.to_write(expr));
   });
 //(environment import-spec ...)    procedure
 
