@@ -33,6 +33,15 @@ BiwaScheme.debug = function(/*arguments*/){
 }
 
 //
+// Assertion
+//
+BiwaScheme.assert = function(cond, desc) {
+  if (!cond) {
+    throw new BiwaScheme.Bug("[BUG] Assertion failed: "+desc);
+  }
+}
+
+//
 // Configurations
 //
 
