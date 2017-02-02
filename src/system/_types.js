@@ -10,6 +10,12 @@ BiwaScheme.isUndef = function(obj){
   return (obj === BiwaScheme.undef);
 };
 
+BiwaScheme.isBoolean = _.isBoolean; // Return true if arg is either true or false
+
+//BiwaScheme.isNumber is defined in number.js (Return true if arg is scheme number)
+
+BiwaScheme.isString = _.isString;
+
 BiwaScheme.isChar = function(obj){
   return (obj instanceof BiwaScheme.Char);
 };
@@ -84,6 +90,14 @@ BiwaScheme.isClosure = function(obj){
 // valid argument for anywhere function is expected
 BiwaScheme.isProcedure = function(obj){
   return BiwaScheme.isClosure(obj) || _.isFunction(obj);
+};
+
+// Return true if obj is a scheme value which evaluates to itself
+BiwaScheme.isSelfEvaluating = function(obj) {
+  return BiwaScheme.isBoolean(obj) ||
+         BiwaScheme.isNumber(obj) ||
+         BiwaScheme.isString(obj) ||
+         BiwaScheme.isChar(obj);
 };
 
 //
