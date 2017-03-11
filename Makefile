@@ -51,6 +51,7 @@ all: build
 
 build: \
 	FILES.json \
+	package.json \
 	src/development_initializer.js \
 	release/biwascheme.js \
 	release/biwascheme-min.js \
@@ -59,6 +60,9 @@ build: \
 
 FILES.json: FILES.json.ejs
 	`npm bin`/ejs-cli FILES.json.ejs > $@
+
+package.json: package.json.ejs FILES.json
+	`npm bin`/ejs-cli package.json.ejs > $@
 
 src/development_initializer.js: src/development_initializer.js.ejs FILES.json
 	`npm bin`/ejs-cli src/development_initializer.js.ejs > $@

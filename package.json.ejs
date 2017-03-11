@@ -1,0 +1,40 @@
+<%# vim: set filetype=javascript: -%>
+{
+    "name": "biwascheme",
+    "description": "A practical Scheme interpreter written in JavaScript",
+    "version": "0.6.7",
+    "author": "Yutaka HARA <yutaka.hara.gmail.com>",
+    "license": "MIT",
+    "homepage": "http://www.biwascheme.org/",
+    "keywords": ["scheme", "lisp", "interpreter", "repl", "biwa"],
+    "repository":{
+        "type": "git",
+        "url": "git://github.com/biwascheme/biwascheme.git"
+    },
+    "main": "./release/node_biwascheme.js",
+    "files": [
+      "src/platforms/node/node_biwascheme.js",
+<%
+      var files = JSON.parse(include('FILES.json'))["node"];
+      files.forEach(function(path){
+-%>
+      "<%= path %>",
+<%
+      });
+%>
+      "bin/biwas"
+    ],
+    "dependencies" : {
+        "optparse" : "1.0.5",
+        "underscore" : "1.2.2",
+        "underscore.string" : "2.0.0"
+    },
+    "devDependencies": {
+        "express": "~4.10.4",
+        "body-parser": ">0",
+        "marked": "~0.3.2",
+        "ejs": "~2.5.6",
+        "ejs-cli": "~2.0.0"
+    },
+    "bin": { "biwas": "./bin/biwas" }
+}

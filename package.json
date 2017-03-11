@@ -12,9 +12,7 @@
     },
     "main": "./release/node_biwascheme.js",
     "files": [
-      "bin/biwas",
       "src/platforms/node/node_biwascheme.js",
-
       "src/platforms/node/module_preamble.js",
       "src/version.js",
       "src/header.js",
@@ -45,7 +43,9 @@
       "src/library/extra_lib.js",
       "src/library/node_functions.js",
       "src/library/srfi.js",
-      "src/platforms/node/module_postamble.js"
+      "src/platforms/node/module_postamble.js",
+
+      "bin/biwas"
     ],
     "dependencies" : {
         "optparse" : "1.0.5",
@@ -61,3 +61,4 @@
     },
     "bin": { "biwas": "./bin/biwas" }
 }
+
