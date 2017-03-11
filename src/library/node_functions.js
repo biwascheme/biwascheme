@@ -1,5 +1,5 @@
 //
-// Library functions only work on Node.js
+// Library functions only work on Node.js (raises error on browser)
 // see also: test/node_functions.js
 //
 

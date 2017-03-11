@@ -3,7 +3,7 @@
 
 var fs = require('fs'),
     path = require('path'),
-    BiwaScheme = require('../release/node_biwascheme'),
+    BiwaScheme = require('../src/platforms/node/node_biwascheme.js'),
     optparse = require('optparse');
 
 function Options(argv){

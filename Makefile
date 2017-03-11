@@ -34,9 +34,6 @@ BASIC_FILES =                                     \
   src/library/node_functions.js                   \
   src/library/srfi.js
 
-CONSOLE_FILES =                                   \
-  $(BASIC_FILES)
-
 PLAIN_FILES =                                     \
   $(BASIC_FILES)                                  \
   src/library/webscheme_lib.js                    \
@@ -52,7 +49,7 @@ BROWSER_FILES =                                   \
 
 all: build
 
-build: release/biwascheme.js release/console_biwascheme.js release/node_biwascheme.js release/biwascheme-min.js release/biwascheme-plain.js release/biwascheme-plain-min.js
+build: release/biwascheme.js release/biwascheme-min.js release/biwascheme-plain.js release/biwascheme-plain-min.js
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
@@ -73,17 +70,6 @@ release/biwascheme-plain.js: $(VERSION_FILE) $(PLAIN_FILES) Makefile
 
 release/biwascheme-plain-min.js: release/biwascheme-plain.js
 	uglifyjs -o $@ release/biwascheme-plain.js --comments
-	@echo "Wrote " $@
-
-release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
-	cat $(VERSION_FILE) > $@
-	cat $(CONSOLE_FILES) >> $@
-	@echo "Wrote " $@
-
-release/node_biwascheme.js: src/platforms/node/module_preamble.js release/console_biwascheme.js src/platforms/node/module_postamble.js
-	cat src/platforms/node/module_preamble.js > $@
-	cat release/console_biwascheme.js >> $@
-	cat src/platforms/node/module_postamble.js >> $@
 	@echo "Wrote " $@
 
 #
