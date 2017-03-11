@@ -1,0 +1,48 @@
+// vim: set ft=javascript:
+var BiwaScheme = BiwaScheme || {}; 
+
+(function(){ //local namespace
+  // Find the script tag
+  var find_script_tag = function(e){
+    if(e.nodeName.toLowerCase() == 'script'){
+      return e;
+    }
+    else if(e.id == '_firebugConsole'){
+      if(e.previousSibling.nodeName.toLowerCase() == 'script')
+        return e.previousSibling;
+      else
+        console.error("BiwaScheme could not find the script tag... please use firebug 1.5.0");
+    }
+    else{
+      return find_script_tag(e.lastChild);
+    }
+  };
+
+  var script = find_script_tag(document);
+
+  var src = script.getAttribute("src");
+  var dir = src.match(/(.*)src\/development_initializer.js/)[1];
+
+  var script_tag = function(path){
+    return '<script type="text/javascript" src="' +
+             path +
+           '"><\/script>';
+  };
+
+<%
+  var files = JSON.parse(include('../FILES.json'))["browser_dev"];
+  files.forEach(function(path){
+-%>
+  document.write(script_tag(dir+"<%= path %>"));
+<%
+  });
+%>
+  document.write("<script type='text/javascript'>BiwaScheme.startDev()<\/script>");
+
+  // Start user's program
+  BiwaScheme.startDev = function(){
+    var onError = function(e){ throw e; }
+    var intp = new BiwaScheme.Interpreter(onError);
+    intp.evaluate(script.innerHTML);
+  };
+})();

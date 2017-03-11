@@ -49,7 +49,19 @@ BROWSER_FILES =                                   \
 
 all: build
 
-build: release/biwascheme.js release/biwascheme-min.js release/biwascheme-plain.js release/biwascheme-plain-min.js
+build: \
+	FILES.json \
+	src/development_initializer.js \
+	release/biwascheme.js \
+	release/biwascheme-min.js \
+	release/biwascheme-plain.js \
+	release/biwascheme-plain-min.js
+
+FILES.json: FILES.json.ejs
+	`npm bin`/ejs-cli FILES.json.ejs > $@
+
+src/development_initializer.js: src/development_initializer.js.ejs FILES.json
+	`npm bin`/ejs-cli src/development_initializer.js.ejs > $@
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@

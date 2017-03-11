@@ -1,3 +1,4 @@
+// vim: set ft=javascript:
 var BiwaScheme = BiwaScheme || {}; 
 
 (function(){ //local namespace
@@ -27,10 +28,11 @@ var BiwaScheme = BiwaScheme || {};
              path +
            '"><\/script>';
   };
-  document.write(script_tag(dir+"src/version.js"));
+
   document.write(script_tag(dir+"src/deps/jquery.js"));
   document.write(script_tag(dir+"src/deps/underscore.js"));
   document.write(script_tag(dir+"src/deps/underscore.string.js"));
+  document.write(script_tag(dir+"src/version.js"));
   document.write(script_tag(dir+"src/header.js"));
   document.write(script_tag(dir+"src/system/class.js"));
   document.write(script_tag(dir+"src/system/_writer.js"));
@@ -56,12 +58,13 @@ var BiwaScheme = BiwaScheme || {};
   document.write(script_tag(dir+"src/library/infra.js"));
   document.write(script_tag(dir+"src/library/r6rs_lib.js"));
   document.write(script_tag(dir+"src/library/js_interface.js"));
-  document.write(script_tag(dir+"src/library/webscheme_lib.js"));
   document.write(script_tag(dir+"src/library/extra_lib.js"));
   document.write(script_tag(dir+"src/library/node_functions.js"));
   document.write(script_tag(dir+"src/library/srfi.js"));
+  document.write(script_tag(dir+"src/library/webscheme_lib.js"));
   document.write(script_tag(dir+"src/platforms/browser/dumper.js"));
   document.write(script_tag(dir+"src/platforms/browser/console.js"));
+
   document.write("<script type='text/javascript'>BiwaScheme.startDev()<\/script>");
 
   // Start user's program
@@ -71,3 +74,4 @@ var BiwaScheme = BiwaScheme || {};
     intp.evaluate(script.innerHTML);
   };
 })();
+

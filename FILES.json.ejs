@@ -1,0 +1,86 @@
+<%# vim: set ft=javascript: -%>
+<%
+//
+// List of .js files
+//
+
+// Common files for Node and browser
+var basic_files = [
+  "src/version.js",
+  "src/header.js",
+  "src/system/class.js",
+  "src/system/_writer.js",
+  "src/system/_types.js",
+  "src/system/error.js",
+  "src/system/set.js",
+  "src/system/values.js",
+  "src/system/pair.js",
+  "src/system/symbol.js",
+  "src/system/char.js",
+  "src/system/number.js",
+  "src/system/port.js",
+  "src/system/record.js",
+  "src/system/enumeration.js",
+  "src/system/hashtable.js",
+  "src/system/syntax.js",
+  "src/system/parser.js",
+  "src/system/compiler.js",
+  "src/system/pause.js",
+  "src/system/call.js",
+  "src/system/interpreter.js",
+  "src/system/promise.js",
+  "src/library/infra.js",
+  "src/library/r6rs_lib.js",
+  "src/library/js_interface.js",
+  "src/library/extra_lib.js",
+  "src/library/node_functions.js",
+  "src/library/srfi.js"
+];
+
+// Files for npm package
+var node_files =
+  ["src/platforms/node/module_preamble.js"]
+  .concat(basic_files)
+  .concat(["src/platforms/node/module_postamble.js"]);
+
+// Files only run in browser
+var browser_libs = [
+    "src/library/webscheme_lib.js",
+    "src/platforms/browser/dumper.js",
+    "src/platforms/browser/console.js"
+  ];
+var browser_deps = [
+    "src/deps/jquery.js",
+    "src/deps/underscore.js",
+    "src/deps/underscore.string.js"
+  ];
+
+// Files for browser (except dependencies)
+var plain_files = 
+  basic_files
+  .concat(browser_libs)
+  .concat(["src/platforms/browser/release_initializer.js"]);
+
+// Files for browser (including dependencies)
+var browser_release_files = 
+  browser_deps
+  .concat(basic_files)
+  .concat(browser_libs)
+  .concat(["src/platforms/browser/release_initializer.js"]);
+
+// Files for browser (development mode)
+var browser_dev_files =
+  browser_deps
+  .concat(basic_files)
+  .concat(browser_libs);
+
+-%>
+<%-
+  JSON.stringify({
+    "node": node_files,
+    "browser_release": browser_release_files,
+    "browser_dev": browser_dev_files
+  },
+  // prettify with 2 spaces
+  null, 2);
+-%>
