@@ -48,17 +48,17 @@
       "bin/biwas"
     ],
     "dependencies" : {
-        "optparse" : "1.0.5",
-        "underscore" : "1.2.2",
-        "underscore.string" : "2.0.0"
+          "optparse" : "1.0.5"
+        , "underscore" : "1.2.2"
+        , "underscore.string" : "2.0.0"
     },
     "devDependencies": {
-        "express": "~4.10.4",
-        "body-parser": ">0",
-        "marked": "~0.3.2",
-        "ejs": "~2.5.6",
-        "ejs-cli": "~2.0.0",
-        "uglifyjs": "~2.4.10"
+          "express": "~4.10.4"
+        , "body-parser": ">0"
+        , "marked": "~0.3.2"
+        , "ejs": "~2.5.6"
+        , "ejs-cli": "~2.0.0"
+        , "uglifyjs": "~2.4.10"
     },
     "bin": { "biwas": "./bin/biwas" }
 }
