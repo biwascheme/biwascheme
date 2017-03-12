@@ -1,12 +1,8 @@
 #
-# Makefile - gather javascripts and compress it
+# Build
 #
-VERSION_FILE_IN =  src/version.js.in
-VERSION_FILE    =  src/version.js
-
 
 BASIC_FILES = \
-		src/version.js \
 		src/header.js \
 		src/system/class.js \
 		src/system/_writer.js \
@@ -36,7 +32,6 @@ BASIC_FILES = \
 		src/library/node_functions.js \
 		src/library/srfi.js \
 		$()
-
 PLAIN_FILES = \
 		src/version.js \
 		src/header.js \
@@ -72,12 +67,11 @@ PLAIN_FILES = \
 		src/platforms/browser/console.js \
 		src/platforms/browser/release_initializer.js \
 		$()
-
 BROWSER_FILES = \
+		src/version.js \
 		src/deps/jquery.js \
 		src/deps/underscore.js \
 		src/deps/underscore.string.js \
-		src/version.js \
 		src/header.js \
 		src/system/class.js \
 		src/system/_writer.js \
@@ -122,27 +116,28 @@ build: \
 	release/biwascheme-plain.js \
 	release/biwascheme-plain-min.js
 
+FILES.json: FILES.json.ejs
+	`npm bin`/ejs-cli FILES.json.ejs > $@
+
 package.json: package.json.ejs FILES.json
 	`npm bin`/ejs-cli package.json.ejs > $@
 
 src/development_initializer.js: src/development_initializer.js.ejs FILES.json
 	`npm bin`/ejs-cli src/development_initializer.js.ejs > $@
 
-$(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) VERSION Makefile
+src/version.js: src/version.js.in VERSION
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
-release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
-	cat $(VERSION_FILE) > $@
-	cat $(BROWSER_FILES) >> $@
+release/biwascheme.js: $(BROWSER_FILES)
+	cat $(BROWSER_FILES) > $@
 	@echo "Wrote " $@
 
 release/biwascheme-min.js: release/biwascheme.js
 	uglifyjs -o $@ release/biwascheme.js --comments
 	@echo "Wrote " $@
 
-release/biwascheme-plain.js: $(VERSION_FILE) $(PLAIN_FILES) Makefile
-	cat $(VERSION_FILE) > $@
-	cat $(PLAIN_FILES) >> $@
+release/biwascheme-plain.js: $(PLAIN_FILES)
+	cat $(PLAIN_FILES) > $@
 	@echo "Wrote " $@
 
 release/biwascheme-plain-min.js: release/biwascheme-plain.js
