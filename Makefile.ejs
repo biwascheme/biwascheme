@@ -46,7 +46,7 @@ release/biwascheme.js: $(BROWSER_FILES)
 	@echo "Wrote " $@
 
 release/biwascheme-min.js: release/biwascheme.js
-	uglifyjs -o $@ release/biwascheme.js --comments
+	`npm bin`/uglifyjs -o $@ release/biwascheme.js --comments
 	@echo "Wrote " $@
 
 release/biwascheme-plain.js: $(PLAIN_FILES)
@@ -54,7 +54,7 @@ release/biwascheme-plain.js: $(PLAIN_FILES)
 	@echo "Wrote " $@
 
 release/biwascheme-plain-min.js: release/biwascheme-plain.js
-	uglifyjs -o $@ release/biwascheme-plain.js --comments
+	`npm bin`/uglifyjs -o $@ release/biwascheme-plain.js --comments
 	@echo "Wrote " $@
 
 #

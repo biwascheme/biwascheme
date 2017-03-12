@@ -106,10 +106,10 @@ Prerequisites:
 * make
 * sed
 * Node.js (tested with 7.4.0)
-* uglifyjs ($ npm install uglify-js -g) 
 
-Make compiles src/\*.js into release/biwascheme.js.
+To build release/*.js:
 
+    $ npm install
     $ ./bootstrap.sh
     $ make
 

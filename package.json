@@ -57,7 +57,8 @@
         "body-parser": ">0",
         "marked": "~0.3.2",
         "ejs": "~2.5.6",
-        "ejs-cli": "~2.0.0"
+        "ejs-cli": "~2.0.0",
+        "uglifyjs": "~2.4.10"
     },
     "bin": { "biwas": "./bin/biwas" }
 }
