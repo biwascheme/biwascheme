@@ -5,8 +5,8 @@
 //
 
 // Common files for Node and browser
+var version_file = "src/version.js";
 var basic_files = [
-  "src/version.js",
   "src/header.js",
   "src/system/class.js",
   "src/system/_writer.js",
@@ -39,7 +39,8 @@ var basic_files = [
 
 // Files for npm package
 var node_files =
-  ["src/platforms/node/module_preamble.js"]
+  [version_file]
+  .concat(["src/platforms/node/module_preamble.js"])
   .concat(basic_files)
   .concat(["src/platforms/node/module_postamble.js"]);
 
@@ -57,20 +58,23 @@ var browser_deps = [
 
 // Files for browser (except dependencies)
 var plain_files = 
-  basic_files
+  [version_file]
+  .concat(basic_files)
   .concat(browser_libs)
   .concat(["src/platforms/browser/release_initializer.js"]);
 
 // Files for browser (including dependencies)
 var browser_release_files = 
-  browser_deps
+  [version_file]
+  .concat(browser_deps)
   .concat(basic_files)
   .concat(browser_libs)
   .concat(["src/platforms/browser/release_initializer.js"]);
 
 // Files for browser (development mode)
 var browser_dev_files =
-  browser_deps
+  [version_file]
+  .concat(browser_deps)
   .concat(basic_files)
   .concat(browser_libs);
 

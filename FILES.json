@@ -1,6 +1,5 @@
 {
   "basic": [
-    "src/version.js",
     "src/header.js",
     "src/system/class.js",
     "src/system/_writer.js",
@@ -31,8 +30,8 @@
     "src/library/srfi.js"
   ],
   "node": [
-    "src/platforms/node/module_preamble.js",
     "src/version.js",
+    "src/platforms/node/module_preamble.js",
     "src/header.js",
     "src/system/class.js",
     "src/system/_writer.js",
@@ -99,10 +98,10 @@
     "src/platforms/browser/release_initializer.js"
   ],
   "browser_release": [
+    "src/version.js",
     "src/deps/jquery.js",
     "src/deps/underscore.js",
     "src/deps/underscore.string.js",
-    "src/version.js",
     "src/header.js",
     "src/system/class.js",
     "src/system/_writer.js",
@@ -137,10 +136,10 @@
     "src/platforms/browser/release_initializer.js"
   ],
   "browser_dev": [
+    "src/version.js",
     "src/deps/jquery.js",
     "src/deps/underscore.js",
     "src/deps/underscore.string.js",
-    "src/version.js",
     "src/header.js",
     "src/system/class.js",
     "src/system/_writer.js",

@@ -13,8 +13,8 @@
     "main": "./release/node_biwascheme.js",
     "files": [
       "src/platforms/node/node_biwascheme.js",
-      "src/platforms/node/module_preamble.js",
       "src/version.js",
+      "src/platforms/node/module_preamble.js",
       "src/header.js",
       "src/system/class.js",
       "src/system/_writer.js",

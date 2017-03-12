@@ -29,10 +29,10 @@ var BiwaScheme = BiwaScheme || {};
            '"><\/script>';
   };
 
+  document.write(script_tag(dir+"src/version.js"));
   document.write(script_tag(dir+"src/deps/jquery.js"));
   document.write(script_tag(dir+"src/deps/underscore.js"));
   document.write(script_tag(dir+"src/deps/underscore.string.js"));
-  document.write(script_tag(dir+"src/version.js"));
   document.write(script_tag(dir+"src/header.js"));
   document.write(script_tag(dir+"src/system/class.js"));
   document.write(script_tag(dir+"src/system/_writer.js"));
