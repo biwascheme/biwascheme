@@ -132,6 +132,11 @@ BiwaScheme.List = function() {
   return array_to_list(ary, false);
 };
 
+// Convert an Array to Scheme list
+BiwaScheme.ListA = function(ary) {
+  return array_to_list(ary, false)
+};
+
 // Shallow: array_to_list(1, 2, [3]) == (list 1 2 (vector 3 4))
 BiwaScheme.array_to_list = function(ary) {
   return array_to_list(ary, false);
