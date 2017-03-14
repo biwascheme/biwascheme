@@ -84,7 +84,7 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
       });
     }
     else {
-      throw new BiwaScheme.Bug("this so is not a pair");
+      throw new BiwaScheme.Bug("this so is not a pair: "+BiwaScheme.to_write(this.expr));
     }
   },
 
@@ -513,7 +513,9 @@ BiwaScheme.Expander = {
     var so = new SyntaxObject(expr, Expander.InitialWrap),
         env = Expander.InitialEnv,
         menv = Expander.InitialEnv;
-    return SyntaxObject.strip(Expander._exp(so, env, menv));
+    var ret = SyntaxObject.strip(Expander._exp(so, env, menv));
+    debug("Expanded:", BiwaScheme.to_write(ret));
+    return ret;
   },
 
   _exp: function(so, env, menv) {
@@ -574,7 +576,7 @@ BiwaScheme.Expander = {
   
   // name: String (used only for debug print)
   _expandMacro: function(name, transformer, so) {
-    debug("_expandMacro:" + name, so.inspect());
+    debug("_expandMacro", so.inspect());
 
     var m = new Mark();
     // Call `addMark` before and after the transformation.
