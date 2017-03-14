@@ -62,6 +62,10 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
       }
     }
 
+    if (BiwaScheme.SyntaxEnv.hasOwnProperty(sym.name)) {
+      return BiwaScheme.Syntax.Label.TopLevel;
+    }
+
     console.error("getLabel notfound", BiwaScheme.to_write(this.expr), this.wrap.debugStr());
     throw new BiwaScheme.Error("undefined identifier: "+sym.name);
   },
@@ -204,6 +208,7 @@ BiwaScheme.Syntax.Label = BiwaScheme.Class.create({
   }
 });
 BiwaScheme.Syntax.Label.n = 0;
+BiwaScheme.Syntax.Label.TopLevel = new BiwaScheme.Syntax.Label();
 
 BiwaScheme.Syntax.Subst = BiwaScheme.Class.create({
   initialize: function(sym, marks, label){
@@ -501,11 +506,14 @@ _.extend(BiwaScheme.Syntax, {
 //
 
 BiwaScheme.Expander = {
+  InitialEnv: new BiwaScheme.Syntax.Env({}),
+  InitialWrap: new BiwaScheme.Syntax.Wrap([BiwaScheme.Syntax.Mark.TopMark]),
+
   expand: function(expr) {
-    var so = new SyntaxObject(expr, Syntax.InitialWrap),
-        env = Syntax.InitialEnv,
-        menv = Syntax.InitialEnv;
-    return Expander._exp(so, env, menv);
+    var so = new SyntaxObject(expr, Expander.InitialWrap),
+        env = Expander.InitialEnv,
+        menv = Expander.InitialEnv;
+    return SyntaxObject.strip(Expander._exp(so, env, menv));
   },
 
   _exp: function(so, env, menv) {
@@ -520,6 +528,7 @@ BiwaScheme.Expander = {
           var newx = Expander._expandMacro(so.expr.name, binding.value, so);
           return Expander._exp(newx, env, menv);
         case "lexical":
+        case "global":
           return binding.value;
         default:
           throw new BiwaScheme.Error("undefined variable: "+expr.name);
@@ -536,6 +545,7 @@ BiwaScheme.Expander = {
             var newx = Expander._expandMacro(id.expr.name, binding.value, so);
             return Expander._exp(newx, env, menv);
           case "lexical":
+          case "global":
             var car = binding.value;
             var cdr = List.apply(null, Expander._expandExprs(_.rest(sos), env, menv));
             return new SyntaxObject(new Pair(car, cdr), so.wrap)
@@ -588,6 +598,16 @@ BiwaScheme.Expander = {
   }
 }
 
+// TODO: merge this with BiwaScheme.TopEnv and BiwaScheme.CoreEnv
+BiwaScheme.SyntaxEnv = {};
+BiwaScheme.global_variable_set = function(name, type, value) {
+  BiwaScheme.SyntaxEnv[name] = new BiwaScheme.Syntax.Binding(type, value);
+};
+BiwaScheme.Syntax.INITIAL_ENV_ITEMS.forEach(function(item){
+  var name = item[0], type = item[1], value = item[2];
+  BiwaScheme.global_variable_set(name, type, value);
+});
+
 // Aliases for this file
 var Syntax = BiwaScheme.Syntax,
     SyntaxObject = BiwaScheme.Syntax.SyntaxObject,
@@ -609,20 +629,4 @@ var Syntax = BiwaScheme.Syntax,
       if(BiwaScheme.Syntax.TRACE_EXPANSION) console.log.apply(null, Array.prototype.slice.call(arguments));
     };
 
-// Init InitialEnv and InitialWrap
-var markSubsts = [], envHash = {};
-BiwaScheme.Syntax.INITIAL_ENV_ITEMS.forEach(function(item){
-  var name = item[0], type = item[1], value = item[2];
-
-  var label = new Label(name);
-  var binding = new Binding(type, value);
-  envHash[label] = binding;
-
-  var subst = new Subst(BiwaScheme.Sym(name), [Mark.TopMark], label);
-  markSubsts.push(subst);
-});
-markSubsts.push(Mark.TopMark);
-BiwaScheme.Syntax.InitialEnv = new BiwaScheme.Syntax.Env(envHash);
-BiwaScheme.Syntax.InitialWrap = new BiwaScheme.Syntax.Wrap(markSubsts);
-  
 })();

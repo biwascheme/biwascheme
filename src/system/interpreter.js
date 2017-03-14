@@ -220,6 +220,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
            !BiwaScheme.CoreEnv.hasOwnProperty(name))
           throw new BiwaScheme.Error("global variable '"+name+"' is not defined");
         
+        BiwaScheme.global_variable_set(name, "global", BiwaScheme.Sym(name));
         BiwaScheme.TopEnv[name] = a;
         a = BiwaScheme.undef;
         break;

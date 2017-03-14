@@ -18,6 +18,7 @@ BiwaScheme.check_arity = function(len, min, max){
   else if(max && max < len)
     throw new BiwaScheme.Error(fname+": too many arguments (at most: "+max+" got: "+len+")");
 }
+
 BiwaScheme.define_libfunc = function(fname, min, max, func){
   var f = function(ar, intp){
     BiwaScheme.check_arity(ar.length, min, max);
@@ -28,7 +29,9 @@ BiwaScheme.define_libfunc = function(fname, min, max, func){
   f["fname"]    = fname; // for check_arity
   f["inspect"] = function(){ return this.fname; }
   BiwaScheme.CoreEnv[fname] = f;
+  BiwaScheme.global_variable_set(fname, "global", BiwaScheme.Sym(fname));
 }
+
 BiwaScheme.alias_libfunc = function(fname, aliases) {
   if (BiwaScheme.CoreEnv[fname]) {
     if (_.isArray(aliases)) {
@@ -45,10 +48,16 @@ BiwaScheme.alias_libfunc = function(fname, aliases) {
                   " does not exist, so can't alias it.");
   }
 };
+
 BiwaScheme.define_syntax = function(sname, func) {
   var s = new BiwaScheme.Syntax(sname, func);
   BiwaScheme.CoreEnv[sname] = s;
+  BiwaScheme.global_variable_set(sname, "macro", function(so){
+    var newExpr = func(so.expr);
+    return new BiwaScheme.Syntax.SyntaxObject(newExpr, so.wrap);
+  });
 }
+
 BiwaScheme.define_scmfunc = function(fname, min, max, str){
   (new BiwaScheme.Interpreter).evaluate("(define "+fname+" "+str+"\n)");
 }
