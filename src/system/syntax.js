@@ -191,10 +191,12 @@ BiwaScheme.Syntax.Label = BiwaScheme.Class.create({
   initialize: function(suffix){
     this.n = (BiwaScheme.Syntax.Label.n++);
     this.suffix = suffix || "";
+
+    this.name = "l" + this.n + this.suffix;
   },
 
   debugStr: function(){
-    return "l" + this.n + this.suffix;
+    return this.name;
   },
 
   toString: function(){
@@ -298,11 +300,11 @@ BiwaScheme.Syntax.Binding = BiwaScheme.Class.create({
 
 BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
   initialize: function(/*hash*/){
-    this.hash = arguments[0] || {};  // Hash<Label, Binding>
+    this.hash = arguments[0] || {};  // Hash<Label name, Binding>
   },
 
-  set: function(k, v) {
-    this.hash[k] = v;
+  set: function(label, binding) {
+    this.hash[label.name] = binding;
   },
 
   // Return a (shallow) copy of this
@@ -312,17 +314,18 @@ BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
     return new Env(newHash);
   },
 
-  hasKey: function(k) {
-    return this.hash.hasOwnProperty(k);
-  },
-
-  get: function(k) {
-    return this.hasKey(k) ? this.hash[k] : null;
+  get: function(label) {
+    return this.hash[label.name];
   },
 
   // - id: identifier SO
   bindingOfId: function(id) {
-    var binding = this.get(id.getLabel());
+    var label = id.getLabel();
+    if (label == Label.TopLevel) {
+      return BiwaScheme.SyntaxEnv[id.expr.name];
+    }
+
+    var binding = this.get(label);
     if (!binding) {
       throw new BiwaScheme.Error("displaced lexical: "+id.expr.name);
     }
@@ -330,7 +333,11 @@ BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
   },
 
   inspect: function(){
-    return "#<Env>";
+    var keys = _.keys(this.hash);
+    if (keys.length == 0)
+      return "#<Env>";
+    else
+      return "#<Env " + _.keys(this.hash).join(",") + ">";
   }
 });
 
