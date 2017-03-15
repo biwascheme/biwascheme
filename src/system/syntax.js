@@ -354,6 +354,28 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
     return x;
   }],
 
+  ["define", "core", function(so, env, metaEnv){
+    // (define _ body...)
+    var sos = so.expose();
+    if (sos.length < 3) throw new Error("define: malformed define");
+    var newBody = sos.slice(2, sos.length).map(function(so){
+      return Expander._exp(so, env, metaEnv);
+    });
+    return new Pair(Sym("define"),
+             new Pair(sos[1], // TODO: check this
+               ListA(newBody)));
+  }],
+
+  ["begin", "core", function(so, env, metaEnv){
+    // (begin body...)
+    var sos = so.expose();
+    if (sos.length < 2) throw new Error("begin: missing body of begin");
+    var newBody = sos.slice(1, sos.length).map(function(so){
+      return Expander._exp(so, env, metaEnv);
+    });
+    return new Pair(Sym("begin"), ListA(newBody));
+  }],
+
   ["set!", "core", function(so, env, metaEnv){
     // (set! x v)
     var sos = so.expose();
