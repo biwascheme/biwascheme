@@ -385,6 +385,14 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
                 Expander._exp(sos[2], env, metaEnv));
   }],
 
+  ["call/cc", "core", function(so, env, metaEnv){
+    // (call/cc f)
+    var sos = so.expose();
+    if (sos.length < 2) throw new Error("call/cc: missing argument");
+    return List(Sym("call/cc"),
+                Expander._exp(sos[1], env, metaEnv));
+  }],
+
   ["if", "core", function(so, env, metaEnv){
     var sos = so.expose();
     if (sos.length < 3) throw new Error("if: missing then clause");
