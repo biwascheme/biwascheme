@@ -404,31 +404,85 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
   ["lambda", "core", function(so, env, metaEnv){
     var sos = so.expose();
     if (sos.length < 3) throw new BiwaScheme.Error("malformed lambda");
-    var paramListSo = sos[1];
+    var paramSpec = sos[1].expr;
     var bodySos = _.rest(sos, 2);
 
+    // Validate parameter spec 
+    var lastCdr;
+    if (paramSpec instanceof BiwaScheme.Pair) {
+      var x;
+      for (x = paramSpec; x instanceof BiwaScheme.Pair; x = x.cdr) {
+        if (!(x.car instanceof BiwaScheme.Symbol)) {
+          throw new Error("lambda: invalid parameter name: "+BiwaScheme.to_write(paramSpec));
+        }
+      }
+      lastCdr = x;
+      if (lastCdr instanceof BiwaScheme.Symbol) { // (lambda (x y . rest) ...)
+        // ok
+      }
+      else if (lastCdr !== BiwaScheme.nil) {
+        throw new Error("lambda: invalid rest parameter: "+BiwaScheme.to_write(paramSpec));
+      }
+    }
+    else if (paramSpec === BiwaScheme.nil || // (lambda () ...)
+             paramSpec instanceof BiwaScheme.Symbol) { // (lambda args ...)
+      // ok
+    }
+    else {
+      throw new Error("lambda: invalid parameter spec: "+BiwaScheme.inspec(paramSpec));
+    }
+
+    // Generate new name for parameters
+    var newParamSpec, paramNames;
+    if (paramSpec === BiwaScheme.nil) {
+      newParamSpec = BiwaScheme.nil;
+      paramNames = [];
+    }
+    else if (paramSpec instanceof BiwaScheme.Symbol) {
+      newParamSpec = Syntax.genVar(paramSpec.name);
+      paramNames = [[paramSpec, newParamSpec]];
+    }
+    else {
+      paramNames = paramSpec.to_array().map(function(sym){
+        return [sym, Syntax.genVar(sym.name)];
+      });
+      var lastIdx;
+      if (lastCdr instanceof BiwaScheme.Symbol) {
+        newParamSpec = Syntax.genVar(lastCdr.name)
+        paramNames.push([lastCdr, newParamSpec]);
+        lastIdx = paramNames.length - 2;
+      }
+      else {
+        newParamSpec = BiwaScheme.nil;
+        lastIdx = paramNames.length - 1;
+      }
+      for (var i = lastIdx; i >= 0; i--) {
+        newParamSpec = new Pair(paramNames[i][1], newParamSpec);
+      }
+    }
+
+    // Update env
     var newEnv = env.dup();
-    var params = paramListSo.expose().map(function(x) {
-      var newSym = Syntax.genVar(x.expr.name);
+    var params = paramNames.map(function(names) {
       var label = new Label();
-      var binding = new Binding("lexical", newSym);
+      var binding = new Binding("lexical", names[1]);
       newEnv.set(label, binding);
       return {
-        so: x,
-        label: label,
-        newSym: newSym
+                                       // Not sure
+        so: new SyntaxObject(names[0], sos[1].wrap),
+        label: label
       }
     });
 
     var newBodyExprs = bodySos.map(function(bodySo){
-      var newBody = params.reduce(function(b, param) {
+      var newBodyExpr = params.reduce(function(b, param) {
         return SyntaxObject.addSubst(param.so, param.label, b);
       }, bodySo);
-      return Expander._exp(newBody, newEnv, metaEnv);
+      return Expander._exp(newBodyExpr, newEnv, metaEnv);
     });
 
     return new Pair(Sym("lambda"),
-             new Pair(ListA(params.map(function(x){ return x.newSym })),
+             new Pair(newParamSpec,
                ListA(newBodyExprs)));
   }],
 
