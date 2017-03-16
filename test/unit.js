@@ -657,8 +657,7 @@ describe('11.6 Procedure predicate' , {
     ev("(procedure? (lambda () 5))").should_be(true);
     ev("(procedure? '(lambda ()))").should_be(false);
     ev("(procedure? car)").should_be(true);
-    ev("(procedure? if)").should_be(false);
-    ev("(procedure? define-macro)").should_be(false);
+    ev("(procedure? 123)").should_be(false);
     // TODO: Following test cases don't work.
     // call/cc are builtin subr(byte code instruction). 
     // ev("(procedure? call/cc)").should_be(true);
