@@ -94,10 +94,11 @@ BiwaScheme.isProcedure = function(obj){
 
 // Return true if obj is a scheme value which evaluates to itself
 BiwaScheme.isSelfEvaluating = function(obj) {
-  return BiwaScheme.isBoolean(obj) ||
-         BiwaScheme.isNumber(obj) ||
-         BiwaScheme.isString(obj) ||
-         BiwaScheme.isChar(obj);
+  return !(obj instanceof BiwaScheme.Pair) &&
+         !(obj instanceof BiwaScheme.Symbol);
+  // TODO: I'm not sure nil is self-evaluating in R7RS
+  // Anyway currently nil is treated as self-evaluating
+  // for backward compatibility with BiwaScheme <= 0.6.x.
 };
 
 //
