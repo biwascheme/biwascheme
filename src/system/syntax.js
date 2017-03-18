@@ -310,6 +310,7 @@ BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
 
   set: function(label, binding) {
     this.hash[label.name] = binding;
+    return this;
   },
 
   // Return a (shallow) copy of this
@@ -355,15 +356,44 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
   }],
 
   ["define", "core", function(so, env, metaEnv){
-    // (define _ body...)
-    var sos = so.expose();
-    if (sos.length < 3) throw new Error("define: malformed define");
-    var newBody = sos.slice(2, sos.length).map(function(so){
-      return Expander._exp(so, env, metaEnv);
-    });
-    return new Pair(Sym("define"),
-             new Pair(sos[1], // TODO: check this
-               ListA(newBody)));
+    // TODO: is it really safe to access so.expr directly?
+    var expr = so.expr;
+    if (!(expr.cdr instanceof BiwaScheme.Pair))
+      throw new Error("define: malformed define");
+    var cadr = expr.cdr.car;
+    if (cadr instanceof BiwaScheme.Symbol) {
+      // (define var expr)
+      var cddr = expr.cdr.cdr;
+      if (!(cddr instanceof BiwaScheme.Pair) || cddr.cdr !== BiwaScheme.nil)
+        throw new Error("define: malformed define");
+      var newExpr = Expander._exp(new SyntaxObject(cddr.car, so.wrap), env, metaEnv);
+      return List(Sym("define"), cadr, newExpr);
+    }
+    else if (cadr instanceof BiwaScheme.Pair) {
+      // (define (fname arg...) body...)
+      // => (define fname (lambda (arg...) body...))
+      // (define (fname arg... . rest) body...)
+      // => (define fname (lambda (arg... . rest) body...))
+      // (define (fname . args) body...)
+      // => (define fname (lambda args body...))
+      var fname = cadr.car, argSpec = cadr.cdr;
+      if (!(fname instanceof BiwaScheme.Symbol))
+        throw new Error("define: invalid function name");
+      var label = new Label(), binding = new Binding("lexical", fname);
+      var lambdaExpr = new Pair(Sym("lambda"),
+                         new Pair(argSpec, 
+                           expr.cdr.cdr));
+      var lambdaSo = SyntaxObject.addSubst(
+        new SyntaxObject(fname, new Wrap()),
+        label,
+        new SyntaxObject(lambdaExpr, new Wrap()));
+      var newEnv = env.dup().set(label, binding);
+      var newLambdaExpr = Expander._exp(lambdaSo, newEnv, metaEnv);
+      return List(Sym("define"), fname, newLambdaExpr);
+    }
+    else {
+      throw new Error("define: malformed define");
+    }
   }],
 
   ["begin", "core", function(so, env, metaEnv){
