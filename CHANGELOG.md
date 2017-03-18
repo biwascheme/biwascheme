@@ -1,3 +1,12 @@
+# v0.7.0
+
+- change: These programs are not allowed in R7RS and raise error in BiwaScheme 0.7.0
+  - `(display if)`
+  - `(define x)`
+
+# Before v0.6.x
+
+```
 2016-12-25 v0.6.7
 
   * new: list-sort, vector-sort, vector-sort! now can take a comparator proc (#77, #78)
@@ -146,3 +155,4 @@
   * new: (string->number) parses flonum
   * new: BiwaScheme.GitCommit
     note: now sed is needed to compile biwascheme.js
+```

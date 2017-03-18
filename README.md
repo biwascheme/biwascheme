@@ -91,7 +91,7 @@ Files for npm package:
 
 Docs:
 
-* History.txt
+* CHANGELOG.md
 * doc
 * website/
   + HTMLs and CSS of www.biwascheme.org
