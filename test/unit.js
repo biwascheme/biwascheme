@@ -459,9 +459,6 @@ describe('11.2 Definitions', {
   'define and set!' : function(){
     ev("(define x 1) (set! x 2) x").should_be(2);
   },
-  'define value with unspecified value' : function(){
-    ev("(define x) (set! x 2) x").should_be(2);
-  },
   'function define' : function(){
     ev("(define f (lambda (x) (+ x 2))) (f 3)").should_be(5);
   },
