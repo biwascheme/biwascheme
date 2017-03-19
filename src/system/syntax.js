@@ -445,79 +445,14 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
     var paramSpec = sos[1].expr;
     var bodySos = _.rest(sos, 2);
 
-    // Validate parameter spec 
-    var lastCdr;
-    if (paramSpec instanceof BiwaScheme.Pair) {
-      var x;
-      for (x = paramSpec; x instanceof BiwaScheme.Pair; x = x.cdr) {
-        if (!(x.car instanceof BiwaScheme.Symbol)) {
-          throw new Error("lambda: invalid parameter name: "+BiwaScheme.to_write(paramSpec));
-        }
-      }
-      lastCdr = x;
-      if (lastCdr instanceof BiwaScheme.Symbol) { // (lambda (x y . rest) ...)
-        // ok
-      }
-      else if (lastCdr !== BiwaScheme.nil) {
-        throw new Error("lambda: invalid rest parameter: "+BiwaScheme.to_write(paramSpec));
-      }
-    }
-    else if (paramSpec === BiwaScheme.nil || // (lambda () ...)
-             paramSpec instanceof BiwaScheme.Symbol) { // (lambda args ...)
-      // ok
-    }
-    else {
-      throw new Error("lambda: invalid parameter spec: "+BiwaScheme.inspec(paramSpec));
-    }
+    var lastCdr = Expander.LambdaHelper.validateParamSpec(paramSpec);
 
-    // Generate new name for parameters
-    var newParamSpec, paramNames;
-    if (paramSpec === BiwaScheme.nil) {
-      newParamSpec = BiwaScheme.nil;
-      paramNames = [];
-    }
-    else if (paramSpec instanceof BiwaScheme.Symbol) {
-      newParamSpec = Syntax.genVar(paramSpec.name);
-      paramNames = [[paramSpec, newParamSpec]];
-    }
-    else {
-      paramNames = paramSpec.to_array().map(function(sym){
-        return [sym, Syntax.genVar(sym.name)];
-      });
-      var lastIdx;
-      if (lastCdr instanceof BiwaScheme.Symbol) {
-        newParamSpec = Syntax.genVar(lastCdr.name)
-        paramNames.push([lastCdr, newParamSpec]);
-        lastIdx = paramNames.length - 2;
-      }
-      else {
-        newParamSpec = BiwaScheme.nil;
-        lastIdx = paramNames.length - 1;
-      }
-      for (var i = lastIdx; i >= 0; i--) {
-        newParamSpec = new Pair(paramNames[i][1], newParamSpec);
-      }
-    }
+    var ret = Expander.LambdaHelper.generateVariables(paramSpec, lastCdr);
+    var newParamSpec = ret[0],
+        paramNames = ret[1];
 
-    // Update env
-    var newEnv = env.dup();
-    var params = paramNames.map(function(names) {
-      var label = new Label();
-      var binding = new Binding("lexical", names[1]);
-      newEnv.set(label, binding);
-      return {
-                                       // Not sure
-        so: new SyntaxObject(names[0], sos[1].wrap),
-        label: label
-      }
-    });
-
-    var newBodyExprs = bodySos.map(function(bodySo){
-      var newBodyExpr = params.reduce(function(b, param) {
-        return SyntaxObject.addSubst(param.so, param.label, b);
-      }, bodySo);
-      return Expander._exp(newBodyExpr, newEnv, metaEnv);
-    });
+    var newBodyExprs = Expander.LambdaHelper.expandBody(
+      bodySos, paramNames, sos[1].wrap, env, metaEnv);
 
     return new Pair(Sym("lambda"),
              new Pair(newParamSpec,
@@ -713,6 +648,96 @@ BiwaScheme.Expander = {
     });
   }
 }
+
+// Helpers for expanding `lambda`
+BiwaScheme.Expander.LambdaHelper = {
+  // Check parameter spec is valid
+  // Return the last cdr of the parameter list
+  // - paramSpec: scheme expr
+  validateParamSpec: function(paramSpec) {
+    // Validate parameter spec 
+    var lastCdr;
+    if (paramSpec instanceof BiwaScheme.Pair) {
+      var x;
+      for (x = paramSpec; x instanceof BiwaScheme.Pair; x = x.cdr) {
+        if (!(x.car instanceof BiwaScheme.Symbol)) {
+          throw new Error("lambda: invalid parameter name: "+BiwaScheme.to_write(paramSpec));
+        }
+      }
+      lastCdr = x;
+      if (lastCdr instanceof BiwaScheme.Symbol) { // (lambda (x y . rest) ...)
+        // ok
+      }
+      else if (lastCdr !== BiwaScheme.nil) {
+        throw new Error("lambda: invalid rest parameter: "+BiwaScheme.to_write(paramSpec));
+      }
+    }
+    else if (paramSpec === BiwaScheme.nil || // (lambda () ...)
+             paramSpec instanceof BiwaScheme.Symbol) { // (lambda args ...)
+      // ok
+    }
+    else {
+      throw new Error("lambda: invalid parameter spec: "+BiwaScheme.inspec(paramSpec));
+    }
+    return lastCdr;
+  },
+
+  // Generate new name for parameters
+  // - paramSpec: scheme expr
+  // - lastCdr: Symbol or nil
+  generateVariables: function(paramSpec, lastCdr) {
+    var newParamSpec, paramNames;
+    if (paramSpec === BiwaScheme.nil) {
+      newParamSpec = BiwaScheme.nil;
+      paramNames = [];
+    }
+    else if (paramSpec instanceof BiwaScheme.Symbol) {
+      newParamSpec = Syntax.genVar(paramSpec.name);
+      paramNames = [[paramSpec, newParamSpec]];
+    }
+    else {
+      paramNames = paramSpec.to_array().map(function(sym){
+        return [sym, Syntax.genVar(sym.name)];
+      });
+      var lastIdx;
+      if (lastCdr instanceof BiwaScheme.Symbol) {
+        newParamSpec = Syntax.genVar(lastCdr.name)
+        paramNames.push([lastCdr, newParamSpec]);
+        lastIdx = paramNames.length - 2;
+      }
+      else {
+        newParamSpec = BiwaScheme.nil;
+        lastIdx = paramNames.length - 1;
+      }
+      for (var i = lastIdx; i >= 0; i--) {
+        newParamSpec = new Pair(paramNames[i][1], newParamSpec);
+      }
+    }
+    return [newParamSpec, paramNames];
+  },
+
+  expandBody: function(bodySos, paramNames, wrap, env, metaEnv) {
+    var newEnv = env.dup();
+    var params = paramNames.map(function(names) {
+      var label = new Label();
+      var binding = new Binding("lexical", names[1]);
+      newEnv.set(label, binding);
+      return {
+        so: new SyntaxObject(names[0], wrap),
+        label: label
+      }
+    });
+
+    var newBodyExprs = bodySos.map(function(bodySo){
+      var newBodyExpr = params.reduce(function(b, param) {
+        return SyntaxObject.addSubst(param.so, param.label, b);
+      }, bodySo);
+      return Expander._exp(newBodyExpr, newEnv, metaEnv);
+    });
+
+    return newBodyExprs;
+  }
+};
 
 // TODO: merge this with BiwaScheme.TopEnv and BiwaScheme.CoreEnv
 BiwaScheme.SyntaxEnv = {};
