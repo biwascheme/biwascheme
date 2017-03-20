@@ -75,12 +75,7 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
     if (this.expr instanceof Pair) {
       var wrap = this.wrap;
       return this.expr.to_array().map(function(sub) {
-        if (sub instanceof SyntaxObject) {
-          return new SyntaxObject(sub.expr, wrap.joinWrap(sub.wrap));
-        }
-        else {
-          return new SyntaxObject(sub, wrap);
-        }
+        return new SyntaxObject.wrapWith(wrap, sub);
       });
     }
     else {
@@ -114,15 +109,22 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
 });
 
 _.extend(BiwaScheme.Syntax.SyntaxObject, {
+  // Return a SyntaxObject with a wrap
+  // - x: SyntaxObject or scheme expr
+  // Note: this is named `extend-wrap` in Beautiful Code
+  wrapWith: function(wrap, x) {
+    if (x instanceof SyntaxObject) {
+      return new SyntaxObject(x.expr, wrap.joinWrap(x.wrap));
+    }
+    else {
+      return new SyntaxObject(x, wrap);
+    }
+  },
+
   // Return a SyntaxObject with a mark
   // x : SyntaxObject or scheme expr
   addMark: function(x, mark) {
-    if (x instanceof SyntaxObject) {
-      return new SyntaxObject(x.expr, x.wrap.addMark(mark));
-    }
-    else {
-      return new SyntaxObject(x, new Wrap([mark]));
-    }
+    return SyntaxObject.wrapWith(new Wrap([mark]), x);
   },
 
   // Return a SyntaxObject with a subst
@@ -131,12 +133,7 @@ _.extend(BiwaScheme.Syntax.SyntaxObject, {
   // x : SyntaxObject or scheme expr
   addSubst: function(id, label, x) {
     var subst = new Subst(id.expr, id.wrap.marks(), label);
-    if (x instanceof SyntaxObject) {
-      return new SyntaxObject(x.expr, x.wrap.addSubst(subst));
-    }
-    else {
-      return new SyntaxObject(x, new Wrap([subst]));
-    }
+    return SyntaxObject.wrapWith(new Wrap([subst]), x);
   },
 
   strip: function(x) {
