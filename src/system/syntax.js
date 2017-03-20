@@ -89,7 +89,7 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
   },
   
   inspect: function() {
-    if (Syntax.inspecting) { // Simplify nested SyntaxObject
+    if (Syntax.inspecting) { // Simplify nested SyntaxObject (currently disabled)
       if (BiwaScheme.isSelfEvaluating(this.expr)) {
         return BiwaScheme.to_write(this.expr) + "{-}";
       }
@@ -99,7 +99,7 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
       }
     }
     else {
-      Syntax.inspecting = true;
+      //Syntax.inspecting = true;
       var ret = "#<SO " + BiwaScheme.to_write(this.expr) +
                 " " + this.wrap.debugStr() + ">";
       Syntax.inspecting = false;
@@ -278,17 +278,7 @@ BiwaScheme.Syntax.Wrap = BiwaScheme.Class.create({
   },
 
   debugStr: function() {
-    var ret = [];
-    this.markSubsts.forEach(function(x){
-      if (x instanceof Subst && x.marks[0] === Mark.TopMark) {
-        // Omit INITIAL_ENV_ITEMS
-        if (_.last(ret) != "...") ret.push("...");
-      }
-      else {
-        ret.push(x.debugStr());
-      }
-    });
-    return ret.join("");
+    return this.markSubsts.map(function(x){ return x.debugStr() }).join("");
   },
 
   toString: function() {
