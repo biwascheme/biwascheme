@@ -136,6 +136,13 @@ _.extend(BiwaScheme.Syntax.SyntaxObject, {
     return SyntaxObject.wrapWith(new Wrap([subst]), x);
   },
 
+  // Return a SyntaxObject with substs
+  // - x : SyntaxObject or scheme expr
+  // - substs: Array<Subst>
+  addSubsts: function(x, substs) {
+    return SyntaxObject.wrapWith(new Wrap(substs), x);
+  },
+
   strip: function(x) {
     if (x instanceof SyntaxObject) {
       return (x.wrap.isTopMarked() ? x.expr : SyntaxObject.strip(x.expr));
@@ -715,24 +722,18 @@ BiwaScheme.Expander.LambdaHelper = {
 
   expandBody: function(bodySos, paramNames, wrap, env, metaEnv) {
     var newEnv = env.dup();
-    var params = paramNames.map(function(names) {
+    var substs = [];
+    paramNames.forEach(function(names) {
       var label = new Label();
       var binding = new Binding("lexical", names[1]);
       newEnv.set(label, binding);
-      return {
-        so: new SyntaxObject(names[0], wrap),
-        label: label
-      }
+      substs.push(new Subst(names[0], wrap.marks(), label));
     });
 
-    var newBodyExprs = bodySos.map(function(bodySo){
-      var newBodyExpr = params.reduce(function(b, param) {
-        return SyntaxObject.addSubst(param.so, param.label, b);
-      }, bodySo);
+    return bodySos.map(function(bodySo){
+      var newBodyExpr = SyntaxObject.addSubsts(bodySo, substs);
       return Expander._exp(newBodyExpr, newEnv, metaEnv);
     });
-
-    return newBodyExprs;
   }
 };
 
