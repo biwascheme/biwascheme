@@ -460,59 +460,6 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
     var target = x.cdr.car;
     var so = new BiwaScheme.Syntax.SyntaxObject(target);
     return List(Sym("quote"), so);
-  }],
-
-  ["let", "macro", function(so){
-    // (let ((a 1) (b 2)) (+ a b))
-    // => ((lambda (a b) (+ a b)) 1 2)
-    // (let loop ((a 1) (b 2)) body ..)
-    //=> (letrec ((loop (lambda (a b) body ..))) (loop 1 2))
-    var sos = so.expose(); // [let, (name?), binds, bodyExpr, ...]
-
-    if (sos[1].expr instanceof Symbol) {
-      // named let
-      TODO
-    }
-    else {
-      var vars = nil, vals = nil;
-      var binds = sos[1].expose();
-      binds.forEach(function(bind) {
-        var a = bind.expose();
-        vars = new Pair(a[0], vars);
-        vals = new Pair(a[1], vals);
-      });
-
-      var bodies = _.rest(sos, 2);
-                                          // Not sure
-      var ret = new Pair(List.apply(null, [sos[0].sym("lambda"), vars].concat(bodies)),
-                         vals);
-      return new SyntaxObject(ret, new Wrap());
-    }
-  }],
-
-  ["orr", "macro", function(so){
-    //debug("orr", so.inspect());
-    var sos = so.expose();
-    var id = sos[0];
-    var e1 = sos[1], e2 = sos[2];
-    var ret = List(id.sym("let"),
-                List(List(Sym("t"), e1)),
-                List(id.sym("if"), Sym("t"), Sym("t"), e2));
-    return new SyntaxObject(ret, new Wrap());
-  }],
-
-  ["swap!", "macro", function(so){
-    //debug("swap!", so.inspect());
-    // (swap! a b)
-    // = (let ((temp #'a)) (set! #'a #'b) (set! b temp))
-    var sos = so.expose();
-    var id = sos[0];
-    var a = sos[1], b = sos[2];
-    var ret = List(id.sym("let"),
-                List(List(Sym("temp"), a)),
-                List(id.sym("set!"), a, b),
-                List(id.sym("set!"), b, Sym("temp")));
-    return new SyntaxObject(ret, new Wrap());
   }]
 ];
 
