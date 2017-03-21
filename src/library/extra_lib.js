@@ -244,7 +244,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       throw new Bug("you cannot use free variables in macro expander (or define-macro must be on toplevel)")
     var cls = [opc[2]];
 
-    TopEnv[name.name] = new Syntax(name.name, function(sexp){
+    BiwaScheme.define_syntax(name.name, function(sexp){
       var given_args = sexp.to_array();
 
       given_args.shift();
