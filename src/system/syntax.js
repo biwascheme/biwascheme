@@ -70,7 +70,33 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
     throw new BiwaScheme.Error("undefined identifier: "+sym.name);
   },
 
+  // Return true if this SO represents an identifier
+  isIdentifier: function() {
+    return this.expr instanceof BiwaScheme.Symbol;
+  },
+
+  // Return true if this SO contains nil
+  isNullSO: function() {
+    return this.expr === BiwaScheme.nil;
+  },
+
+  // Return true if this SO contains a Pair
+  isPairSO: function() {
+    return this.expr instanceof BiwaScheme.Pair;
+  },
+
+  // Extract car as SO
+  sCar: function() {
+    return SyntaxObject.wrapWith(this.wrap, this.expr.car);
+  },
+
+  // Extract cdr as SO
+  sCdr: function() {
+    return SyntaxObject.wrapWith(this.wrap, this.expr.cdr);
+  },
+
   // Decompose #SO<List> into an array of #<SO>
+  // Note: Last cdr is just ignored (even if it is not nil)
   expose: function() {
     if (this.expr instanceof Pair) {
       var wrap = this.wrap;
@@ -434,19 +460,19 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
   }],
 
   ["lambda", "core", function(so, env, metaEnv){
-    var sos = so.expose();
-    if (sos.length < 3) throw new BiwaScheme.Error("malformed lambda");
-    var paramSpec = sos[1].expr;
-    var bodySos = _.rest(sos, 2);
+    var cdrSo = so.sCdr();
+    if (!cdrSo.isPairSO()) throw new BiwaScheme.Error("malformed lambda");
+    var paramSpecSo = cdrSo.sCar();
+    var bodySos = cdrSo.sCdr().expose();
 
-    var lastCdr = Expander.LambdaHelper.validateParamSpec(paramSpec);
+    var lastCdr = Expander.LambdaHelper.validateParamSpec(paramSpecSo);
 
-    var ret = Expander.LambdaHelper.generateVariables(paramSpec, lastCdr);
+    var ret = Expander.LambdaHelper.generateVariables(paramSpecSo, lastCdr);
     var newParamSpec = ret[0],
         paramNames = ret[1];
 
     var newBodyExprs = Expander.LambdaHelper.expandBody(
-      bodySos, paramNames, sos[1].wrap, env, metaEnv);
+      bodySos, paramNames, env, metaEnv);
 
     return new Pair(Sym("lambda"),
              new Pair(newParamSpec,
@@ -467,6 +493,7 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
 
 _.extend(BiwaScheme.Syntax, {
   genVar: function(prefix){
+    if (!prefix) throw new BiwaScheme.Bug("invalid prefix: "+BiwaScheme.inspect(prefix));
     var n = (Syntax._genVar++);
     return Sym(prefix + "." + n);
   },
@@ -594,55 +621,52 @@ BiwaScheme.Expander = {
 BiwaScheme.Expander.LambdaHelper = {
   // Check parameter spec is valid
   // Return the last cdr of the parameter list
-  // - paramSpec: scheme expr
-  validateParamSpec: function(paramSpec) {
+  // - paramSpecSo: SyntaxObject
+  validateParamSpec: function(paramSpecSo) {
     // Validate parameter spec 
     var lastCdr;
-    if (paramSpec instanceof BiwaScheme.Pair) {
+    if (paramSpecSo.isPairSO()) {
       var x;
-      for (x = paramSpec; x instanceof BiwaScheme.Pair; x = x.cdr) {
-        if (!(x.car instanceof BiwaScheme.Symbol)) {
-          throw new Error("lambda: invalid parameter name: "+BiwaScheme.to_write(paramSpec));
+      for (x = paramSpecSo; x.isPairSO(); x = x.sCdr()) {
+        if (!(x.sCar().isIdentifier())) {
+          throw new Error("lambda: invalid parameter name: "+BiwaScheme.to_write(paramSpecSo.expr));
         }
       }
       lastCdr = x;
-      if (lastCdr instanceof BiwaScheme.Symbol) { // (lambda (x y . rest) ...)
-        // ok
-      }
-      else if (lastCdr !== BiwaScheme.nil) {
-        throw new Error("lambda: invalid rest parameter: "+BiwaScheme.to_write(paramSpec));
+      if (!lastCdr.isNullSO() && !lastCdr.isIdentifier()) {
+        throw new Error("lambda: invalid rest parameter: "+BiwaScheme.to_write(paramSpecSo.expr));
       }
     }
-    else if (paramSpec === BiwaScheme.nil || // (lambda () ...)
-             paramSpec instanceof BiwaScheme.Symbol) { // (lambda args ...)
-      // ok
-    }
-    else {
-      throw new Error("lambda: invalid parameter spec: "+BiwaScheme.inspec(paramSpec));
+    else if (!paramSpecSo.isNullSO() && !paramSpecSo.isIdentifier()) {
+      throw new Error("lambda: invalid parameter spec: "+BiwaScheme.inspect(paramSpecSo.expr));
     }
     return lastCdr;
   },
 
   // Generate new name for parameters
-  // - paramSpec: scheme expr
-  // - lastCdr: Symbol or nil
-  generateVariables: function(paramSpec, lastCdr) {
+  // - paramSpecSo: SO
+  // - lastCdr: SO(Symbol or nil)
+  // Return:
+  // - newParamSpec: scheme expr
+  // - paramNames: Array of [oldname(SO), newname(Symbol)]
+  generateVariables: function(paramSpecSo, lastCdr) {
     var newParamSpec, paramNames;
-    if (paramSpec === BiwaScheme.nil) {
+    if (paramSpecSo.isNullSO()) {
       newParamSpec = BiwaScheme.nil;
       paramNames = [];
     }
-    else if (paramSpec instanceof BiwaScheme.Symbol) {
-      newParamSpec = Syntax.genVar(paramSpec.name);
-      paramNames = [[paramSpec, newParamSpec]];
+    else if (paramSpecSo.isIdentifier()) {
+      newParamSpec = Syntax.genVar(paramSpecSo.expr.name);
+      paramNames = [[paramSpecSo, newParamSpec]];
     }
     else {
-      paramNames = paramSpec.to_array().map(function(sym){
-        return [sym, Syntax.genVar(sym.name)];
+      paramNames = paramSpecSo.expose().map(function(id){
+        if (!id.isIdentifier()) throw new Error("expected identifier but got "+BiwaScheme.inspect(id));
+        return [id, Syntax.genVar(id.expr.name)];
       });
       var lastIdx;
-      if (lastCdr instanceof BiwaScheme.Symbol) {
-        newParamSpec = Syntax.genVar(lastCdr.name)
+      if (lastCdr.isIdentifier()) {
+        newParamSpec = Syntax.genVar(lastCdr.expr.name)
         paramNames.push([lastCdr, newParamSpec]);
         lastIdx = paramNames.length - 2;
       }
@@ -657,14 +681,15 @@ BiwaScheme.Expander.LambdaHelper = {
     return [newParamSpec, paramNames];
   },
 
-  expandBody: function(bodySos, paramNames, wrap, env, metaEnv) {
+  // Expand body of lambda
+  expandBody: function(bodySos, paramNames, env, metaEnv) {
     var newEnv = env.dup();
     var substs = [];
     paramNames.forEach(function(names) {
       var label = new Label();
       var binding = new Binding("lexical", names[1]);
       newEnv.set(label, binding);
-      substs.push(new Subst(names[0], wrap.marks(), label));
+      substs.push(new Subst(names[0].expr, names[0].wrap.marks(), label));
     });
 
     return bodySos.map(function(bodySo){
