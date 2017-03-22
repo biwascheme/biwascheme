@@ -404,43 +404,21 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
   }],
 
   ["define", "core", function(so, env, metaEnv){
-    // TODO: is it really safe to access so.expr directly?
-    var expr = so.expr;
-    if (!(expr.cdr instanceof BiwaScheme.Pair))
-      throw new Error("define: malformed define");
-    var cadr = expr.cdr.car;
-    if (cadr instanceof BiwaScheme.Symbol) {
-      // (define var expr)
-      var cddr = expr.cdr.cdr;
-      if (!(cddr instanceof BiwaScheme.Pair) || cddr.cdr !== BiwaScheme.nil)
-        throw new Error("define: malformed define");
-      var newExpr = Expander._exp(new SyntaxObject(cddr.car, so.wrap), env, metaEnv);
-      return List(Sym("define"), cadr, newExpr);
-    }
-    else if (cadr instanceof BiwaScheme.Pair) {
-      // (define (fname arg...) body...)
-      // => (define fname (lambda (arg...) body...))
-      // (define (fname arg... . rest) body...)
-      // => (define fname (lambda (arg... . rest) body...))
-      // (define (fname . args) body...)
-      // => (define fname (lambda args body...))
-      var fname = cadr.car, argSpec = cadr.cdr;
-      if (!(fname instanceof BiwaScheme.Symbol))
-        throw new Error("define: invalid function name");
-      var label = new Label(), binding = new Binding("lexical", fname);
-      var lambdaExpr = new Pair(Sym("lambda"),
-                         new Pair(argSpec, 
-                           expr.cdr.cdr));
+    var ret = LambdaHelper.parseDefine(so, env);
+    var name = ret[0], expr = ret[1], isLambda = ret[2];
+
+    if (isLambda) { // `(define (f ...) ...)`
+      var label = new Label();
+      var binding = new Binding("lexical", name.expr);
       var lambdaSo = SyntaxObject.addSubst(
-        new SyntaxObject(fname, new Wrap()),
+        name,
         label,
-        new SyntaxObject(lambdaExpr, new Wrap()));
+        new SyntaxObject(expr, new Wrap()));
       var newEnv = env.dup().set(label, binding);
-      var newLambdaExpr = Expander._exp(lambdaSo, newEnv, metaEnv);
-      return List(Sym("define"), fname, newLambdaExpr);
+      return List(Sym("define"), name, Expander._exp(lambdaSo, newEnv, metaEnv));
     }
-    else {
-      throw new Error("define: malformed define");
+    else { 
+      return List(Sym("define"), name, Expander._exp(expr, env, metaEnv));
     }
   }],
 
@@ -493,18 +471,25 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
     var paramSpecSo = cdrSo.sCar();
     var bodySos = cdrSo.sCdr().expose();
 
-    var lastCdr = Expander.LambdaHelper.validateParamSpec(paramSpecSo);
-
-    var ret = Expander.LambdaHelper.generateVariables(paramSpecSo, lastCdr);
-    var newParamSpec = ret[0],
-        paramNames = ret[1];
-
-    var newBodyExprs = Expander.LambdaHelper.expandBody(
-      bodySos, paramNames, env, metaEnv);
-
-    return new Pair(Sym("lambda"),
-             new Pair(newParamSpec,
-               ListA(newBodyExprs)));
+    // Check this lambda has internal definitions
+    ret = LambdaHelper.collectInternalDefs(bodySos);
+    var internalDefs = ret[0];
+    bodySos = ret[1];
+    
+    if (internalDefs.length > 0) {
+      // Convert "lambda + internal defs" into "lambda + letrec*"
+      var letrec = LambdaHelper.buildLetRecStar(internalDefs, bodySos);
+      var newLambda = new SyntaxObject(
+        List(Sym("lambda"), paramSpecSo, letrec), so.wrap);
+      return Expander._exp(newLambda, env, metaEnv);
+    }
+    else {
+      var ret = LambdaHelper.expandBody(paramSpecSo, bodySos, env, metaEnv);
+      var newParamSpec = ret[0], newBodyExprs = ret[1];
+      return new Pair(Sym("lambda"),
+               new Pair(newParamSpec,
+                 ListA(newBodyExprs)));
+    }
   }],
 
   ["syntax", "core", function(so, env, metaEnv){
@@ -709,10 +694,93 @@ BiwaScheme.Expander.LambdaHelper = {
     return [newParamSpec, paramNames];
   },
 
-  // Expand body of lambda
-  expandBody: function(bodySos, paramNames, env, metaEnv) {
-    var newEnv = env.dup();
-    var substs = [];
+  // Collect internal definitions (including `define` in `begin`)
+  // - bodySos: Array of SO
+  // Return:
+  // - defs: Array of SO (each starts with `define`)
+  // - rest: Array of SO
+  collectInternalDefs: function(bodySos) {
+    var defs = [];
+    var rest = bodySos;
+    while (rest.length > 0) {
+      var so = rest[0];
+      if (so.isPairSO() && so.sCar().expr === Sym("define")) {
+        defs.push(so);
+        rest = rest.slice(1, rest.length);
+      }
+      else if (so.isPairSO() && so.sCar().expr === Sym("begin")) {
+        if (!so.sCdr().isPairSO() && !so.sCdr().isNullSO())
+          throw new Error("lambda: malformed begin");
+        // Splice `begin`
+        rest = so.sCdr().expose().concat(rest.slice(1, rest.length));
+      }
+      else {
+        // Found an expression. Stop looking for internal defs
+        break;
+      }
+    }
+    return [defs, rest];
+  },
+
+  // Build `(letrec* ((name expr)...) ...)`
+  // - internalDefs: Array of SO
+  // - bodySos: Array of SO
+  buildLetRecStar: function(internalDefs, bodySos) {
+    var defs = internalDefs.map(function(so) {
+      var ret = LambdaHelper.parseDefine(so);
+      var name = ret[0], expr = ret[1];
+      return List(name, expr);
+    });
+    return new Pair(Sym("letrec*"),
+             new Pair(ListA(defs),
+               ListA(bodySos)));
+  },
+
+  // Parse `(define ...)` and return either
+  // - variable name and the expression, or
+  // - variable name and a lambda expression (for `(define (f ...) ...)`)
+  // Return:
+  // - name: SO(Identifier)
+  // - expr: SO
+  // - isLambda: true if expr is lambda
+  parseDefine: function(so) {
+    var cdr = so.sCdr();
+    if (!cdr.isPairSO()) throw new Error("define: missing name");
+    var cadr = cdr.sCar(), cddr = cdr.sCdr();
+    if (cadr.isIdentifier()) {
+      // (define var expr)
+      if (!cddr.isPairSO() || !cddr.sCdr().isNullSO())
+        throw new Error("define: malformed expr: "+BiwaScheme.to_write(cddr.expr));
+      return [cadr, cddr.sCar(), false]; 
+    }
+    else if (cadr.isPairSO()) {
+      // (define (fname arg...) body...)
+      // => (define fname (lambda (arg...) body...))
+      // (define (fname arg... . rest) body...)
+      // => (define fname (lambda (arg... . rest) body...))
+      // (define (fname . args) body...)
+      // => (define fname (lambda args body...))
+      var fname = cadr.sCar(), argSpec = cadr.sCdr();
+      if (!fname.isIdentifier()) throw new Error("define: invalid function name");
+      var lambdaExpr = new Pair(Sym("lambda"),
+                         new Pair(argSpec, 
+                           cddr));
+      return [fname, lambdaExpr, true]; 
+    }
+    else {
+      throw new Error("define: invalid name form: "+BiwaScheme.to_write(so.expr));
+    }
+  },
+
+  // Expand body expressions
+  expandBody: function(paramSpecSo, bodySos, env, metaEnv) {
+    var lastCdr = LambdaHelper.validateParamSpec(paramSpecSo);
+    var ret = LambdaHelper.generateVariables(paramSpecSo, lastCdr);
+    var newParamSpec = ret[0],
+        paramNames = ret[1];
+
+    var newEnv = env.dup(),
+        substs = [];
     paramNames.forEach(function(names) {
       var label = new Label();
       var binding = new Binding("lexical", names[1]);
@@ -720,10 +788,11 @@ BiwaScheme.Expander.LambdaHelper = {
       substs.push(new Subst(names[0].expr, names[0].wrap.marks(), label));
     });
 
-    return bodySos.map(function(bodySo){
+    var newBodyExprs = bodySos.map(function(bodySo){
       var newBodyExpr = SyntaxObject.addSubsts(bodySo, substs);
       return Expander._exp(newBodyExpr, newEnv, metaEnv);
     });
+    return [newParamSpec, newBodyExprs];
   }
 };
 
@@ -747,6 +816,7 @@ var Syntax = BiwaScheme.Syntax,
     Subst = BiwaScheme.Syntax.Subst,
     Env = BiwaScheme.Syntax.Env,
     Expander = BiwaScheme.Expander,
+    LambdaHelper = BiwaScheme.Expander.LambdaHelper,
 
     nil = BiwaScheme.nil,
     List = BiwaScheme.List,

@@ -488,6 +488,13 @@ describe('11.2 Definitions', {
         (define (x) (define (y) (define (z) (define a 2) a) (z)) (y)) \
         (let1 result (x) \
           (list result a)").should_be("(2 1)");
+  },
+  'define in begin (toplevel)' : function() {
+    ev("(begin (define a 1)) a").should_be(1);
+  },
+  'define in begin (lambda)' : function() {
+    ew("(define a 1) \
+        (list a ((lambda () (begin (define a 2)) a)))").should_be("(1 2)");
   }
 })
 
