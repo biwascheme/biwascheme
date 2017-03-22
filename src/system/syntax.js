@@ -34,6 +34,22 @@ BiwaScheme.CoreEnv["set!"]   = new BiwaScheme.Syntax("set!");
 
 BiwaScheme.Syntax.TRACE_EXPANSION = true;
 
+// Colors for debug print
+var theme = {
+  env: 'yellow',
+  so: 'green',
+  subst: 'blue',
+  mark: 'yellow'
+};
+if (BiwaScheme.on_node && BiwaScheme.Syntax.TRACE_EXPANSION) {
+  var colors = require('colors/safe');
+  colors.setTheme(theme);
+}
+else {
+  var colors = {};
+  for (name in theme) colors[name] = function(s){ return s};
+}
+
 BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
   initialize: function(expr, wrap){
     this.expr = expr;
@@ -126,8 +142,8 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
     }
     else {
       //Syntax.inspecting = true;
-      var ret = "#<SO " + BiwaScheme.to_write(this.expr) +
-                " " + this.wrap.debugStr() + ">";
+      var ret = colors.so("#<SO ") + BiwaScheme.to_write(this.expr) +
+                " " + this.wrap.debugStr() + colors.so(">");
       Syntax.inspecting = false;
       return ret;
     }
@@ -193,12 +209,12 @@ BiwaScheme.isIdentifier = function(x) {
 BiwaScheme.Syntax.Mark = BiwaScheme.Class.create({
   initialize: function(){
     this.n = (BiwaScheme.Syntax.Mark.n++);
-
   },
 
   // For debug print
   debugStr: function(){
-    return "m" + this.n;
+    opts = arguments[0] || {}
+    return opts['nocolor'] ? "m"+this.n : colors.mark("m"+this.n);
   },
 
   toString: function() {
@@ -248,8 +264,8 @@ BiwaScheme.Syntax.Subst = BiwaScheme.Class.create({
   },
 
   debugStr: function() {
-    var marks = this.marks.map(function(m){ return m.debugStr() }).join("");
-    return "[" + this.sym.name + "(" + marks + ")" + this.label.debugStr() + "]";
+    var marks = this.marks.map(function(m){ return m.debugStr({nocolor: true}) }).join("");
+    return colors.subst("[" + this.sym.name + "(" + marks + ")" + this.label.debugStr() + "]");
   },
 
   inspect: function(){
@@ -361,9 +377,9 @@ BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
   inspect: function(){
     var keys = _.keys(this.hash);
     if (keys.length == 0)
-      return "#<Env>";
+      return colors.env("#<Env>");
     else
-      return "#<Env " + _.keys(this.hash).join(",") + ">";
+      return colors.env("#<Env " + _.keys(this.hash).join(",") + ">");
   }
 });
 
