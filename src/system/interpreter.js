@@ -438,7 +438,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         if(expr === BiwaScheme.Parser.EOS) break;
 
         // expand
-        expr = BiwaScheme.Interpreter.expand(expr);
+        expr = BiwaScheme.Expander.expand(expr);
 
         // compile
         var opc = this.compiler.run(expr);

@@ -270,7 +270,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return x;
   }
   define_syntax("%macroexpand", function(x){
-    var expanded = BiwaScheme.Interpreter.expand(x.cdr.car);
+    var expanded = BiwaScheme.Expander.expand(x.cdr.car);
     return List(Sym("quote"), expanded);
   });
   define_syntax("%macroexpand-1", function(x){
@@ -279,7 +279,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   define_libfunc("macroexpand", 1, 1, function(ar){
-    return BiwaScheme.Interpreter.expand(ar[0]);
+    return BiwaScheme.Expander.expand(ar[0]);
   });
   define_libfunc("macroexpand-1", 1, 1, function(ar){
     return macroexpand_1(ar[0]);

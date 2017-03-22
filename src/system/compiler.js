@@ -501,7 +501,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
 
 // Compile an expression with new compiler
 BiwaScheme.Compiler.compile = function(expr, next){
-  expr = BiwaScheme.Interpreter.expand(expr);
+  expr = BiwaScheme.Expander.expand(expr);
   return (new BiwaScheme.Compiler).run(expr, next);
 };
 
