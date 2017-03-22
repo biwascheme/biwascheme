@@ -330,8 +330,20 @@ BiwaScheme.Syntax.Wrap = BiwaScheme.Class.create({
 
 BiwaScheme.Syntax.Binding = BiwaScheme.Class.create({
   initialize: function(type, value){
-    this.type = type;   // either of "macro" "lexical" "core"
-    this.value = value;
+    switch(type) {
+      case "macro":
+      case "core":
+        if (!_.isFunction(value))
+          throw new BiwaScheme.Bug("expected function but got "+BiwaScheme.inspect(value));
+        break;
+      case "lexical":
+      case "global":
+        if (!(value instanceof BiwaScheme.Symbol))
+          throw new BiwaScheme.Bug("expected symbol but got "+BiwaScheme.inspect(value));
+        break;
+    }
+    this.type = type;   // either of "macro" "lexical" "core" "global"
+    this.value = value; // expander for "macro", "core". Symbol for "lexical", "global"
   },
 
   inspect: function(){
