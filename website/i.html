@@ -35,13 +35,13 @@
           $('#ver').text(BiwaScheme.Version);
 
           var intp = new BiwaScheme.Interpreter(function(e){
-                                                 puts(e);
+                                                 Console.puts(e);
                                                  });
           $('#src').change(function(){
             $('#bs-console').empty();
             var src = $('#src').val();
             intp.evaluate(src, function(result){
-                               puts(result);
+                               Console.puts(result);
                                });
           }).trigger('change');
         })
