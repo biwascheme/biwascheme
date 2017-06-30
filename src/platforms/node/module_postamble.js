@@ -1,14 +1,14 @@
 BiwaScheme.run = function(code, opts) {
   opts = opts || {};
   var intp = new BiwaScheme.Interpreter(function(e){
-    if(!opts["no_print"]) {
-      if(e.stack){
-        console.error(e.stack);
-      }
-      else{
+//    if(!opts["no_print"]) {
+//      if(e.stack){
+//        console.error(e.stack);
+//      }
+//      else{
         console.error(e.toString ? e.toString() : e);
-      }
-    }
+//      }
+//    }
 
     throw e;
   });

@@ -2888,6 +2888,24 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // Chapter 12 syntax-case
   //
 
+  // Internal function (see also: src/system/syntax.js)
+  // (define-sytnax name transformer)
+  // => (define name ( make-hygienic-syntax transformers))
+  // `transformer` is a scheme function which takes a SyntaxObject.
+  define_libfunc(" make-hygienic-syntax", 1, 1, function(ar){
+    return new BiwaScheme.Syntax(ar[0], ar[1]);
+  });
+
+  // Internal function (see also: src/system/syntax.js)
+  // (syntax-case x () clauses...)
+  // => ( syntax-match x #'() #'(clauses...))
+  // Each clause is like (fender may be #f)
+  //   (pattern fender-expr output-expr)
+  define_libfunc(" syntax-match", 3, 3, function(ar){
+    var so = ar[0], literals = ar[1], clauses = ar[2];
+
+  });
+
   //
   // Chapter 13 Hashtables
   //

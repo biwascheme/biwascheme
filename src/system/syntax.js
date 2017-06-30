@@ -125,6 +125,10 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
     }
   },
 
+  strip: function() {
+    return SyntaxObject.strip(this);
+  }
+
   // Returns a Symbol of the same context as this
   sym: function(name) {
     return new SyntaxObject(Sym(name), this.wrap);
@@ -490,6 +494,47 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
                new Pair(newParamSpec,
                  ListA(newBodyExprs)));
     }
+  }],
+
+  ["define-syntax", "core", function(so, env, metaEnv){
+    var cdr = so.sCdr();
+    if (!cdr.isPairSO()) throw new Error("define-syntax: missing name");
+    var name = cdr.sCar();
+    if (!name.isIdentifier())
+      throw new Error("define-syntax: invalid name: "+BiwaScheme.to_write(name));
+    var cddr = cdr.sCdr();
+    if (!cddr.isPairSO())
+      throw new Error("define-syntax: missing transformer: "+BiwaScheme.to_write(so.strip()));
+    if (!cddr.sCdr().isNullSO())
+      throw new Error("malformed define-syntax: "+BiwaScheme.to_write(so.strip()));
+    var transformer = cddr.sCar();
+    
+    var define = List(Sym("define"), name, 
+                   List(Sym(" make-hygienic-syntax", transformer)));
+    return Expander._exp(define, env, metaEnv);
+  }],
+
+  ["syntax-case", "core", function(so, env, metaEnv){
+    var cdr = so.sCdr();
+    if (!cdr.isPairSO()) throw new Error("syntax-case: missing argument");
+    var givenSo = cdr.sCar();
+    if (!(givenSo.expr instanceof SyntaxObject))
+      throw new Error("syntax-case: expected syntax object");
+
+    var cddr = cdr.sCdr();
+    if (!cddr.isPairSO()) throw new Error("syntax-case: missing literals");
+    var literals = cddr.sCar();
+    if (!literals.isPairSO()) throw new Error("syntax-case: invalid literals");
+
+    var clausesRaw = cddr.sCdr();
+    if (!clausesRaw.isPairSO()) throw new Error("syntax-case: invalid clauses");
+    var clauses = clausesRaw.to_array().map(function(clause) {
+    });
+
+    return List(Sym(" syntax-match"),
+                givenSo,
+                literals.to_array(),
+                clauses);
   }],
 
   ["syntax", "core", function(so, env, metaEnv){
