@@ -122,12 +122,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return new Pair(Sym("js-invocation"), x.cdr);
   });
 
-  // (js-new "Date" 2005 1 1)
-  // (js-new "Draggable" elem 'onEnd (lambda (drg) ...))
+  // (js-new (js-eval "Date") 2005 1 1)
+  // (js-new (js-eval "Draggable") elem 'onEnd (lambda (drg) ...))
   //   If symbol is given, following arguments are converted to 
   //   an js object. If any of them is a scheme closure,
   //   it is converted to js function which invokes that closure.
   //
+  // (js-new "Date" 2005 1 1)
+  //   You can pass javascript program string for constructor.
   define_libfunc("js-new", 1, null, function(ar, intp){
     // make js object from key-value pair
     var array_to_obj = function(ary){
@@ -147,9 +149,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     };
 
     var ctor = ar.shift();
-    assert_string(ctor);
+    if (_.isString(ctor)) ctor = eval(ctor);
     if(ar.length == 0){
-      return eval("new " + ctor + "()");
+      return new ctor();
     }
     else{
       // pack args to js object, if symbol appears
@@ -167,7 +169,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       var args_str = _.map(ar, function(value, i){
         return "args['" + i + "']";
       }).join(",");
-      return eval("new " + ctor + "(" + args_str + ")");
+      return eval("new ctor(" + args_str + ")");
     }
   });
 

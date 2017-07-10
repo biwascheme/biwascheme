@@ -132,7 +132,7 @@ Other macro-related functions:
   * `(current-date [tz-offset])`
     * Note: tz-offset is currently ignored and always local time is returned
     * Note: If you need a JavaScript `Date` object, use `js-eval` or 
-      `(js-new Date)`.
+      `(js-new "Date")`.
   * `(date? x)` `(date-nanosecond d)` `(date-millisecond d)`
     `(date-second d)` `(date-minute d)` `(date-hour d)` `(date-day d)`
     `(date-month d)` `(date-year d)` `(date-week-day d)`
@@ -204,7 +204,10 @@ Other macro-related functions:
 * macro `..`
   * TODO: write doc
 
+* `(js-new ctor args...)` = `new a`
+  * eg. `(js-new (js-eval "Date") 2017 1 2)`
 * `(js-new ctorname args...)` = `new a`
+  * `ctorname` is evaluated as JavaScript program.
   * eg. `(js-new "Date" 2008 1 2)`
 * `(js-obj key1 value1 key2 value2...)
   * eg. `(js-obj "foo" 1 "bar" 2)` → `{"foo": 1, "bar": 2}`
