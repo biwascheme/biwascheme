@@ -15,7 +15,7 @@ var ev = function(src){
 var ew = function(src){
   return BiwaScheme.to_write(BiwaScheme.run(src));
 };
-var puts = util.puts;
+var puts = console.log;
 
 puts("Running tests...");
 
@@ -80,8 +80,8 @@ var tests = {
 };
 
 _.each(tests, function(func, name){
-  util.puts("- "+name);
+  puts("- "+name);
   func();
 });
 
-util.puts("test ok");
+puts("test ok");
