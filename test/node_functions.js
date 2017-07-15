@@ -1,8 +1,8 @@
 //
 // test/node_functions.js
 //
-// $ npm install underscore .
-var BiwaScheme = require('biwascheme'),
+// $ npm run node-test
+var BiwaScheme = require('..'),
     _ = require('underscore'),
     assert = require('assert'),
     fs = require('fs'),

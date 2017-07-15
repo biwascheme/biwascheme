@@ -21,5 +21,10 @@
         "body-parser": ">0",
         "marked": "~0.3.2"
     },
-    "bin": { "biwas": "./bin/biwas" }
+    "bin": {
+        "biwas": "./bin/biwas"
+    },
+    "scripts": {
+        "node-test": "node test/node_functions.js"
+    }
 }
