@@ -150,6 +150,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     var ctor = ar.shift();
     if (_.isString(ctor)) ctor = eval(ctor);
+
     if(ar.length == 0){
       return new ctor();
     }
@@ -165,11 +166,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           args.push(ar[i]);
         }
       }
-      // construct js code to create new object
-      var args_str = _.map(ar, function(value, i){
-        return "args['" + i + "']";
-      }).join(",");
-      return eval("new ctor(" + args_str + ")");
+      // Run `new ctor(...args)`;
+      return new (Function.prototype.bind.apply(ctor, [null].concat(args)))();
     }
   });
 
