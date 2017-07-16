@@ -49,6 +49,7 @@ function unbalanced_parentheses(text_code) {
         switch(tokens[i]) {
             case "[": ++brakets; break;
             case "]": --brakets; break;
+            case "#(": ++parentheses; break;
             case "(": ++parentheses; break;
             case ")": --parentheses; break;
         }
