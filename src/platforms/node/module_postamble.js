@@ -21,20 +21,33 @@ BiwaScheme.run_file = function(filename, encoding/*optional*/) {
   return BiwaScheme.run(src);
 };
 
+// (load scm-path)
 BiwaScheme.define_libfunc("load", 1, 1, function(ar) {
-  var relpath = ar[0];
-  BiwaScheme.assert_string(relpath);
-  // assume path is relative to node_modules directory
-  var filename = __dirname + "/../../../" + relpath;
-  var code = require("fs").readFileSync(filename, "utf8");
+  var path = ar[0];
+  BiwaScheme.assert_string(path);
+
+  var fullpath;
+  if (path[0] == "/" || /^\w:/.test(path))
+    fullpath = path;
+  else
+    fullpath = process.cwd() + "/" + path;
+
+  var code = require("fs").readFileSync(fullpath, "utf8");
   return BiwaScheme.run(code);
 });
 
+// (js-load js-path)
 BiwaScheme.define_libfunc("js-load", 1, 1, function(ar) {
-  var relpath = ar[0];
-  BiwaScheme.assert_string(relpath);
-  // assume path is relative to node_modules directory
-  return require(__dirname + "/../../../" + relpath);
+  var path = ar[0];
+  BiwaScheme.assert_string(path);
+
+  var fullpath;
+  if (path[0] == "/" || /^\w:/.test(path))
+    fullpath = path;
+  else
+    fullpath = process.cwd() + "/" + path;
+
+  return require(fullpath);
 });
 
 BiwaScheme.Port.current_error =

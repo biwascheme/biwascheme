@@ -1,0 +1,1 @@
+exports.FOO = 2;

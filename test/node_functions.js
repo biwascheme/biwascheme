@@ -63,6 +63,17 @@ var tests = {
     process.exit = orig_exit;
   },
 
+  // Load
+  "load": function(){
+    var result = ev('(load "test/node_functions/foo.scm") FOO');
+    assert.equal(result, 1);
+  },
+
+  "js-load": function(){
+    var result = ev('(js-load "test/node_functions/foo.js")');
+    assert.equal(result.FOO, 2);
+  },
+
   // SRFI 98
   "get-environment-variable": function(){
     var path = ev('(get-environment-variable "PATH")');

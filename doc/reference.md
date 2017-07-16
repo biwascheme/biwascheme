@@ -9,7 +9,7 @@
 * [Syntax](#syntax)
 * [JavaScript language interface](#js-interface)
 * [Browser functions](#browser)
-* [System functions (Node.js only)](#nodejs)
+* [Node.js](#nodejs)
 * [BiwaScheme JavaScript API](#js-api)
 
 ### Basic types
@@ -331,9 +331,11 @@ These functions are only available in browsers (i.e. does not work on Node.js.)
       for detecting the end of loading. In the above example,
       BiwaScheme waits until `window.Foo` is defined.
 
-### System functions (Node.js only)
+### Node.js
 
 <a name="nodejs" />
+
+#### System functions
 
 * R6RS
   * `(file-exists? filepath)` 
@@ -344,6 +346,18 @@ These functions are only available in browsers (i.e. does not work on Node.js.)
 * srfi-98
   * `(get-environment-variable name)` -> string or #f
   * `(get-environment-variables)` -> alist of string (("key" . "value"))
+
+#### Loading other files
+
+* (load path)
+  - Load a scheme source file
+* (js-load path)
+  - Load a javascript source file
+
+`path` is relative to the current directory, unless it starts with `/` or
+`/^\w:/` (i.e. `c:`, `d:`, etc.)
+
+#### Using Node.js libraries
 
 You can also use Node.js libraries via `js-eval`, etc.
 
