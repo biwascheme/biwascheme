@@ -1,8 +1,8 @@
 //
 // test/node_functions.js
 //
-// $ npm install underscore .
-var BiwaScheme = require('biwascheme'),
+// $ npm run node-test
+var BiwaScheme = require('..'),
     _ = require('underscore'),
     assert = require('assert'),
     fs = require('fs'),
@@ -15,7 +15,7 @@ var ev = function(src){
 var ew = function(src){
   return BiwaScheme.to_write(BiwaScheme.run(src));
 };
-var puts = util.puts;
+var puts = console.log;
 
 puts("Running tests...");
 
@@ -63,6 +63,17 @@ var tests = {
     process.exit = orig_exit;
   },
 
+  // Load
+  "load": function(){
+    var result = ev('(load "test/node_functions/foo.scm") FOO');
+    assert.equal(result, 1);
+  },
+
+  "js-load": function(){
+    var result = ev('(js-load "test/node_functions/foo.js")');
+    assert.equal(result.FOO, 2);
+  },
+
   // SRFI 98
   "get-environment-variable": function(){
     var path = ev('(get-environment-variable "PATH")');
@@ -80,8 +91,8 @@ var tests = {
 };
 
 _.each(tests, function(func, name){
-  util.puts("- "+name);
+  puts("- "+name);
   func();
 });
 
-util.puts("test ok");
+puts("test ok");

@@ -8,11 +8,13 @@
   - $ make -B
 1. Make sure it is working:
   - run tests
+    - node ./local_website.js
     - open http://localhost:7001/test/spec.html
     - open http://localhost:7001/test/spec.html#release
     - open http://localhost:7001/test/spec.html#min
     - run test/browser_functions/
       - `$ cd test/browser_functions && node server.js && open http://localhost:7001/`
+    - $ npm run node-test
   - run demos
     - demo/*
     - open http://localhost:7001/demo/repl.html

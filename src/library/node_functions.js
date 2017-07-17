@@ -40,13 +40,13 @@
 
   //(file-exists? filename)    procedure 
   define_node_libfunc("file-exists?", 1, 1, function(ar){
-    assert_string(ar[0]);
+    BiwaScheme.assert_string(ar[0]);
     return node.fs.existsSync(ar[0]);
   });
 
   //(delete-file filename)    procedure 
   define_node_libfunc("delete-file", 1, 1, function(ar){
-    assert_string(ar[0]);
+    BiwaScheme.assert_string(ar[0]);
     node.fs.unlinkSync(ar[0]);
     return BiwaScheme.undef;
   });
@@ -77,7 +77,7 @@
 
   // (get-environment-variable name) -> string or #f
   define_node_libfunc("get-environment-variable", 1, 1, function(ar){
-    assert_string(ar[0]);
+    BiwaScheme.assert_string(ar[0]);
     var val = node.process.env[ar[0]];
     return _.isUndefined(val) ? false : val;
   });

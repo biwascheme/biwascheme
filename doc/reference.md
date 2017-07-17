@@ -9,7 +9,7 @@
 * [Syntax](#syntax)
 * [JavaScript language interface](#js-interface)
 * [Browser functions](#browser)
-* [System functions (Node.js only)](#nodejs)
+* [Node.js](#nodejs)
 * [BiwaScheme JavaScript API](#js-api)
 
 ### Basic types
@@ -132,7 +132,7 @@ Other macro-related functions:
   * `(current-date [tz-offset])`
     * Note: tz-offset is currently ignored and always local time is returned
     * Note: If you need a JavaScript `Date` object, use `js-eval` or 
-      `(js-new Date)`.
+      `(js-new "Date")`.
   * `(date? x)` `(date-nanosecond d)` `(date-millisecond d)`
     `(date-second d)` `(date-minute d)` `(date-hour d)` `(date-day d)`
     `(date-month d)` `(date-year d)` `(date-week-day d)`
@@ -204,7 +204,10 @@ Other macro-related functions:
 * macro `..`
   * TODO: write doc
 
+* `(js-new ctor args...)` = `new a`
+  * eg. `(js-new (js-eval "Date") 2017 1 2)`
 * `(js-new ctorname args...)` = `new a`
+  * `ctorname` is evaluated as JavaScript program.
   * eg. `(js-new "Date" 2008 1 2)`
 * `(js-obj key1 value1 key2 value2...)
   * eg. `(js-obj "foo" 1 "bar" 2)` → `{"foo": 1, "bar": 2}`
@@ -328,9 +331,11 @@ These functions are only available in browsers (i.e. does not work on Node.js.)
       for detecting the end of loading. In the above example,
       BiwaScheme waits until `window.Foo` is defined.
 
-### System functions (Node.js only)
+### Node.js
 
 <a name="nodejs" />
+
+#### System functions
 
 * R6RS
   * `(file-exists? filepath)` 
@@ -341,6 +346,18 @@ These functions are only available in browsers (i.e. does not work on Node.js.)
 * srfi-98
   * `(get-environment-variable name)` -> string or #f
   * `(get-environment-variables)` -> alist of string (("key" . "value"))
+
+#### Loading other files
+
+* (load path)
+  - Load a scheme source file
+* (js-load path)
+  - Load a javascript source file
+
+`path` is relative to the current directory, unless it starts with `/` or
+`/^\w:/` (i.e. `c:`, `d:`, etc.)
+
+#### Using Node.js libraries
 
 You can also use Node.js libraries via `js-eval`, etc.
 

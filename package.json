@@ -5,8 +5,14 @@
     "author": "Yutaka HARA <yutaka.hara.gmail.com>",
     "license": "MIT",
     "homepage": "http://www.biwascheme.org/",
-    "keywords": ["scheme", "lisp", "interpreter", "repl", "biwa"],
-    "repository":{
+    "keywords": [
+        "scheme",
+        "lisp",
+        "interpreter",
+        "repl",
+        "biwa"
+    ],
+    "repository": {
         "type": "git",
         "url": "git://github.com/biwascheme/biwascheme.git"
     },
@@ -47,10 +53,10 @@
 
       "bin/biwas"
     ],
-    "dependencies" : {
-          "optparse" : "1.0.5"
-        , "underscore" : "1.2.2"
-        , "underscore.string" : "2.0.0"
+    "dependencies": {
+        "optparse": "1.0.5",
+        "underscore": "1.2.2",
+        "underscore.string": "2.0.0"
     },
     "devDependencies": {
           "express": "~4.10.4"
@@ -61,6 +67,11 @@
         , "uglifyjs": "~2.4.10"
         , "color": "~1.0.3"
     },
-    "bin": { "biwas": "./bin/biwas" }
+    "bin": {
+        "biwas": "./bin/biwas"
+    },
+    "scripts": {
+        "node-test": "node test/node_functions.js"
+    }
 }
 

@@ -9,7 +9,7 @@ See [doc/reference](/doc/reference.html) for full list of functions.
 
 ### Macro
 
-BiwaScheme does not have `syntax-ruels` or `syntax-case`, but has [`define-macro`](/doc/reference.html#macro).
+BiwaScheme does not have `syntax-rules` or `syntax-case`, but has [`define-macro`](/doc/reference.html#macro).
 
 ### Javascript language interface
 

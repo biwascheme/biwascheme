@@ -2034,6 +2034,7 @@ describe('js interface', {
   },
   'js-new' : function(){
     ev('(js-invoke (js-new "Date" 2008 1 1) "getFullYear")').should_be(2008);
+    ev('(js-invoke (js-new (js-eval "Date") 2017 1 1) "getFullYear")').should_be(2017);
     BiwaScheme.TestForJSNew = function(obj){
       this.foo = obj["foo"];
     };
