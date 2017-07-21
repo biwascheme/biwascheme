@@ -1,3 +1,14 @@
+2017-07-21 v0.6.8
+
+  * new: js-new can take JS constructor function (#97)
+  * fix: `(eval 123)` raises error (#83)
+  * fix: "XML Parsing Error" on Firefox (fix #88)
+  * fix: error on i.html (#93)
+  * fix: (Node.js) `biwas` freeze with `#(1 2)` (#21)
+  * fix: (Node.js) `(read)` may conflict with `display` (#84)
+  * fix: (Node.js) `load` and `js-load` find source file from the current directory (#89)
+  * fix: (Node.js) file-exists?, delete-file, get-environment-variable did not work
+
 2016-12-25 v0.6.7
 
   * new: list-sort, vector-sort, vector-sort! now can take a comparator proc (#77, #78)
