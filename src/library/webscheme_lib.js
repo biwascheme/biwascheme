@@ -399,12 +399,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var handler = function(event){
       return _.clone(intp2).invoke_closure(proc, [event]);
     };
-    $(selector).bind(evtype, handler);
+    $(selector).on(evtype, handler);
     return handler;
   });
   define_libfunc("remove-handler!", 3, 3, function(ar, intp){
     var selector = ar[0], evtype = ar[1], handler = ar[2];
-    $(selector).unbind(evtype, handler);
+    $(selector).off(evtype, handler);
     return BiwaScheme.undef;
   });
   define_libfunc("wait-for", 2, 2, function(ar){
@@ -416,18 +416,18 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if (prev_handler) {
       // Maybe a wait-for is called more than once,
       // and previous handler is not consumed.
-      elem.unbind(evtype, prev_handler);
+      elem.off(evtype, prev_handler);
     }
 
     return new BiwaScheme.Pause(function(pause){
       var handler = function(event){
         elem.biwascheme_wait_for[evtype] = undefined;
-        elem.unbind(evtype, handler);
+        elem.off(evtype, handler);
         return pause.resume(event);
       };
 
       elem.biwascheme_wait_for[evtype] = handler;
-      elem.bind(evtype, handler);
+      elem.on(evtype, handler);
     });
   });
 
