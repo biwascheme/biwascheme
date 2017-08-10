@@ -1277,7 +1277,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
                       expand_qq(f.cdr, lv+1));
         else
           return List(Sym("cons"),
-                      List(Sym("list"), Sym("unquote-splicing"), expand_qq(f.car.cdr.car, lv)),
+                      List(Sym("list"),
+                           List(Sym("quote"), Sym("unquote-splicing")),
+                           expand_qq(f.car.cdr.car, lv)),
                       expand_qq(f.cdr, lv+1));
       }
       else if(car === Sym("unquote")){
@@ -1291,7 +1293,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       }
       else if(car === Sym("quasiquote"))
         return List(Sym("list"),
-                    Sym("quasiquote"),
+                    List(Sym("quote"), Sym("quasiquote")),
                     expand_qq(f.cdr.car, lv+1));
       else
         return List(Sym("cons"),

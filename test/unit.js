@@ -1232,6 +1232,9 @@ describe('11.17  Quasiquotation', {
   },
   'improper list' : function(){
     ew("`(( foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons)))").should_be("((foo 7) . cons)");
+  },
+  'nested' : function(){
+    ew("`(a b `(c d))").should_be("(a b (quasiquote (c d)))");
   }
 //  ,
 //  'vector quasiquotation' : function(){
