@@ -142,3 +142,7 @@ BiwaScheme.array_to_list = function(ary) {
 BiwaScheme.deep_array_to_list = function(ary) {
   return array_to_list(ary, true);
 };
+
+BiwaScheme.Cons = function(car, cdr) {
+  return new BiwaScheme.Pair(car, cdr);
+};
