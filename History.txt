@@ -1,6 +1,8 @@
 (not yet) v0.6.9
 
+  * new: Vector quasiquote
   * fix: Fixed nested quasiquote (#100)
+  * fix: `(vector)` was not allowed
 
 2017-07-21 v0.6.8
 

@@ -35,7 +35,7 @@ The biggest features not implemented are errors and `syntax-rules`
 * 11.16 Iteration
   * ok
 * 11.17 Quasiquotation
-  * almost ok (except vector quasiquotation))
+  * ok
 * 11.18 Binding constructs for syntactic keywords
   * not yet
 * 11.19 Macro transformers

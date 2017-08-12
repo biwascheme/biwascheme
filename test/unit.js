@@ -1235,11 +1235,18 @@ describe('11.17  Quasiquotation', {
   },
   'nested' : function(){
     ew("`(a b `(c d))").should_be("(a b (quasiquote (c d)))");
+  },
+  'nested + splicing' : function(){
+    ew("(let1 ls '(4) `(1 `(2 ,(3 ,@ls))))")
+      .should_be("(1 (quasiquote (2 (unquote (3 4)))))");
+  },
+  'vector quasiquotation' : function(){
+    ew("`#(10 5 ,(sqrt 4) ,@(map sqrt '(16 9)) 8)").should_be("#(10 5 2 4 3 8)");
+  },
+  'vector (nested)' : function(){
+    ew("(let1 ls '(4) `#(1 `#(2 ,#(3 ,@ls))))")
+      .should_be("#(1 (quasiquote #(2 (unquote #(3 4)))))");
   }
-//  ,
-//  'vector quasiquotation' : function(){
-//    ew("`#(10 5 ,(sqrt 4) ,@(map sqrt '(16 9)) 8)").should_be("#(10 5 2 4 3 8)");
-//  }
 })
 
 describe('11.18  Binding constructs for syntactic keywords', {

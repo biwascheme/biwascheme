@@ -1262,7 +1262,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //named let
 
   //        11.17  Quasiquotation
-  //quasiquote
+  // `() is expanded to `cons` and `append`.
+  // `#() is expanded to `vector` and `vector-append`.
   var expand_qq = function(f, lv){
     if(f instanceof Symbol || f === nil){
       return List(Sym("quote"), f);
@@ -1270,26 +1271,24 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     else if(f instanceof Pair){
       var car = f.car;
       if(car instanceof Pair && car.car === Sym("unquote-splicing")){
-        var lv = lv-1;
-        if(lv == 0)
+        if(lv == 1)
           return List(Sym("append"),
                       f.car.cdr.car,
-                      expand_qq(f.cdr, lv+1));
+                      expand_qq(f.cdr, lv));
         else
           return List(Sym("cons"),
                       List(Sym("list"),
                            List(Sym("quote"), Sym("unquote-splicing")),
-                           expand_qq(f.car.cdr.car, lv)),
-                      expand_qq(f.cdr, lv+1));
+                           expand_qq(f.car.cdr.car, lv-1)),
+                      expand_qq(f.cdr, lv));
       }
       else if(car === Sym("unquote")){
-        var lv = lv-1;
-        if(lv == 0)
+        if(lv == 1)
           return f.cdr.car;
         else
           return List(Sym("list"),
                       List(Sym("quote"), Sym("unquote")),
-                      expand_qq(f.cdr.car, lv));
+                      expand_qq(f.cdr.car, lv-1));
       }
       else if(car === Sym("quasiquote"))
         return List(Sym("list"),
@@ -1301,48 +1300,48 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
                     expand_qq(f.cdr, lv));
     }
     else if(f instanceof Array){
-      throw new Bug("vector quasiquotation is not implemented yet");
+      var vecs = [[]];
+      for(var i=0; i<f.length; i++){
+        if(f[i] instanceof Pair && f[i].car === Sym("unquote-splicing")) {
+          if (lv == 1) {
+            var item = List(Sym("list->vector"), f[i].cdr.car);
+            item["splicing"] = true;
+            vecs.push(item);
+            vecs.push([]);
+          }
+          else {
+            var item = List(Sym("cons"),
+                         List(Sym("list"),
+                              List(Sym("quote"), Sym("unquote-splicing")),
+                              expand_qq(f[i].car.cdr.car, lv-1)),
+                         expand_qq(f[i].cdr, lv));
+            _.last(vecs).push(item);
+          }
+        }
+        else {
+          // Expand other things as the same as if they are in a list quasiquote
+          _.last(vecs).push(expand_qq(f[i], lv));
+        }
+      }
+
+      var vectors = vecs.map(function(vec){
+        if (vec["splicing"]) {
+          return vec;
+        }
+        else {
+          return Cons(Sym("vector"),
+                      BiwaScheme.array_to_list(vec));
+        }
+      });
+      if (vectors.length == 1) {
+         return Cons(Sym("vector"),
+                     BiwaScheme.array_to_list(vecs[0]));
+      }
+      else {
+        return Cons(Sym("vector-append"),
+                    BiwaScheme.array_to_list(vectors));
+      }
     }
-//      // `#(1 2 (unquote f))
-//      // (vector 1 2 f)
-//      // `#(1 2 (unquote-splicing f) 3)
-//      // (vector-append
-//      //   (vector 1 2)
-//      //   f
-//      //   (vector 3))
-//      // `#(1 2 `#(3 ,,f) 4)
-//      // (vector 1 2 `#(3 ,g) 4)
-//      var len = f.length;
-//      if(len == 0) return f;
-//
-//      var vecs = [[]];
-//      for(var i=0; i<len; i++){
-//        if(f[i] instanceof Pair){
-//          if(f[i].car === Sym("unquote")){
-//            var lv = lv - 1;
-//            if(lv == 0)
-//              vecs.last().push(f[i]);
-//            else
-//              vecs.push()
-//          }
-//      }
-//
-//      var car = f[0];
-//      if(car === Sym("unquote")){
-//        var lv = lv - 1;
-//        if(lv == 0)
-//          return f.cdr.car;
-//        else
-//          return List(Sym("vector"),
-//                      List(Sym("quote"), Sym("unquote")),
-//                      expand_qq(f.cdr.car, lv));
-//      }
-//      else{
-////        return [ Sym("vector"),
-////                 expand_qq(
-//      }
-//    }
-//  }
     else
       return f;
   }
