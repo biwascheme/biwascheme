@@ -1154,7 +1154,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     }
     return vec;
   })
-  define_libfunc("vector", 1, null, function(ar){
+  define_libfunc("vector", 0, null, function(ar){
     return ar;
   })
   define_libfunc("vector-length", 1, 1, function(ar){
