@@ -35,7 +35,7 @@
     var code = $("#code").html();
 
     (new BiwaScheme.Interpreter(function(e){
-      puts(e.message);
+      Console.puts(e.message);
       console.error(e);
       throw e;
     })).evaluate(code);
