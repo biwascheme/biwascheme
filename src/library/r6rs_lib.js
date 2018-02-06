@@ -2621,8 +2621,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var port = ar[0] || Port.current_input;
     assert_port(port);
 
-    return port.get_string(function(str){
-	    return Interpreter.read(str);
+    return new BiwaScheme.Pause(function(pause){
+      port.get_string(function(str){
+        pause.resume( Interpreter.read(str) );
+      });
     });
   })
 

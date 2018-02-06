@@ -2232,7 +2232,9 @@ describe('srfi-1 list', {
 describe('srfi-6 string ports', {
   'open-input-string' : function(){
     ev('(port? (open-input-string "hello"))').should_be(true);
-    ew('(read (open-input-string "1"))').should_be(1);
+    scm_eval('(read (open-input-string "1"))', function(result) {
+      expect(result).should_be(1);
+    });
   },
   'open-output-string' : function(){
     ev("(port? (open-output-string))").should_be(true);

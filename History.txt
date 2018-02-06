@@ -3,6 +3,8 @@
   * new: Vector quasiquote
   * fix: Fixed nested quasiquote (#100)
   * fix: `(vector)` was not allowed
+  * fix: `(read)` should be a async function (#106)
+    - eg. `(define x (read))` now works on Node repl (./bin/biwas)
 
 2017-07-21 v0.6.8
 
