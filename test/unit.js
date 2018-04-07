@@ -2361,6 +2361,156 @@ describe('srfi-62 s-expr comment', {
 // Node.js only
 
 describe('infra', {
+  'is_valid_integer_notation, invalid "rep" param': function() {
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_integer_notation([], 10);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_integer_notation({}, 2);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_integer_notation('123', 10);
+    });
+  },
+  'is_valid_integer_notation, invalid "rdx" param': function() {
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_integer_notation('0', []);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_integer_notation('0', {});
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_integer_notation('0', '2');
+    });
+  },
+  'is_valid_integer_notation, with radix outside of 2..36 range': function() {
+    expect(BiwaScheme.is_valid_integer_notation('2', 0)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('0', -1)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('1', -2)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('1', -2)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('-5', 1)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('5', 37)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('7', 45)).should_be(false);
+  },
+  'is_valid_integer_notation, valid': function() {
+    expect(BiwaScheme.is_valid_integer_notation('+10010', 2)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('-2122', 3)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('3212', 4)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('612543', 7)).should_be(true);
+
+    expect(BiwaScheme.is_valid_integer_notation('7154372', 8)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('53216', 9)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('642366', 10)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('3532a5', 11)).should_be(true);
+
+    expect(BiwaScheme.is_valid_integer_notation('aB3214', 12)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('cba132', 13)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('FFbce', 16)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('jka389', 21)).should_be(true);
+
+    expect(BiwaScheme.is_valid_integer_notation('vwuacb', 33)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('-xACB4', 34)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('+10xy', 35)).should_be(true);
+    expect(BiwaScheme.is_valid_integer_notation('xyz', 36)).should_be(true);
+  },
+  'is_valid_integer_notation, invalid': function() {
+    expect(BiwaScheme.is_valid_integer_notation('+10012', 2)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('-2322', 3)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('3242', 4)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('67543', 7)).should_be(false);
+    
+    expect(BiwaScheme.is_valid_integer_notation('784372', 8)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('95916', 9)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('6e266', 10)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('3a2b5', 11)).should_be(false);
+    
+    expect(BiwaScheme.is_valid_integer_notation('az214', 12)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('cby32', 13)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('fbke', 16)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('++jk9', 21)).should_be(false);
+
+    expect(BiwaScheme.is_valid_integer_notation('vwuzz', 33)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('--ab4', 34)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('+10xz', 35)).should_be(false);
+    expect(BiwaScheme.is_valid_integer_notation('++xyz', 36)).should_be(false);
+  },
+  'parse_integer, invalid "rep" param': function() {
+    js_should_raise_error(function() {
+      BiwaScheme.parse_integer([], 10);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.parse_integer({}, 2);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.parse_integer('123', 10);
+    });
+  },
+  'parse_integer, invalid "rdx" param': function() {
+    js_should_raise_error(function() {
+      BiwaScheme.parse_integer('0', []);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.parse_integer('0', {});
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.parse_integer('0', '2');
+    });
+  },
+  'parse_integer, with radix outside of 2..36 range': function() {
+    expect(BiwaScheme.parse_integer('2', 0)).should_be(false);
+    expect(BiwaScheme.parse_integer('0', -1)).should_be(false);
+    expect(BiwaScheme.parse_integer('1', -2)).should_be(false);
+    expect(BiwaScheme.parse_integer('1', -2)).should_be(false);
+    expect(BiwaScheme.parse_integer('-5', 1)).should_be(false);
+    expect(BiwaScheme.parse_integer('5', 37)).should_be(false);
+    expect(BiwaScheme.parse_integer('7', 45)).should_be(false);
+  },
+  'parse_integer, valid, positive, base-10 radix': function() {
+    expect(BiwaScheme.parse_integer('10', 10)).should_be(10);
+    expect(BiwaScheme.parse_integer('123', 10)).should_be(123);
+    expect(BiwaScheme.parse_integer('+5', 10)).should_be(5);
+    expect(BiwaScheme.parse_integer('5', 10)).should_be(5);
+    expect(BiwaScheme.parse_integer('37', 10)).should_be(37);
+  },
+  'parse_integer, valid, zero, base-10 radix': function() {
+    expect(BiwaScheme.parse_integer('0', 10)).should_be(0);
+    expect(BiwaScheme.parse_integer('-0', 10)).should_be(0);
+    expect(BiwaScheme.parse_integer('0', 10)).should_be(0);
+  },
+  'parse_integer, valid, negative, base-10 radix': function() {
+    expect(BiwaScheme.parse_integer('-5', 10)).should_be(-5);
+    expect(BiwaScheme.parse_integer('-345', 10)).should_be(-345);
+    expect(BiwaScheme.parse_integer('-37', 10)).should_be(-37);
+    expect(BiwaScheme.parse_integer('-41', 10)).should_be(-41);
+  },
+  'parse_integer, valid, positive, with radix': function() {
+    expect(BiwaScheme.parse_integer('1010', 2)).should_be(10);
+    expect(BiwaScheme.parse_integer('fff', 16)).should_be(4095);
+    expect(BiwaScheme.parse_integer('243342', 8)).should_be(83682);
+    expect(BiwaScheme.parse_integer('1', 25)).should_be(1);
+    expect(BiwaScheme.parse_integer('43312314', 5)).should_be(369709);
+  },
+  'parse_integer, valid, zero, with radix': function() {
+    expect(BiwaScheme.parse_integer('0', 2)).should_be(0);
+    expect(BiwaScheme.parse_integer('0', 5)).should_be(0);
+    expect(BiwaScheme.parse_integer('0', 3)).should_be(0);
+    expect(BiwaScheme.parse_integer('0', 4)).should_be(0);
+  },
+  'parse_integer, valid, negative, with radix': function() {
+    expect(BiwaScheme.parse_integer('-1010', 2)).should_be(-10);
+    expect(BiwaScheme.parse_integer('-fff', 16)).should_be(-4095);
+    expect(BiwaScheme.parse_integer('-243342', 8)).should_be(-83682);
+    expect(BiwaScheme.parse_integer('-1', 25)).should_be(-1);
+    expect(BiwaScheme.parse_integer('-43312314', 5)).should_be(-369709);
+  },
   'parse_float, invalid param': function() {
     js_should_raise_error(function() {
       BiwaScheme.parse_float('');

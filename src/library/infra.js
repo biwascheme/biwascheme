@@ -179,6 +179,50 @@ BiwaScheme.deprecate = function(title, ver, alt){
 // utils
 //
 
+// Given a string notation of an integer, and the radix, validates the
+// notation: returns true if the notation is valid, otherwise false.
+//
+// @param {string} rep - the string representation of the integer
+// @param {integer} rdx - the radix, where 2 <= rdx <= 36
+BiwaScheme.is_valid_integer_notation = function(rep, rdx) {
+  BiwaScheme.assert_string(rep);
+  BiwaScheme.assert_integer(rdx);
+
+  if (rdx < 2 || rdx > 36)
+    return false;
+
+  var rdx_symbols = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+  var valid_symbols = rdx_symbols.slice(0, rdx);
+  var sym_regex = new RegExp('^[+-]?' + '[' + valid_symbols + ']+$', 'ig');
+
+  return sym_regex.test(rep);
+};
+
+// Parse an integer. If the integer does not have a valid representation, or
+// produces NaN, - false is returned. If the radix is not within [2..36]
+// range, false is returned as well.
+//
+// @param {string} rep - the string representation of the integer
+// @param {integer} rdx - the radix, where 2 <= rdx <= 36
+BiwaScheme.parse_integer = function(rep, rdx) {
+  BiwaScheme.assert_string(rep);
+  BiwaScheme.assert_integer(rdx);
+
+  if (rdx < 2 || rdx > 36)
+    return false;
+
+  if (!BiwaScheme.is_valid_integer_notation(rep, rdx))
+    return false;
+
+  var res = parseInt(rep, rdx);
+
+  if (Number.isNaN(res))
+    return false;
+
+  return res;
+};
+
 // Parse a floating-point number. If the floating-point number does not have a
 // valid representation, or produces -Infinity, +Infinity or NaN, - false is
 // returned.
