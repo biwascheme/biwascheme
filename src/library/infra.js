@@ -256,6 +256,32 @@ BiwaScheme.parse_integer = function(rep, rdx) {
   return res;
 };
 
+// Given a string notation of a floating-point number in the standard or
+// scientific notation, returns true if the notation valid, otherwise false.
+//
+// For example:
+// "1"      -> true
+// "1."     -> true
+// "1.23"   -> true
+// "1e4"    -> true
+// "1E4"    -> true
+// "1E4.34" -> false
+// "e34"    -> false
+//
+// @param {string} rep - the string representation of the float.
+// @return {boolean}
+BiwaScheme.is_valid_float_notation = function(rep) {
+  BiwaScheme.assert_string(rep);
+
+  var sci_regex = /^[+-]?[0-9]+[.]?[0-9]*e[+-]?[0-9]+$/ig;
+  var fp_regex  = /(^[+-]?[0-9]*[.][0-9]+$)|(^[+-]?[0-9]+[.][0-9]*$)/g;
+
+  if (sci_regex.test(rep) || fp_regex.test(rep))
+    return true;
+
+  return BiwaScheme.is_valid_integer_notation(rep, 10);
+};
+
 // Parse a floating-point number. If the floating-point number does not have a
 // valid representation, or produces -Infinity, +Infinity or NaN, - false is
 // returned.
@@ -264,6 +290,9 @@ BiwaScheme.parse_integer = function(rep, rdx) {
 // @return {float|false}
 BiwaScheme.parse_float = function(rep) {
   BiwaScheme.assert_string(rep);
+
+  if (!BiwaScheme.is_valid_float_notation(rep))
+    return false;
 
   var res = new Number(rep).valueOf();
 

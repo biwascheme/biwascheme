@@ -878,12 +878,24 @@ describe('11.7 Arithmetic', {
     ev('(string->number "123.")').should_be(123.0);
     ev('(string->number "-123.")').should_be(-123.0);
     ev('(string->number "100" 16)').should_be(256)
-    ev('(string->number "1.2"').should_be(1.2)
-    ew('(string->number "1e2"').should_be("100") //FIXME: should be '100.0', specifically...
+    ev('(string->number "1.2")').should_be(1.2)
+    ew('(string->number "1e2")').should_be(100.0)
     ev('(string->number "0/0")').should_be(false)
     ev('(string->number "+inf.0")').should_be(Infinity)
     ev('(string->number "-inf.0")').should_be(-Infinity)
     ew('(string->number "+nan.0")').should_be("+nan.0")
+  },
+  'string->number, valid, sci-float, explicit base 10': function() {
+    ev('(string->number "2.34" 10)').should_be(2.34);
+    ev('(string->number "-3e5" 10)').should_be(-3e5);
+    ev('(string->number "0.123" 10)').should_be(0.123);
+    ev('(string->number "1e11" 10)').should_be(1e11);
+  },
+  'string->number, valid sci-float, with non-10 base': function() {
+    ev('(string->number "2.34" 2)').should_be(false);
+    ev('(string->number "-3e5" 8)').should_be(false);
+    ev('(string->number "0.123" 2)').should_be(false);
+    ev('(string->number "1e11" 2)').should_be(false);
   },
   'string->number, invalid number notation' : function() {
     ev('(string->number "abc")').should_be(false);
@@ -891,10 +903,14 @@ describe('11.7 Arithmetic', {
     ev('(string->number "d")').should_be(false);
     ev('(string->number "D")').should_be(false);
     ev('(string->number "")').should_be(false);
+    ev('(string->number " 123")').should_be(false);
+    ev('(string->number " ")').should_be(false);
+    ev('(string->number "(1)")').should_be(false);
     ev('(string->number "1r")').should_be(false);
     ev('(string->number "1.23xy")').should_be(false);
     ev('(string->number "1.23r")').should_be(false);
     ev('(string->number "1.23R")').should_be(false);
+    ev('(string->number "--1.234")').should_be(false);
   }
 })
 
@@ -2557,6 +2573,53 @@ describe('infra', {
     expect(BiwaScheme.parse_integer('-243342', 8)).should_be(-83682);
     expect(BiwaScheme.parse_integer('-1', 25)).should_be(-1);
     expect(BiwaScheme.parse_integer('-43312314', 5)).should_be(-369709);
+  },
+  'is_valid_float_notation, invalid param': function() {
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_float_notation('');
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_float_notation([]);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.is_valid_float_notation({});
+    });
+  },
+  'is_valid_float_notation, valid, standard notation': function() {
+    expect(BiwaScheme.is_valid_float_notation('1.')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('.0')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('1.23')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('-1.')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('-.0')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('-1.23')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('1')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('-1')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('0')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('255')).should_be(true);
+  },
+  'is_valid_float_notation, valid, scientific notation': function() {
+    expect(BiwaScheme.is_valid_float_notation('1.23e4')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('3.14e+5')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('1.23E+4')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('1.23e-4')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('1.25e-0')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('1.23E-4')).should_be(true);
+    expect(BiwaScheme.is_valid_float_notation('5E4')).should_be(true);
+  },
+  'is_valid_float_notation, invalid standard notation': function() {
+    expect(BiwaScheme.is_valid_float_notation('++123.4')).should_be(false);
+    expect(BiwaScheme.is_valid_float_notation('-5. 4')).should_be(false);
+    expect(BiwaScheme.is_valid_float_notation('(1.0)')).should_be(false);
+  },
+  'is_valid_float_notation, invalid scientific notation': function() {
+    expect(BiwaScheme.is_valid_float_notation('1E4.34')).should_be(false);
+    expect(BiwaScheme.is_valid_float_notation('1e4.34')).should_be(false);
+    expect(BiwaScheme.is_valid_float_notation('5e3.14')).should_be(false);
+    expect(BiwaScheme.is_valid_float_notation('e3')).should_be(false);
+    expect(BiwaScheme.is_valid_float_notation('e0')).should_be(false);
+    
   },
   'parse_float, invalid param': function() {
     js_should_raise_error(function() {
