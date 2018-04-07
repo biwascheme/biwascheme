@@ -885,6 +885,12 @@ describe('11.7 Arithmetic', {
     ev('(string->number "-inf.0")').should_be(-Infinity)
     ew('(string->number "+nan.0")').should_be("+nan.0")
   },
+  'string->number, invalid "radix" param ': function() {
+    ev('(string->number "2" 0)').should_be(false);
+    ev('(string->number "2.34" 0)').should_be(false);
+    should_raise_error('(string->number "2.34" `())');
+    should_raise_error('(string->number "2.34" "2")');
+  },
   'string->number, valid, sci-float, explicit base 10': function() {
     ev('(string->number "2.34" 10)').should_be(2.34);
     ev('(string->number "-3e5" 10)').should_be(-3e5);
