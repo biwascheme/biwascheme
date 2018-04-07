@@ -186,6 +186,7 @@ BiwaScheme.deprecate = function(title, ver, alt){
 // Returns a float if the notation is valid, otherwise false.
 //
 // @param {string} rep - the string representation of the fraction
+// @return {float|false}
 BiwaScheme.parse_fraction = function(rep) {
   BiwaScheme.assert_string(rep);
 
@@ -214,6 +215,7 @@ BiwaScheme.parse_fraction = function(rep) {
 //
 // @param {string} rep - the string representation of the integer
 // @param {integer} rdx - the radix, where 2 <= rdx <= 36
+// @return {boolean}
 BiwaScheme.is_valid_integer_notation = function(rep, rdx) {
   BiwaScheme.assert_string(rep);
   BiwaScheme.assert_integer(rdx);
@@ -235,6 +237,7 @@ BiwaScheme.is_valid_integer_notation = function(rep, rdx) {
 //
 // @param {string} rep - the string representation of the integer
 // @param {integer} rdx - the radix, where 2 <= rdx <= 36
+// @return {integer|false}
 BiwaScheme.parse_integer = function(rep, rdx) {
   BiwaScheme.assert_string(rep);
   BiwaScheme.assert_integer(rdx);
@@ -258,6 +261,7 @@ BiwaScheme.parse_integer = function(rep, rdx) {
 // returned.
 //
 // @param {string} rep - the string representation of the floating-point value
+// @return {float|false}
 BiwaScheme.parse_float = function(rep) {
   BiwaScheme.assert_string(rep);
 
