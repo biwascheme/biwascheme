@@ -179,6 +179,36 @@ BiwaScheme.deprecate = function(title, ver, alt){
 // utils
 //
 
+// Parses a fractional notation in the format: <num>/<denom> (e.g. 3/7, -9/4),
+// where <num> is a valid integer notation, and <denom> is a valid notation
+// for a positive integer.
+//
+// Returns a float if the notation is valid, otherwise false.
+//
+// @param {string} rep - the string representation of the fraction
+BiwaScheme.parse_fraction = function(rep) {
+  BiwaScheme.assert_string(rep);
+
+  var frac_parts = rep.split('/');
+
+  if (frac_parts.length !== 2)
+    return false;
+
+  var num_rep = frac_parts[0];
+  var denom_rep = frac_parts[1];
+
+  var num = BiwaScheme.parse_integer(num_rep, 10);
+  var denom = BiwaScheme.parse_integer(denom_rep, 10);
+
+  if (num === false || denom === false)
+    return false;
+
+  if (denom <= 0)
+    return false;
+
+  return num / denom;
+};
+
 // Given a string notation of an integer, and the radix, validates the
 // notation: returns true if the notation is valid, otherwise false.
 //

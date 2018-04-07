@@ -2361,6 +2361,53 @@ describe('srfi-62 s-expr comment', {
 // Node.js only
 
 describe('infra', {
+  'parse_fraction, invalid "rep" param': function() {
+    js_should_raise_error(function() {
+      BiwaScheme.parse_fraction([], 10);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.parse_fraction({}, 2);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.parse_fraction('123', 10);
+    });
+  },
+  'parse_fraction, valid, positive': function() {
+    expect(BiwaScheme.parse_fraction('1/1')).should_be(1.0);
+    expect(BiwaScheme.parse_fraction('10/5')).should_be(2.0);
+    expect(BiwaScheme.parse_fraction('3/5')).should_be(3 / 5.0);
+  },
+  'parse_fraction, valid, negative': function() {
+    expect(BiwaScheme.parse_fraction('-1/1')).should_be(-1.0);
+    expect(BiwaScheme.parse_fraction('-10/5')).should_be(-2.0);
+    expect(BiwaScheme.parse_fraction('-3/5')).should_be(-3 / 5.0);
+  },
+  'parse_fraction, valid, zero numerator': function() {
+    expect(BiwaScheme.parse_fraction('0/1')).should_be(0.0);
+    expect(BiwaScheme.parse_fraction('-0/1')).should_be(0.0);
+    expect(BiwaScheme.parse_fraction('+0/1')).should_be(0.0);
+  },
+  'parse_fraction, invalid, zero denominator': function() {
+    expect(BiwaScheme.parse_fraction('0/0')).should_be(false);
+    expect(BiwaScheme.parse_fraction('3/0')).should_be(false);
+    expect(BiwaScheme.parse_fraction('-3/0')).should_be(false);
+  },
+  'parse_fraction, invalid, negative denominator': function() {
+    expect(BiwaScheme.parse_fraction('5/-25')).should_be(false);
+    expect(BiwaScheme.parse_fraction('9/(-26)')).should_be(false);
+    expect(BiwaScheme.parse_fraction('(9/-35)')).should_be(false);
+    expect(BiwaScheme.parse_fraction('5/-74')).should_be(false);
+  },
+  'parse_fraction, invalid': function() {
+    expect(BiwaScheme.parse_fraction('1')).should_be(false);
+    expect(BiwaScheme.parse_fraction('-1')).should_be(false);
+    expect(BiwaScheme.parse_fraction('0')).should_be(false);
+    expect(BiwaScheme.parse_fraction('(9/35)')).should_be(false);
+    expect(BiwaScheme.parse_fraction('fff/fff')).should_be(false);
+    expect(BiwaScheme.parse_fraction('abc')).should_be(false);
+  },
   'is_valid_integer_notation, invalid "rep" param': function() {
     js_should_raise_error(function() {
       BiwaScheme.is_valid_integer_notation([], 10);
