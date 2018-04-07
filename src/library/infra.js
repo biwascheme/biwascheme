@@ -174,3 +174,26 @@ BiwaScheme.deprecate = function(title, ver, alt){
             "Please use "+alt+" instead";
   console.warn(msg); 
 };
+
+//
+// utils
+//
+
+// Parse a floating-point number. If the floating-point number does not have a
+// valid representation, or produces -Infinity, +Infinity or NaN, - false is
+// returned.
+//
+// @param {string} rep - the string representation of the floating-point value
+BiwaScheme.parse_float = function(rep) {
+  BiwaScheme.assert_string(rep);
+
+  var res = new Number(rep).valueOf();
+
+  if (Number.isNaN(res))
+    return false;
+
+  if (!Number.isFinite(res))
+    return false;
+
+  return res;
+};

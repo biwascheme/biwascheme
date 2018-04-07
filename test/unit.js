@@ -47,6 +47,17 @@ function should_raise_error(str){
   expect(ex.message).should_not_match("\[BUG\]");
 }
 
+function js_should_raise_error(fun) {
+  try {
+    fun();
+  } catch (e) {
+    // The exception must be BiwaScheme.Error
+    expect(e instanceof BiwaScheme.Error).should_be(true);
+    // It must not be interpreter bug
+    expect(e.message).should_not_match("\[BUG\]");
+  }
+}
+
 var Set = BiwaScheme.Set;
 describe('Set', {
   'before each' : function(){
@@ -863,10 +874,13 @@ describe('11.7 Arithmetic', {
   },
   'string->number' : function(){
     ev('(string->number "100")').should_be(100)
+    ev('(string->number "-100")').should_be(-100);
+    ev('(string->number "123.")').should_be(123.0);
+    ev('(string->number "-123.")').should_be(-123.0);
     ev('(string->number "100" 16)').should_be(256)
     ev('(string->number "1.2"').should_be(1.2)
     ew('(string->number "1e2"').should_be("100") //FIXME: should be '100.0', specifically...
-    //ev('(string->number "0/0")').should_be(false) TODO
+    ev('(string->number "0/0")').should_be(false)
     ev('(string->number "+inf.0")').should_be(Infinity)
     ev('(string->number "-inf.0")').should_be(-Infinity)
     ew('(string->number "+nan.0")').should_be("+nan.0")
@@ -2345,5 +2359,104 @@ describe('srfi-62 s-expr comment', {
 
 // describe('srfi-98 get-environment-variable(s)', {
 // Node.js only
+
+describe('infra', {
+  'parse_float, invalid param': function() {
+    js_should_raise_error(function() {
+      BiwaScheme.parse_float('');
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.parse_float([]);
+    });
+
+    js_should_raise_error(function() {
+      BiwaScheme.parse_float({});
+    });
+  },
+  'parse_float, valid, positive fp': function() {
+    expect(BiwaScheme.parse_float('1.')).should_be(1.0);
+    expect(BiwaScheme.parse_float('1')).should_be(1.0);
+    expect(BiwaScheme.parse_float('1.0')).should_be(1.0);
+    expect(BiwaScheme.parse_float('3.14159')).should_be(3.14159);
+    expect(BiwaScheme.parse_float('1.234')).should_be(1.234);
+    expect(BiwaScheme.parse_float('1.23')).should_be(1.23);
+    expect(BiwaScheme.parse_float('1.2')).should_be(1.2);
+  },
+  'parse_float, valid, zero fp': function() {
+    expect(BiwaScheme.parse_float('0')).should_be(0.0);
+    expect(BiwaScheme.parse_float('0.')).should_be(0.0);
+    expect(BiwaScheme.parse_float('-0.')).should_be(0.0);
+    expect(BiwaScheme.parse_float('+0.')).should_be(0.0);
+    expect(BiwaScheme.parse_float('0.0')).should_be(0.0);
+    expect(BiwaScheme.parse_float('-0.0')).should_be(0.0);
+    expect(BiwaScheme.parse_float('+0.0')).should_be(0.0);
+  },
+  'parse_float, valid, negative fp': function() {
+    expect(BiwaScheme.parse_float('-1')).should_be(-1.0);
+    expect(BiwaScheme.parse_float('-1.')).should_be(-1.0);
+    expect(BiwaScheme.parse_float('-3.14159')).should_be(-3.14159);
+    expect(BiwaScheme.parse_float('-1.234')).should_be(-1.234);
+    expect(BiwaScheme.parse_float('-1.23')).should_be(-1.23);
+    expect(BiwaScheme.parse_float('-1.2')).should_be(-1.2);
+  },
+  'parse_float, invalid notation': function() {
+    expect(BiwaScheme.parse_float('- 1.2')).should_be(false);
+    expect(BiwaScheme.parse_float('--1.2')).should_be(false);
+    expect(BiwaScheme.parse_float('++1.2')).should_be(false);
+    expect(BiwaScheme.parse_float('1 . 2')).should_be(false);
+    expect(BiwaScheme.parse_float('-1 . 2')).should_be(false);
+    expect(BiwaScheme.parse_float('1a25')).should_be(false);
+    expect(BiwaScheme.parse_float('-1.2a')).should_be(false);
+    expect(BiwaScheme.parse_float('-1.2A')).should_be(false);
+    expect(BiwaScheme.parse_float('4.56a4')).should_be(false);
+    expect(BiwaScheme.parse_float('0/0')).should_be(false);
+    expect(BiwaScheme.parse_float('13/11')).should_be(false);
+  },
+  'parse_float, valid, scientific notation, positive fp': function() {
+    expect(BiwaScheme.parse_float('1e4')).should_be(1e4);
+    expect(BiwaScheme.parse_float('1e0')).should_be(1e0);
+    expect(BiwaScheme.parse_float('1E4')).should_be(1e4);
+    expect(BiwaScheme.parse_float('1E5')).should_be(1e5);
+    expect(BiwaScheme.parse_float('1e3')).should_be(1e3);
+    expect(BiwaScheme.parse_float('1e-3')).should_be(1e-3);
+    expect(BiwaScheme.parse_float('1e-5')).should_be(1e-5);
+  },
+  'parse_float, valid, scientific notation, zero fp': function() {
+    expect(BiwaScheme.parse_float('0e0')).should_be(0);
+    expect(BiwaScheme.parse_float('0e-0')).should_be(0);
+    expect(BiwaScheme.parse_float('0e+0')).should_be(0);
+    expect(BiwaScheme.parse_float('+0E+0')).should_be(0);
+    expect(BiwaScheme.parse_float('-0e+0')).should_be(0);
+    expect(BiwaScheme.parse_float('+0E-0')).should_be(0);
+    expect(BiwaScheme.parse_float('-0e+0')).should_be(0);
+    expect(BiwaScheme.parse_float('-0e-0')).should_be(0);
+  },
+  'parse_float, valid, scientific notation, negative fp': function() {
+    expect(BiwaScheme.parse_float('-0e-5')).should_be(-0e-5);
+    expect(BiwaScheme.parse_float('-3e+5')).should_be(-3e+5);
+    expect(BiwaScheme.parse_float('-0E-5')).should_be(-0E-5);
+    expect(BiwaScheme.parse_float('-3E+5')).should_be(-3E+5);
+    expect(BiwaScheme.parse_float('-3e4')).should_be(-3e4);
+    expect(BiwaScheme.parse_float('-3E4')).should_be(-3E4);
+  },
+  'parse_float, invalid scientific notation': function() {
+    expect(BiwaScheme.parse_float('-3Ee4')).should_be(false);
+    expect(BiwaScheme.parse_float('-3e++4')).should_be(false);
+    expect(BiwaScheme.parse_float('--3e+4')).should_be(false);
+    expect(BiwaScheme.parse_float('++3e+4')).should_be(false);
+    expect(BiwaScheme.parse_float('1.23eeeeee5')).should_be(false);
+  },
+  'parse_float, invalid, NaN': function() {
+    expect(BiwaScheme.parse_float('NaN')).should_be(false);
+  },
+  'parse_float, invalid, +Infinity': function() {
+    expect(BiwaScheme.parse_float('Infinity')).should_be(false);
+    expect(BiwaScheme.parse_float('+Infinity')).should_be(false);
+  },
+  'parse_float, invalid, -Infinity': function() {
+    expect(BiwaScheme.parse_float('-Infinity')).should_be(false);
+  }
+});
 
 };
