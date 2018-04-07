@@ -870,6 +870,17 @@ describe('11.7 Arithmetic', {
     ev('(string->number "+inf.0")').should_be(Infinity)
     ev('(string->number "-inf.0")').should_be(-Infinity)
     ew('(string->number "+nan.0")').should_be("+nan.0")
+  },
+  'string->number, invalid number notation' : function() {
+    ev('(string->number "abc")').should_be(false);
+    ev('(string->number "ABC")').should_be(false);
+    ev('(string->number "d")').should_be(false);
+    ev('(string->number "D")').should_be(false);
+    ev('(string->number "")').should_be(false);
+    ev('(string->number "1r")').should_be(false);
+    ev('(string->number "1.23xy")').should_be(false);
+    ev('(string->number "1.23r")').should_be(false);
+    ev('(string->number "1.23R")').should_be(false);
   }
 })
 
