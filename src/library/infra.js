@@ -273,8 +273,8 @@ BiwaScheme.parse_integer = function(rep, rdx) {
 BiwaScheme.is_valid_float_notation = function(rep) {
   BiwaScheme.assert_string(rep);
 
-  var sci_regex = /^[+-]?[0-9]+[.]?[0-9]*e[+-]?[0-9]+$/ig;
-  var fp_regex  = /(^[+-]?[0-9]*[.][0-9]+$)|(^[+-]?[0-9]+[.][0-9]*$)/g;
+  var sci_regex = /^[+-]?[0-9]+[.]?[0-9]*e[+-]?[0-9]+$/i;
+  var fp_regex  = /(^[+-]?[0-9]*[.][0-9]+$)|(^[+-]?[0-9]+[.][0-9]*$)/;
 
   if (sci_regex.test(rep) || fp_regex.test(rep))
     return true;
