@@ -752,17 +752,40 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return z.toString(radix);
   })
   define_libfunc("string->number", 1, 3, function(ar){
-    var s = ar[0], radix = ar[1] || 10;
-    switch(s){
-      case "+inf.0": return Infinity;
-      case "-inf.0": return -Infinity;
-      case "+nan.0": return NaN;
-      default:       if(s.match(/[eE.]/))
-                       return parseFloat(s);
-                     else
-                       return parseInt(s, radix);
+    var s = ar[0];
 
-    }
+    if (s === '+inf.0')
+      return Infinity;
+
+    if (s === '-inf.0')
+      return -Infinity;
+
+    if (s === '+nan.0')
+      return NaN;
+
+    var radix = ar[1];
+    
+    var int_res = BiwaScheme.parse_integer(
+      s, radix === 0 ? 0 : radix || 10
+    );
+
+    if (int_res !== false)
+      return int_res;
+
+    if (radix !== undefined && radix !== 10)
+      return false;
+
+    var fp_res = BiwaScheme.parse_float(s);
+
+    if (fp_res !== false)
+      return fp_res;
+
+    var frac_res = BiwaScheme.parse_fraction(s);
+
+    if (frac_res !== false)
+      return frac_res;
+
+    return false;
   })
 
   //

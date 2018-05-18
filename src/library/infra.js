@@ -174,3 +174,133 @@ BiwaScheme.deprecate = function(title, ver, alt){
             "Please use "+alt+" instead";
   console.warn(msg); 
 };
+
+//
+// utils
+//
+
+// Parses a fractional notation in the format: <num>/<denom> (e.g. 3/7, -9/4),
+// where <num> is a valid integer notation, and <denom> is a valid notation
+// for a positive integer.
+//
+// Returns a float if the notation is valid, otherwise false.
+//
+// @param {string} rep - the string representation of the fraction
+// @return {float|false}
+BiwaScheme.parse_fraction = function(rep) {
+  BiwaScheme.assert_string(rep);
+
+  var frac_parts = rep.split('/');
+
+  if (frac_parts.length !== 2)
+    return false;
+
+  var num_rep = frac_parts[0];
+  var denom_rep = frac_parts[1];
+
+  var num = BiwaScheme.parse_integer(num_rep, 10);
+  var denom = BiwaScheme.parse_integer(denom_rep, 10);
+
+  if (num === false || denom === false)
+    return false;
+
+  if (denom <= 0)
+    return false;
+
+  return num / denom;
+};
+
+// Given a string notation of an integer, and the radix, validates the
+// notation: returns true if the notation is valid, otherwise false.
+//
+// @param {string} rep - the string representation of the integer
+// @param {integer} rdx - the radix, where 2 <= rdx <= 36
+// @return {boolean}
+BiwaScheme.is_valid_integer_notation = function(rep, rdx) {
+  BiwaScheme.assert_string(rep);
+  BiwaScheme.assert_integer(rdx);
+
+  if (rdx < 2 || rdx > 36)
+    return false;
+
+  var rdx_symbols = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+  var valid_symbols = rdx_symbols.slice(0, rdx);
+  var sym_regex = new RegExp('^[+-]?' + '[' + valid_symbols + ']+$', 'ig');
+
+  return sym_regex.test(rep);
+};
+
+// Parse an integer. If the integer does not have a valid representation, or
+// produces NaN, - false is returned. If the radix is not within [2..36]
+// range, false is returned as well.
+//
+// @param {string} rep - the string representation of the integer
+// @param {integer} rdx - the radix, where 2 <= rdx <= 36
+// @return {integer|false}
+BiwaScheme.parse_integer = function(rep, rdx) {
+  BiwaScheme.assert_string(rep);
+  BiwaScheme.assert_integer(rdx);
+
+  if (rdx < 2 || rdx > 36)
+    return false;
+
+  if (!BiwaScheme.is_valid_integer_notation(rep, rdx))
+    return false;
+
+  var res = parseInt(rep, rdx);
+
+  if (Number.isNaN(res))
+    return false;
+
+  return res;
+};
+
+// Given a string notation of a floating-point number in the standard or
+// scientific notation, returns true if the notation valid, otherwise false.
+//
+// For example:
+// "1"      -> true
+// "1."     -> true
+// "1.23"   -> true
+// "1e4"    -> true
+// "1E4"    -> true
+// "1E4.34" -> false
+// "e34"    -> false
+//
+// @param {string} rep - the string representation of the float.
+// @return {boolean}
+BiwaScheme.is_valid_float_notation = function(rep) {
+  BiwaScheme.assert_string(rep);
+
+  var sci_regex = /^[+-]?[0-9]+[.]?[0-9]*e[+-]?[0-9]+$/i;
+  var fp_regex  = /(^[+-]?[0-9]*[.][0-9]+$)|(^[+-]?[0-9]+[.][0-9]*$)/;
+
+  if (sci_regex.test(rep) || fp_regex.test(rep))
+    return true;
+
+  return BiwaScheme.is_valid_integer_notation(rep, 10);
+};
+
+// Parse a floating-point number. If the floating-point number does not have a
+// valid representation, or produces -Infinity, +Infinity or NaN, - false is
+// returned.
+//
+// @param {string} rep - the string representation of the floating-point value
+// @return {float|false}
+BiwaScheme.parse_float = function(rep) {
+  BiwaScheme.assert_string(rep);
+
+  if (!BiwaScheme.is_valid_float_notation(rep))
+    return false;
+
+  var res = new Number(rep).valueOf();
+
+  if (Number.isNaN(res))
+    return false;
+
+  if (!Number.isFinite(res))
+    return false;
+
+  return res;
+};
