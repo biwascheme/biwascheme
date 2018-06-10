@@ -656,7 +656,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     if(base){ // log b num == log e num / log e b
       assert_number(base);
-      return Math.log(num) / Math.log(b)
+      return Math.log(num) / Math.log(base)
     }
     else
       return Math.log(num);
