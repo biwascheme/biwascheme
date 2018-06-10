@@ -1062,7 +1062,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     _.times(ar[0], function() { out += c; });
     return out;
   })
-  define_libfunc("string", 1, null, function(ar){
+  define_libfunc("string", 0, null, function(ar){
+    if(ar.length == 0) return "";
     for(var i=0; i<ar.length; i++)
       assert_char(ar[i]);
     return _.map(ar, function(c){ return c.value }).join("");
