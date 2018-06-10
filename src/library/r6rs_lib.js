@@ -901,8 +901,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       n++;
     return n;
   });
-  define_libfunc("append", 2, null, function(ar){
-    var k = ar.length
+  define_libfunc("append", 1, null, function(ar){
+    var k = ar.length;
     var ret = ar[--k];
     while(k--){
       _.each(ar[k].to_array().reverse(), function(item){
