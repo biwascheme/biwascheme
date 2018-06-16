@@ -656,7 +656,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     if(base){ // log b num == log e num / log e b
       assert_number(base);
-      return Math.log(num) / Math.log(b)
+      return Math.log(num) / Math.log(base)
     }
     else
       return Math.log(num);
@@ -901,8 +901,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       n++;
     return n;
   });
-  define_libfunc("append", 2, null, function(ar){
-    var k = ar.length
+  define_libfunc("append", 1, null, function(ar){
+    var k = ar.length;
     var ret = ar[--k];
     while(k--){
       _.each(ar[k].to_array().reverse(), function(item){
@@ -1062,7 +1062,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     _.times(ar[0], function() { out += c; });
     return out;
   })
-  define_libfunc("string", 1, null, function(ar){
+  define_libfunc("string", 0, null, function(ar){
+    if(ar.length == 0) return "";
     for(var i=0; i<ar.length; i++)
       assert_char(ar[i]);
     return _.map(ar, function(c){ return c.value }).join("");
