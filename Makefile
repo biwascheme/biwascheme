@@ -100,7 +100,7 @@ browser_test:
 index.html: doc/_header.html index_.html doc/_footer.html
 	cat doc/_header.html index_.html doc/_footer.html > index.html
 
-website: index.html
+website: index.html doc/**/*.md
 	node bin/biwas tools/make_doc.scm
 
 watch_website:
