@@ -33,8 +33,8 @@ BiwaScheme does not have `syntax-rules` or `syntax-case`, but has [`define-macro
 
 ### Synchronous interface
 
-Some of the BiwaScheme library functions are implemented as "Synchronous"
-funcitons.
+Some of the BiwaScheme library functions are implemented as synchronous
+functions.
 
 For example, `(sleep sec)` will stop evaluation of Scheme program
 for `sec` seconds, and then the rest of the program will be evaluated.
