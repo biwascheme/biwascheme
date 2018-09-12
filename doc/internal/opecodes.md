@@ -15,6 +15,8 @@ Registers:
   * Used by op_refer-free, op_assign-free
 * s [integer] : denotes stack size (TODO: can we remove this by using ary.push()/ary.pop()?)
 
+You can see how these registers work on [/test/tracer.html](https://www.biwascheme.org/test/tracer.html).
+
 Opecodes
 --------
 
