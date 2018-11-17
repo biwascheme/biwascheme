@@ -141,6 +141,13 @@ describe('Interpreter', {
     expect( BiwaScheme.inspect(intp.call_stack) ).should_be('[]');
   },
 
+  'stack trace (reset on errors)': function(){
+    var intp = new BiwaScheme.Interpreter();
+    intp.evaluate("((lambda () a))");
+    intp.evaluate("((lambda () a))");
+    expect( BiwaScheme.inspect(intp.call_stack) ).should_be('["(anon)"]');
+  },
+
   'define_scmfunc': function() {
     BiwaScheme.define_scmfunc('scmfunc-test', 1, 1, 
             "(lambda (n) \

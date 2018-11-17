@@ -402,6 +402,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
 
   // Compile and evaluate Scheme program
   evaluate: function(str, after_evaluate){
+    this.call_stack = [];
     this.parser = new BiwaScheme.Parser(str);
     this.compiler = new BiwaScheme.Compiler();
     if(after_evaluate) 
