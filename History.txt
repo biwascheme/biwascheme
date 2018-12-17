@@ -1,14 +1,15 @@
-(not yet) v0.6.9
+2018-12-17 v0.6.9
 
   * new: Vector quasiquote
   * new: Allow `(string)` (#120)
   * fix: Fixed nested quasiquote (#100)
   * fix: `(vector)` was not allowed
-  * fix: `(read)` should be a async function (#106)
-    - eg. `(define x (read))` now works on Node repl (./bin/biwas)
+  * fix: `(read)` should be a async function (#106, #113)
+    - eg. `(define x (read))` now works on Node repl (./bin/biwas) and the [website repl](https://www.biwascheme.org)
   * fix: `string-number` improved (#119)
   * fix: `log` did not work (#120)
   * fix: Allow `(append ls)` (#120)
+  * fix: Backtrace get longer with every error on an Interpreter object (#122)
 
 2017-07-21 v0.6.8
 
