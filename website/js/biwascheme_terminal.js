@@ -59,7 +59,7 @@ jQuery(document).ready(function($, undefined) {
         height: 250,
         name: 'biwa',
         exit: false,
-        prompt: 'biwascheme>'
+        prompt: 'biwascheme> '
     });
 
     // run trace mode
