@@ -70,12 +70,12 @@ jQuery(document).ready(function($, undefined) {
     // redefine sleep it sould pause terminal
     BiwaScheme.define_libfunc("sleep", 1, 1, function(ar){
         var sec = ar[0];
-        assert_real(sec);
+        BiwaScheme.assert_real(sec);
         term.pause();
         return new BiwaScheme.Pause(function(pause){
             setTimeout(function(){
                 term.resume();
-                pause.resume(nil);
+                pause.resume(BiwaScheme.nil);
             }, sec * 1000);
         });
     });
