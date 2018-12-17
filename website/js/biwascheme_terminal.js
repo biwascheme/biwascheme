@@ -28,6 +28,9 @@ jQuery(document).ready(function($, undefined) {
     BiwaScheme.Port.current_output = new BiwaScheme.Port.CustomOutput(
         Console.puts
     );
+    BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(function(callback){
+        term.read('read> ', callback);
+    });
     var code_to_evaluate = '';
     var term = $('#term').terminal(function(command, term) {
         code_to_evaluate += ' ' + command;
@@ -38,17 +41,20 @@ jQuery(document).ready(function($, undefined) {
                     var dump_opc = (new BiwaScheme.Dumper()).dump_opc(opc);
                     term.echo(dump_opc, {raw: true});
                 }
-                bscheme.evaluate(code_to_evaluate, function(result) {
+                var result = bscheme.evaluate(code_to_evaluate, function(result) {
                     if (result !== undefined && result !== BiwaScheme.undef) {
                         term.echo('=> ' + BiwaScheme.to_write(result));
                     }
                 });
+                if (!(result instanceof BiwaScheme.Pause)) {
+                    term.set_prompt('biwascheme> ');
+                }
             } catch(e) {
                 term.error(e.message);
+                term.set_prompt('biwascheme> ');
                 code_to_evaluate = '';
                 throw(e);
             }
-            term.set_prompt('biwascheme>');
             code_to_evaluate = '';
         } else {
             term.set_prompt('...            ');
@@ -59,7 +65,7 @@ jQuery(document).ready(function($, undefined) {
         height: 250,
         name: 'biwa',
         exit: false,
-        prompt: 'biwascheme>'
+        prompt: 'biwascheme> '
     });
 
     // run trace mode
@@ -70,12 +76,12 @@ jQuery(document).ready(function($, undefined) {
     // redefine sleep it sould pause terminal
     BiwaScheme.define_libfunc("sleep", 1, 1, function(ar){
         var sec = ar[0];
-        assert_real(sec);
+        BiwaScheme.assert_real(sec);
         term.pause();
         return new BiwaScheme.Pause(function(pause){
             setTimeout(function(){
                 term.resume();
-                pause.resume(nil);
+                pause.resume(BiwaScheme.nil);
             }, sec * 1000);
         });
     });
