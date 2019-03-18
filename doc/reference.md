@@ -94,7 +94,7 @@
 
 <a name="macro"/>
 
-BiwaScheme does not have `syntax-ruels` or `syntax-case`, but has `define-macro`.
+BiwaScheme does not have `syntax-rules` or `syntax-case`, but has `define-macro`.
 
 ```
 (define-macro (test expr)
