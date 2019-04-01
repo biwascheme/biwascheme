@@ -486,7 +486,8 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
                     sets.set_union(s.set_intersect(free)),
                     f.set_union(proper.to_set()),
                     ["return"]);
-    var do_close = ["close", 
+    var do_close = ["close",
+                     vars.length(),
                      free.size(),
                      this.make_boxes(sets, proper, do_body),
                      next,

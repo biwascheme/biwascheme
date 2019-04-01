@@ -154,7 +154,7 @@ Create Scheme closure object (which is represented with JS Array).
 #### format
 
 ```
-["close", <n>, <body>, <opecodes_next>, <dotpos>]
+["close", <args>, <n>, <body>, <opecodes_next>, <dotpos>]
 ```
 
 TODO: &lt;opecodes_next> should be the last in consistency with other opecodes

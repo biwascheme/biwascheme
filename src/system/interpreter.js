@@ -119,7 +119,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
 
   // private
   //ret: [body, stack[s-1], stack[s-2], .., stack[s-n], dotpos]
-  closure: function(body, n, s, dotpos){
+  closure: function(body, args, n, s, dotpos){
     var v = []; //(make-vector n+1+1)
     v[0] = body;
     for(var i=0; i<n; i++)
@@ -127,6 +127,8 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     v[n+1] = dotpos;
 
     v.closure_p = true;
+    if(dotpos == -1)
+      v.expected_args = args;
 
     return v;
   },
@@ -202,8 +204,8 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         break;
       case "close":
         var ox=x;
-        var n=ox[1], body=ox[2], x=ox[3], dotpos=ox[4];
-        a = this.closure(body, n, s, dotpos);
+        var v=ox[1], n=ox[2], body=ox[3], x=ox[4], dotpos=ox[5];
+        a = this.closure(body, v, n, s, dotpos);
         s -= n;
         break;
       case "box":
@@ -281,7 +283,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         // the number of arguments in the last call is
         // pushed to the stack.
         var n_args = this.index(s, -1);
-        if(func instanceof Array){ //closure
+        if(func instanceof Array && func.closure_p === true){ //closure
           a = func;
           x = func[0];
 
@@ -310,6 +312,16 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
               this.index_set(s, -1, this.index(s, -1) + 1);  
             }
             this.index_set(s, dotpos, ls);
+          }
+          else {
+            // the dot is not found
+            // --------------------
+            // => Verify that number of arguments = expected number of arguments
+            // (if the closure knows how many it wants)
+            if(func.expected_args && n_args != func.expected_args) {
+              var errMsg = "Function call error: got " + n_args + " but wanted " + func.expected_args;
+              throw new BiwaScheme.Error(errMsg);
+            }
           }
           f = s;
           c = a;
