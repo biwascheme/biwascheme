@@ -487,7 +487,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
                     f.set_union(proper.to_set()),
                     ["return"]);
     var do_close = ["close",
-                     vars.length(),
+                     vars instanceof BiwaScheme.Pair ? vars.length() : 0,
                      free.size(),
                      this.make_boxes(sets, proper, do_body),
                      next,
