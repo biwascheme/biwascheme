@@ -218,6 +218,9 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     //     (let ((b a)) (print a) (+ a b)))
     var binds = x.cdr.car, body = x.cdr.cdr;
 
+    if(binds === nil)
+      return new Pair(Sym("let"), new Pair(nil, body));
+
     if(!(binds instanceof Pair))
       throw new Error("let*: need a pair for bindings: got "+to_write(binds));
 

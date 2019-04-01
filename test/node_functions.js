@@ -20,6 +20,15 @@ var puts = console.log;
 puts("Running tests...");
 
 var tests = {
+  // R6RS core
+  "let ()": function(){
+    assert.ok(ev('(let () #t)'));
+  },
+
+  "let* ()": function(){
+    assert.ok(ev('(let* () #t)'));
+  },
+
   // R6RS stdlib 9
   "file-exists? (#t)": function(){
     assert.ok(ev('(file-exists? "Makefile")'));
