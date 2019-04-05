@@ -140,7 +140,7 @@ underscore.string:
 Website
 -------
 
-repo: [biwascheme/biwascheme.github.io](https://github.com/biwascheme/biwascheme.github.io).
+The source of www.biwascheme.org is in `./website`.
 
 ### Run local website
 
