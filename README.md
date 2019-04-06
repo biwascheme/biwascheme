@@ -147,6 +147,7 @@ The source of www.biwascheme.org is in `./website`.
 You can run the website locally with Node and express.
 
     $ make
+    $ make website
     $ npm install
     $ node local_website.js
     $ open http://localhost:7001
