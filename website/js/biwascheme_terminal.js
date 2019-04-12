@@ -154,6 +154,10 @@ jQuery(document).ready(function($, undefined) {
     BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(function(callback){
         term.read('read> ', callback);
     });
+    if (window.Prism) {
+        // add define-macro to list of keywords
+        Prism.languages.scheme.keyword.pattern = /(\()(?:define(?:-syntax|-library|-values)?|(?:case-)?lambda|let(?:\*|rec)?(?:-values)?|else|if|cond|begin|delay(?:-force)?|parameterize|define-macro|guard|set!|(?:quasi-)?quote|syntax-rules)(?=[()\s])/;
+    }
     var position;
     var timer;
     var term = $('#term').terminal(function(code, term) {
