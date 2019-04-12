@@ -122,7 +122,7 @@ function indent(code, level, offset) {
            }
            return offset + last_sexpr[3].col;
        } else if (last_sexpr[0].line === last_sexpr[1].line) {
-           return offset + last_sexpr[1].col;
+           return offset + level + last_sexpr[0].col;
        } else {
            var next_tokens = last_sexpr.slice(2);
            for (var i in next_tokens) {
