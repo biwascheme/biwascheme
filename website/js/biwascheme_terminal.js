@@ -155,6 +155,13 @@ jQuery(document).ready(function($, undefined) {
         term.read('read> ', callback);
     });
     if (window.Prism) {
+        // use symbols
+        Prism.languages.insertBefore('scheme', 'string', {
+            symbol: {
+                pattern: /'[^\s()]+/g,
+                greedy: true
+            }
+        });
         // add define-macro to list of keywords
         Prism.languages.scheme.keyword.pattern = /(\()(?:define(?:-syntax|-library|-values)?|(?:case-)?lambda|let(?:\*|rec)?(?:-values)?|else|if|cond|begin|delay(?:-force)?|parameterize|define-macro|guard|set!|(?:quasi-)?quote|syntax-rules)(?=[()\s])/;
     }
