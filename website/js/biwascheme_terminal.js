@@ -99,7 +99,7 @@ function sexp(tokens) {
 }
 //--------------------------------------------------------------------------
 function indent(code, level, offset) {
-   var specials = ['define', 'lambda', 'let', 'define-macro'];
+   var specials = ['define', 'lambda', 'let', 'let*', 'letrec', 'define-macro'];
    var tokens = tokenize(code, true);
    var last_sexpr = sexp(tokens);
    var lines = code.split('\n');
