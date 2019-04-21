@@ -132,6 +132,8 @@ function indent(code, level, offset) {
                }
            }
        }
+   } else {
+       return 0;
    }
    return spaces + level;
 }
