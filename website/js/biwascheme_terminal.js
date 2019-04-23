@@ -12,46 +12,69 @@ function unbalanced_parentheses(text_code) {
     }
     return parentheses != 0 || brakets != 0;
 }
-// tokenizer from Lips interpreter
-//--------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// S-Expression Tokenizer taken from LIPS interpreter
+// Copyright (C) Jakub T. Jankiewicz
+// released under MIT license
+// -----------------------------------------------------------------------------
 var tokenize = (function() {
     var pre_parse_re = /("(?:\\[\S\s]|[^"])*"|\/(?! )[^\/\\]*(?:\\[\S\s][^\/\\]*)*\/[gimy]*(?=\s|\(|\)|$)|;.*)/g;
-    var tokens_re = /("(?:\\[\S\s]|[^"])*"|\/(?! )[^\/\\]*(?:\\[\S\s][^\/\\]*)*\/[gimy]*(?=\s|\(|\)|$)|\(|\)|'|"(?:\\[\S\s]|[^"])+|(?:\\[\S\s]|[^"])*"|;.*|(?:[-+]?(?:(?:\.[0-9]+|[0-9]+\.[0-9]+)(?:[eE][-+]?[0-9]+)?)|[0-9]+\.)[0-9]|\.|,@|,|`|[^(\s)]+)/gim;
-    /* eslint-enable */
+    var tokens_re = /("(?:\\[\S\s]|[^"])*"|\/(?! )[^\/\\]*(?:\\[\S\s][^\/\\]*)*\/[gimy]*(?=\s|\(|\)|$)|\(|\)|'|"(?:\\[\S\s]|[^"])+|\n|(?:\\[\S\s]|[^"])*"|;.*|(?:[-+]?(?:(?:\.[0-9]+|[0-9]+\.[0-9]+)(?:[eE][-+]?[0-9]+)?)|[0-9]+\.)[0-9]|\.|,@|,|`|[^(\s)]+)/gim;
+    // ----------------------------------------------------------------------
+    function last_item(array) {
+        return array[array.length - 1];
+    }
     // ----------------------------------------------------------------------
     return function tokens(str) {
+        str = str.replace(/\n\r|\r/g, '\n');
         var count = 0;
-        var offset = 0;
+        var line = 0;
         var tokens = [];
+        var prev_string;
+        var current_line = [];
+        var col = 0;
         str.split(pre_parse_re).filter(Boolean).forEach(function(string) {
             if (string.match(pre_parse_re)) {
-                if (!string.match(/^;/)) {
-                    var col = (string.split(/\n/), [""]).pop().length;
-                    tokens.push({
-                        token: string,
-                        col,
-                        offset: count + offset,
-                        line: offset
-                    });
-                    count += string.length;
+                col = 0;
+                if (current_line.length) {
+                    var last_token = last_item(current_line);
+                    if (last_token.token.match(/\n/)) {
+                        var last_line = last_token.token.split('\n').pop();
+                        col += last_line.length;
+                    } else {
+                        col += last_token.token.length;
+                    }
+                    col += last_token.col;
                 }
-                offset += (string.match("\n") || []).length;
+                var token = {
+                    col,
+                    line,
+                    token: string,
+                    offset: count
+                };
+                tokens.push(token);
+                current_line.push(token);
+                count += string.length;
+                col += string.length;
+                line += (string.match("\n") || []).length;
                 return;
             }
-            string.split('\n').filter(Boolean).forEach(function(line, i) {
-                var col = 0;
-                line.split(tokens_re).filter(Boolean).forEach(function(token) {
-                    var line = i + offset;
-                    var result = {
-                        col,
-                        line,
-                        token,
-                        offset: count + line
-                    };
-                    col += token.length;
-                    count += token.length;
-                    tokens.push(result);
-                });
+            string.split(tokens_re).filter(Boolean).forEach(function(string) {
+                var token = {
+                    col,
+                    line,
+                    token: string,
+                    offset: count
+                };
+                col += string.length;
+                count += string.length;
+                tokens.push(token);
+                current_line.push(token);
+                if (string === '\n') {
+                    ++line;
+                    current_line = [];
+                    col = 0;
+                }
             });
         });
         return tokens;
@@ -76,6 +99,7 @@ function sexp(tokens) {
 }
 //--------------------------------------------------------------------------
 function indent(code, level, offset) {
+   var specials = ['define', 'lambda', 'let', 'let*', 'letrec', 'define-macro'];
    var tokens = tokenize(code, true);
    var last_sexpr = sexp(tokens);
    var lines = code.split('\n');
@@ -88,7 +112,7 @@ function indent(code, level, offset) {
        }
        if (last_sexpr.length === 1) {
            return offset + last_sexpr[0].col + 1;
-       } else if (['define', 'lambda', 'let'].indexOf(last_sexpr[1].token) !== -1) {
+       } else if (specials.indexOf(last_sexpr[1].token) !== -1) {
            return offset + last_sexpr[0].col + level;
        } else if (last_sexpr[0].line < last_sexpr[1].line) {
            return offset + last_sexpr[0].col + 1;
@@ -98,7 +122,7 @@ function indent(code, level, offset) {
            }
            return offset + last_sexpr[3].col;
        } else if (last_sexpr[0].line === last_sexpr[1].line) {
-           return offset + last_sexpr[1].col;
+           return offset + level + last_sexpr[0].col;
        } else {
            var next_tokens = last_sexpr.slice(2);
            for (var i in next_tokens) {
@@ -108,6 +132,8 @@ function indent(code, level, offset) {
                }
            }
        }
+   } else {
+       return 0;
    }
    return spaces + level;
 }
@@ -130,6 +156,17 @@ jQuery(document).ready(function($, undefined) {
     BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(function(callback){
         term.read('read> ', callback);
     });
+    if (window.Prism) {
+        // use symbols
+        Prism.languages.insertBefore('scheme', 'string', {
+            symbol: {
+                pattern: /'[^\s()]+/g,
+                greedy: true
+            }
+        });
+        // add define-macro to list of keywords
+        Prism.languages.scheme.keyword.pattern = /(\()(?:define(?:-syntax|-library|-values)?|(?:case-)?lambda|let(?:\*|rec)?(?:-values)?|else|if|cond|begin|delay(?:-force)?|parameterize|define-macro|guard|set!|(?:quasi-)?quote|syntax-rules)(?=[()\s])/;
+    }
     var position;
     var timer;
     var term = $('#term').terminal(function(code, term) {
