@@ -306,7 +306,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return new BiwaScheme.Pause(function(pause){
       $.ajax(path, {
         dataType: "text",
-        mimeType: "text/plain; charset=x-user-defined", // For Firefox (#88)
+        mimeType: "text/plain; charset=UTF-8", // For Firefox (#88)
         success: function(data) {
           // create new interpreter not to destroy current stack.
           intp2.evaluate(data,
