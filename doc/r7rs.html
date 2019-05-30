@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>BiwaScheme</title>
+    <link href="/website/css/screen.css" rel="stylesheet" type="text/css">
+    <link href="/website/css/jquery.terminal-2.3.0.css" rel="stylesheet" type="text/css"></script>
+    <link href="/website/css/prism-coy.css" rel="stylesheet" type="text/css"></script>
+    <script src="/release/biwascheme.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.mousewheel.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.timers.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.terminal-2.3.0.js" type="text/javascript"></script>
+    <script src="/website/js/prism.js" type="text/javascript"></script>
+    <script src="/website/js/prism-scheme.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.terminal.prism.js" type="text/javascript"></script>
+    <script src="/website/js/keyboard.js" type="text/javascript"></script>
+    <script src="/website/js/biwascheme_terminal.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <a href="https://github.com/biwascheme/biwascheme"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+    <div id="menu">
+      <a href="/index.html">
+        <img src="/website/images/biwascheme_logo.png" alt="logo"
+             title="BiwaScheme logo by @jcubic">
+      </a>
+      <ul>
+        <li><a href='/doc/features.html'>Features</a></li>
+        <li><a href='/doc/getting_started.html'>Getting Started</a></li>
+        <li><a href='/doc/reference.html'>Reference</a></li>
+        <li><a href='/doc/faq.html'>FAQ</a></li>
+        <li><a href='/doc/index.html'>Other docs</a></li>
+      </ul>
+    </div>
+    <div id="content">
+<h1 id="-r7rs-http-www-r7rs-org-"><a href="http://www.r7rs.org/">R7RS</a></h1>
+<p>BiwaScheme supports basic feature of R7RS, but currently not all.</p>
+<p>The following list is based on r7rs.pdf (the final draft)
+on the <a href="http://trac.sacrideo.us/wg/wiki#no1">Wiki</a>.</p>
+<h1 id="1-overviewofscheme-5">1 OverviewofScheme....................... 5</h1>
+<h2 id="1-1-semantics-5">1.1 Semantics ......................... 5</h2>
+<h2 id="1-2-syntax-5">1.2 Syntax........................... 5</h2>
+<h2 id="1-3-notationandterminology-5">1.3 Notationandterminology ................ 5</h2>
+<h1 id="2-lexicalconventions-7">2 Lexicalconventions ....................... 7</h1>
+<h2 id="2-1-identifiers-7">2.1 Identifiers ......................... 7</h2>
+<h2 id="2-2-whitespaceandcomments-8">2.2 Whitespaceandcomments................ 8</h2>
+<h2 id="2-3-othernotations-8">2.3 Othernotations...................... 8</h2>
+<h2 id="2-4-datumlabels-9">2.4 Datumlabels ....................... 9</h2>
+<h1 id="3-basicconcepts-9">3 Basicconcepts.......................... 9</h1>
+<h2 id="3-1-variables-syntactic-keywords-and-regions-9">3.1 Variables, syntactic keywords, and regions . . . . . . . 9</h2>
+<h2 id="3-2-disjointnessoftypes-10">3.2 Disjointnessoftypes ................... 10</h2>
+<h2 id="3-3-externalrepresentations-10">3.3 Externalrepresentations................. 10</h2>
+<h2 id="3-4-storagemodel-10">3.4 Storagemodel....................... 10</h2>
+<h2 id="3-5-propertailrecursion-11">3.5 Propertailrecursion ................... 11</h2>
+<h1 id="4-expressions-12">4 Expressions ........................... 12</h1>
+<h2 id="4-1-primitiveexpressiontypes-12">4.1 Primitiveexpressiontypes................ 12</h2>
+<ul>
+<li>variable reference</li>
+<li><code>quote</code></li>
+<li>procedure call</li>
+<li><code>lambda</code></li>
+<li><code>if</code></li>
+<li><code>set!</code></li>
+<li><code>include</code> <code>include-ci</code><ul>
+<li>like <code>#include</code> in C</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-2-derivedexpressiontypes-14">4.2 Derivedexpressiontypes................. 14</h2>
+<ul>
+<li><code>cond</code> <code>case</code> <code>and</code> <code>or</code> <code>when</code> <code>unless</code></li>
+<li>[TODO]<code>cond-expand</code></li>
+<li><code>let</code> <code>let*</code> <code>letrec</code> <code>letrec*</code> <code>let-values</code></li>
+<li><code>begin</code></li>
+<li><code>do</code> named let</li>
+<li>[TODO]<code>delay</code>, <code>delay-force</code>, <code>force</code>, <code>promise?</code>, <code>make-promise</code></li>
+<li>[TODO]<code>make-paremeter</code>, <code>parameterize</code></li>
+<li>[TODO]<code>guard</code></li>
+<li>quasiquote</li>
+<li><code>case-lambda</code></li>
+</ul>
+<h2 id="4-3-macros-21">4.3 Macros........................... 21</h2>
+<ul>
+<li>[TODO]<code>let-syntax</code>, <code>letrec-syntax</code>, <code>syntax-rules</code>, <code>syntax-error</code></li>
+</ul>
+<h1 id="5-programstructure-25">5 Programstructure........................ 25</h1>
+<h2 id="5-1-programs-25">5.1 Programs ......................... 25</h2>
+<h2 id="5-2-import-declarations-25">5.2 Import declarations.................... 25</h2>
+<ul>
+<li>[TODO]<code>import</code></li>
+</ul>
+<h2 id="5-3-variabledefinitions-25">5.3 Variabledefinitions.................... 25</h2>
+<ul>
+<li><code>define</code></li>
+</ul>
+<h2 id="5-4-syntaxdefinitions-26">5.4 Syntaxdefinitions .................... 26</h2>
+<ul>
+<li>[TODO]<code>define-values</code>, <code>define-syntax</code></li>
+</ul>
+<h2 id="5-5-record-typedefinitions-27">5.5 Record-typedefinitions.................. 27</h2>
+<ul>
+<li>[TODO]<code>define-record-type</code> (is it a subset of R6RS records?)</li>
+</ul>
+<h2 id="5-6-libraries-28">5.6 Libraries.......................... 28</h2>
+<ul>
+<li>[TODO]<code>define-library</code></li>
+</ul>
+<h2 id="5-7-therepl-29">5.7 TheREPL ........................ 29</h2>
+<h1 id="6-standardprocedures-30">6 Standardprocedures ...................... 30</h1>
+<h2 id="6-1-equivalencepredicates-30">6.1 Equivalencepredicates.................. 30</h2>
+<ul>
+<li><code>eqv?</code> <code>eq?</code> <code>equal?</code></li>
+</ul>
+<h2 id="6-2-numbers-32">6.2 Numbers.......................... 32</h2>
+<ul>
+<li>(number/complex/real/rational/integer)</li>
+<li>[TODO] <code>exact?</code> <code>inexact?</code> <code>exact-integer?</code> <code>exact</code> <code>inexact</code></li>
+<li>[TODO] <code>#b</code>, <code>#o</code>, <code>#e</code>, <code>#i</code></li>
+<li><code>number?</code> <code>complex?</code> <code>real?</code> <code>rational?</code> <code>integer?</code></li>
+<li><code>finite?</code> <code>infinite?</code> <code>nan?</code> <code>=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></li>
+<li><code>zero?</code> <code>positive?</code> <code>negative?</code> <code>odd?</code> <code>even?</code></li>
+<li><code>max</code> <code>min</code> <code>+</code> <code>*</code> <code>-</code> <code>/</code> <code>abs</code></li>
+<li>[TODO] <code>floor/</code> <code>floor-quotient</code> <code>floor-remainder</code></li>
+<li>[TODO] <code>truncate/</code> <code>truncate-quotient</code> <code>truncate-remainder</code></li>
+<li>[TODO] <code>quotient</code> <code>remainder</code> <code>modulo</code></li>
+<li>[TODO] <code>gcd</code> <code>lcm</code> <code>numerator</code> <code>denominator</code></li>
+<li><code>floor</code> <code>ceiling</code> <code>truncate</code> <code>round</code></li>
+<li>[TODO] <code>rationalize</code></li>
+<li><code>exp</code> <code>log</code> <code>sin</code> <code>cos</code> <code>tan</code> <code>asin</code> <code>acos</code> <code>atan</code> </li>
+<li>[TODO] <code>square</code></li>
+<li><code>sqrt</code> <code>expt</code></li>
+<li>[TODO] <code>exact-integer-sqrt</code></li>
+<li><code>make-rectangular</code> <code>make-polar</code> <code>real-part</code> <code>imag-part</code> <code>magnitude</code> <code>angle</code></li>
+<li><code>number-&gt;string</code> <code>string-&gt;number</code></li>
+</ul>
+<h2 id="6-3-booleans-40">6.3 Booleans.......................... 40</h2>
+<ul>
+<li><code>not</code> <code>boolean?</code> <code>boolean=</code></li>
+</ul>
+<h2 id="6-4-pairsandlists-40">6.4 Pairsandlists....................... 40</h2>
+<ul>
+<li><code>pair?</code> <code>cons</code> <code>car</code> <code>cdr</code> <code>set-car!</code> <code>set-cdr!</code></li>
+<li><code>caar</code> ... <code>cddddr</code></li>
+<li><code>null?</code> <code>list?</code> <code>make-list</code> <code>list</code> <code>length</code> <code>append</code></li>
+<li><code>reverse</code> <code>list-tail</code> <code>list-ref</code> <code>list-set!</code></li>
+<li><code>memq</code> <code>memv</code> <code>member</code> <code>assq</code> <code>assv</code> <code>assoc</code> </li>
+<li><code>list-copy</code></li>
+</ul>
+<h2 id="6-5-symbols-43">6.5 Symbols.......................... 43</h2>
+<ul>
+<li><code>symbol?</code> <code>symbol=?</code> <code>symbol-&gt;string</code> <code>string-&gt;symbol</code></li>
+</ul>
+<h2 id="6-6-characters-44">6.6 Characters......................... 44</h2>
+<ul>
+<li>[TODO] <code>#\alarm</code>, etc</li>
+<li><code>char?</code> <code>char=?</code> <code>char&lt;?</code> <code>char&gt;?</code> <code>char&lt;=?</code> <code>char&gt;=?</code></li>
+<li><code>char-ci=?</code> <code>char-ci&lt;?</code> <code>char-ci&gt;?</code> <code>char-ci&lt;=?</code> <code>char-ci&gt;=?</code></li>
+<li>[TODO] <code>char-alphabetic?</code> etc.</li>
+<li>[TODO] <code>digit-value</code></li>
+<li><code>char-&gt;integer</code> <code>integer-&gt;char</code></li>
+<li>[TODO] <code>char-upcase</code> <code>char-downcase</code> <code>char-foldcase</code></li>
+</ul>
+<h2 id="6-7-strings-45">6.7 Strings........................... 45</h2>
+<ul>
+<li><code>string?</code> <code>make-string</code> <code>string</code> <code>string-length</code> <code>string-ref</code> <code>string-set!</code></li>
+<li><code>string=?</code> <code>string-ci=?</code>, etc.</li>
+<li><code>string-upcase</code> <code>string-downcase</code></li>
+<li>[TODO] <code>string-foldcase</code></li>
+<li><code>substring</code> <code>string-append</code> <code>string-&gt;list</code> <code>list-&gt;string</code> <code>string-copy</code></li>
+<li>[TODO] <code>string-copy!</code> <code>string-fill!</code></li>
+</ul>
+<h2 id="6-8-vectors-48">6.8 Vectors .......................... 48</h2>
+<ul>
+<li><code>vector?</code> <code>make-vector</code> <code>vector</code> <code>vector-length</code> <code>vector-ref</code></li>
+<li><code>vector-set!</code> <code>vector-&gt;list</code> <code>list-&gt;vector</code></li>
+<li><code>vector-&gt;string</code> <code>string-&gt;vector</code> <code>vector-copy</code></li>
+<li>[TODO] <code>vector-copy!</code></li>
+<li><code>vector-append</code> <code>vector-fill!</code></li>
+</ul>
+<h2 id="6-9-bytevectors-49">6.9 Bytevectors ........................ 49</h2>
+<ul>
+<li>[TODO] <code>bytevector?</code> <code>make-bytevector</code> <code>bytevector</code>
+<code>bytevector-length</code> <code>bytevector-u8-ref</code> <code>bytevector-u8-set!</code>
+<code>bytevector-copy</code> <code>bytevector-copy!</code> <code>bytevector-append</code>
+<code>utf8-&gt;string</code> <code>string-&gt;utf8</code></li>
+</ul>
+<h2 id="6-10controlfeatures-50">6.10Controlfeatures...................... 50</h2>
+<ul>
+<li><code>procedure?</code> <code>apply</code> <code>map</code> <code>string-map</code> <code>vector-map</code></li>
+<li><code>for-each</code> <code>string-for-each</code> <code>vector-for-each</code></li>
+<li><code>call/cc</code> <code>call-with-current-continuation</code></li>
+<li><code>values</code> <code>call-with-values</code></li>
+<li>[TODO] <code>dynamic-wind</code></li>
+</ul>
+<h2 id="6-11exceptions-54">6.11Exceptions ........................ 54</h2>
+<ul>
+<li>[TODO] <code>with-exception-handler</code> <code>raise-continuable</code>
+<code>error</code> <code>error-object?</code> <code>error-object-message</code>
+<code>error-object-irritants</code> <code>read-error?</code> <code>file-error?</code></li>
+<li><code>raise</code></li>
+</ul>
+<h2 id="6-12environmentsandevaluation-55">6.12Environmentsandevaluation .............. 55</h2>
+<ul>
+<li>[TODO] <code>environment</code> <code>scheme-report-environment</code>
+<code>null-environment</code> <code>interaction-environment</code></li>
+<li><code>eval</code></li>
+</ul>
+<h2 id="6-13inputandoutput-55">6.13Inputandoutput..................... 55</h2>
+<ul>
+<li><code>call-with-port</code></li>
+<li>[TODO] <code>call-with-input-file</code> <code>call-with-output-file</code></li>
+<li><code>port?</code> <code>input-port?</code> <code>output-port?</code> <code>textual-port?</code> <code>binary-port?</code></li>
+<li>[TODO] <code>input-port-open? output-port-open?</code></li>
+<li><code>current-input-port</code> <code>current-output-port</code> <code>current-error-port</code></li>
+<li>[TODO] <code>with-input-from-file</code> <code>with-output-to-file</code></li>
+<li>[TODO] <code>open-input-file</code> <code>open-binary-input-file</code>
+<code>open-output-file</code> <code>open-binary-output-file</code></li>
+<li><code>close-port</code> <code>close-input-port</code> <code>close-output-port</code></li>
+<li><code>open-input-string</code> <code>open-output-string</code> <code>get-output-string</code></li>
+<li><p>[TODO] <code>open-input-bytevector</code> <code>open-output-bytevector</code>
+<code>get-output-bytevector</code></p>
+</li>
+<li><p><code>read</code></p>
+</li>
+<li>[TODO] <code>read-char</code> <code>peek-char</code> <code>read-line</code></li>
+<li><code>eof-object?</code> <code>eof-object</code></li>
+<li>[TODO] <code>char-ready?</code></li>
+<li><p>[TODO] <code>read-string</code> <code>read-u8</code> <code>peek-u8</code> <code>u8-ready?</code>
+<code>read-bytevector</code> <code>read-bytevector!</code></p>
+</li>
+<li><p><code>write</code></p>
+</li>
+<li>[TODO] <code>write-shared</code> <code>write-simple</code></li>
+<li><code>display</code> <code>newline</code> <code>write-char</code></li>
+<li>[TODO] <code>write-string</code> <code>write-u8</code> <code>write-bytevector</code> <code>flush-output-port</code></li>
+</ul>
+<h2 id="6-14systeminterface-59">6.14Systeminterface ..................... 59</h2>
+<ul>
+<li><code>load</code></li>
+<li><code>file-exists?</code> <code>delete-file</code> <code>command-line</code> `exit</li>
+<li>[TODO] <code>emergency-exit</code></li>
+<li>[TODO] <code>get-environment-variable</code> <code>get-environment-variables</code></li>
+<li>[TODO] <code>current-second</code> <code>current-jiffy</code> <code>jiffies-per-second</code></li>
+<li>[TODO] <code>features</code></li>
+</ul>
+<h1 id="7-formalsyntaxandsemantics-61">7 Formalsyntaxandsemantics.................. 61</h1>
+<h2 id="7-1-formalsyntax-61">7.1 Formalsyntax....................... 61</h2>
+<h2 id="7-2-formalsemantics-65">7.2 Formalsemantics..................... 65</h2>
+<h2 id="7-3-derivedexpressiontypes-68">7.3 Derivedexpressiontypes................. 68</h2>
+    </div>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2023947-5', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

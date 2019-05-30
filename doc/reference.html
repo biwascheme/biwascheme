@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>BiwaScheme</title>
+    <link href="/website/css/screen.css" rel="stylesheet" type="text/css">
+    <link href="/website/css/jquery.terminal-2.3.0.css" rel="stylesheet" type="text/css"></script>
+    <link href="/website/css/prism-coy.css" rel="stylesheet" type="text/css"></script>
+    <script src="/release/biwascheme.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.mousewheel.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.timers.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.terminal-2.3.0.js" type="text/javascript"></script>
+    <script src="/website/js/prism.js" type="text/javascript"></script>
+    <script src="/website/js/prism-scheme.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.terminal.prism.js" type="text/javascript"></script>
+    <script src="/website/js/keyboard.js" type="text/javascript"></script>
+    <script src="/website/js/biwascheme_terminal.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <a href="https://github.com/biwascheme/biwascheme"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+    <div id="menu">
+      <a href="/index.html">
+        <img src="/website/images/biwascheme_logo.png" alt="logo"
+             title="BiwaScheme logo by @jcubic">
+      </a>
+      <ul>
+        <li><a href='/doc/features.html'>Features</a></li>
+        <li><a href='/doc/getting_started.html'>Getting Started</a></li>
+        <li><a href='/doc/reference.html'>Reference</a></li>
+        <li><a href='/doc/faq.html'>FAQ</a></li>
+        <li><a href='/doc/index.html'>Other docs</a></li>
+      </ul>
+    </div>
+    <div id="content">
+<h2 id="list-of-functions">List of functions</h2>
+<ul>
+<li><a href="#basic">Basic types</a></li>
+<li><a href="#numeric">Numeric types</a></li>
+<li><a href="#control">Control structure</a></li>
+<li><a href="#macro">Macro</a></li>
+<li><a href="#advanced">Advanced types</a></li>
+<li><a href="#utilities">Utilities</a></li>
+<li><a href="#syntax">Syntax</a></li>
+<li><a href="#js-interface">JavaScript language interface</a></li>
+<li><a href="#browser">Browser functions</a></li>
+<li><a href="#nodejs">Node.js</a></li>
+<li><a href="#js-api">BiwaScheme JavaScript API</a></li>
+</ul>
+<h3 id="basic-types">Basic types</h3>
+<p><a name="basic"/></p>
+<ul>
+<li>List<ul>
+<li><code>length</code> <code>append</code> <code>reverse</code> <code>list-tail</code> <code>list-ref</code> <code>map</code> <code>for-each</code></li>
+<li><code>find</code> <code>for-all</code> <code>exists</code> <code>filter</code> <code>partition</code> <code>fold-left</code> <code>fold-righ</code></li>
+<li><code>remp</code> <code>remove</code> <code>remv</code> <code>remq</code></li>
+<li><code>memp</code> <code>member</code> <code>memv</code> <code>memq</code></li>
+<li><code>assp</code> <code>assoc</code> <code>assv</code> <code>assq</code></li>
+<li><code>cons*</code></li>
+<li><code>list-sort</code></li>
+<li><code>(iota count start? step?)</code> (srfi-1)</li>
+<li><code>(list-copy list)</code> (srfi-1)</li>
+</ul>
+</li>
+<li>String<ul>
+<li><code>string?</code> <code>make-string</code> <code>string</code> <code>string-length</code> <code>string-ref</code></li>
+<li><code>string=?</code> <code>string&lt;?</code> <code>string&gt;?</code> <code>string&lt;=?</code> <code>string&gt;=?</code></li>
+<li><code>substring</code> <code>string-append</code> <code>string-&gt;list</code> <code>list-&gt;string</code></li>
+<li><code>string-for-each</code> <code>string-copy</code></li>
+<li><code>(open-input-string s)</code> (srfi-6)</li>
+<li><code>(open-output-string)</code> (srfi-6)</li>
+<li><code>(get-output-string strport)</code> (srfi-6)</li>
+</ul>
+</li>
+<li>Vector<ul>
+<li><code>vector?</code> <code>vector</code> <code>vector-length</code> <code>vector-ref</code> <code>vector-set!</code></li>
+<li><code>vector-&gt;list</code> <code>list-&gt;vector</code> <code>vector-fill!</code> <code>vector-map</code> <code>vector-for-each</code></li>
+<li><code>(vector-append v1 v2...)</code> <code>(vector-copy v)</code> (srfi-43)</li>
+<li><code>vector-sort</code> <code>vector-sort!</code></li>
+</ul>
+</li>
+<li>Boolean<ul>
+<li><code>boolean?</code> <code>boolean=</code> <code>not</code> <code>and</code> <code>or</code></li>
+</ul>
+</li>
+<li>Pair<ul>
+<li><code>pair?</code> <code>null?</code> <code>list?</code></li>
+<li><code>cons</code> <code>list</code> <code>car</code> <code>cdr</code> <code>set-car!</code> <code>set-cdr!</code></li>
+<li><code>caar</code> <code>cadr</code> <code>...</code> <code>cdddar</code> <code>cddddr</code></li>
+</ul>
+</li>
+<li>Symbol<ul>
+<li><code>symbol?</code> <code>symbol-&gt;string</code> <code>symbol=?</code> <code>string-&gt;symbol</code></li>
+</ul>
+</li>
+<li>Char<ul>
+<li><code>char?</code> <code>char-&gt;integer</code> <code>integer-&gt;char</code> <code>char=?</code> <code>char&lt;?</code> <code>char&gt;?</code> <code>char&lt;=?</code> <code>char&gt;=?</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="numeric-types">Numeric types</h3>
+<p><a name="numeric"/></p>
+<ul>
+<li>Integer (1, -2, etc.)<ul>
+<li><code>integer?</code> <code>odd?</code> <code>even?</code></li>
+<li><code>(random-integer n)</code> =&gt; 0..n-1 (srfi-27)</li>
+</ul>
+</li>
+<li>Rational (literal not supported yet)<ul>
+<li><code>rational?</code></li>
+</ul>
+</li>
+<li>Real (1.2, -2.3, etc.)<ul>
+<li><code>(random-real)</code> =&gt; 0.0...1.0 (srfi-27)</li>
+</ul>
+</li>
+<li>Complex // literal not supported yet<ul>
+<li><code>complex?</code> <code>make-rectangular</code> <code>make-polar</code> <code>real-part</code> <code>imag-part</code> <code>magnitude</code> <code>angle</code></li>
+</ul>
+</li>
+<li>Number<ul>
+<li><code>number?</code> <code>=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code> <code>zero?</code> <code>positive?</code> <code>negative?</code></li>
+<li><code>finite?</code> <code>infinite?</code> <code>nan?</code></li>
+<li><code>max</code> <code>min</code> <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>abs</code> <code>div0-and-mod0</code> <code>div</code> <code>mod</code> <code>div0-and-mod0</code> <code>div0</code> <code>mod0</code></li>
+<li><code>numerator</code> <code>denominator</code> <code>floor</code> <code>ceiling</code> <code>truncate</code> <code>round</code> <code>(rationalize)</code></li>
+<li><code>exp</code> <code>log</code> <code>sin</code> <code>cos</code> <code>tan</code> <code>asin</code> <code>acos</code> <code>atan</code> <code>sqrt</code> <code>exact-integer-sqrt</code> <code>expt</code></li>
+<li><code>number-&gt;string</code> <code>string-&gt;number</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="control-structure">Control structure</h3>
+<p><a name="control"/></p>
+<ul>
+<li>Conditional<ul>
+<li><code>if</code> <code>when</code> <code>unless</code> <code>cond</code> <code>case</code></li>
+</ul>
+</li>
+<li>Loop<ul>
+<li><code>do</code> <code>let(named</code> <code>let)</code> <code>dotimes</code></li>
+</ul>
+</li>
+<li>Exception<ul>
+<li><code>raise</code></li>
+</ul>
+</li>
+<li>Assignment<ul>
+<li><code>let</code> <code>let1</code> <code>let\*</code> <code>letrec</code> <code>letrec\*</code></li>
+</ul>
+</li>
+<li>Values<ul>
+<li><code>values</code> <code>call-with-values</code> <code>let-values</code> <code>let\*-values</code></li>
+<li><code>(receive &lt;formals&gt; &lt;expression&gt; &lt;body&gt;...)</code> (srfi-8)</li>
+</ul>
+</li>
+<li><code>apply</code></li>
+<li><code>eval</code></li>
+<li><code>eq?</code> <code>eqv?</code> <code>equal?</code></li>
+</ul>
+<h3 id="macro">Macro</h3>
+<p><a name="macro"/></p>
+<p>BiwaScheme does not have <code>syntax-rules</code> or <code>syntax-case</code>, but has <code>define-macro</code>.</p>
+<pre><code>(define-macro (test expr)
+  `(if ,expr
+    #t
+    (print (format &quot;test failed: ~a&quot; (quote ,expr)))))
+
+(test (= 1 2)) ;=&gt; test failed: (= 1 2)
+</code></pre><p>Other macro-related functions:</p>
+<ul>
+<li><code>macroexpand</code> <code>macroexpand-1</code> <code>%macroexpand</code> <code>%macroexpand-1</code> <code>gensym</code></li>
+</ul>
+<h3 id="advanced-types">Advanced types</h3>
+<p><a name="advanced"/></p>
+<ul>
+<li>Port (I/O)</li>
+<li>Record<ul>
+<li><code>define-record-type</code></li>
+</ul>
+</li>
+<li>Hashtable<ul>
+<li><code>make-eq-hashtable</code> <code>make-eqv-hashtable</code> <code>make-hashtable</code></li>
+<li><code>equal-hash</code> <code>string-hash</code> <code>string-ci-hash</code> <code>symbol-hash</code></li>
+<li><code>hashtable?</code> <code>hashtable-size</code> <code>hashtable-ref</code> <code>hashtable-set!</code></li>
+<li><code>hashtable-delete!</code> <code>hashtable-contains?</code> <code>hashtable-update!</code></li>
+<li><code>hashtable-copy</code> <code>hashtable-clear!</code> <code>hashtable-keys</code> <code>hashtable-entries</code></li>
+<li><code>hashtable-equivalence-function</code> <code>hashtable-hash-function</code> <code>hashtable-mutable?</code></li>
+</ul>
+</li>
+<li>Enumeration<ul>
+<li><code>define-enumeration</code></li>
+<li><code>enum-set-member?</code> <code>enum-set-subset?</code> <code>snum-set=?</code> <code>enum-set-&gt;list</code></li>
+<li><code>enum-set-union</code> <code>enum-set-intersection</code> <code>enum-set-difference</code>
+ <code>enum-set-complement</code> <code>enum-set-projection</code></li>
+</ul>
+</li>
+<li>Date (srfi-19)<ul>
+<li><code>(current-date [tz-offset])</code><ul>
+<li>Note: tz-offset is currently ignored and always local time is returned</li>
+<li>Note: If you need a JavaScript <code>Date</code> object, use <code>js-eval</code> or 
+<code>(js-new &quot;Date&quot;)</code>.</li>
+</ul>
+</li>
+<li><code>(date? x)</code> <code>(date-nanosecond d)</code> <code>(date-millisecond d)</code>
+<code>(date-second d)</code> <code>(date-minute d)</code> <code>(date-hour d)</code> <code>(date-day d)</code>
+<code>(date-month d)</code> <code>(date-year d)</code> <code>(date-week-day d)</code><ul>
+<li>Note: <code>date-month</code> returns 1..12, not 0..11</li>
+</ul>
+</li>
+<li><code>(date-&gt;string date [template])</code><ul>
+<li>eg. <code>(date-&gt;string (current-date) &quot;~Y-~m-~d ~H:~M:~S&quot;)</code></li>
+<li>See <a href="http://srfi.schemers.org/srfi-19/srfi-19.html">srfi-19</a> 
+for full list of <code>~?</code></li>
+</ul>
+</li>
+<li><code>(parse-date date)</code> = <code>Date.parse</code></li>
+</ul>
+</li>
+<li>Regexp<ul>
+<li><code>regexp-exec</code> <code>(regexp-exec)</code> <code>(regexp-replace-all)</code></li>
+<li><code>string-&gt;regexp</code> <code>regexp?</code> <code>regexp-&gt;string</code></li>
+</ul>
+</li>
+<li>Promise (R7RS)<ul>
+<li>syntax <code>(delay expression)</code><ul>
+<li>Return a promise</li>
+</ul>
+</li>
+<li>syntax <code>(delay-force promise-expr)</code><ul>
+<li>Return a promise</li>
+<li><code>promise-expr</code> must evaluates to a promise </li>
+<li>Mostly the same as <code>(delay (force promise-expr))</code>, but runs effectively</li>
+</ul>
+</li>
+<li><code>(force promise)</code><ul>
+<li>If no value has been computed for the promise, a value is computed and returned.</li>
+<li>If the promise is forced a second time, the cached value is returned.</li>
+</ul>
+</li>
+<li><code>(promise? obj)</code><ul>
+<li>Return #t if obj is a promise</li>
+</ul>
+</li>
+<li><code>(make-promise obj)</code><ul>
+<li>Return a promise which, when <code>force</code>d, will return obj</li>
+<li>Just return obj if obj is already a promise</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="utilities">Utilities</h3>
+<p><a name="utilities"/></p>
+<ul>
+<li>Simple format (srfi-28)<ul>
+<li>eg. <code>(format &quot;Result: ~s&quot; (some-calculation))</code></li>
+<li><code>(format format-str obj1 obj2 ...)</code> -&gt; string</li>
+<li><code>(format #f format-str ...)</code> -&gt; string</li>
+<li><code>(format #t format-str ...)</code> -&gt; output to current port </li>
+<li><code>(format port format-str ...)</code> -&gt; output to the port <ul>
+<li><code>~a</code>: display</li>
+<li><code>~s</code>: write</li>
+<li><code>~%</code>: newline</li>
+<li><code>~~</code>: tilde</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Write with shared structure (srfi-38)<ul>
+<li><code>(write/ss x)</code></li>
+<li>alias: <code>write-with-shared-structure</code>, <code>write*</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="syntax">Syntax</h3>
+<p><a name="syntax"/></p>
+<ul>
+<li>Comment<ul>
+<li>Single line comment (<code>;</code>)</li>
+<li>Multi line comment (<code>#| ... |#</code>) (srfi-30)</li>
+<li>One sexp comment (<code>#;</code>) (srfi-62)</li>
+</ul>
+</li>
+<li>Quote<ul>
+<li>quote (<code>&#39;</code>)</li>
+<li>quasiquote (`) unquote (<code>,</code>) unquote-splicing (<code>,@</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="javascript-language-interface">JavaScript language interface</h3>
+<p><a name="js-interface" /></p>
+<ul>
+<li><code>(js-eval str)</code> evaluate <code>str</code> as JavaScript code</li>
+<li><code>(js-ref jsobj str)</code> = <code>a.b</code></li>
+<li><code>(js-set! jsobj str value)</code> = <code>a.b = c</code></li>
+<li><code>(js-call jsfunc args...)</code> = <code>a()</code></li>
+<li><code>(js-invoke jsobj methodname args...)</code> = <code>a.b()</code></li>
+<li><code>js-invocation</code></li>
+<li><p>macro <code>..</code></p>
+<ul>
+<li>TODO: write doc</li>
+</ul>
+</li>
+<li><p><code>(js-new ctor args...)</code> = <code>new a</code></p>
+<ul>
+<li>eg. <code>(js-new (js-eval &quot;Date&quot;) 2017 1 2)</code></li>
+</ul>
+</li>
+<li><code>(js-new ctorname args...)</code> = <code>new a</code><ul>
+<li><code>ctorname</code> is evaluated as JavaScript program.</li>
+<li>eg. <code>(js-new &quot;Date&quot; 2008 1 2)</code></li>
+</ul>
+</li>
+<li>`(js-obj key1 value1 key2 value2...)<ul>
+<li>eg. <code>(js-obj &quot;foo&quot; 1 &quot;bar&quot; 2)</code> → <code>{&quot;foo&quot;: 1, &quot;bar&quot;: 2}</code></li>
+</ul>
+</li>
+<li><p><code>(js-closure proc)</code> returns a JS function that executes a Scheme function <code>proc</code></p>
+</li>
+<li><p>Predicates</p>
+<ul>
+<li><code>(js-null? x)</code></li>
+<li><code>(js-undefined? x)</code></li>
+<li><code>(js-function? x)</code></li>
+</ul>
+</li>
+<li><p>Conversion</p>
+<ul>
+<li><code>(js-array-&gt;list)</code></li>
+<li><code>(list-&gt;js-array)</code></li>
+<li><code>(js-obj-&gt;alist)</code></li>
+<li><code>(alist-&gt;js-obj)</code></li>
+</ul>
+</li>
+<li><p>Timer</p>
+<ul>
+<li><code>(timer proc sec)</code> = setTimeout</li>
+<li><code>(set-timer! proc sec)</code> = setInterval</li>
+<li><code>(clear-timer! timer-id)</code> = clearInterval</li>
+<li><code>(sleep sec)</code><ul>
+<li>Blocking sleep. <code>(sleep 3)</code> will wait 3 seconds and then 
+BiwaScheme resumes running the rest of the code. </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Console</p>
+<ul>
+<li><code>(console-debug obj1 ...)</code> = console.debug</li>
+<li><code>(console-log obj1 ...)</code></li>
+<li><code>(console-info obj1 ...)</code></li>
+<li><code>(console-warn obj1 ...)</code></li>
+<li><code>(console-error obj1 ...)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="browser-functions">Browser functions</h3>
+<p><a name="browser" /></p>
+<p>These functions are only available in browsers (i.e. does not work on Node.js.)</p>
+<ul>
+<li><p>Dialog</p>
+<ul>
+<li><code>(alert msg)</code><ul>
+<li>= window.alert</li>
+</ul>
+</li>
+<li><code>(confirm msg)</code> =&gt; boolean<ul>
+<li>= window.confirm</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Element</p>
+<ul>
+<li><code>(element-empty! elem)</code> = <code>(element-clear! elem)</code></li>
+<li><code>(element-visible? elem)</code></li>
+<li><code>(element-toggle! elem)</code></li>
+<li><code>(element-hide! elem)</code></li>
+<li><code>(element-show! elem)</code></li>
+<li><code>(element-remove! elem)</code></li>
+<li><code>(element-update! elem html)</code></li>
+<li><code>(element-replace! elem x)</code></li>
+<li><code>(element-insert! elem x)</code></li>
+<li><code>(element-select elem)</code></li>
+<li><code>(element-read-attribute elem attr)</code></li>
+<li><code>(element-write-attribute! elem attr value)</code></li>
+<li><code>(element-height elem)</code></li>
+<li><code>(element-width elem)</code></li>
+<li><code>(element-has-class-name? elem class)</code></li>
+<li><code>(element-add-class-name! elem class)</code></li>
+<li><code>(element-remove-class-name! elem class)</code></li>
+<li><code>(element-toggle-class-name! elem class)</code></li>
+<li><code>(element-dimensions elem)</code> =&gt; (values width height)</li>
+<li><code>(element-focus! elem)</code></li>
+<li><code>(element-content elem)</code> =&gt; string (html content or input value)</li>
+<li><code>(element-append-child! elem child)</code></li>
+<li><code>(element-new spec</code>)</li>
+</ul>
+</li>
+</ul>
+<pre><code>  (element-new &#39;(div &quot;foo&quot;))        =&gt; &lt;div&gt;foo&lt;/div&gt;
+  (element-new &#39;(&quot;div#main&quot; &quot;foo&quot;)) =&gt; &lt;div id=&#39;main&#39;&gt;foo&lt;/div&gt;
+  (element-new &#39;(&quot;div.red&quot; &quot;foo&quot;))  =&gt; &lt;div class=&#39;red&#39;&gt;foo&lt;/div&gt;
+  (element-new &#39;(div align &quot;right&quot; &quot;foo&quot;))  =&gt; &lt;div align=&#39;right&#39;&gt;foo&lt;/div&gt;
+  (element-new &#39;(div (span &quot;foo&quot;))  =&gt; &lt;div&gt;&lt;span&gt;foo&lt;/span&gt;&lt;/div&gt;
+</code></pre><ul>
+<li><code>(getelem selector)</code> = <code>($ selector)</code><ul>
+<li>Same as <code>jQuery(selector)</code> except returns <code>#f</code> when no element is found</li>
+</ul>
+</li>
+<li><code>(set-style! selector prop value)</code><ul>
+<li>eg. <code>(set-style! &quot;#box&quot; &quot;left&quot; 300)</code></li>
+</ul>
+</li>
+<li><code>(get-style selector prop)</code></li>
+<li><code>(set-content! selector text)</code> <ul>
+<li>Replace content of <code>selector</code> with <code>text</code></li>
+<li>Newlines in <code>text</code> are replaced with <code>&lt;br&gt;</code></li>
+<li>Tabs in <code>text</code> are replaced with <code>&amp;nbsp;&amp;nbsp;&amp;nbsp;</code></li>
+</ul>
+</li>
+<li><p><code>(get-content selector)</code> =&gt; string</p>
+</li>
+<li><p>Event</p>
+<ul>
+<li><code>(add-handler! selector event proc)</code> =&gt; js-handler</li>
+<li><code>(remove-handler! selector event js-handler)</code><ul>
+<li>eg. <code>(define h (add-handler! &quot;#button1&quot; &quot;click&quot; (lambda (ev) ...)))</code></li>
+<li>eg. <code>(remove-handler! &quot;#button1&quot; &quot;click&quot; h)</code></li>
+</ul>
+</li>
+<li><code>(wait-for selector event)</code><ul>
+<li>eg. <code>(wait-for &quot;#button1&quot; &quot;click&quot;) (alert &quot;pushed&quot;)</code></li>
+<li>Synchronously wait for the event
+(rest of the program will be evaluated after the event)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Ajax</p>
+<ul>
+<li><code>(http-request path)</code> =&gt; string<ul>
+<li>eg. <code>(http-get &quot;/foo&quot;)</code></li>
+<li>Synchronously issue GET request 
+(rest of the program will be evaluated after server responded)</li>
+</ul>
+</li>
+<li><code>(http-post path params)</code> =&gt; string<ul>
+<li>eg. <code>(http-post &quot;/foo&quot; &#39;((&quot;x&quot; . 1) (&quot;y&quot; . 2)))</code></li>
+<li>Synchronously issue POST request 
+(rest of the program will be evaluated after server responded)</li>
+</ul>
+</li>
+<li><code>(receive-jsonp url)</code> =&gt; string<ul>
+<li>eg. <code>(receive-jsonp &quot;http://server/x&quot;)</code> will issue GET to
+<code>http://server/x?callback=BiwaScheme.jsonp_receiver[123]</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Load Scheme or JS file on the server</p>
+<ul>
+<li><code>(load path)</code><ul>
+<li>(eg. <code>(load &quot;lib/foo.scm&quot;)</code>)</li>
+<li>Synchronously load the Scheme program
+(rest of the program will be evaluated after server responded)</li>
+</ul>
+</li>
+<li><code>(js-load js-path check)</code><ul>
+<li>(eg. <code>(js-load &quot;lib/foo.js&quot; &quot;Foo&quot;)</code>)</li>
+<li>Synchronously load the JavaScript file
+(rest of the program will be evaluated after server responded)</li>
+<li>Implemented with <code>script</code> tag. The argument <code>check</code> is used
+for detecting the end of loading. In the above example,
+BiwaScheme waits until <code>window.Foo</code> is defined.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="node-js">Node.js</h3>
+<p><a name="nodejs" /></p>
+<h4 id="system-functions">System functions</h4>
+<ul>
+<li><p>R6RS</p>
+<ul>
+<li><code>(file-exists? filepath)</code> </li>
+<li><code>(delete-file filepath)</code> </li>
+<li><code>(command-line)</code></li>
+<li><code>(exit)</code> <code>(exit num)</code></li>
+</ul>
+</li>
+<li><p>srfi-98</p>
+<ul>
+<li><code>(get-environment-variable name)</code> -&gt; string or #f</li>
+<li><code>(get-environment-variables)</code> -&gt; alist of string ((&quot;key&quot; . &quot;value&quot;))</li>
+</ul>
+</li>
+</ul>
+<h4 id="loading-other-files">Loading other files</h4>
+<ul>
+<li>(load path)<ul>
+<li>Load a scheme source file</li>
+</ul>
+</li>
+<li>(js-load path)<ul>
+<li>Load a javascript source file</li>
+</ul>
+</li>
+</ul>
+<p><code>path</code> is relative to the current directory, unless it starts with <code>/</code> or
+<code>/^\w:/</code> (i.e. <code>c:</code>, <code>d:</code>, etc.)</p>
+<h4 id="using-node-js-libraries">Using Node.js libraries</h4>
+<p>You can also use Node.js libraries via <code>js-eval</code>, etc.</p>
+<pre><code>(define fs (js-eval &quot;require(&#39;fs&#39;)&quot;))
+
+(define path &quot;.&quot;)
+(print (js-invoke fs &#39;readdirSync path))
+; Alternatively you can use `..` macro syntax:
+; (print (.. fs `(readdirSync ,path)))
+</code></pre><h3 id="biwascheme-javascript-api">BiwaScheme JavaScript API</h3>
+<p><a name="js-api" /></p>
+<h4 id="evaluate-scheme-program">Evaluate Scheme program</h4>
+<pre><code class="lang-js">&lt;script type=&quot;text/javascript&quot; src=&quot;biwascheme.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+var onError = function(e){ console.error(e); }
+var biwa = new BiwaScheme.Interpreter(onError)
+biwa.evaluate(&quot;(+ 1 2)&quot;, function(result) {
+  alert(result);  //=&gt; 3
+});
+&lt;/script&gt;
+</code></pre>
+<h4 id="define-library-function">Define library function</h4>
+<p>You can write JavaScript library function with <code>BiwaScheme.define_libfunc</code>.</p>
+<ul>
+<li>1st argument: function name</li>
+<li>2nd argument: minimum number of arguments</li>
+<li>3rd argument: maximum number of arguments (pass null for infinite)</li>
+<li>4th argument: function body</li>
+</ul>
+<pre><code class="lang-js">BiwaScheme.define_libfunc(&quot;add&quot;, 2, 2, function(ar){
+  BiwaScheme.assert_integer(ar[0]);
+  BiwaScheme.assert_integer(ar[1]);
+  return ar[0] + ar[1];
+});
+</code></pre>
+<p>See <code>src/library/*.js</code> for more examples.</p>
+    </div>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2023947-5', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

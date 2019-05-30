@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>BiwaScheme</title>
+    <link href="../website/css/screen.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <a href="https://github.com/biwascheme/biwascheme"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+    <div id="menu">
+      <a href="/">
+        <img src="website/images/biwascheme_logo.png" alt="logo"
+             title="BiwaScheme logo by @jcubic">
+      </a>
+    </div>
+<h2>About</h2>
+
+<p>BiwaScheme is a Scheme interpreter written in JavaScript.</p>
+
+<h2>Try it now</h2>
+
+<p>&lt;div id=&quot;term&quot;&gt;&lt;/div&gt;</p>
+
+<h2>Download</h2>
+
+<p>&lt;ul&gt;
+  &lt;li&gt;&lt;a id=&quot;rel&quot; href=&quot;/release/biwascheme.js&quot;&gt;biwascheme.js&lt;/a&gt;
+  version &lt;span id=&quot;ver&quot;&gt;--&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a id=&quot;relmin&quot; href=&quot;/release/biwascheme-min.js&quot;&gt;biwascheme-min.js&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</p>
+
+<p>&lt;script type=&quot;text/javascript&quot;&gt;
+  $(&#39;#ver&#39;).html(BiwaScheme.Version);
+  $(&#39;#rel&#39;).attr(&quot;href&quot;, &quot;/release/biwascheme-&quot;+BiwaScheme.Version+&quot;.js&quot;);
+  $(&#39;#rel&#39;).text(&quot;biwascheme-&quot;+BiwaScheme.Version+&quot;.js&quot;);
+  $(&#39;#relmin&#39;).attr(&quot;href&quot;, &quot;/release/biwascheme-&quot;+BiwaScheme.Version+&quot;-min.js&quot;);
+  $(&#39;#relmin&#39;).text(&quot;biwascheme-&quot;+BiwaScheme.Version+&quot;-min.js&quot;);
+&lt;/script&gt;</p>
+
+<p>&lt;a href=&quot;https://github.com/biwascheme/biwascheme/tree/master/release&quot;&gt;Older versions&lt;/a&gt; are on github.</p>
+
+<h2>News</h2>
+
+<p>&lt;ul id=&quot;newsList&quot;&gt;
+&lt;/ul&gt;</p>
+
+<p>&lt;p&gt;&lt;a href=&#39;https://github.com/biwascheme/biwascheme/issues?direction=desc&amp;labels=announce&amp;page=1&amp;sort=updated&amp;state=closed&#39;&gt;more...&lt;/a&gt;&lt;/p&gt;</p>
+
+<p>&lt;script type=&quot;text/javascript&quot;&gt;
+  // Pick news from github issues labeled &#39;announce&#39;
+  $.ajax({
+    type: &#39;GET&#39;,
+    url: &#39;https://api.github.com/repos/biwascheme/biwascheme/issues?labels=announce&amp;state=all&amp;per_page=10&#39;,
+    dataType: &#39;jsonp&#39;,
+    success: function(json){
+      $.each(json[&#39;data&#39;], function(idx, entry){
+        $(&#39;#newsList&#39;).append([
+          &quot;&lt;li&gt;&quot;,
+          &quot;&lt;a href=&#39;&quot;,
+            entry.html<em>url,
+          &quot;&#39;&gt;&quot;,
+            entry.title,
+          &quot;&lt;/a&gt;&quot;,
+          &quot; (&quot;,
+            entry.created</em>at,
+          &quot;)&quot;,
+          &quot;&lt;/li&gt;&quot;
+        ].join(&#39;&#39;))
+      });
+    }
+  });
+&lt;/script&gt;</p>
+
+<p>&lt;h2&gt;Example&lt;/h2&gt;</p>
+
+<p>&lt;pre&gt;&lt;code&gt;&lt;font color=&#39;purple&#39;&gt;&amp;lt;script src=&quot;biwascheme.js&quot;&amp;gt;&lt;/font&gt;
+(&lt;font color=&#39;blue&#39;&gt;console-log&lt;/font&gt; &lt;font color=&#39;red&#39;&gt;&quot;Hello, world!&quot;&lt;/font&gt;)
+&lt;font color=&#39;purple&#39;&gt;&amp;lt;/script&amp;gt;&lt;/font&gt;&lt;/code&gt;&lt;/pre&gt;</p>
+
+<p>&lt;h2&gt;Demo&lt;/h2&gt;</p>
+
+<p>&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;demo/pictlang.html&quot;&gt;Picture language (from SICP)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;website/i.html&quot;&gt;BiwaScheme for Mobile&lt;/a&gt;&lt;/li&gt;</p>
+
+<p>  &lt;li&gt;Games
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;http://lambda.bugyo.tk/cdr/hockey/&quot;&gt;Hockey (a pong-like game)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;http://lambda.bugyo.tk/cdr/dobon/&quot;&gt;Dobon (a card game)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;</p>
+
+<p>  &lt;li&gt;Development
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;demo/repl.html&quot;&gt;REPL with IL inspector&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;test/spec.html&quot;&gt;Unit test&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;test/tracer.html&quot;&gt;Tiny interpreter debugger&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</p>
+
+<p>&lt;!--&lt;h2&gt;Features&lt;/h2&gt;</p>
+
+<p>&lt;ul&gt;
+  &lt;li&gt;Most syntax/base library of R6RS&lt;/li&gt;
+  &lt;li&gt;define-macrokkk
+       :href &amp;quot;http://en.wikipedia.org/wiki/Macro<em>%28computer</em>science%29#Lisp_macros&amp;quot;
+       &amp;quot;Lisp Macros&amp;quot;)
+    &amp;quot; and Quasiquotation&amp;quot;)
+(li &amp;quot;Functions for web application (Ajax, DOM manipulation, etc.)&amp;quot;)
+(li &amp;quot;Calling JavaScript functions from Scheme and Scheme from JavaScript&amp;quot;)
+(li &amp;quot;Extending scheme interpreter in Javascipt&amp;quot;)
+(li &amp;quot;Comprehensive &amp;quot; (link-to &amp;quot;unit test&amp;quot; &amp;quot;repos/test/spec.html&amp;quot;))
+(li &amp;quot;Tiny &amp;quot; (link-to &amp;quot;interpreter debugger&amp;quot; &amp;quot;repos/test/tracer.html&amp;quot;))
+(li (link-to &amp;quot;Mobile version&amp;quot; &amp;quot;i.html&amp;quot;)))&lt;/code&gt;&lt;/pre&gt;
+--&gt;</p>
+
+<p>&lt;h2&gt;Specs&lt;/h2&gt;</p>
+
+<p>&lt;ul&gt;
+  &lt;li&gt;
+    &lt;a href=&quot;http://www.r6rs.org/final/html/r6rs/r6rs-Z-H-2.html#node<em>toc</em>start&quot;&gt;R6RS Language&lt;/a&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;a href=&quot;http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-1.html#node<em>toc</em>start&quot;&gt;R6RS Library&lt;/a&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</p>
+
+<p>&lt;h2&gt;Contact&lt;/h2&gt;</p>
+
+<p>&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://github.com/biwascheme/biwascheme/issues&quot;&gt;Issues (GitHub)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://groups.google.co.jp/group/biwascheme&quot;&gt;Mailling list&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://groups.google.co.jp/group/biwascheme-ja&quot;&gt;Mailling list(Japanese)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</p>    </div>
+  </body>
+</html>

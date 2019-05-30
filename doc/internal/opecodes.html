@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>BiwaScheme</title>
+    <link href="/website/css/screen.css" rel="stylesheet" type="text/css">
+    <link href="/website/css/jquery.terminal-2.3.0.css" rel="stylesheet" type="text/css"></script>
+    <link href="/website/css/prism-coy.css" rel="stylesheet" type="text/css"></script>
+    <script src="/release/biwascheme.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.mousewheel.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.timers.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.terminal-2.3.0.js" type="text/javascript"></script>
+    <script src="/website/js/prism.js" type="text/javascript"></script>
+    <script src="/website/js/prism-scheme.js" type="text/javascript"></script>
+    <script src="/website/js/jquery.terminal.prism.js" type="text/javascript"></script>
+    <script src="/website/js/keyboard.js" type="text/javascript"></script>
+    <script src="/website/js/biwascheme_terminal.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <a href="https://github.com/biwascheme/biwascheme"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+    <div id="menu">
+      <a href="/index.html">
+        <img src="/website/images/biwascheme_logo.png" alt="logo"
+             title="BiwaScheme logo by @jcubic">
+      </a>
+      <ul>
+        <li><a href='/doc/features.html'>Features</a></li>
+        <li><a href='/doc/getting_started.html'>Getting Started</a></li>
+        <li><a href='/doc/reference.html'>Reference</a></li>
+        <li><a href='/doc/faq.html'>FAQ</a></li>
+        <li><a href='/doc/index.html'>Other docs</a></li>
+      </ul>
+    </div>
+    <div id="content">
+<h1 id="intermediate-language">Intermediate Language</h1>
+<p>BiwaScheme is a VM based compiler-interpreter. Scheme program is translated into IL (Intermediate Language) by BiwaScheme.Compiler, and then executed by BiwaScheme.Interpreter.</p>
+<p>Most of the opecodes are taken from 3imp.pdf.</p>
+<p>Registers:</p>
+<ul>
+<li>a [object] : temporary</li>
+<li>x [opecodes] : opecodes to execute next</li>
+<li>f [integer] : [TODO: denotes start position of free variables in the stack?]</li>
+<li>c [closure] : closure object which is currently executed (set to [] in toplevel)<ul>
+<li>Closure object contains information about freevars (outer variables). When closure requires value of a free variable, it is retrieved from this register.</li>
+<li>Used by op_refer-free, op_assign-free</li>
+</ul>
+</li>
+<li>s [integer] : denotes stack size (TODO: can we remove this by using ary.push()/ary.pop()?)</li>
+</ul>
+<p>You can see how these registers work on <a href="https://www.biwascheme.org/test/tracer.html">/test/tracer.html</a>.</p>
+<h2 id="opecodes">Opecodes</h2>
+<ul>
+<li>Stack manipulation<ul>
+<li><a href="#op_constant">op_constant</a> : Set value of &#39;a&#39; register</li>
+<li><a href="#op_argument">op_argument</a> : Push value of &#39;a&#39; register onto stack</li>
+</ul>
+</li>
+<li>Control structure<ul>
+<li><a href="#op_test">op_test</a> : Conditional execution</li>
+<li><a href="#op_close">op_close</a> : Create Scheme closure</li>
+<li><a href="#op_conti">op_conti</a> : Capture continuation</li>
+<li><a href="#op_nuate">op_nuate</a> : Invoke continuation</li>
+<li><a href="#op_halt">op_halt</a> : Terminate program execution</li>
+</ul>
+</li>
+<li>Function call<ul>
+<li><a href="#op_frame">op_frame</a> : Push stack frame</li>
+<li><a href="#op_apply">op_apply</a> : Invoke procedure (Scheme closure or JS function)</li>
+<li><a href="#op_tco_hinted_apply">op_tco_hinted_apply</a> : op_apply for tail call (Used for stack trace)</li>
+<li><a href="#op_return">op_return</a> : Terminate execution of a procedure</li>
+<li><a href="#op_shift">op_shift</a> : Quick stack frame discard for tail call optimization</li>
+</ul>
+</li>
+<li>Variable reference/assignment<ul>
+<li><a href="#op_refer-local">op_refer-local</a></li>
+<li><a href="#op_refer-free">op_refer-free</a></li>
+<li><a href="#op_refer-global">op_refer-global</a></li>
+<li><a href="#op_assign-local">op_assign-local</a></li>
+<li><a href="#op_assign-free">op_assign-free</a></li>
+<li><a href="#op_assign-global">op_assign-global</a></li>
+<li><a href="#op_box">op_box</a> : Create a &#39;box&#39; for variables which may be reassigned by set!</li>
+<li><a href="#op_indirect">op_indirect</a> : Get the current value closed in a box</li>
+</ul>
+</li>
+</ul>
+<h3 id="op_constant">op_constant</h3>
+<p><a name="op_constant" /></p>
+<p>Push val onto the stack. Often used with op_argument.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;constant&quot;, &lt;value&gt;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="registers">registers</h4>
+<ul>
+<li>writes:<ul>
+<li>a: the opecode</li>
+<li>x: next opecode</li>
+</ul>
+</li>
+</ul>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(display &quot;hello&quot;)
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [constant &quot;hello&quot;
+   [argument
+   [constant 1
+   [argument
+   [refer-global &quot;display&quot;
+   [apply]]]]]]
+[halt]]
+</code></pre><h3 id="op_argument">op_argument</h3>
+<p><a name="op_argument" /></p>
+<p>Push a value (typically an argument of function call) onto the stack.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;argument&quot;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="registers">registers</h4>
+<ul>
+<li>reads:<ul>
+<li>a: the value to push</li>
+<li>s: old stack size</li>
+</ul>
+</li>
+<li>writes:<ul>
+<li>x: next opecode</li>
+<li>s: new stack size</li>
+</ul>
+</li>
+</ul>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(print &quot;hi&quot;)
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [constant &quot;hi&quot;
+   [argument
+   [constant 1
+   [argument
+   [refer-global &quot;print&quot;
+   [apply]]]]]]
+[halt]]
+</code></pre><h3 id="op_test">op_test</h3>
+<p><a name="op_test" /></p>
+<p>Execute either of two operations depending on the value of &#39;a&#39; register.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;test&quot;, &lt;opecodes_then&gt;, &lt;opecodes_else&gt;]
+</code></pre><h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(if 7 8 9)
+</code></pre><p>compiled:</p>
+<pre><code>[constant 7
+[test
+   [constant 8
+      [halt]]
+   [constant 9
+      [halt]]]]
+</code></pre><h3 id="op_close">op_close</h3>
+<p><a name="op_close" /></p>
+<p>Create Scheme closure object (which is represented with JS Array).</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;close&quot;, &lt;n&gt;, &lt;body&gt;, &lt;opecodes_next&gt;, &lt;dotpos&gt;]
+</code></pre><p>TODO: &lt;opecodes_next&gt; should be the last in consistency with other opecodes</p>
+<h4 id="description">description</h4>
+<p>op_close creates closure object onto the &#39;a&#39; register.</p>
+<ul>
+<li>n<ul>
+<li>number of free variables (i.e. local variables defined outside) which this closure contains</li>
+<li>eg. (lambda (a) a) -&gt; 0</li>
+<li>eg. (lamdba () (+ b c)) -&gt; 2</li>
+</ul>
+</li>
+<li>body<ul>
+<li>opecodes (compiled closure body)</li>
+</ul>
+</li>
+<li>dotpos<ul>
+<li>(see below)</li>
+</ul>
+</li>
+</ul>
+<h4 id="closure-object">closure object</h4>
+<p>Scheme closures are represented by JS arrays with its attribute &#39;closure_p&#39; assigned to true.</p>
+<pre><code>[body, freevar1, freevar2, ..., dotpos]
+</code></pre><ul>
+<li>body<ul>
+<li>closure body compiled into opecodes</li>
+</ul>
+</li>
+<li>freevar<ul>
+<li>value of the free variable</li>
+<li>If the free variable may be reassigned by set!, a box is stored instead of the direct value (see footnote)</li>
+</ul>
+</li>
+<li>dotpos<ul>
+<li>used for handling rest args</li>
+<li>(lambda args ...) : 0</li>
+<li>(lambda (a . rest) ...) : 1</li>
+<li>(lambda (a b . rest) ...) : 2</li>
+<li>(lambda (a b c) ...) : -1</li>
+<li>(lambda () ...) : 0</li>
+</ul>
+</li>
+</ul>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(lambda () 1)
+</code></pre><p>compiled:</p>
+<pre><code>[close 
+  0
+  [constant 1
+    [return]]
+  [halt]
+  -1]
+</code></pre><h4 id="example-of-reassigned-freevars">example of reassigned freevars</h4>
+<p>Usually closure object contains actual values of the freevars:</p>
+<pre><code>(define (f a b)
+  (lambda () a b))
+(f 11 22)
+
+-&gt; [ [&quot;refer-free&quot;, 0, [&quot;refer-free&quot;, 1, [&quot;return&quot;]]], 11, 22, -1]
+</code></pre><p>But when the freevar may reassigned by set!, a box (JS array contains the actual value) is stored. It will be unboxed by op_indirect (see also: op_indirect, op_box)</p>
+<pre><code>(define (f a b)
+  (set! a 99)
+  (lambda () a b))
+(f 11 22)
+
+-&gt; [ [&quot;refer-free&quot;, 0, [&quot;indirect&quot;, [&quot;refer-free&quot;, 1, [&quot;return&quot;]]]], [99], 22, -1]
+</code></pre><h3 id="op_conti">op_conti</h3>
+<p><a name="op_conti" /></p>
+<p>Capture the current continuation.</p>
+<p>Caputred continuation is just a Scheme closure which includes whole copy of current stack and op_nuate to restore it (see also: op_nuate).</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;conti&quot;, &lt;n&gt;, &lt;opecodes_next&gt;]
+</code></pre><p>n: number of args(for outer lambda) to remove (= 0 unless tail position)</p>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(call/cc func)
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [conti 0
+   [argument
+   [constant 1
+   [argument
+   [refer-global &quot;func&quot;
+   [apply]]]]]]
+[halt]]
+</code></pre><h3 id="op_nuate">op_nuate</h3>
+<p><a name="op_nuate" /></p>
+<p>Restore stack saved by op_conti (see op_conti).</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;nuate&quot;, &lt;saved_stack&gt;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="description">description</h4>
+<p>op_nuate takes saved stack as an argument. When op_nuate is invoked, the interpreter stack is replaced by this saved stack.</p>
+<p>op_nuate is never generated by Compiler. It is dynamically generated by Interpreter when processing op_conti.</p>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(define cc (call/cc identity))
+(cc)
+</code></pre><p>compiled:</p>
+<pre><code>[refer-local 0
+[nuate #&lt;Object{stack,last_refer,call_stack,tco_counter}&gt;
+[return]]]
+</code></pre><h3 id="op_halt">op_halt</h3>
+<p><a name="op_halt" /></p>
+<p>Indicate end of program.</p>
+<p>A program may have more than one op_halt (eg. <code>if</code> is compiled into op_test which contains then-clause and else-clause, both have op_halt on its end.)</p>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>&#39;()
+</code></pre><p>compiled:</p>
+<pre><code>[constant ()
+  [halt]]
+</code></pre><h3 id="op_frame">op_frame</h3>
+<p><a name="op_frame" /></p>
+<p>Push stack frame.</p>
+<p>op_frame must be called before applying a function, except when it is a tail call (see also: op_shift.)</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;frame&quot;, &lt;opecodes_next&gt;, &lt;opecodes_after&gt;]
+</code></pre><ul>
+<li>opecodes_after<ul>
+<li>opecodes executed after the new stack frame is popped from stack</li>
+</ul>
+</li>
+</ul>
+<h4 id="description">description</h4>
+<p>op_frame pushes a frame (i.e. the following values) onto stack:</p>
+<ul>
+<li><opecodes_after> - opecodes to execute after new frame is popped //stack top</li>
+<li>value of &#39;f&#39; register - position of previous frame</li>
+<li>value of &#39;c&#39; register - the closure currently executed</li>
+</ul>
+<p>Usually this frame is popped by <a href="#return">return</a>.</p>
+<p>op_frame is generated by:</p>
+<ul>
+<li>function calls (foo 1 2 3)</li>
+<li>call/cc (call/cc func)</li>
+</ul>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(print 11)
+</code></pre><p>compiled:</p>
+<pre><code>[frame        // op_frame
+   [constant 11          // push arguments to stack           
+   [argument
+   [constant 1           // push number of arguments 
+   [argument
+   [refer-global &quot;print&quot; // load function to &#39;a&#39; register
+   [apply]]]]]]          // invoke function
+[halt]]
+</code></pre><p>Note that op_frame itself does not touch &#39;f&#39; register. Since function arguments are evaluated between op_frame and <a href="#apply">apply</a> and these evaluations must be done in the current frame, &#39;f&#39; register is updated by <a href="#apply">apply</a>.</p>
+<h3 id="op_apply">op_apply</h3>
+<p><a name="op_apply" /></p>
+<p>Invoke a function-like object, i.e. Scheme closure or BiwaScheme library JS function.</p>
+<p>(Use <code>js-call</code> for native JS functions.)</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;apply&quot;]
+</code></pre><h4 id="description">description</h4>
+<p>In contrast to other opecodes, op_apply takes no arguments. Instead it retrieves needed information from the stack.</p>
+<p>Before calling op_apply, you must put these values onto stack:</p>
+<ul>
+<li>func: closure or function to apply</li>
+<li>n_args: number of actual arguments</li>
+<li>arg1: first argument</li>
+<li>arg2: second argument</li>
+<li>arg3: third argument</li>
+<li>x // usually stack frame is already prepared by op_frame</li>
+<li>f</li>
+<li>c</li>
+</ul>
+<h5 id="applicable-things">applicable things</h5>
+<ul>
+<li>Scheme closure<ul>
+<li>a JS array</li>
+</ul>
+</li>
+<li>Library function (map, +, etc.)<ul>
+<li>a JS function which takes args(array) and intp(Interpreter) as arguments</li>
+</ul>
+</li>
+</ul>
+<p>Note that you cannot invoke pure JS functions directly. You can use js-call or js-invoke instead.</p>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(+ 11 22)
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [constant 22  
+   [argument          // push 22 (second argument) to stack
+   [constant 11  
+   [argument          // push 11 (first argument) to stack
+   [constant 2   
+   [argument          // push 2 (number of arguments) to stack
+   [refer-global &quot;+&quot;  // load function &#39;+&#39; to &#39;a&#39; register
+   [apply]]]]]]]]     // invoke the function with arguments 11 and 22
+[halt]]
+</code></pre><h3 id="op_tco_hinted_apply">op_tco_hinted_apply</h3>
+<p><a name="op_tco_hinted_apply" /></p>
+<p>Same as op_apply, but used for tail calls. Added for stack trace.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;tco_hinted_apply&quot;]
+</code></pre><h4 id="description">description</h4>
+<p>See op_apply for how it retrieves the funcion and its arguments.</p>
+<h4 id="stack-trace">Stack trace</h4>
+<p>BiwaScheme.Interpreter has three variables to handle stack trace:</p>
+<ul>
+<li><p>this.last_refer (String)</p>
+<ul>
+<li>Name of the last variable referred by op_refer-global, etc. </li>
+<li>BiwaScheme IL does not contain names of local variables, so
+they are shown as &quot;(anon)&quot;.</li>
+</ul>
+</li>
+<li><p>this.call_stack (Array of String) </p>
+<ul>
+<li>Stack of function name</li>
+</ul>
+</li>
+<li><p>this.tco_counter (Array of Integer)</p>
+<ul>
+<li>Number of tail calls happened</li>
+<li>tco_counter.length is equal to number of stack frames
+(Note that this is different from stack.length,
+ because this.stack is one-dimentional array).</li>
+<li>However, call_stack.length may not be the same as number of frames
+because tail call does not push stack frame.</li>
+<li>tco_counter holds this difference, i.e. how many funcalls have occured
+without pushing stack frame.</li>
+</ul>
+</li>
+</ul>
+<p>Here is the difference between normal call and tail call.</p>
+<ul>
+<li>Normal funcall<ul>
+<li>op_frame pushes frame onto this.stack, pushes 0 onto tco_counter</li>
+<li>op_apply pushes function name onto this.call_stack</li>
+<li>op_return pops stack frame, tco_counter and call_stack</li>
+</ul>
+</li>
+<li>Tail call<ul>
+<li>(op_frame is not called)</li>
+<li>(op_shift is called)</li>
+<li>tco_hinted_apply increments the value on top of tco_counter</li>
+<li>op_apply pushes function name onto this.call_stack</li>
+<li>op_return pops stack frame, tco_counter and call_stack.
+call_stack may be popped more than once if value of tco_counter &gt;= 1.</li>
+</ul>
+</li>
+</ul>
+<p>Length of call_stack is capped to Interpreter#max_trace_size (which defaults
+to BiwaScheme.max_trace_size). We do not cap length of tco_counter
+because it does not grow with tail calls.</p>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(define (f) (print 7))
+</code></pre><p>compiled:</p>
+<pre><code>[close 0                      // Create a Scheme closure
+   [constant 7                // Body of f
+   [argument
+   [constant 1
+   [argument
+   [refer-global &quot;print&quot;
+   [shift 1
+   [tco_hinted_apply]]]]]]]   // Invoke print with tco_hinted_apply
+   [assign-global &quot;f&quot;
+   [halt]]
+-1]
+</code></pre><h3 id="op_return">op_return</h3>
+<p><a name="op_return" /></p>
+<p>Pop stack frame.</p>
+<p>op_return is generated by (lambda ...) and must be called as the last opecode of function execution.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;return&quot;]
+</code></pre><p>op_return does not have <opecodes_next> because it pops next opecodes from stack.</p>
+<h4 id="description">description</h4>
+<p>op_return pops the following values from stack:</p>
+<ul>
+<li>n [integer] : number of arguments passed to this function call</li>
+<li>arg1</li>
+<li>arg2</li>
+<li>arg3</li>
+<li>x [opecodes] // stack frame pushed by op_frame</li>
+<li>f [integer]</li>
+<li>c [closure]</li>
+</ul>
+<p>op_return also sets x, f, c to register &#39;x&#39;, &#39;f&#39;, &#39;c&#39;.</p>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>((lambda () 11))
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [constant 0
+   [argument
+   [close 0
+      [constant 11
+      [return]]
+      [apply]
+   -1]]]
+[halt]]
+</code></pre><h3 id="op_shift">op_shift</h3>
+<p><a name="op_shift" /></p>
+<p>Discard the arguments for parent call from stack.</p>
+<p>Since stack frame is not pushed by op_frame and popped by op_return for tail calls, we need to remove old arguments with op_shift.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;shift&quot;, &lt;n_args&gt;, &lt;opecodes_next&gt;]
+</code></pre><ul>
+<li>n_args<ul>
+<li>number of arguments this tail call passes</li>
+</ul>
+</li>
+<li>opecodes_next<ul>
+<li>must be [&quot;apply&quot;]</li>
+</ul>
+</li>
+</ul>
+<h4 id="description">description</h4>
+<p>op_shift removes arguments for parent call from stack. Suppose the following code:</p>
+<pre><code>(define (foo x y)
+  (bar &quot;a&quot; &quot;b&quot; &quot;c&quot;))
+(foo &quot;x&quot; &quot;y&quot;)
+</code></pre><p>Before applying bar, op_shift removes the following values. Note that first four elements will not be popped - that&#39;s why this operation is named &quot;shift&quot;.</p>
+<ul>
+<li>3 //stack top</li>
+<li>&quot;a&quot; // arguments for tail call (bar)</li>
+<li>&quot;b&quot;</li>
+<li>&quot;c&quot;</li>
+<li>2   // will be removed  // arguments for parent call (foo)</li>
+<li>&quot;x&quot; // will be removed</li>
+<li>&quot;y&quot; // will be removed</li>
+</ul>
+<p>Also note that stack frame is not pushed by op_frame for tail calls.</p>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>((lambda () (print 1))
+</code></pre><p>Here (print 1) is a tail call.</p>
+<p>compiled:</p>
+<pre><code>[frame
+   [constant 0
+   [argument
+   [close 0  // make a closure, and
+      [constant 1
+      [argument
+      [constant 1
+      [argument
+      [refer-global &quot;print&quot;
+      [shift 1
+      [apply]]]]]]]
+      [apply]  // immediately invoke it
+   -1]]]
+[halt]]
+</code></pre><p>Without tail call optimization, this program is compiled to:</p>
+<pre><code>[frame
+   [constant 0
+   [argument
+   [close 0
+      [frame  // push stack frame
+         [constant 1
+         [argument
+         [constant 1
+         [argument
+         [refer-global &quot;print&quot;
+         [apply]]]]]]
+      [return]]  // pop stack frame
+      [apply]
+   -1]]]
+[halt]]
+</code></pre><h3 id="op_refer-local">op_refer-local</h3>
+<p><a name="op_refer-local" /></p>
+<p>Load the value of a local variable.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;refer-local&quot;, &lt;variable_pos&gt;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(define a 99)
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [constant 7
+   [argument
+   [constant 1
+   [argument
+   [close 0
+      [refer-local 0
+         [return]]
+      [apply]
+      -1]]]]]
+[halt]]
+</code></pre><h3 id="op_refer-free">op_refer-free</h3>
+<p><a name="op_refer-free" /></p>
+<p>Load the value of a free variable.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;refer-free&quot;, &lt;variable_pos&gt;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(let ((a &quot;a&quot;)(b &quot;b&quot;))
+  (let ()
+    a)
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [constant &quot;a&quot;
+   [argument
+   [constant &quot;b&quot;
+   [argument
+   [constant 2
+   [argument
+   [close 0
+      [constant 0
+      [argument
+      [refer-local 1
+      [argument
+      [close 1
+         [refer-free 0
+         [return]]
+         [shift 0
+         [apply]]
+      -1]]]]]
+      [apply]
+   -1]]]]]]]
+halt]
+</code></pre><h3 id="op_refer-global">op_refer-global</h3>
+<p><a name="op_refer-global" /></p>
+<p>Load the value of a certain global variable.</p>
+<h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>map
+</code></pre><p>compiled:</p>
+<pre><code>[refer-global &quot;map&quot;
+[halt]]
+</code></pre><h3 id="op_assign-local">op_assign-local</h3>
+<p><a name="op_assign-local" /></p>
+<p>Assign value to a variable.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;assign-local&quot;, &lt;FIXME&gt;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="example">example</h4>
+<p>See example of op_indirect.</p>
+<h3 id="op_assign-free">op_assign-free</h3>
+<p><a name="op_assign-free" /></p>
+<p>Assign a value to a free variable.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;assign-free&quot;, &lt;FIXME&gt;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(let ((a &quot;a&quot;))
+  (let ()
+    (set! a &quot;aa&quot;)))
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [constant &quot;a&quot;
+   [argument
+   [constant 1
+   [argument
+   [close 0
+      [box 0
+      [constant 0
+      [argument
+      [refer-local 0
+      [argument
+      [close 1
+         [constant &quot;aa&quot;
+         [assign-free 0
+         [return]]]
+         [shift 0
+         [apply]]
+      -1]]]]]]
+      [apply]
+   -1]]]]]
+halt]
+</code></pre><h3 id="op_assign-global">op_assign-global</h3>
+<p><a name="op_assign-global" /></p>
+<p>Assign a value to a global variable.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;assign-global&quot;, &lt;str_variable_name&gt;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(define a 99)
+</code></pre><p>compiled:</p>
+<pre><code>[constant 99
+[assign-global &quot;a&quot;
+[halt]]]
+</code></pre><h3 id="op_box">op_box</h3>
+<p><a name="op_box" /></p>
+<p>Make a box for a variable which may be reassigned by set! (see op_indirect).</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;box&quot;, &lt;FIXME&gt;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="example">example</h4>
+<p>See example of op_indirect.</p>
+<h3 id="op_indirect">op_indirect</h3>
+<p>is used to load the value of a variable which may reassigned by &#39;set!&#39;.</p>
+<h4 id="format">format</h4>
+<pre><code>[&quot;indirect&quot;, &lt;opecodes_next&gt;]
+</code></pre><h4 id="example">example</h4>
+<p>program:</p>
+<pre><code>(let ((a &quot;a&quot;))
+  (set! a &quot;b&quot;)
+  a)
+</code></pre><p>compiled:</p>
+<pre><code>[frame
+   [constant &quot;a&quot;
+   [argument
+   [constant 1
+   [argument
+   [close 0
+      [box 0
+      [constant &quot;b&quot;
+      [assign-local 0
+      [refer-local 0
+      [indirect
+      [return]]]]]]
+      [apply]
+   -1]]]]]
+[halt]]
+</code></pre>    </div>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2023947-5', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
