@@ -98,7 +98,9 @@ browser_test:
 #
 
 index.html: doc/_header.html index_.html doc/_footer.html
-	cat doc/_header.html index_.html doc/_footer.html > index.html
+	cat doc/_header.html > $@
+	sed -e  "s/@VERSION@/`cat VERSION`/g" index_.html >> $@
+	cat doc/_footer.html >> $@
 
 website: index.html doc/**/*.md
 	node bin/biwas tools/make_doc.scm
