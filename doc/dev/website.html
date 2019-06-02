@@ -35,22 +35,21 @@
     </div>
     <div id="content">
 <h2 id="website">Website</h2>
-<p>Website of BiwaScheme (<a href="http://www.biwascheme.org">http://www.biwascheme.org</a>) is hosted by yhara&#39;s personal server.</p>
+<p>Website of BiwaScheme (<a href="https://www.biwascheme.org">https://www.biwascheme.org</a>) is hosted on GitHub Pages.</p>
 <h3 id="how-to-build-html">How to build *.html</h3>
 <p>Execute <code>$ make website -B</code> to </p>
 <ol>
 <li>convert <code>doc/**/*.md</code> to HTML, and</li>
-<li>build index.html from index_.html, doc/_header.html and doc/_footer.html.</li>
+<li>build index.html from index_.html, website/_header.html and website/_footer.html.</li>
 </ol>
-<h3 id="browse-locally-with-node-">Browse locally (with Node)</h3>
+<h3 id="how-to-update-the-website">How to update the website</h3>
+<p>Just push these html files to the <code>master</code> branch.</p>
+<h3 id="browse-locally-with-node-js-">Browse locally (with Node.js)</h3>
 <pre><code>$ ./local_website.js`
 $ open http://localhost:7001/
 </code></pre><h3 id="browse-locally-with-pow-http-pow-cx-">Browse locally (with <a href="http://pow.cx">Pow</a>)</h3>
 <pre><code>$ ln -s . ~/.pow/biwascheme
 $ open http://biwascheme.dev/index.html
-</code></pre><h3 id="memo-for-me-how-to-publish-changes">Memo for me: how to publish changes</h3>
-<pre><code>$ rake publish        # only doc/ and index.html
-$ rake publish ALL=1  # all files including js (used for releases)
 </code></pre>    </div>
 
     <!-- Google Analytics -->

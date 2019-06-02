@@ -1,15 +1,19 @@
 ## Website
 
-Website of BiwaScheme (http://www.biwascheme.org) is hosted by yhara's personal server.
+Website of BiwaScheme (https://www.biwascheme.org) is hosted on GitHub Pages.
 
 ### How to build *.html
 
 Execute `$ make website -B` to 
 
 1. convert `doc/**/*.md` to HTML, and
-2. build index.html from index_.html, doc/_header.html and doc/_footer.html.
+2. build index.html from index_.html, website/_header.html and website/_footer.html.
 
-### Browse locally (with Node)
+### How to update the website
+
+Just push these html files to the `master` branch.
+
+### Browse locally (with Node.js)
 
 ```
 $ ./local_website.js`
@@ -21,11 +25,4 @@ $ open http://localhost:7001/
 ```
 $ ln -s . ~/.pow/biwascheme
 $ open http://biwascheme.dev/index.html
-```
-
-### Memo for me: how to publish changes
-
-```
-$ rake publish        # only doc/ and index.html
-$ rake publish ALL=1  # all files including js (used for releases)
 ```
