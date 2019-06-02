@@ -193,7 +193,19 @@ with(BiwaScheme) {
   BiwaScheme.date2string = function(date, format){
     var zeropad  = function(n){ return n<10 ? "0"+n : ""+n }; 
     var spacepad = function(n){ return n<10 ? " "+n : ""+n }; 
-    
+    var isoweeknum  = function(x){
+      var janFour = new Date(x.getFullYear(), 0, 4);
+      var weekone = new Date(x.getFullYear(), 0, 4);
+
+      if (janFour.getDay() >= date_names.weekday.indexOf("Thu")) {
+        weekone.setDate(janFour.getDate() - (janFour.getDay()+1));
+      } else {
+        weekone.setDate(janFour.getDate() + ((7 - janFour.getDay()) +1));
+      }
+
+      return Math.ceil(((x - weekone) / 86400000) / 7);
+    };
+ 
     var getter = {
       a: function(x){ return date_names.weekday[x.getDay()] },
       A: function(x){ return date_names.full_weekday[x.getDay()] },
@@ -221,7 +233,7 @@ with(BiwaScheme) {
       t: function(x){ return "\t" },
       T: function(x){ return getter.H(x) + ":" + getter.M(x) + ":" + getter.S(x) },
       U: function(x){ throw new Bug("not implemented: weeknum(0~, Sun)") },
-      V: function(x){ throw new Bug("not implemented: weeknum(1~, Sun?)") },
+      V: function(x){ return isoweeknum(x) },
       w: function(x){ return x.getDay() },
       W: function(x){ throw new Bug("not implemented: weeknum(0~, Mon)") },
       x: function(x){ throw new Bug("not implemented: weeknum(1~, Mon)") },
