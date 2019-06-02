@@ -34,8 +34,8 @@
     (print "Wrote " html-path)))
 
 ;; Load header and footer
-(define HEADER (read-file "doc/_header.html"))
-(define FOOTER (read-file "doc/_footer.html"))
+(define HEADER (read-file "website/_header.html"))
+(define FOOTER (read-file "website/_footer.html"))
 
 ;; Convert ./doc/**/*.md into *.html
 (traverse (lambda (path)

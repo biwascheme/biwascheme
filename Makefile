@@ -97,10 +97,10 @@ browser_test:
 # Website
 #
 
-index.html: doc/_header.html index_.html doc/_footer.html
-	sed -e  "s/@VERSION@/`cat VERSION`/g" doc/_header.html > $@
+index.html: website/_header.html index_.html website/_footer.html
+	sed -e  "s/@VERSION@/`cat VERSION`/g" website/_header.html > $@
 	sed -e  "s/@VERSION@/`cat VERSION`/g" index_.html >> $@
-	sed -e  "s/@VERSION@/`cat VERSION`/g" doc/_footer.html >> $@
+	sed -e  "s/@VERSION@/`cat VERSION`/g" website/_footer.html >> $@
 
 website: index.html doc/**/*.md
 	node bin/biwas tools/make_doc.scm
