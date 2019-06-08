@@ -96,7 +96,7 @@
 
 BiwaScheme does not have `syntax-rules` or `syntax-case`, but has `define-macro`.
 
-```
+```scheme
 (define-macro (test expr)
   `(if ,expr
     #t
@@ -361,7 +361,7 @@ These functions are only available in browsers (i.e. does not work on Node.js.)
 
 You can also use Node.js libraries via `js-eval`, etc.
 
-```
+```scheme
 (define fs (js-eval "require('fs')"))
 
 (define path ".")

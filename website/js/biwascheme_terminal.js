@@ -186,6 +186,7 @@ jQuery(document).ready(function($, undefined) {
             throw(e);
         }
     }, {
+        mobileIngoreAutoSpace: [',', '.', ')'],
         keymap: {
             ENTER: function(e, original) {
                 if (unbalanced_parentheses(this.get_command())) {
@@ -213,8 +214,8 @@ jQuery(document).ready(function($, undefined) {
                 return lines.join('\n');
             }
         },
-        keydown: function() {
-            if (position) {
+        keydown: function(e) {
+            if (position !== false) {
                 term.set_position(position);
                 position = false;
             }
@@ -258,7 +259,6 @@ jQuery(document).ready(function($, undefined) {
             }
         },
         greetings: false,
-        width: 500,
         height: 250,
         name: 'biwa',
         exit: false,
