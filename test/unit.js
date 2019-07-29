@@ -149,7 +149,7 @@ describe('Interpreter', {
   },
 
   'define_scmfunc': function() {
-    BiwaScheme.define_scmfunc('scmfunc-test', 1, 1, 
+    BiwaScheme.define_scmfunc('scmfunc-test', 1, 1,
             "(lambda (n) \
                 (let iter ((n n) (result 1)) \
                     (if (= n 0) \
@@ -165,8 +165,8 @@ describe('utilities', {
       expect( to_write(1) ).should_be("1");
       expect( to_write("") ).should_be("\"\"");
       expect( to_write("asdf") ).should_be("\"asdf\"");
-      expect( to_write(new Pair(1, 
-                       new Pair(2, 
+      expect( to_write(new Pair(1,
+                       new Pair(2,
                          nil))) ).should_be("(1 2)");
       expect( to_write(Sym("a")) ).should_be("a");
       expect( to_write(true) ).should_be("#t");
@@ -267,8 +267,8 @@ describe('utilities', {
 
       expect( write_ss(1) ).should_be("1");
       expect( write_ss("asdf") ).should_be("\"asdf\"");
-      expect( write_ss(new Pair(1, 
-                       new Pair(2, 
+      expect( write_ss(new Pair(1,
+                       new Pair(2,
                          nil))) ).should_be("(1 2)");
       expect( write_ss(Sym("a")) ).should_be("a");
       expect( write_ss(true) ).should_be("#t");
@@ -347,7 +347,7 @@ describe('syntax expand', {
     ev("(and 1 2 3)").should_be(3);
   },
   'nested expand' : function(){
-    ev("(and 1 (and 2 3) 4)").should_be(4); 
+    ev("(and 1 (and 2 3) 4)").should_be(4);
   },
   'define-macro' : function(){
     ev("(define-macro (foo x y) `(+ ,x ,y)) (foo 8 9)").should_be(17);
@@ -680,10 +680,10 @@ describe('11.6 Procedure predicate' , {
     ev("(procedure? if)").should_be(false);
     ev("(procedure? define-macro)").should_be(false);
     // TODO: Following test cases don't work.
-    // call/cc are builtin subr(byte code instruction). 
+    // call/cc are builtin subr(byte code instruction).
     // ev("(procedure? call/cc)").should_be(true);
     // ev("(procedure? call-with-current-continuation)").should_be(true);
-  }  
+  }
 })
 
 describe('11.7 Arithmetic', {
@@ -953,17 +953,17 @@ describe('11.8 Booleans', {
 
 describe('11.9 Pairs and lists', {
   'pair?' : function(){
-    ev("(pair? '(a . b))").should_be(true); 
-    ev("(pair? '(a b c))").should_be(true); 
-    ev("(pair? '())").should_be(false); 
-    ev("(pair? '#(a b))").should_be(false); 
+    ev("(pair? '(a . b))").should_be(true);
+    ev("(pair? '(a b c))").should_be(true);
+    ev("(pair? '())").should_be(false);
+    ev("(pair? '#(a b))").should_be(false);
   },
   'cons' : function(){
-    ew("(cons 'a '())").should_be("(a)"); 
-    ew("(cons '(a) '(b c d))").should_be("((a) b c d)"); 
-    ew("(cons \"a\" '(b c))").should_be('("a" b c)'); 
-    ew("(cons 'a 3)").should_be("(a . 3)"); 
-    ew("(cons '(a b) 'c)").should_be("((a b) . c)"); 
+    ew("(cons 'a '())").should_be("(a)");
+    ew("(cons '(a) '(b c d))").should_be("((a) b c d)");
+    ew("(cons \"a\" '(b c))").should_be('("a" b c)');
+    ew("(cons 'a 3)").should_be("(a . 3)");
+    ew("(cons '(a b) 'c)").should_be("((a b) . c)");
   },
   'car' : function(){
     ew("(car '(a b c))").should_be("a");
@@ -1272,7 +1272,7 @@ describe('11.16  Iteration', {
 //        ((< (car numbers) 0)
 //         (loop (cdr numbers)
 //               nonneg
-//               (cons (car numbers) neg))))) 
+//               (cons (car numbers) neg)))))
 //                ⇒  ((6 1 3) (-5 -2))
 })
 
@@ -1281,7 +1281,7 @@ describe('11.17  Quasiquotation', {
     ew("`(list ,(+ 1 2) 4)").should_be("(list 3 4)");
   },
   'binding' : function(){
-    ew("(let ((name 'a)) `(list ,name ',name))").should_be("(list a (quote a))"); 
+    ew("(let ((name 'a)) `(list ,name ',name))").should_be("(list a (quote a))");
   },
   'splicing' : function(){
     ew("`(a ,(+ 1 2) ,@(map abs '(4 -5 6)) b)").should_be("(a 3 4 5 6 b)");
@@ -1362,8 +1362,8 @@ describe('2 Bytevectors', {
     ev("(bitwise-xor -1 17)").should_be(-18);
   },
   'bitwise-if': function(){
-    ev("(bitwise-if  5 -1 0)").should_be(5); 
-    ev("(bitwise-if -5 -1 0)").should_be(-5); 
+    ev("(bitwise-if  5 -1 0)").should_be(5);
+    ev("(bitwise-if -5 -1 0)").should_be(-5);
   },
   'bitwise-bit-count': function(){
     ev("(bitwise-bit-count  5)").should_be(2);
@@ -1424,7 +1424,7 @@ describe('3 List utilities', {
     //ev("(for-all even? '(3 1 4 1 5 9 . 2))").should_be(false);
     //                ⇒  &assertion exception
     ev("(for-all even? '(2 4 14))").should_be(true);
-    //(for-all even? '(2 4 14 . 9)) 
+    //(for-all even? '(2 4 14 . 9))
     //                ⇒  &assertion exception
     ev("(for-all (lambda (n) (and (even? n) n)) '(2 4 14))").should_be(14);
     ev("(for-all < '(1 2 3) '(2 3 4))").should_be(true);
@@ -1434,7 +1434,7 @@ describe('3 List utilities', {
   'exists' : function(){
     ev("(exists even? '(3 1 4 1 5 9))").should_be(true);
     ev("(exists even? '(3 1 1 5 9))").should_be(false);
-    //    (exists even? '(3 1 1 5 9 . 2)) 
+    //    (exists even? '(3 1 1 5 9 . 2))
     //                    ⇒  &assertion exception
     ev("(exists (lambda (n) (and (even? n) n)) '(2 1 4 14))").should_be(2);
     ev("(exists < '(1 2 4) '(2 3 4))").should_be(true);
@@ -1460,7 +1460,7 @@ describe('3 List utilities', {
     ew("(fold-right cons '() '(1 2 3 4 5))").should_be("(1 2 3 4 5)");
     ew("(fold-right (lambda (x l) (if (odd? x) (cons x l) l)) '() '(3 1 4 1 5 9 2 6 5))").should_be("(3 1 1 5 9 5)");
     ew("(fold-right cons '(q) '(a b c))").should_be("(a b c q)");
-    ev("(fold-right + 0 '(1 2 3) '(4 5 6))").should_be(21); 
+    ev("(fold-right + 0 '(1 2 3) '(4 5 6))").should_be(21);
   },
   'remp' : function(){
     ew("(remp even? '(3 1 4 1 5 9 2 6 5))").should_be("(3 1 1 5 9 5)");
@@ -1517,6 +1517,7 @@ describe('4 Sorting', {
   'list-sort': function(){
     ew("(list-sort '(1 3 4 2 5))").should_be("(1 2 3 4 5)");
     ew("(list-sort > '(1 3 4 2 5))").should_be("(5 4 3 2 1)");
+    // needs a list-sort of different types, with a custom comparator
   },
   'vector-sort': function(){
     ew("(let* ((v '#(1 3 2 5 4)) \
@@ -1567,7 +1568,7 @@ describe('5 Control structures', {
 describe('6 Records', {
   // 6.2  Records: Syntactic layer
 
-  //(define-record-type <name spec> <record clause>*)    syntax 
+  //(define-record-type <name spec> <record clause>*)    syntax
   'define-record-type': function(){
     ew("(define-record-type point (fields x (mutable y) (immutable c))) \
         (define p (make-point 1 2 'red)) \
@@ -1632,13 +1633,13 @@ describe('6 Records', {
                       (record-constructor-descriptor point2d))) \
         (point2d-x (make-point3d 1 2 3))").should_be(1);
   },
-  //(record-type-descriptor <record name>)    syntax 
+  //(record-type-descriptor <record name>)    syntax
   'record-type-descriptor': function(){
     ev("(define-record-type point) \
         (record-type-descriptor? \
           (record-type-descriptor point))").should_be(true);
   },
-  //(record-constructor-descriptor <record name>)    syntax 
+  //(record-constructor-descriptor <record name>)    syntax
   'record-type-descriptor': function(){
     ev("(define-record-type point) \
         (procedure? \
@@ -1649,7 +1650,7 @@ describe('6 Records', {
   // 6.3  Records: Procedural layer
   'make-record-type-descriptor': function(){
     ev("(make-record-type-descriptor 'point #f #f #f #f \
-          #((mutable x) (mutable y) (immutable c)))"); 
+          #((mutable x) (mutable y) (immutable c)))");
   },
   'make-record-type-descriptor (nongenerative)': function(){
     ev("(eq? (make-record-type-descriptor 'point #f 'point-type #f #f \
@@ -1766,15 +1767,15 @@ describe('8 I/O', {
     ev("(port-closed? \
           (call-with-port \
             (open-output-string) \
-            (lambda (port) port)))").should_be(true); 
+            (lambda (port) port)))").should_be(true);
   },
   'call-with-string-output-port' : function(){
     ev("(call-with-string-output-port \
           (lambda (port) \
-            (write 'ok port)))").should_be("ok"); 
+            (write 'ok port)))").should_be("ok");
   },
   'eof-object' : function(){
-    ev("(eqv? (eof-object) (eof-object))").should_be(true); 
+    ev("(eqv? (eof-object) (eof-object))").should_be(true);
     ev("(eq? (eof-object) (eof-object))").should_be(true);
   },
   'eof-object?' : function(){
@@ -2021,8 +2022,8 @@ describe('15 Composite library', {
 
 describe('16 eval', {
   'eval' : function(){
-    ev("(eval '(+ 1 2))").should_be(3); 
-    ev("(eval 123)").should_be(123); 
+    ev("(eval '(+ 1 2))").should_be(3);
+    ev("(eval 123)").should_be(123);
   }
 })
 
@@ -2033,15 +2034,15 @@ describe('18 Mutable strings', {
 })
 
 describe('19 R5RS compatibility', {
-//(exact->inexact z)    procedure 
-//(inexact->exact z)    procedure 
+//(exact->inexact z)    procedure
+//(inexact->exact z)    procedure
 //
-//(quotient n1 n2)    procedure 
-//(remainder n1 n2)    procedure 
+//(quotient n1 n2)    procedure
+//(remainder n1 n2)    procedure
 //(modulo n1 n2)    procedure
 //
-//(null-environment n)    procedure 
-//(scheme-report-environment n)    procedure 
+//(null-environment n)    procedure
+//(scheme-report-environment n)    procedure
 })
 
 describe('R6RS Promise', {
@@ -2092,7 +2093,7 @@ describe('js interface', {
   'js-call' : function() {
     ev('(js-call (js-eval "Math.pow") 2 4)').should_be(16);
   },
-  'js-invoke' : function(){ 
+  'js-invoke' : function(){
     ev('(js-invoke (js-eval "Math") "pow" 2 4)').should_be(16);
   },
   'js-new' : function(){
@@ -2500,12 +2501,12 @@ describe('infra', {
     expect(BiwaScheme.is_valid_integer_notation('-2322', 3)).should_be(false);
     expect(BiwaScheme.is_valid_integer_notation('3242', 4)).should_be(false);
     expect(BiwaScheme.is_valid_integer_notation('67543', 7)).should_be(false);
-    
+
     expect(BiwaScheme.is_valid_integer_notation('784372', 8)).should_be(false);
     expect(BiwaScheme.is_valid_integer_notation('95916', 9)).should_be(false);
     expect(BiwaScheme.is_valid_integer_notation('6e266', 10)).should_be(false);
     expect(BiwaScheme.is_valid_integer_notation('3a2b5', 11)).should_be(false);
-    
+
     expect(BiwaScheme.is_valid_integer_notation('az214', 12)).should_be(false);
     expect(BiwaScheme.is_valid_integer_notation('cby32', 13)).should_be(false);
     expect(BiwaScheme.is_valid_integer_notation('fbke', 16)).should_be(false);
@@ -2634,7 +2635,7 @@ describe('infra', {
     expect(BiwaScheme.is_valid_float_notation('5e3.14')).should_be(false);
     expect(BiwaScheme.is_valid_float_notation('e3')).should_be(false);
     expect(BiwaScheme.is_valid_float_notation('e0')).should_be(false);
-    
+
   },
   'parse_float, invalid param': function() {
     js_should_raise_error(function() {
