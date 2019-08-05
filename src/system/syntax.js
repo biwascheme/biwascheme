@@ -42,7 +42,7 @@ var theme = {
   mark: 'yellow'
 };
 if (BiwaScheme.on_node && BiwaScheme.Syntax.TRACE_EXPANSION) {
-  var colors = require('colors/safe');
+  var colors = require('colors');
   colors.setTheme(theme);
 }
 else {
