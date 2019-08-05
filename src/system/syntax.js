@@ -129,6 +129,10 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
     }
   },
 
+  strip: function() {
+    return SyntaxObject.strip(this);
+  },
+
   // Returns a Symbol of the same context as this
   sym: function(name) {
     return new SyntaxObject(Sym(name), this.wrap);
