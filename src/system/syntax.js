@@ -50,7 +50,10 @@ else {
   for (name in theme) colors[name] = function(s){ return s};
 }
 
+// SyntaxObject (S-expr with some meta information)
 BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
+  // expr: S-expr
+  // wrap: BiwaScheme.Syntax.Wrap
   initialize: function(expr, wrap){
     this.expr = expr;
     if (!wrap) throw new BiwaScheme.Error("[BUG] wrap not specified");
@@ -58,6 +61,7 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
   },
 
   // Return the label corresponding to this identifier
+  // (`id-label` in "Beautiful Code")
   getLabel: function() {
     BiwaScheme.assert(this.expr instanceof BiwaScheme.Symbol,
                       "called getLabel on non-identifier SO");
@@ -185,6 +189,7 @@ _.extend(BiwaScheme.Syntax.SyntaxObject, {
     return SyntaxObject.wrapWith(new Wrap(substs), x);
   },
 
+  // Convert a SyntaxObject into pure S-expr by removing meta information
   strip: function(x) {
     if (x instanceof SyntaxObject) {
       return (x.wrap.isTopMarked() ? x.expr : SyntaxObject.strip(x.expr));
@@ -226,6 +231,7 @@ BiwaScheme.Syntax.Mark = BiwaScheme.Class.create({
   }
 });
 BiwaScheme.Syntax.Mark.n = 0;
+// A special Mark for InitialWrap (used by `strip`)
 BiwaScheme.Syntax.Mark.TopMark = new BiwaScheme.Syntax.Mark();
 
 // Return true if `this.marks` and `marks` are the same (ordered) list of Marks 
@@ -368,14 +374,18 @@ BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
     return new Env(newHash);
   },
 
+  // Return the binding corresponds to `label` (or `undefined` if none)
+  // (`label-binding` in "Beautiful Code")
   get: function(label) {
     return this.hash[label.name];
   },
 
   // - id: identifier SO
+  // (`id-binding` in "Beautiful Code")
   bindingOfId: function(id) {
     var label = id.getLabel();
     if (label == Label.TopLevel) {
+      // REVIEW: should we lookup TopEnv/CoreEnv too?
       return BiwaScheme.SyntaxEnv[id.expr.name];
     }
 
@@ -505,6 +515,7 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
 // Misc
 
 _.extend(BiwaScheme.Syntax, {
+  // Return a unique name with the given `prefix`
   genVar: function(prefix){
     if (!prefix) throw new BiwaScheme.Bug("invalid prefix: "+BiwaScheme.inspect(prefix));
     var n = (Syntax._genVar++);
