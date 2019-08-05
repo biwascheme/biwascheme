@@ -76,7 +76,9 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
       else {
         var subst = ms;
         if (subst.sym === sym && Mark.isSameMarks(subst.marks, marks)) {
-          debug("getLabel", sym.name, subst.debugStr());
+          var marksStr = "["+marks.map(function(m){ return m.debugStr() }).join(", ")+"]";
+          debug("getLabel", "ident:", this.inspect(), "marks:", marksStr,
+            "matched:", subst.debugStr(), "result:", subst.label.debugStr());
           return subst.label;
         }
       }
@@ -275,7 +277,7 @@ BiwaScheme.Syntax.Subst = BiwaScheme.Class.create({
 
   debugStr: function() {
     var marks = this.marks.map(function(m){ return m.debugStr({nocolor: true}) }).join("");
-    return colors.subst("[" + this.sym.name + "(" + marks + ")" + this.label.debugStr() + "]");
+    return colors.subst("[" + this.sym.name + "(" + marks + ")=" + this.label.debugStr() + "]");
   },
 
   inspect: function(){
@@ -330,7 +332,7 @@ BiwaScheme.Syntax.Wrap = BiwaScheme.Class.create({
   },
 
   debugStr: function() {
-    return this.markSubsts.map(function(x){ return x.debugStr() }).join("");
+    return this.markSubsts.map(function(x){ return x.debugStr() }).join(",");
   },
 
   toString: function() {
@@ -357,7 +359,7 @@ BiwaScheme.Syntax.Binding = BiwaScheme.Class.create({
   },
 
   inspect: function(){
-    return "#<Binding("+this.type+")>";
+    return "#<Binding("+this.type+", "+this.value+")>";
   }
 });
 
@@ -402,10 +404,15 @@ BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
 
   inspect: function(){
     var keys = _.keys(this.hash);
-    if (keys.length == 0)
+    if (keys.length == 0) {
       return colors.env("#<Env>");
-    else
-      return colors.env("#<Env " + _.keys(this.hash).join(",") + ">");
+    }
+    else {
+      var contents = _.map(this.hash, function(v, k) {
+        return k + "=" + v.inspect();
+      }).join(", ");
+      return colors.env("#<Env " + contents + ">");
+    }
   }
 });
 
@@ -559,12 +566,12 @@ BiwaScheme.Expander = {
         env = Expander.InitialEnv,
         menv = Expander.InitialEnv;
     var ret = SyntaxObject.strip(Expander._exp(so, env, menv));
-    debug("Expanded:", BiwaScheme.to_write(ret));
+    debug("Expanded:", BiwaScheme.to_write(ret), "\n");
     return ret;
   },
 
   _exp: function(so, env, menv) {
-    if (!BiwaScheme.isSelfEvaluating(so.expr)) debug("_exp", so.inspect(), env, menv);
+    if (!BiwaScheme.isSelfEvaluating(so.expr)) debug("_exp", so.inspect(), env.inspect(), menv);
 
     var expr = so.expr;
     if (expr instanceof BiwaScheme.Symbol) {
