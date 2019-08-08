@@ -51,6 +51,13 @@ else {
 }
 
 // SyntaxObject (S-expr with some meta information)
+//
+// NB: Definition of "syntax object" is not limited to instances of `SyntaxObject`.
+// A syntax object is either of:
+// - A nonpair, nonvector, nonsymbol value (number, boolean, string, char)
+// - A pair or vector of syntax objects
+// - An instane of `SyntaxObject` ("wrapped" syntax object)
+// Note that a raw symbol is not a syntax object. It needs to be wrapped with SyntaxObject.
 BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
   // expr: S-expr
   // wrap: BiwaScheme.Syntax.Wrap
@@ -561,6 +568,7 @@ BiwaScheme.Expander = {
   InitialEnv: new BiwaScheme.Syntax.Env({}),
   InitialWrap: new BiwaScheme.Syntax.Wrap([BiwaScheme.Syntax.Mark.TopMark]),
 
+  // Entry point of Expander
   expand: function(expr) {
     var so = new SyntaxObject(expr, Expander.InitialWrap),
         env = Expander.InitialEnv,
@@ -570,6 +578,7 @@ BiwaScheme.Expander = {
     return ret;
   },
 
+  // Main loop of Expander (`exp` in "Beautiful Code")
   _exp: function(so, env, menv) {
     if (!BiwaScheme.isSelfEvaluating(so.expr)) debug("_exp", so.inspect(), env.inspect(), menv);
 
@@ -626,6 +635,8 @@ BiwaScheme.Expander = {
     }
   },
   
+  // Expand macro use
+  // (`exp-macro` in "Beautiful Code")
   // name: String (used only for debug print)
   _expandMacro: function(name, transformer, so) {
     debug("_expandMacro", so.inspect());
