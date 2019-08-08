@@ -522,8 +522,8 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
 
   ["syntax", "core", function(so, env, metaEnv){
     var x = so.expr;
-    if (!(x.cdr instanceof Pair)) throw new Error("quote: missing argument");
-    if (x.cdr.cdr !== BiwaScheme.nil) throw new Error("quote: too many arguments");
+    if (!(x.cdr instanceof Pair)) throw new Error("syntax: missing argument");
+    if (x.cdr.cdr !== BiwaScheme.nil) throw new Error("syntax: too many arguments");
     var target = x.cdr.car;
     var so = new BiwaScheme.Syntax.SyntaxObject(target);
     return List(Sym("quote"), so);
