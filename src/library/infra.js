@@ -52,8 +52,10 @@ BiwaScheme.alias_libfunc = function(fname, aliases) {
 BiwaScheme.define_syntax = function(sname, func) {
   var s = new BiwaScheme.Syntax(sname, func);
   BiwaScheme.CoreEnv[sname] = s;
-  BiwaScheme.global_variable_set(sname, "macro", function(so){
-    var newExpr = func(so.expr);
+  BiwaScheme.global_variable_set(sname, "macro", function(ar){
+    var so = ar[0];
+    var expr = BiwaScheme.Syntax.SyntaxObject.strip(so);
+    var newExpr = func(expr);
     return new BiwaScheme.Syntax.SyntaxObject(newExpr, so.wrap);
   });
 }
