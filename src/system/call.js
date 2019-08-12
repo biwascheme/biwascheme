@@ -32,6 +32,24 @@ BiwaScheme.Call = BiwaScheme.Class.create({
     };
   },
 
+  // Return VM opecode to invoke this Call
+  // opc_after: VM opecode to run with the result
+  make_opc: function(opc_after) {
+    var call_proc = ["constant", this.args.length,
+                    ["argument",
+                    ["constant", this.proc,
+                    ["apply", this.args.length]]]]; 
+    var push_args = _.inject(this.args, function(opc, arg){
+      return ["constant", arg, 
+             ["argument",
+             opc]];
+    }, call_proc);
+    var run = ["frame",
+              push_args,
+              opc_after];
+    return run;
+  },
+
   inspect: function(){
     return "#<Call args=" + this.args.inspect() + ">";
   },
