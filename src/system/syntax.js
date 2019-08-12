@@ -213,6 +213,9 @@ _.extend(BiwaScheme.Syntax.SyntaxObject, {
       // Just return x if not changed (to avoid unnecessary memory allocation)
       return (a === x.car && d === x.cdr ? x : new Pair(a, d));
     }
+    else if (_.isArray(x)) {
+      return x.map(function(item){ return SyntaxObject.strip(item) });
+    }
     else {
       return x;
     }
@@ -424,18 +427,34 @@ BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
 });
 
 BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
-  ["quote", "core", function(so, env, metaEnv){
+
+  ["swap!", "macro", function(ar){
+    var so = ar[0];
+    //debug("swap!", so.inspect());
+    // (swap! a b)
+    // = (let ((temp #'a)) (set! #'a #'b) (set! b temp))
+    var sos = so.expose();
+    var id = sos[0];
+    var a = sos[1], b = sos[2];
+    var ret = List(id.sym("let"),
+                List(List(id.sym("temp"), a)),
+                List(id.sym("set!"), a, b),
+                List(id.sym("set!"), b, id.sym("temp")));
+    return new SyntaxObject(ret, new Wrap());
+  }],
+
+  ["quote", "core", function(so, env, metaEnv, after){
     var x = so.expr;
     if (!(x.cdr instanceof Pair)) throw new Error("quote: missing argument");
     if (x.cdr.cdr !== BiwaScheme.nil) throw new Error("quote: too many arguments");
-    return x;
+    return after(x);
   }],
 
-  ["define", "core", function(so, env, metaEnv){
+  ["define", "core", function(so, env, metaEnv, after){
     var ret = LambdaHelper.parseDefine(so, env);
-    var name = ret[0], expr = ret[1], isLambda = ret[2];
+    var name = ret[0], expr = ret[1], isDefun = ret[2];
 
-    if (isLambda) { // `(define (f ...) ...)`
+    if (isDefun) { // `(define (f ...) ...)`
       var label = new Label();
       var binding = new Binding("lexical", name.expr);
       var lambdaSo = SyntaxObject.addSubst(
@@ -443,57 +462,72 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
         label,
         new SyntaxObject(expr, new Wrap()));
       var newEnv = env.dup().set(label, binding);
-      return List(Sym("define"), name, Expander._exp(lambdaSo, newEnv, metaEnv));
+      return Expander._exp(lambdaSo, newEnv, metaEnv, function(so2) {
+        return after(List(Sym("define"), name, so2));
+      });
     }
-    else { 
-      return List(Sym("define"), name, Expander._exp(expr, env, metaEnv));
+    else { // `(define x ...)`
+      return Expander._exp(expr, env, metaEnv, function(so2) {
+        return after(List(Sym("define"), name, so2));
+      });
     }
   }],
 
-  ["begin", "core", function(so, env, metaEnv){
+  ["begin", "core", function(so, env, metaEnv, after){
     // (begin body...)
     var sos = so.expose();
     if (sos.length < 2) throw new Error("begin: missing body of begin");
-    var newBody = sos.slice(1, sos.length).map(function(so){
-      return Expander._exp(so, env, metaEnv);
+    return Expander._expandExprs(_.rest(sos), env, metaEnv, function(newBody) {
+      return after(new Pair(Sym("begin"), ListA(newBody)));
     });
-    return new Pair(Sym("begin"), ListA(newBody));
   }],
 
-  ["set!", "core", function(so, env, metaEnv){
+  ["set!", "core", function(so, env, metaEnv, after){
     // (set! x v)
     var sos = so.expose();
     if (sos.length != 3) throw new Error("set!: set! takes var and val");
-    return List(Sym("set!"),
-                Expander._exp(sos[1], env, metaEnv),
-                Expander._exp(sos[2], env, metaEnv));
+
+    return Expander._exp(sos[1], env, metaEnv, function(left) {
+      return Expander._exp(sos[2], env, metaEnv, function(right) {
+        return after(List(Sym("set!"), left, right));
+      });
+    });
   }],
 
-  ["call/cc", "core", function(so, env, metaEnv){
+  ["call/cc", "core", function(so, env, metaEnv, after){
     // (call/cc f)
     var sos = so.expose();
     if (sos.length < 2) throw new Error("call/cc: missing argument");
-    return List(Sym("call/cc"),
-                Expander._exp(sos[1], env, metaEnv));
+    return Expander._exp(sos[1], env, metaEnv, function(so2) {
+      return after(List(Sym("call/cc"), so2));
+    });
   }],
 
-  ["if", "core", function(so, env, metaEnv){
+  ["call-with-current-continuation", "macro", function(x){
+    var sos = x.expose();
+    return List(Sym("call/cc"), sos[1]);
+  }],
+
+  ["if", "core", function(so, env, metaEnv, after){
     var sos = so.expose();
     if (sos.length < 3) throw new Error("if: missing then clause");
     if (sos.length > 4) throw new Error("if: too many clauses");
 
-    var condc = Expander._exp(sos[1], env, metaEnv);
-    var thenc = Expander._exp(sos[2], env, metaEnv);
-    if (sos[3]) { 
-      var elsec = Expander._exp(sos[3], env, metaEnv);
-      return List(Sym("if"), condc, thenc, elsec);
-    }
-    else {
-      return List(Sym("if"), condc, thenc, BiwaScheme.undef);
-    }
+    return Expander._exp(sos[1], env, metaEnv, function(condc) {
+      return Expander._exp(sos[2], env, metaEnv, function(thenc) {
+        if (sos[3]) { 
+          return Expander._exp(sos[3], env, metaEnv, function(elsec) {
+            return after(List(Sym("if"), condc, thenc, elsec));
+          });
+        }
+        else {
+          return after(List(Sym("if"), condc, thenc, BiwaScheme.undef));
+        }
+      });
+    });
   }],
 
-  ["lambda", "core", function(so, env, metaEnv){
+  ["lambda", "core", function(so, env, metaEnv, after){
     var cdrSo = so.sCdr();
     if (!cdrSo.isPairSO()) throw new BiwaScheme.Error("malformed lambda");
     var paramSpecSo = cdrSo.sCar();
@@ -509,24 +543,25 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
       var letrec = LambdaHelper.buildLetRecStar(internalDefs, bodySos);
       var newLambda = new SyntaxObject(
         List(Sym("lambda"), paramSpecSo, letrec), so.wrap);
-      return Expander._exp(newLambda, env, metaEnv);
+      return Expander._exp(newLambda, env, metaEnv, after);
     }
     else {
-      var ret = LambdaHelper.expandBody(paramSpecSo, bodySos, env, metaEnv);
-      var newParamSpec = ret[0], newBodyExprs = ret[1];
-      return new Pair(Sym("lambda"),
-               new Pair(newParamSpec,
-                 ListA(newBodyExprs)));
+      return LambdaHelper.expandBody(paramSpecSo, bodySos, env, metaEnv,
+                                     function(newParamSpec, newBodyExprs) {
+        return after(new Pair(Sym("lambda"),
+                       new Pair(newParamSpec,
+                         ListA(newBodyExprs))));
+      });
     }
   }],
 
-  ["syntax", "core", function(so, env, metaEnv){
+  ["syntax", "core", function(so, env, metaEnv, after){
     var x = so.expr;
     if (!(x.cdr instanceof Pair)) throw new Error("syntax: missing argument");
     if (x.cdr.cdr !== BiwaScheme.nil) throw new Error("syntax: too many arguments");
     var target = x.cdr.car;
     var so = new BiwaScheme.Syntax.SyntaxObject(target);
-    return List(Sym("quote"), so);
+    return after(List(Sym("quote"), so));
   }]
 ];
 
@@ -569,96 +604,124 @@ BiwaScheme.Expander = {
   InitialWrap: new BiwaScheme.Syntax.Wrap([BiwaScheme.Syntax.Mark.TopMark]),
 
   // Entry point of Expander
+  // 
+  // Normally returns a S-expr. If `expr` contains a macro use, returns
+  // BiwaScheme.Call to evaluate the macro body (which is written in Scheme).
   expand: function(expr) {
-    var so = new SyntaxObject(expr, Expander.InitialWrap),
+    var so1 = new SyntaxObject(expr, Expander.InitialWrap),
         env = Expander.InitialEnv,
         menv = Expander.InitialEnv;
-    var ret = SyntaxObject.strip(Expander._exp(so, env, menv));
-    debug("Expanded:", BiwaScheme.to_write(ret), "\n");
-    return ret;
+    return Expander._exp(so1, env, menv, function(so2) {
+      var stripped = SyntaxObject.strip(so2);
+      debug("Expanded:", BiwaScheme.to_write(stripped), "\n");
+      return stripped;
+    });
   },
 
   // Main loop of Expander (`exp` in "Beautiful Code")
-  _exp: function(so, env, menv) {
-    if (!BiwaScheme.isSelfEvaluating(so.expr)) debug("_exp", so.inspect(), env.inspect(), menv);
+  // Returns syntax object or BiwaScheme.Call
+  _exp: function(so1, env, menv, after) {
+    if (!BiwaScheme.isSelfEvaluating(so1.expr)) debug("_exp", so1.inspect(), env.inspect(), menv);
 
-    var expr = so.expr;
+    var expr = so1.expr;
     if (expr instanceof BiwaScheme.Symbol) {
       // Variable reference or varref-like macro call
-      var binding = env.bindingOfId(so);
+      var binding = env.bindingOfId(so1);
       switch(binding.type) {
         case "macro":
-          var newx = Expander._expandMacro(so.expr.name, binding.value, so);
-          return Expander._exp(newx, env, menv);
+          return Expander._expandMacro(so1.expr.name, binding.value, so1, function(so2) {
+            return Expander._exp(so2, env, menv, after);
+          });
         case "lexical":
         case "global":
-          return binding.value;
+          return after(binding.value);
         default:
           throw new BiwaScheme.Error("undefined variable: "+expr.name);
       }
     }
     else if (expr instanceof BiwaScheme.Pair) {
-      var sos = so.expose();
+      var sos = so1.expose();
       if (sos[0].expr instanceof BiwaScheme.Symbol) {
         // Funcion call or macro call
         var id = sos[0];
         var binding = env.bindingOfId(id);
         switch(binding.type) {
           case "macro":
-            var newx = Expander._expandMacro(id.expr.name, binding.value, so);
-            return Expander._exp(newx, env, menv);
+            return Expander._expandMacro(id.expr.name, binding.value, so1, function(so2) {
+              return Expander._exp(so2, env, menv, after);
+            });
           case "lexical":
           case "global":
             var car = binding.value;
-            var cdr = List.apply(null, Expander._expandExprs(_.rest(sos), env, menv));
-            return new SyntaxObject(new Pair(car, cdr), so.wrap)
+            return Expander._expandExprs(_.rest(sos), env, menv, function(newSos) {
+              var cdr = List.apply(null, newSos);
+              var so2 = new SyntaxObject(new Pair(car, cdr), so1.wrap)
+              return after(so2);
+            });
           case "core":
-            return Expander._expandCore(binding.value, so, env, menv);
+            return Expander._expandCore(binding.value, so1, env, menv, after);
           default:
             throw "must not happen"
         }
       }
       else {
         // ((func expr...) args...)
-        var car = Expander._exp(sos[0], env, menv);
-        var cdr = List.apply(null, Expander._expandExprs(_.rest(sos), env, menv));
-        return new SyntaxObject(new Pair(car, cdr), so.wrap);
+        return Expander._exp(sos[0], env, menv, function(car) {
+          return Expander._expandExprs(_.rest(sos), env, menv, function(newSos) {
+            var cdr = List.apply(null, newSos);
+            var so2 = new SyntaxObject(new Pair(car, cdr), so1.wrap);
+            return after(so2);
+          });
+        });
       }
     }
     else {
       // Constant
-      var d = SyntaxObject.strip(so);
+      var d = SyntaxObject.strip(so1);
       if (!BiwaScheme.isSelfEvaluating(d)) {
         throw new Error("misplaced non-self evaluating expr: "+BiwaScheme.to_write(d));
       }
-      return d;
+      return after(d);
     }
   },
   
   // Expand macro use
   // (`exp-macro` in "Beautiful Code")
   // name: String (used only for debug print)
-  _expandMacro: function(name, transformer, so) {
+  // after: js-func that takes the resulting SO
+  // Returns BiwaScheme.Call
+  _expandMacro: function(name, transformer, so, after) {
     debug("_expandMacro", so.inspect());
 
     var m = new Mark();
     // Call `addMark` before and after the transformation.
     // Only "new" code are left marked because same marks cancel each other.
     var marked = SyntaxObject.addMark(so, m);
-    return SyntaxObject.addMark(transformer(marked), m);
+    return new BiwaScheme.Call(transformer, [marked], function(newSo) {
+      var remarked = SyntaxObject.addMark(newSo, m);
+      return after(remarked);
+    });
   },
 
-  _expandCore: function(coreTrans, so, env, menv) {
+  // coreTrans: js function
+  _expandCore: function(coreTrans, so, env, menv, after) {
     debug("_expandCore", so.inspect());
 
-    return new SyntaxObject(coreTrans(so, env, menv), so.wrap);
+    return coreTrans(so, env, menv, function(newExpr) {
+      return after(new SyntaxObject(newExpr, so.wrap));
+    });
   },
 
   // - exprs: Array<SO>
-  _expandExprs: function(exprs, env, menv) {
-    //debug("_expandExprs", exprs);
-    return exprs.map(function(so) {
-      return Expander._exp(so, env, menv);
+  _expandExprs: function(exprs, env, menv, after) {
+    if (exprs.length == 0) {
+      return after([]);
+    }
+    var first = exprs[0], rest = _.rest(exprs);
+    return Expander._exp(first, env, menv, function(newFirst) {
+      return Expander._expandExprs(rest, env, menv, function(newRest) {
+        return after([newFirst].concat(newRest));
+      });
     });
   }
 }
@@ -772,7 +835,7 @@ BiwaScheme.Expander.LambdaHelper = {
   // Parse `(define ...)` and return either
   // - variable name and the expression, or
   // - variable name and a lambda expression (for `(define (f ...) ...)`)
-  // Return:
+  // Returns `[name, expr, isLambda]`
   // - name: SO(Identifier)
   // - expr: SO
   // - isLambda: true if expr is lambda
@@ -806,7 +869,7 @@ BiwaScheme.Expander.LambdaHelper = {
   },
 
   // Expand body expressions
-  expandBody: function(paramSpecSo, bodySos, env, metaEnv) {
+  expandBody: function(paramSpecSo, bodySos, env, metaEnv, after) {
     var lastCdr = LambdaHelper.validateParamSpec(paramSpecSo);
     var ret = LambdaHelper.generateVariables(paramSpecSo, lastCdr);
     var newParamSpec = ret[0],
@@ -821,11 +884,12 @@ BiwaScheme.Expander.LambdaHelper = {
       substs.push(new Subst(names[0].expr, names[0].wrap.marks(), label));
     });
 
-    var newBodyExprs = bodySos.map(function(bodySo){
-      var newBodyExpr = SyntaxObject.addSubsts(bodySo, substs);
-      return Expander._exp(newBodyExpr, newEnv, metaEnv);
+    var newBodySos = bodySos.map(function(bodySo){
+      return SyntaxObject.addSubsts(bodySo, substs);
     });
-    return [newParamSpec, newBodyExprs];
+    return Expander._expandExprs(newBodySos, newEnv, metaEnv, function(newBodyExprs) {
+      return after(newParamSpec, newBodyExprs);
+    });
   }
 };
 

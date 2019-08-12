@@ -21,9 +21,19 @@ BiwaScheme.Pause = BiwaScheme.Class.create({
     this.on_pause(this);
   },
 
+  // Save state of expander
+  set_expander_state(expanding) {
+    this.expanding = expanding;
+  },
+
   //restart calculation
   resume: function(value){
-    return this.interpreter.resume(true, value, this.x, this.f, this.c, this.s)
+    if (this.expanding) {
+      return this.interpreter.resume("expanding", value, this.x, this.f, this.c, this.s, this.expanding);
+    }
+    else {
+      return this.interpreter.resume("evaluating", value, this.x, this.f, this.c, this.s)
+    }
   }
 });
 

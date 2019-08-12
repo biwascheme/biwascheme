@@ -414,7 +414,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     this.file_stack = [];
 
     try{
-      return this.resume(false);
+      return this.resume("normal");
     }
     catch(e){
       e.message = e.message + " [" + this.call_stack.join(", ") + "]";
@@ -424,33 +424,69 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
 
   // Resume evaluation
   // (internally used from Interpreter#execute and Pause#resume)
-  resume: function(is_resume, a, x, f, c, s){
+  //
+  // state:
+  //   - "reading" (normal mode)
+  //   - "evaluating" (VM is suspended by Pause)
+  //   - "expanding" (Expander is suspended by Pause)
+  resume: function(state, a, x, f, c, s, prev_expanding){
     var ret = BiwaScheme.undef;
 
+    var expanding;
     for(;;){
-      if(is_resume){
-        ret = this._execute(a, x, f, c, s);
-        is_resume = false;
-      }
-      else{
+      if (state == "normal") {
         if(!this.parser) break; // adhoc: when Pause is used via invoke_closure
         var expr = this.parser.getObject();
         if(expr === BiwaScheme.Parser.EOS) break;
-
-        // expand
-        expr = BiwaScheme.Expander.expand(expr);
-
-        // compile
-        var opc = this.compiler.run(expr);
-        //if(BiwaScheme.Debug) Console.p(opc);
-
-        // execute
-        ret = this._execute(expr, opc, 0, [], 0);
+        expanding = BiwaScheme.Expander.expand(expr);
+      }
+      else if (state == "expanding") {
+        // Resume expansion
+        state = "normal";
+        expanding = prev_expanding;
       }
 
-      if(ret instanceof BiwaScheme.Pause){ //suspend evaluation
+      var opc;
+      if (state == "normal") {
+        while (expanding instanceof BiwaScheme.Call) {
+          var so_or_pause;
+          if (_.isFunction(expanding.proc)) {
+            so_or_pause = expanding.proc(expanding.args);
+          }
+          else {
+            // The macro transformer needs to evaluate Scheme code.
+            var run = expanding.make_opc(["halt"]);
+            so_or_pause = this._execute(null, run, 0, [], 0);
+          }
+
+          if (so_or_pause instanceof BiwaScheme.Pause) {
+            var pause = so_or_pause;
+            pause.set_expander_state(expanding);
+            return pause; // Suspend expansion
+          }
+          else {
+            var so = so_or_pause;
+            expanding = expanding.after(so);
+          }
+        }
+        var expanded = expanding;
+        // compile
+        opc = this.compiler.run(expanded);
+      }
+
+      if (state == "evaluating") {
+        state = "normal";
+        ret = this._execute(a, x, f, c, s);
+      }
+      else {
+        // execute
+        ret = this._execute(expanded, opc, 0, [], 0);
+      }
+
+      if(ret instanceof BiwaScheme.Pause){ // Suspend evaluation
         return ret;
       }
+      // Otherwise, continue to the next S-expression
     }
 
     // finished executing all forms
