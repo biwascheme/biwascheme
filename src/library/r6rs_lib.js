@@ -155,7 +155,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   })
 
   define_syntax("or", function(x){
-    // (or a b c) => (if a a (if b b (if c c #f)))
+    // (or a b c) => (if a a (if b b (if c c #f)))    // FIXME: this is wrong (a, b, c should only be evaluated once)
+    //                                                // Correct version:
+    //                                                // (let ((v a)) (if v v
+    //                                                //   (let ((v b)) (if v v
+    //                                                //     (let ((v c)) (if v v #f))))))
     //todo: check improper list
 
     var objs = x.cdr.to_array()
