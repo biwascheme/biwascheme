@@ -51,7 +51,7 @@ BiwaScheme.Call = BiwaScheme.Class.create({
   },
 
   inspect: function(){
-    return "#<Call args=" + this.args.inspect() + ">";
+    return "#<Call args=[" + this.args.map(BiwaScheme.inspect).join(', ') + "]>";
   },
 
   toString: function(){
@@ -59,7 +59,7 @@ BiwaScheme.Call = BiwaScheme.Class.create({
   },
 
   to_write: function(){
-    return "#<Call>";
+    return this.inspect();
   }
 })
 
