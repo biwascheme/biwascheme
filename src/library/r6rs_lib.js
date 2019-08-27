@@ -796,21 +796,21 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
   define_libfunc("car", 1, 1, function(ar){
     //should raise &assertion for '()...
-    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply car on " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply car on " + BiwaScheme.to_write(ar[0]));
     return ar[0].car;
   });
   define_libfunc("cdr", 1, 1, function(ar){
     //should raise &assertion for '()...
-    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply cdr on " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply cdr on " + BiwaScheme.to_write(ar[0]));
     return ar[0].cdr;
   });
   define_libfunc("set-car!", 2, 2, function(ar){
-    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply set-car! on " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply set-car! on " + BiwaScheme.to_write(ar[0]));
     ar[0].car = ar[1];
     return BiwaScheme.undef;
   });
   define_libfunc("set-cdr!", 2, 2, function(ar){
-    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply set-cdr! on " + ar[0]);
+    if(!(ar[0] instanceof Pair)) throw new Error("Attempt to apply set-cdr! on " + BiwaScheme.to_write(ar[0]));
     ar[0].cdr = ar[1];
     return BiwaScheme.undef;
   });
