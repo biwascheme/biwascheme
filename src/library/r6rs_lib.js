@@ -154,44 +154,43 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return t;
   })
 
-  define_syntax("or", function(x){
-    // (or a b c) => (if a a (if b b (if c c #f)))    // FIXME: this is wrong (a, b, c should only be evaluated once)
-    //                                                // Correct version:
-    //                                                // (let ((v a)) (if v v
-    //                                                //   (let ((v b)) (if v v
-    //                                                //     (let ((v c)) (if v v #f))))))
-    //todo: check improper list
-
-    var objs = x.cdr.to_array()
-    var f = false;
-    for(var i=objs.length-1; i>=0; i--)
-      f = List(Sym("if"), objs[i], objs[i], f);
-
-    return f;
+  define_hygienic_syntax("or", function(so){
+    // (or a b c)
+    // => (let ((o a)) (if o o
+    //      (let ((o b)) (if o o
+    //        (let ((o c)) (if o o #f))))))
+    var sos = so.expose();
+    var ret = false;
+    _.rest(sos).reverse().forEach(function(so) {
+      ret = List(Sym("let"), List(List(Sym("o"), so)),
+            List(Sym("if"), Sym("o"), Sym("o"), ret));
+    });
+    return ret;
   })
 
   //            11.4.6  Binding constructs
-  define_syntax("let", function(x){
+  define_hygienic_syntax("let", function(so){
     //(let ((a 1) (b 2)) (print a) (+ a b))
     //=> ((lambda (a b) (print a) (+ a b)) 1 2)
     var name = null;
-    if (x.cdr.car instanceof Symbol) {
-      name = x.cdr.car;
-      x = x.cdr;
+    if (so.sCdr().sCar().isIdentifier()) {
+      name = so.sCdr().sCar();
+      so = x.sCdr();
     }
-    var binds = x.cdr.car, body = x.cdr.cdr;
+    var binds = so.sCdr().sCar(), body = so.sCdr().sCdr();
 
-    if((!(binds instanceof Pair)) && binds != BiwaScheme.nil){
+    if((!(binds.isPairSO())) && !binds.isNullSO()){
       throw new Error("let: need a pair for bindings: got "+to_write(binds));
     }
 
+    // Extract variables and values
     var vars = nil, vals = nil;
-    for(var p=binds; p instanceof Pair; p=p.cdr){
-      if(!(p.car instanceof Pair)){
-        throw new Error("let: need a pair for bindings: got "+to_write(p.car));
+    for(var p=binds; p.isPairSO(); p=p.sCdr()){
+      if(!(p.sCar().isPairSO())){
+        throw new Error("let: need a pair for bindings: got "+to_write(p.sCar()));
       }
-      vars = new Pair(p.car.car, vars);
-      vals = new Pair(p.car.cdr.car, vals);
+      vars = new Pair(p.sCar().sCar(), vars);
+      vals = new Pair(p.sCar().sCdr().sCar(), vals);
     }
 
     var lambda = null;

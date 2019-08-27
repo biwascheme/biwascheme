@@ -49,6 +49,9 @@ BiwaScheme.alias_libfunc = function(fname, aliases) {
   }
 };
 
+// (obsolete) You should use define_hygienic_syntax instead.
+// Macros defined with this will not work well with hygienic macros
+// (because this `strip`s metadata for hygiene).
 BiwaScheme.define_syntax = function(sname, func) {
   var s = new BiwaScheme.Syntax(sname, func);
   BiwaScheme.CoreEnv[sname] = s;
@@ -57,6 +60,17 @@ BiwaScheme.define_syntax = function(sname, func) {
     var expr = BiwaScheme.Syntax.SyntaxObject.strip(so);
     var newExpr = func(expr);
     return new BiwaScheme.Syntax.SyntaxObject(newExpr, so.wrap);
+  });
+}
+
+// Define a macro with JavaScript code.
+// `func` takes a syntax object and return a syntax object (or `Call` or `Pause`, if you need them).
+BiwaScheme.define_hygienic_syntax = function(sname, func) {
+  var s = new BiwaScheme.Syntax(sname, func);
+  BiwaScheme.global_variable_set(sname, "macro", function(ar){
+    var so = ar[0];
+    var newSo = func(so);
+    return newSo;
   });
 }
 
