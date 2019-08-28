@@ -1,7 +1,10 @@
-node_modules/
-release/biwascheme.js
-release/biwascheme-min.js
-release/console_biwascheme.js
-release/node_biwascheme.js
-src/version.js
-test/browser_functions/node_modules/
+/node_modules/
+/release/biwascheme.js
+/release/biwascheme-min.js
+/release/console_biwascheme.js
+/release/node_biwascheme.js
+/release/biwascheme-plain-min.js
+/release/biwascheme-plain.js
+/src/version.js
+/test/browser_functions/node_modules/
+/package-lock.json
