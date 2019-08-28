@@ -32,5 +32,6 @@
     },
     "scripts": {
         "node-test": "node test/node_functions.js"
-    }
+    },
+    "files": ["./bin/biwas", "./release/node_biwascheme.js"]
 }
