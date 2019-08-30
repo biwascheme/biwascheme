@@ -19,18 +19,23 @@
     "main": "./release/node_biwascheme.js",
     "dependencies": {
         "optparse": "1.0.5",
-        "underscore": "1.2.2",
-        "underscore.string": "2.0.0"
+        "underscore": "1.9.1",
+        "underscore.string": "3.3.5"
     },
     "devDependencies": {
-        "express": "~4.10.4",
         "body-parser": ">0",
-        "marked": "~0.3.2"
+        "express": "^4.17.1",
+        "marked": "^0.7.0",
+        "uglify-js": "^3.6.0"
     },
     "bin": {
         "biwas": "./bin/biwas"
     },
     "scripts": {
         "node-test": "node test/node_functions.js"
-    }
+    },
+    "files": [
+        "bin/biwas",
+        "release/node_biwascheme.js"
+    ]
 }

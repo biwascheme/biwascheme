@@ -25,13 +25,13 @@ Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
     <!DOCTYPE html>
     <html>
     <body>
-    
+
     <div id="bs-console"></div>
-    
+
     <script src="biwascheme.js">
     (display "hello, world!")
     </script>
-    
+
     </body>
     </html>
 
@@ -94,11 +94,11 @@ Prerequisites:
 
 * make
 * sed
-* node (Node.js)
-* uglifyjs ($ npm install uglify-js -g) 
+* node, npm, npx (Node.js)
 
 Make compiles src/\*.js into release/biwascheme.js.
 
+    $ npm install
     $ make
 
 Links

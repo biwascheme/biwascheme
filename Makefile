@@ -63,7 +63,7 @@ release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
 	@echo "Wrote " $@
 
 release/biwascheme-min.js: release/biwascheme.js
-	uglifyjs -o $@ release/biwascheme.js --comments
+	npx --no-install uglifyjs -o $@ release/biwascheme.js --comments
 	@echo "Wrote " $@
 
 release/biwascheme-plain.js: $(VERSION_FILE) $(PLAIN_FILES) Makefile
@@ -72,7 +72,7 @@ release/biwascheme-plain.js: $(VERSION_FILE) $(PLAIN_FILES) Makefile
 	@echo "Wrote " $@
 
 release/biwascheme-plain-min.js: release/biwascheme-plain.js
-	uglifyjs -o $@ release/biwascheme-plain.js --comments
+	npx --no-install uglifyjs -o $@ release/biwascheme-plain.js --comments
 	@echo "Wrote " $@
 
 release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
