@@ -15,7 +15,9 @@ see [http://www.biwascheme.org/](http://www.biwascheme.org/)
 Download
 ========
 
-* http://www.biwascheme.org/release/biwascheme-min.js (release version)
+* http://www.biwascheme.org/
+
+(Or you can just copy the file from [`./release`](release/).)
 
 How to use
 ==========
