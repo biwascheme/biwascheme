@@ -153,6 +153,7 @@ BiwaScheme.assert_record_cd = BiwaScheme.make_simple_assert("record constructor 
                                           BiwaScheme.isRecordCD);
 BiwaScheme.assert_enum_set = BiwaScheme.make_simple_assert("enum_set",
                                           BiwaScheme.isEnumSet);
+// R7RS Promise (not JS Promise)
 BiwaScheme.assert_promise = BiwaScheme.make_simple_assert("promise",
                                           BiwaScheme.isPromise);
 BiwaScheme.assert_wrapped_syntax_object = BiwaScheme.make_simple_assert("wrapped syntax object", function(obj) {
