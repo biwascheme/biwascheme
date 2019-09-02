@@ -1729,6 +1729,19 @@ describe('10 Command-line access and exit values', {
 })
 
 describe('12 syntax-case', {
+  'syntax-case (swap)': function() {
+    ew(" \
+      (define-syntax swap! \
+        (lambda (x) \
+          (syntax-case x () \
+            ((_ a b) \
+             (syntax (let ((x a)) (set! a b) (set! b x))))))) \
+      (define x 1) \
+      (define y 2) \
+      (swap! x y) \
+      (cons x y) \
+    ").should_be("(2 . 1)");
+  }
 })
 
 describe('13 Hashtables', {
