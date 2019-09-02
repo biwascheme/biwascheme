@@ -219,9 +219,13 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         if(!BiwaScheme.TopEnv.hasOwnProperty(name) &&
            !BiwaScheme.CoreEnv.hasOwnProperty(name))
           throw new BiwaScheme.Error("global variable '"+name+"' is not defined");
-        
         BiwaScheme.global_variable_set(name, "global", BiwaScheme.Sym(name));
         BiwaScheme.TopEnv[name] = a;
+        a = BiwaScheme.undef;
+        break;
+      case "assign-global-syntax":
+        var name=x[1], x=x[2];
+        BiwaScheme.global_variable_set(name, "macro", a);
         a = BiwaScheme.undef;
         break;
       case "assign-local":

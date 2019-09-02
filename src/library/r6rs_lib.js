@@ -2891,6 +2891,25 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // Chapter 12 syntax-case
   //
 
+  // These are not defined in R6RS, but used to implement hygienic macros
+  // (`syntax-case` is translated to these). See src/system/syntax.js
+  define_libfunc("syntax-null?", 1, 1, function(ar){
+    var x = ar[0];
+    return (x instanceof BiwaScheme.Syntax.SyntaxObject && x.isNullSO());
+  });
+  define_libfunc("syntax-pair?", 1, 1, function(ar){
+    var x = ar[0];
+    return (x instanceof BiwaScheme.Syntax.SyntaxObject && x.isPairSO());
+  });
+  define_libfunc("syntax-car", 1, 1, function(ar){
+    assert_wrapped_syntax_object(ar[0]);
+    return ar[0].sCar();
+  });
+  define_libfunc("syntax-cdr", 1, 1, function(ar){
+    assert_wrapped_syntax_object(ar[0]);
+    return ar[0].sCdr();
+  });
+
   //
   // Chapter 13 Hashtables
   //

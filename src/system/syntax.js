@@ -7,32 +7,36 @@ BiwaScheme.Syntax = BiwaScheme.Class.create({
     this.sname = sname;
     this.func = func;
   },
+
   transform: function(x){
-    if (!this.func){
-      throw new BiwaScheme.Bug("sorry, syntax "+this.sname+
-                               " is a pseudo syntax now");
+    if (!this.func) {
+      throw new Error("misplaced syntax: "+this.sname);
     }
     return this.func(x);
   },
+
   inspect: function(){
     return "#<Syntax " + this.sname +">";
   }
 });
 
-// A built-in syntax did not have associated Syntax object.
-// Following code installed dummy Syntax objects to built-in syntax.
-BiwaScheme.CoreEnv["define"] = new BiwaScheme.Syntax("define");
-BiwaScheme.CoreEnv["begin"]  = new BiwaScheme.Syntax("begin");
+// Register dummy syntaxes to raise error
 BiwaScheme.CoreEnv["quote"]  = new BiwaScheme.Syntax("quote");
+BiwaScheme.CoreEnv["define"] = new BiwaScheme.Syntax("define");
+BiwaScheme.CoreEnv["define-syntax"] = new BiwaScheme.Syntax("define-syntax");
+BiwaScheme.CoreEnv["begin"] = new BiwaScheme.Syntax("begin");
+BiwaScheme.CoreEnv["set!"] = new BiwaScheme.Syntax("set!");
+BiwaScheme.CoreEnv["call/cc"] = new BiwaScheme.Syntax("call/cc");
+BiwaScheme.CoreEnv["call-with-current-continuation"]   = new BiwaScheme.Syntax("call-with-current-continuation");
 BiwaScheme.CoreEnv["lambda"] = new BiwaScheme.Syntax("lambda");
-BiwaScheme.CoreEnv["if"]     = new BiwaScheme.Syntax("if");
-BiwaScheme.CoreEnv["set!"]   = new BiwaScheme.Syntax("set!");
+BiwaScheme.CoreEnv["syntax-case"] = new BiwaScheme.Syntax("syntax-case");
+BiwaScheme.CoreEnv["if"] = new BiwaScheme.Syntax("if");
 
 //
 // syntax-case
 //
 
-BiwaScheme.Syntax.TRACE_EXPANSION = true;
+BiwaScheme.Syntax.TRACE_EXPANSION = false;
 
 // Colors for debug print
 var theme = {
@@ -63,7 +67,9 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
   // wrap: BiwaScheme.Syntax.Wrap
   initialize: function(expr, wrap){
     this.expr = expr;
-    if (!wrap) throw new BiwaScheme.Error("[BUG] wrap not specified");
+    if (!wrap) { 
+      throw new BiwaScheme.Error("[BUG] wrap not specified: "+ BiwaScheme.inspect(expr));
+    }
     this.wrap = wrap;
   },
 
@@ -95,13 +101,32 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
       return BiwaScheme.Syntax.Label.TopLevel;
     }
 
-    console.error("getLabel notfound", BiwaScheme.to_write(this.expr), this.wrap.debugStr());
+    //console.error("getLabel notfound", BiwaScheme.to_write(this.expr), this.wrap.debugStr());
     throw new BiwaScheme.Error("undefined identifier: "+sym.name);
   },
 
   // Return true if this SO represents an identifier
   isIdentifier: function() {
     return this.expr instanceof BiwaScheme.Symbol;
+  },
+
+  // `free-identifier=?`
+  freeIdentifierEquals: function(other) {
+    if (!this.isIdentifier()) throw new Bug("not an identifier");
+    if (!(other instanceof SyntaxObject) || !other.isIdentifier())
+      throw new Bug("`other` is not an identifier");
+
+    return this.getLabel() === other.getLabel();
+  },
+
+  // `bound-identifier=?`
+  boundIdentifierEquals: function(other) {
+    if (!this.isIdentifier()) throw new Bug("not an identifier");
+    if (!(other instanceof SyntaxObject) || !other.isIdentifier())
+      throw new Bug("`other` is not an identifier");
+
+    return this.expr.name === other.expr.name &&
+           Mark.isSameMarks(this.wrap.marks(), other.wrap.marks());
   },
 
   // Return true if this SO contains nil
@@ -114,23 +139,34 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
     return this.expr instanceof BiwaScheme.Pair;
   },
 
+  // Return true if this SO contains a vector
+  isVectorSO: function() {
+    return BiwaScheme.isVector(this.expr);
+  },
+
   // Extract car as SO
   sCar: function() {
+    if (!this.isPairSO()) throw new Error("sCar: not a pair SO");
     return SyntaxObject.wrapWith(this.wrap, this.expr.car);
   },
 
   // Extract cdr as SO
   sCdr: function() {
+    if (!this.isPairSO()) throw new Error("sCdr: not a pair SO");
     return SyntaxObject.wrapWith(this.wrap, this.expr.cdr);
   },
 
   // Decompose #SO<List> into an array of #<SO>
-  // Note: Last cdr is just ignored (even if it is not nil)
+  // NB: Last cdr is just ignored (even if it is not nil)
   expose: function() {
     if (this.expr instanceof Pair) {
-      var wrap = this.wrap;
-      return this.expr.to_array().map(function(sub) {
-        return new SyntaxObject.wrapWith(wrap, sub);
+      var outerWrap = this.wrap;
+      return this.expr.to_array().map(function(subExpr) {
+        // Note: If `subExpr` has its own wrap(innerWrap),
+        // new wrap will be (outerWrap + innerWrap).
+        // If the tail of outerWrap and the head of innerWrap is the same
+        // mark, it is removed (cancels each other).
+        return new SyntaxObject.wrapWith(outerWrap, subExpr);
       });
     }
     else {
@@ -191,7 +227,7 @@ _.extend(BiwaScheme.Syntax.SyntaxObject, {
   // label: Label
   // x : SyntaxObject or scheme expr
   addSubst: function(id, label, x) {
-    var subst = new Subst(id.expr, id.wrap.marks(), label);
+    var subst = new Subst(id, label);
     return SyntaxObject.wrapWith(new Wrap([subst]), x);
   },
 
@@ -279,10 +315,10 @@ BiwaScheme.Syntax.Label.n = 0;
 BiwaScheme.Syntax.Label.TopLevel = new BiwaScheme.Syntax.Label();
 
 BiwaScheme.Syntax.Subst = BiwaScheme.Class.create({
-  initialize: function(sym, marks, label){
-    this.sym = sym;     // Symbol
-    this.marks = marks; // Array<Mark>
-    this.label = label; // Label
+  initialize: function(id, label){
+    this.sym = id.expr;           // Symbol
+    this.marks = id.wrap.marks(); // Array<Mark>
+    this.label = label;           // Label
   },
 
   debugStr: function() {
@@ -342,7 +378,8 @@ BiwaScheme.Syntax.Wrap = BiwaScheme.Class.create({
   },
 
   debugStr: function() {
-    return this.markSubsts.map(function(x){ return x.debugStr() }).join(",");
+    //return this.markSubsts.map(function(x){ return x.debugStr() }).join(",");
+    return this.marks().map(function(x){ return x.debugStr() }).join(",");
   },
 
   toString: function() {
@@ -355,13 +392,13 @@ BiwaScheme.Syntax.Binding = BiwaScheme.Class.create({
     switch(type) {
       case "macro":
       case "core":
-        if (!_.isFunction(value))
-          throw new BiwaScheme.Bug("expected function but got "+BiwaScheme.inspect(value));
+        if (!BiwaScheme.isProcedure(value))
+          throw new BiwaScheme.Bug("Binding.initialize: expected function but got "+BiwaScheme.inspect(value));
         break;
       case "lexical":
       case "global":
         if (!(value instanceof BiwaScheme.Symbol))
-          throw new BiwaScheme.Bug("expected symbol but got "+BiwaScheme.inspect(value));
+          throw new BiwaScheme.Bug("Binding.initialize: expected symbol but got "+BiwaScheme.inspect(value));
         break;
     }
     this.type = type;   // either of "macro" "lexical" "core" "global"
@@ -369,7 +406,12 @@ BiwaScheme.Syntax.Binding = BiwaScheme.Class.create({
   },
 
   inspect: function(){
-    return "#<Binding("+this.type+", "+this.value+")>";
+    if (this.type == "macro" || this.type == "core") {
+      return "#<Binding("+this.type+")>";
+    }
+    else {
+      return "#<Binding("+this.type+", "+this.value+")>";
+    }
   }
 });
 
@@ -427,22 +469,6 @@ BiwaScheme.Syntax.Env = BiwaScheme.Class.create({
 });
 
 BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
-
-  ["swap!", "macro", function(ar){
-    var so = ar[0];
-    //debug("swap!", so.inspect());
-    // (swap! a b)
-    // = (let ((temp #'a)) (set! #'a #'b) (set! b temp))
-    var sos = so.expose();
-    var id = sos[0];
-    var a = sos[1], b = sos[2];
-    var ret = List(id.sym("let"),
-                List(List(id.sym("temp"), a)),
-                List(id.sym("set!"), a, b),
-                List(id.sym("set!"), b, id.sym("temp")));
-    return new SyntaxObject(ret, new Wrap());
-  }],
-
   ["quote", "core", function(so, env, metaEnv, after){
     var x = so.expr;
     if (!(x.cdr instanceof Pair)) throw new Error("quote: missing argument");
@@ -460,7 +486,7 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
       var lambdaSo = SyntaxObject.addSubst(
         name,
         label,
-        new SyntaxObject(expr, new Wrap()));
+        new SyntaxObject(expr, new Wrap())); // REVIEW: not `so.wrap`?
       var newEnv = env.dup().set(label, binding);
       return Expander._exp(lambdaSo, newEnv, metaEnv, function(so2) {
         return after(List(Sym("define"), name, so2));
@@ -471,6 +497,18 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
         return after(List(Sym("define"), name, so2));
       });
     }
+  }],
+
+  ["define-syntax", "core", function(so, env, metaEnv, after){
+    var sos = so.expose();
+    if (sos.length < 3) throw new Error("define-syntax: missing name or transformer");
+    if (sos.length > 3) throw new Error("define-syntax: too many args");
+    var name = sos[1], transformer = sos[2];
+
+    // `(define-synax name (lambda (x) ...))`
+    return Expander._exp(transformer, env, metaEnv, function(so2) {
+      return after(List(Sym("define-syntax"), name, so2));
+    });
   }],
 
   ["begin", "core", function(so, env, metaEnv, after){
@@ -555,14 +593,27 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
     }
   }],
 
-  ["syntax", "core", function(so, env, metaEnv, after){
-    var x = so.expr;
-    if (!(x.cdr instanceof Pair)) throw new Error("syntax: missing argument");
-    if (x.cdr.cdr !== BiwaScheme.nil) throw new Error("syntax: too many arguments");
-    var target = x.cdr.car;
-    var so = new BiwaScheme.Syntax.SyntaxObject(target);
-    return after(List(Sym("quote"), so));
-  }]
+  ["syntax-case", "core", function(so, env, metaEnv, after) {
+    var sos = so.expose();
+    if (sos.length < 4) {
+      throw new Error("syntax-case: too few arguments");
+    }
+    var expr = sos[0];
+    if (sos[1].isIdentifier()) {
+      var myEllipsis = sos[1].expr, literals = sos[2], clauses = _.rest(sos, 3);
+    }
+    else {
+      var myEllipsis = Sym("..."), literals = sos[1], clauses = _.rest(sos, 2);
+    }
+    var syntaxCase = new BiwaScheme.Syntax.SyntaxCase(myEllipsis, literals);
+    return syntaxCase.compileClauses(clauses, env, metaEnv, function(compiledClauses) {
+      compiledClauses.push(List(Sym("js-eval"), "throw 'syntax-case: no match'"));
+      var expr = new Pair(Sym("or"), ListA(compiledClauses));
+      var compiledSyntaxCase = new SyntaxObject(expr, so.wrap);
+      // Expand `or`, etc.
+      return Expander._exp(compiledSyntaxCase, env, metaEnv, after);
+    });
+  }],
 ];
 
 // Misc
@@ -575,17 +626,6 @@ _.extend(BiwaScheme.Syntax, {
     return Sym(prefix + "." + n);
   },
   _genVar: 0,
-
-  // free-identifier=?
-  isFreeIdentifierEqual: function(id1, id2) {
-    return id1.getLabel() === id2.getLabel();
-  },
-
-  // bound-identifier=?
-  isBoundIdentifierEqual: function(id1, id2) {
-    return id1.expr.name == id2.expr.name &&
-           Mark.isSameMarks(id1.wrap.marks(), id2.wrap.marks());
-  },
 
   // datum->syntax
   // templateId: Identifier to copy context
@@ -611,11 +651,13 @@ BiwaScheme.Expander = {
     var so1 = new SyntaxObject(expr, Expander.InitialWrap),
         env = Expander.InitialEnv,
         menv = Expander.InitialEnv;
-    return Expander._exp(so1, env, menv, function(so2) {
+    var ret = Expander._exp(so1, env, menv, function(so2) {
       var stripped = SyntaxObject.strip(so2);
       debug("Expanded:", BiwaScheme.to_write(stripped), "\n");
       return stripped;
     });
+    debug("(return from expand)", BiwaScheme.to_write(ret), "\n");
+    return ret;
   },
 
   // Main loop of Expander (`exp` in "Beautiful Code")
@@ -881,7 +923,7 @@ BiwaScheme.Expander.LambdaHelper = {
       var label = new Label();
       var binding = new Binding("lexical", names[1]);
       newEnv.set(label, binding);
-      substs.push(new Subst(names[0].expr, names[0].wrap.marks(), label));
+      substs.push(new Subst(names[0], label));
     });
 
     var newBodySos = bodySos.map(function(bodySo){
@@ -893,7 +935,227 @@ BiwaScheme.Expander.LambdaHelper = {
   }
 };
 
+//
+// Helpers to implement syntax-case (see also: r6rs_lib.js)
+//
+
+BiwaScheme.Syntax.SyntaxCase = BiwaScheme.Class.create({
+  initialize: function(myEllipsis, literals) {
+    this.myEllipsis = myEllipsis;
+    this.literals = literals;
+    // Counter for _newSym
+    this._n = 0;
+  },
+
+  // Return a symbol unique in this syntax-case
+  _newSym: function() {
+    this._n++;
+    return Sym("v"+this._n);
+  },
+
+  compileClauses: function(clauses, env, menv, after) {
+    if (clauses.length == 0) {
+      return after([]);
+    }
+    var first = clauses[0], rest = _.rest(clauses);
+    var clause = this._parseClause(first);
+    var self = this;
+
+    // Compile each clause by recursion
+    return this._compileClause(clause.pattern, clause.outputExpr, env, menv, function(compiledFirst) {
+      return self.compileClauses(rest, env, menv, function(compiledRest) {
+        return after([compiledFirst].concat(compiledRest));
+      });
+    });
+  },
+
+  _parseClause: function(clause) {
+    var sos = clause.expose();
+    if (sos.length < 2) {
+      throw new Error("syntax-case: clause has too few elements");
+    }
+    else if (sos.length == 2) {
+      var pattern = sos[0], fenderExpr = null, outputExpr = sos[1];
+    }
+    else if (sos.length == 3) {
+      var pattern = sos[0], fenderExpr = sos[1], outputExpr = sos[2];
+      throw "TODO: fender";
+    }
+    else if (sos.length > 3) {
+      throw new Error("syntax-case: clause has too many elements");
+    }
+    return {
+      pattern: pattern,
+      fenderExpr: fenderExpr,
+      outputExpr: outputExpr,
+    };
+  },
+
+  // pat: SO (the pattern)
+  // outputExpr: SO (the output expression)
+  _compileClause: function(pat, outputExpr, env, menv, after) {
+    var self = this;
+    return this._compile(
+      pat.sCdr(), // p
+      List(Sym("syntax-cdr"), Sym("x")), // x
+      0, // dim
+      [], // vars
+      // next (cont: You'll get the compiled result by calling `cont`
+      //       with a form to embed in it)
+      function(vars, cont) {
+        return self._compileOutputExpression(outputExpr, vars, env, menv, function(compiledOutExpr) {
+          return after(cont(compiledOutExpr));
+        });
+      }
+    );
+  },
+
+  _compile: function(p, x, dim, vars, next) {
+    debug("_compile", BiwaScheme.to_write(p), BiwaScheme.to_write(x), dim, BiwaScheme.to_write(vars));
+    var v = this._newSym();
+    var matchThis;
+    if (p.isIdentifier()) {
+      // TODO: ellipsis, literal, underscore
+      var newVars = [].concat(vars, [[p, dim]]); 
+      return next(newVars, function(compiledNext) {
+        var compiledThis = List(Sym("let"), List(List(v, x)),
+                             List(Sym("let"), List(List(p, v)),
+                               compiledNext));
+        return compiledThis;
+      });
+    }
+    else if (p.isPairSO()) {
+      var self = this;
+      return this._compile(
+        p.sCar(),
+        List(Sym("syntax-car"), v),
+        dim,
+        vars,
+        function(vars2, cont2) {
+          return self._compile(
+            p.sCdr(),
+            List(Sym("syntax-cdr"), v),
+            dim,
+            vars2,
+            function(vars3, cont3) {
+              return next(vars3, function(compiledNext) {
+                var compiledCdr = cont3(compiledNext);
+                var compiledCar = cont2(compiledCdr)
+                var compiledThis = List(Sym("let"), List(List(v, x)),
+                                   List(Sym("and"), List(Sym("syntax-pair?"), v),
+                                      compiledCar));
+                return compiledThis;
+              });
+            }
+          );
+        }
+      );
+    }
+    else if (BiwaScheme.isVector(p.expr)) {
+      throw "TODO";
+    }
+    else if (p.isNullSO()) {
+      return next(vars, function(compiledNext) {
+        var compiledThis = List(Sym("let"), List(List(v, x)),
+                           List(Sym("and"), List(Sym("syntax-null?"), v),
+                             compiledNext));
+        return compiledThis;
+      });
+    }
+    else { // Constant
+      return next(vars, function(compiledNext) {
+        var compiledThis = List(Sym("let"), List(List(v, x)),
+                           List(Sym("and"), List(Sym("equal?"), v, p),
+                             compiledNext));
+        return compiledThis;
+      });
+    }
+  },
+
+  _compileOutputExpression: function(outputExpr, vars, env, menv, after) {
+    debug("_compileOutputExpression", outputExpr, "vars:", vars)
+    var ret = this._createOutExprEnv(outputExpr, vars, env);
+    var newEnv = ret[0], substs = ret[1];
+
+    // Use Expander to expand `syntax`
+    var outputExpr_ = SyntaxObject.addSubsts(outputExpr, substs);
+    return Expander._exp(outputExpr_, newEnv, menv, after);
+  },
+
+  // Create a Env for expanding output expression
+  _createOutExprEnv: function(outputExpr, vars, origEnv) {
+    var self = this;
+    var newEnv = origEnv.dup(),
+        substs = [];
+
+    // Add pattern variables
+    vars.forEach(function(item) {
+      var identifier = item[0];
+      var label = new Label();
+      var binding = new Binding("lexical", identifier.expr);
+      newEnv.set(label, binding);
+      substs.push(new Subst(identifier, label));
+    });
+
+    // Add `syntax`
+    var label = new Label();
+    var binding = new Binding("macro", function(ar) {
+      var so = ar[0];
+      debug("(generated `syntax`)", so)
+      var sos = so.expose();
+      if (sos.length < 2) throw new Error("syntax: missing argument");
+      if (sos.length > 2) throw new Error("syntax: too many args");
+      var tmpl = sos[1];
+      return self._compileTmpl(tmpl, vars, 0, false);
+    });
+    newEnv.set(label, binding);
+    substs.push(new Subst(new SyntaxObject(Sym("syntax"), outputExpr.wrap), label));
+
+    return [newEnv, substs];
+  },
+
+  // t: SyntaxObject
+  // vars: `[[Symbol, dim], ...]`
+  _compileTmpl: function(t, vars, dim, isEllipsisEscape) {
+    if (t.isIdentifier()) {
+      // Check this is a pattern variable
+      var found = vars.find(function(x) { return x[0].expr === t.expr });
+      if (found) {
+        if (found[1] > dim) {
+          throw new Error("syntax-case: to few ...'s");
+        }
+        return t;
+      }
+      else {
+        // It's just a data (a symbol)
+        return List(Sym("quote"), t);
+      }
+    }
+    else if (t.isPairSO()) {
+      // TODO: ellipsis-escape?, ellipsis?
+      var compiledCar = this._compileTmpl(t.sCar(), vars, dim, isEllipsisEscape);
+      var compiledCdr = this._compileTmpl(t.sCdr(), vars, dim, isEllipsisEscape);
+      return List(Sym("cons"), compiledCar, compiledCdr);
+    }
+    else if (t.isVectorSO()) {
+      throw "TODO"
+    }
+    else if (t.isNullSO()) {
+      // REVIEW: should these be `id.sym()` ??
+      return nil; // REVIEW: should be List(Sym("quote"), nil); ? 
+    }
+    else { // Constant
+      return t;
+    }
+  }
+});
+
+
 // TODO: merge this with BiwaScheme.TopEnv and BiwaScheme.CoreEnv
+// SyntaxEnv contains
+// - user-defined global variables
+// - stdlibs (like "let", "cond")
+// - core forms (like "set!", "lambda")
 BiwaScheme.SyntaxEnv = {};
 BiwaScheme.global_variable_set = function(name, type, value) {
   BiwaScheme.SyntaxEnv[name] = new BiwaScheme.Syntax.Binding(type, value);
@@ -916,13 +1178,20 @@ var Syntax = BiwaScheme.Syntax,
     LambdaHelper = BiwaScheme.Expander.LambdaHelper,
 
     nil = BiwaScheme.nil,
+    inspect = BiwaScheme.inspect,
     List = BiwaScheme.List,
     ListA = BiwaScheme.ListA,
     Pair = BiwaScheme.Pair,
     Sym = BiwaScheme.Sym,
 
     debug = function(/*arguments*/){
-      if(BiwaScheme.Syntax.TRACE_EXPANSION) console.log.apply(null, Array.prototype.slice.call(arguments));
+      if(BiwaScheme.Syntax.TRACE_EXPANSION) {
+        var args = Array.prototype.slice.call(arguments).map(function(x) {
+          if (_.isString(x)) return x;
+          else return inspect(x);
+        });
+        console.log.apply(null, args);
+      }
     };
 
 })();

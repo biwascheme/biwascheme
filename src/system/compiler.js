@@ -89,6 +89,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
     else if(x instanceof BiwaScheme.Pair){
       switch(x.first()){
       case BiwaScheme.Sym("define"):
+      case BiwaScheme.Sym("define-syntax"):
         var exp=x.third();
         ret = this.find_sets(exp, v);
       case BiwaScheme.Sym("begin"):
@@ -160,6 +161,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
     else if(x instanceof BiwaScheme.Pair){
       switch(x.first()){
       case BiwaScheme.Sym("define"):
+      case BiwaScheme.Sym("define-syntax"):
         var exp=x.third();
         ret = this.find_free(exp, b, f);
         break;
@@ -293,9 +295,15 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
         switch(x.first()){
         case BiwaScheme.Sym("define"):
           ret = this._compile_define(x, next);
-
           x = ret[0];
           next = ret[1];
+          break;
+
+        case BiwaScheme.Sym("define-syntax"):
+          var name = x.cdr.car.name; 
+          var value = x.cdr.cdr.car;
+          x = value;
+          next = ["assign-global-syntax", name, next];
           break;
 
         case BiwaScheme.Sym("begin"):
