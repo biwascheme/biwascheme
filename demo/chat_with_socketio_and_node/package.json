@@ -3,8 +3,8 @@
     "description": "Example chat application with BiwaScheme, Node.js and Socket.IO",
     "version": "0.0.1",
     "dependencies": {
-        "biwascheme": "0.6.1",
-        "express": "2.5.1",
-        "socket.io": "0.8.7"
+        "biwascheme": "0.6.9",
+        "express": "4.17.1",
+        "socket.io": "2.2.0"
     }
 }

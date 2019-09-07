@@ -8,27 +8,24 @@
   (js-call (js-eval "require") path))
 
 ;; start a simple web-serving hosting static files from the current directory
-(define (express-start port)
+(define (express-start)
   (let* ((express (require "express"))
-         (app (js-invoke express "createServer"))
+         (app (js-call express))
          (dir (string-append (js-eval "__dirname") "/../../../")))
-    (js-invoke app "configure"
-               (js-closure (lambda () (js-invoke app "use" (js-invoke express "static" dir)))))
-    (js-invoke app "listen" port
-               (js-closure
-                (lambda ()
-                  (let1 addr (js-invoke app "address")
-                        (log-debug (string-append "Server listening on http://"
-                                                  (js-ref addr "address")
-                                                  ":"
-                                                  (number->string (js-ref addr "port"))))))))
+    (js-invoke app "use" (js-invoke express "static" dir))
     app))
 
 ;; extend a web server to accept Socket.IO connections
-(define (socketio-start app connection-handler)
-  (let* ((sio (require "socket.io"))
-         (io (js-invoke sio "listen" app)))
+(define (socketio-start app port connection-handler)
+  (let* ((http (js-invoke (require "http") "createServer" app))
+         (io (js-call (require "socket.io") http)))
     (js-invoke (js-ref io "sockets") "on" "connection" (js-closure connection-handler))
+    (js-invoke http "listen" port
+               (js-closure (lambda ()
+                 (let1 addr (js-invoke http "address")
+                   (log-debug (string-append "Server listening on http://"
+                                             "localhost:"
+                                             (number->string (js-ref addr "port"))))))))
     io))
 
 ;; Socket.IO helpers
@@ -36,7 +33,10 @@
   (apply socketio-emit (cons (js-ref socket "broadcast") args)))
 
 (define (socketio-broadcast-all socket . args)
-  (apply socketio-emit (cons (js-ref (js-ref socket "manager") "sockets") args)))
+  (apply socketio-emit (cons socket args)))
+  ; Not sure this is right...
+  ; Original code (socket.io 0.8.7):
+  ;(apply socketio-emit (cons (js-ref (js-ref socket "manager") "sockets") args)))
 
 ;; main
 (log-debug "Server starting")
@@ -44,7 +44,8 @@
 (define *nicknames* '())
 
 (socketio-start
- (express-start 3333)
+ (express-start)
+ 3333
  (lambda (socket)
    (let ((handle (lambda (type callback) (socketio-on socket type callback)))
          (broadcast (lambda args (apply socketio-broadcast (cons socket args))))
