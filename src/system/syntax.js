@@ -379,7 +379,7 @@ BiwaScheme.Syntax.Wrap = BiwaScheme.Class.create({
 
   debugStr: function() {
     //return this.markSubsts.map(function(x){ return x.debugStr() }).join(",");
-    return this.marks().map(function(x){ return x.debugStr() }).join(",");
+    return this.marks().map(function(x){ return x.debugStr() }).join("");
   },
 
   toString: function() {
