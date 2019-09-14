@@ -233,29 +233,29 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ret;
   })
 
-  var expand_letrec_star = function(x){
-    var binds = x.cdr.car, body = x.cdr.cdr;
+  var expand_letrec_star = function(so){
+    var cdr = so.sCdr();
+    var origBinds = cdr.sCar(), body = cdr.sCdr();
+    if(!origBinds.isPairSO())
+      throw new Error("letrec*: need a pair for bindings: got "+to_write(origBinds));
+    var binds = origBinds.expose().reverse();
 
-    if(!(binds instanceof Pair))
-      throw new Error("letrec*: need a pair for bindings: got "+to_write(binds));
-
-    var ret = body;
-    _.each(binds.to_array().reverse(), function(bind){
-      ret = new Pair(new Pair(Sym("set!"), bind),
-              ret);
+    var set_and_run = body;
+    _.each(binds, function(bind){
+      set_and_run = new Pair(new Pair(Sym("set!"), bind),
+              set_and_run);
     })
-    var letbody = nil;
-    _.each(binds.to_array().reverse(), function(bind){
-      letbody = new Pair(new Pair(bind.car,
-                           new Pair(BiwaScheme.undef, nil)),
-                  letbody);
+    var vars = nil;
+    _.each(binds, function(bind){
+      vars = new Pair(List(bind.sCar(), BiwaScheme.undef),
+                  vars);
     })
     return new Pair(Sym("let"),
-             new Pair(letbody,
-               ret));
+             new Pair(vars,
+               set_and_run));
   }
-  define_syntax("letrec", expand_letrec_star);
-  define_syntax("letrec*", expand_letrec_star);
+  define_hygienic_syntax("letrec", expand_letrec_star);
+  define_hygienic_syntax("letrec*", expand_letrec_star);
 
   define_syntax("let-values", function(x) {
     // (let-values (((a b) (values 1 2))
