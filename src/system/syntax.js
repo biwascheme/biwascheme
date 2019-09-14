@@ -147,6 +147,10 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
   // Extract car as SO
   sCar: function() {
     if (!this.isPairSO()) throw new Error("sCar: not a pair SO");
+    // Note: If `this.expr` has its own wrap(`innerWrap`),
+    // new wrap will be `this.wrap` + `innerWrap`.
+    // If the tail of `this.wrap` and the head of `innerWrap` is the same
+    // mark, it is removed (cancels each other).
     return SyntaxObject.wrapWith(this.wrap, this.expr.car);
   },
 
@@ -160,14 +164,11 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
   // NB: Last cdr is just ignored (even if it is not nil)
   expose: function() {
     if (this.expr instanceof Pair) {
-      var outerWrap = this.wrap;
-      return this.expr.to_array().map(function(subExpr) {
-        // Note: If `subExpr` has its own wrap(innerWrap),
-        // new wrap will be (outerWrap + innerWrap).
-        // If the tail of outerWrap and the head of innerWrap is the same
-        // mark, it is removed (cancels each other).
-        return new SyntaxObject.wrapWith(outerWrap, subExpr);
-      });
+      var so = this, ary = [];
+      for (var ary = [], so = this; so.isPairSO(); so = so.sCdr()) {
+        ary.push(so.sCar());
+      }
+      return ary;
     }
     else {
       throw new BiwaScheme.Bug("this so is not a pair: "+BiwaScheme.to_write(this.expr));
