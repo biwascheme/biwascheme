@@ -75,7 +75,9 @@ BiwaScheme.define_hygienic_syntax = function(sname, func) {
 }
 
 BiwaScheme.define_scmfunc = function(fname, min, max, str){
-  (new BiwaScheme.Interpreter).evaluate("(define "+fname+" "+str+"\n)");
+  var src = "(define "+fname+" "+str+"\n)";
+  var intp = new BiwaScheme.Interpreter(function(e){ throw e; });
+  var ret = intp.evaluate(src);
 }
 
 //  define_scmfunc("map+", 2, null, 
