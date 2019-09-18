@@ -175,7 +175,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var name = null;
     if (so.sCdr().sCar().isIdentifier()) {
       name = so.sCdr().sCar();
-      so = x.sCdr();
+      so = so.sCdr();
     }
     var binds = so.sCdr().sCar(), body = so.sCdr().sCdr();
 
