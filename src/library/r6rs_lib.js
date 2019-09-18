@@ -184,22 +184,21 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     }
 
     // Extract variables and values
-    var vars = nil, vals = nil;
+    var vars = [], vals = [];
     for(var p=binds; p.isPairSO(); p=p.sCdr()){
       if(!(p.sCar().isPairSO())){
         throw new Error("let: need a pair for bindings: got "+to_write(p.sCar()));
       }
-      vars = new Pair(p.sCar().sCar(), vars);
-      vals = new Pair(p.sCar().sCdr().sCar(), vals);
+      vars.push(p.sCar().sCar());
+      vals.push(p.sCar().sCdr().sCar());
     }
+    vars = ListA(vars);
+    vals = ListA(vals);
 
     var lambda = null;
     if (name) {
       // (let loop ((a 1) (b 2)) body ..)
       //=> (letrec ((loop (lambda (a b) body ..))) (loop 1 2))
-      vars = array_to_list(vars.to_array().reverse());
-      vals = array_to_list(vals.to_array().reverse());
-
       var body_lambda = new Pair(Sym("lambda"), new Pair(vars, body));
       var init_call = new Pair(name, vals);
 
