@@ -697,7 +697,7 @@ BiwaScheme.Expander = {
           case "global":
             var car = binding.value;
             return Expander._expandExprs(_.rest(sos), env, menv, function(newSos) {
-              var cdr = List.apply(null, newSos);
+              var cdr = ListA(newSos);
               var so2 = new SyntaxObject(new Pair(car, cdr), so1.wrap)
               return after(so2);
             });
@@ -711,7 +711,7 @@ BiwaScheme.Expander = {
         // ((func expr...) args...)
         return Expander._exp(sos[0], env, menv, function(car) {
           return Expander._expandExprs(_.rest(sos), env, menv, function(newSos) {
-            var cdr = List.apply(null, newSos);
+            var cdr = ListA(newSos);
             var so2 = new SyntaxObject(new Pair(car, cdr), so1.wrap);
             return after(so2);
           });
