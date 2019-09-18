@@ -73,8 +73,10 @@ BiwaScheme.Syntax.SyntaxObject = BiwaScheme.Class.create({
     this.wrap = wrap;
   },
 
-  // Return the label corresponding to this identifier
+  // Find the label matches the identifier. `this` must be an identifier.
   // (`id-label` in "Beautiful Code")
+  //
+  // Matches when there is a subst whose sym is the sym and the marks are the same.
   getLabel: function() {
     BiwaScheme.assert(this.expr instanceof BiwaScheme.Symbol,
                       "called getLabel on non-identifier SO");
