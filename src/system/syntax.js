@@ -409,11 +409,14 @@ BiwaScheme.Syntax.Binding = BiwaScheme.Class.create({
   },
 
   inspect: function(){
-    if (this.type == "macro" || this.type == "core") {
-      return "#<Binding("+this.type+")>";
-    }
-    else {
-      return "#<Binding("+this.type+", "+this.value+")>";
+    switch(this.type) {
+      case "macro":
+      case "core":
+        return "#<Bd("+this.type+")>";
+      case "lexical":
+        return "#<Bd("+this.value+")>";
+      default:
+        return "#<Bd("+this.type+", "+this.value+")>";
     }
   }
 });
