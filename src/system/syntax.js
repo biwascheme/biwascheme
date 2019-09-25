@@ -1191,13 +1191,13 @@ var Syntax = BiwaScheme.Syntax,
     Sym = BiwaScheme.Sym,
 
     debug = function(/*arguments*/){
-      if(BiwaScheme.Syntax.TRACE_EXPANSION) {
-        var args = Array.prototype.slice.call(arguments).map(function(x) {
-          if (_.isString(x)) return x;
-          else return inspect(x);
-        });
-        console.log.apply(null, args);
-      }
+      if(!BiwaScheme.Syntax.TRACE_EXPANSION) return;
+
+      var args = Array.prototype.slice.call(arguments).map(function(x) {
+        if (_.isString(x)) return x;
+        else return inspect(x);
+      });
+      console.log.apply(null, args);
     };
 
 })();
