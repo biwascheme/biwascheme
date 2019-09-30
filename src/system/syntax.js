@@ -612,13 +612,7 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
       var myEllipsis = Sym("..."), literals = sos[2], clauses = _.rest(sos, 3);
     }
     var syntaxCase = new BiwaScheme.Syntax.SyntaxCase(myEllipsis, literals);
-    return syntaxCase.compileClauses(clauses, env, metaEnv, function(compiledClauses) {
-      compiledClauses.push(List(Sym("js-eval"), "throw 'syntax-case: no match'"));
-      var expr = new Pair(Sym("or"), ListA(compiledClauses));
-      var compiledSyntaxCase = new SyntaxObject(expr, so.wrap);
-      // Expand `or`, etc.
-      return Expander._exp(compiledSyntaxCase, env, metaEnv, after);
-    });
+    return syntaxCase.compile(so.wrap, clauses, env, metaEnv, after);
   }],
 ];
 
@@ -959,7 +953,18 @@ BiwaScheme.Syntax.SyntaxCase = BiwaScheme.Class.create({
     return Sym("v"+this._n);
   },
 
-  compileClauses: function(clauses, env, menv, after) {
+  // Compile this syntax-case into a program made of `syntax-car`, `syntax-cdr`, etc.
+  compile: function(wrap, clauses, env, menv, after) {
+    return this._compileClauses(clauses, env, menv, function(compiledClauses) {
+      compiledClauses.push(List(Sym("js-eval"), "throw 'syntax-case: no match'"));
+      var expr = new Pair(Sym("or"), ListA(compiledClauses));
+      var compiledSyntaxCase = new SyntaxObject(expr, wrap);
+      // Expand `or`, etc.
+      return Expander._exp(compiledSyntaxCase, env, menv, after);
+    });
+  },
+
+  _compileClauses: function(clauses, env, menv, after) {
     if (clauses.length == 0) {
       return after([]);
     }
@@ -969,7 +974,7 @@ BiwaScheme.Syntax.SyntaxCase = BiwaScheme.Class.create({
 
     // Compile each clause by recursion
     return this._compileClause(clause.pattern, clause.outputExpr, env, menv, function(compiledFirst) {
-      return self.compileClauses(rest, env, menv, function(compiledRest) {
+      return self._compileClauses(rest, env, menv, function(compiledRest) {
         return after([compiledFirst].concat(compiledRest));
       });
     });
