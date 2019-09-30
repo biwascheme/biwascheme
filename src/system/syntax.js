@@ -604,12 +604,12 @@ BiwaScheme.Syntax.INITIAL_ENV_ITEMS = [
     if (sos.length < 4) {
       throw new Error("syntax-case: too few arguments");
     }
-    var expr = sos[0];
-    if (sos[1].isIdentifier()) {
-      var myEllipsis = sos[1].expr, literals = sos[2], clauses = _.rest(sos, 3);
+    var expr = sos[1];
+    if (sos[2].isIdentifier()) {
+      var myEllipsis = sos[2].expr, literals = sos[3], clauses = _.rest(sos, 4);
     }
     else {
-      var myEllipsis = Sym("..."), literals = sos[1], clauses = _.rest(sos, 2);
+      var myEllipsis = Sym("..."), literals = sos[2], clauses = _.rest(sos, 3);
     }
     var syntaxCase = new BiwaScheme.Syntax.SyntaxCase(myEllipsis, literals);
     return syntaxCase.compileClauses(clauses, env, metaEnv, function(compiledClauses) {
