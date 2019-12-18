@@ -1,4 +1,4 @@
 # Config file for Jekyll (GitHub Pages)
-includes:
-  - src/system/_types.js
-  - src/system/_writer.js
+include:
+  - "src/system/_types.js"
+  - "src/system/_writer.js"
