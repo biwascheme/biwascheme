@@ -26,7 +26,7 @@ BiwaScheme.to_write = function(obj){
               .replace(/\f/g, "\\f")
               .replace(/\r/g, "\\r") +
            '"';
-  else if(_.isArray(obj) && obj.closure_p)
+  else if(BiwaScheme.isClosure(obj))
     return "#<Closure>";
   else if(_.isArray(obj))
     return "#(" + _.map(obj, function(e) { return BiwaScheme.to_write(e); }).join(" ") + ")";

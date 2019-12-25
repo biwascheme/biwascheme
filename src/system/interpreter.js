@@ -126,10 +126,10 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
       v[i+1] = this.index(s, i-1);
     v[n+1] = dotpos;
 
-    v.closure_p = true;
     if(dotpos == -1)
       v.expected_args = args;
 
+    BiwaScheme.makeClosure(v);
     return v;
   },
 
@@ -283,7 +283,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         // the number of arguments in the last call is
         // pushed to the stack.
         var n_args = this.index(s, -1);
-        if(func instanceof Array && func.closure_p === true){ //closure
+        if(BiwaScheme.isClosure(func)){
           a = func;
           x = func[0];
 
