@@ -349,8 +349,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //
   //"procedure?", 1, 1
   define_libfunc("procedure?", 1, 1, function(ar){
-    return ((ar[0] instanceof Array) && (ar[0].closure_p === true)
-	    || (typeof ar[0] == "function"));
+    return BiwaScheme.isProcedure(ar[0]);
   })
 
   //
@@ -1169,7 +1168,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //        11.13  Vectors
   //
   define_libfunc("vector?", 1, 1, function(ar){
-    return (ar[0] instanceof Array) && (ar[0].closure_p !== true)
+    return BiwaScheme.isVector(ar[0]);
   })
   define_libfunc("make-vector", 1, 2, function(ar){
     assert_integer(ar[0]);

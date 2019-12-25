@@ -140,7 +140,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       for(var i=0; i<ary.length; i+=2){
         var key = ary[i], value = ary[i+1];
         assert_symbol(key);
-        if(value.closure_p === true)
+        if(BiwaScheme.isClosure(value))
           value = BiwaScheme.js_closure(value, intp);
 
         obj[key.name] = value;

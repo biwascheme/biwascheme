@@ -238,11 +238,11 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       expected_args = lambda.cdr.car;
     }
 
-    //[close, n_frees, do_body, next]
+    //["close", <args>, <n>, <body>, <opecodes_next>, <dotpos>]
     var opc = Compiler.compile(lambda);
-    if(opc[1] != 0)
+    if(opc[2] != 0)
       throw new Bug("you cannot use free variables in macro expander (or define-macro must be on toplevel)")
-    var cls = [opc[2]];
+    var cls = BiwaScheme.makeClosure([opc[3]]);
 
     TopEnv[name.name] = new Syntax(name.name, function(sexp){
       var given_args = sexp.to_array();

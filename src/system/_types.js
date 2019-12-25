@@ -82,8 +82,15 @@ BiwaScheme.isMutableHashtable = function(obj){
   return (obj instanceof BiwaScheme.Hashtable) && obj.mutable;
 };
 
+// Returns true if `obj` is a Scheme closure.
 BiwaScheme.isClosure = function(obj){
   return (obj instanceof Array) && (obj.closure_p === true);
+};
+
+// Change `ary` into a Scheme closure (destructive).
+BiwaScheme.makeClosure = function(ary) {
+  ary.closure_p = true;
+  return ary;
 };
 
 // procedure: Scheme closure or JavaScript function

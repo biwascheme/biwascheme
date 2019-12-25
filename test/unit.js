@@ -2391,6 +2391,20 @@ describe('srfi-62 s-expr comment', {
 // describe('srfi-98 get-environment-variable(s)', {
 // Node.js only
 
+describe('number of args vs number of parameters', {
+  'string->number, invalid "radix" param ': function() {
+    should_raise_error("(cons)");
+    should_raise_error("(cons 1)");
+    ew("(cons 1 2)").should_be("(1 . 2)"); 
+    should_raise_error("(cons 1 2 3)");
+    should_raise_error("((lambda (x y z) #t))");
+    should_raise_error("((lambda (x y z) #t) 'a)");
+    should_raise_error("((lambda (x y z) #t) 'a 'b)");
+    ew("((lambda (x y z) #t) 'a 'b 'c)").should_be("#t"); 
+    should_raise_error("((lambda (x y z) #t) 'a 'b 'c 'd)");
+  },
+});
+
 describe('infra', {
   'parse_fraction, invalid "rep" param': function() {
     js_should_raise_error(function() {
