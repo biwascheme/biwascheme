@@ -91,6 +91,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     return this.closure(["refer-local", 0,
                           ["nuate", this.save_stack(ss), 
                           ["return"]]], 
+                        1,     //arity
                         0,     //n (number of frees)
                         null,  //s (stack position to get frees)
                         -1);   // dotpos
