@@ -103,8 +103,8 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
   // m: number of items to shift
   // s: stack pointer (= index of stack top + 1)
   shift_args: function(n, m, s){
-    for(var i = n-1; i >= -1; i--){
-      this.index_set(s, i+m+1, this.index(s, i+1));
+    for(var i = n; i >= 0; i--){
+      this.index_set(s, i+m+1, this.index(s, i));
     }
     return s-m-1;
   },
@@ -115,7 +115,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
 
   // private
   index_set: function(s, i, v){
-    this.stack[s-i-2] = v;
+    this.stack[(s-1)-i] = v;
   },
 
   // private
@@ -211,7 +211,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         break;
       case "box":
         var n=x[1], x=x[2];
-        this.index_set(s, n, [this.index(s, n+1)]); //boxing
+        this.index_set(s, n+1, [this.index(s, n+1)]); //boxing
         break;
       case "test":
         var thenc=x[1], elsec=x[2];
@@ -305,14 +305,14 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
               // In such case this VM prepares an empty list as the rest argument.
               // --------------------------------------------------------------
               // => We extend the stack to put the empty list.
-              for(var i = -1; i < n_args; i++){
-                this.index_set(s, i-1, this.index(s, i+1));
+              for(var i = 0; i < n_args+1; i++){
+                this.index_set(s, i-1, this.index(s, i));
               }
               s++;
               // => Update the number of arguments
-              this.index_set(s, -1, this.index(s, 0) + 1);  
+              this.index_set(s, 0, this.index(s, 0) + 1);  
             }
-            this.index_set(s, dotpos, ls);
+            this.index_set(s, dotpos+1, ls);
           }
           else {
             // the dot is not found
