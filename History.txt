@@ -1,3 +1,13 @@
+HEAD
+
+  * new: Arity check for Scheme closures (#132)
+  * new: biwascheme_terminal got some features like syntax highlighting (#133, #135)
+  * new: `date->string` supports V (week num) (#134)
+  * fix: Allow an empty list of bindings in let* (#131)
+  * fix: encoding error on `load` (#138)
+  * fix: error on tail position call/cc (#152)
+  * dependency: Update underscore and underscore.string
+
 2018-12-17 v0.6.9
 
   * new: Vector quasiquote
