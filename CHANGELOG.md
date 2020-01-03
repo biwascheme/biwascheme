@@ -1,4 +1,4 @@
-HEAD
+## HEAD
 
   * new: Arity check for Scheme closures (#132)
   * new: biwascheme_terminal got some features like syntax highlighting (#133, #135)
@@ -8,7 +8,7 @@ HEAD
   * fix: error on tail position call/cc (#152)
   * dependency: Update underscore and underscore.string
 
-2018-12-17 v0.6.9
+## 2018-12-17 v0.6.9
 
   * new: Vector quasiquote
   * new: Allow `(string)` (#120)
@@ -21,7 +21,7 @@ HEAD
   * fix: Allow `(append ls)` (#120)
   * fix: Backtrace get longer with every error on an Interpreter object (#122)
 
-2017-07-21 v0.6.8
+## 2017-07-21 v0.6.8
 
   * new: js-new can take JS constructor function (#97)
   * fix: `(eval 123)` raises error (#83)
@@ -32,7 +32,7 @@ HEAD
   * fix: (Node.js) `load` and `js-load` find source file from the current directory (#89)
   * fix: (Node.js) file-exists?, delete-file, get-environment-variable did not work
 
-2016-12-25 v0.6.7
+## 2016-12-25 v0.6.7
 
   * new: list-sort, vector-sort, vector-sort! now can take a comparator proc (#77, #78)
   * new: case-lambda (#81)
@@ -42,7 +42,7 @@ HEAD
   * fix: fixed error on `load` on Firefox (#79)
   * fix: element-toggle-class-name!, etc. shows deprecation warning unintentionally (#80)
 
-2016-10-06 v0.6.6
+## 2016-10-06 v0.6.6
 
   * new: string->number supports complex numbers (#72)
   * fix: fixed number predicates (eg. (complex? 1) now returns #t) (#70)
@@ -52,12 +52,12 @@ HEAD
       (define a 1)
       (define a (+ a 1))
 
-2016-09-15 v0.6.5
+## 2016-09-15 v0.6.5
 
   * new: complex numbers arithmetics (#69)
   * new: `readline` is supported on Node (#23)
 
-2016-05-31 v0.6.4
+## 2016-05-31 v0.6.4
 
   * new: R7RS promise (delay, force, delay-force, etc.)
   * change:
@@ -65,7 +65,7 @@ HEAD
       but deprecated)
     - `wait-for` returns event object instead of `#<undef>`
 
-2015-12-25 v0.6.3
+## 2015-12-25 v0.6.3
 
   * new:
     - macro `..` (expands to `js-invocation`)
@@ -79,7 +79,7 @@ HEAD
   * Add reference http://www.biwascheme.org/doc/reference.html
   * Some bug fixes
 
-2014-02-16  v0.6.2
+## 2014-02-16  v0.6.2
 
   * change:
       - upgraded from jQuery 1.6.2 to 1.7.1
@@ -109,7 +109,7 @@ HEAD
 
   * some bug fixes
 
-2011-12-01  v0.6.1
+## 2011-12-01  v0.6.1
 
   * fix: bin/biwas works on Node 0.6.x
 
@@ -131,7 +131,7 @@ HEAD
     - file-exists?, delete-file, command-line, exit
         (R6RS standard library chapter 9 and 10)
 
-2011-11-22  v0.6.0
+## 2011-11-22  v0.6.0
 
   * change: migrated from prototype.js to jQuery and underscore.js
 
@@ -151,28 +151,28 @@ HEAD
       demo/raphaeljs/
       demo/chat_with_socketio_and_node/
 
-2011-08-07  v0.5.7
+## 2011-08-07  v0.5.7
 
   * new: install via npm ($ npm install biwascheme)
     it means you can do require('biwascheme') on Node
   * improve: added tuplespace/README
   * fix: element-write-attribute did not work
 
-2011-07-07  v0.5.6
+## 2011-07-07  v0.5.6
 
   * new: Node.js support! (try 'node bin/biwas a.scm')
 
-2011-06-30  v0.5.5.2
+## 2011-06-30  v0.5.5.2
 
   * new: list-sort/comp
   * fix: functions with multiple body exprs did not work
 
-2010-12-25  v0.5.5.1
+## 2010-12-25  v0.5.5.1
 
   * new: R6RS Records
   * bug fixes
 
-2010-08-27  v0.5.4.2
+## 2010-08-27  v0.5.4.2
 
   * fix: (let-values)
   * fix: (acos)
