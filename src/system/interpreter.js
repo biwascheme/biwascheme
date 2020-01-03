@@ -85,7 +85,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
   //s: depth of stack to save
   //n: number of args(for outer lambda) to remove (= 0 unless tail position)
   //ret: closure array
-  continuation: function(s, n){
+  capture_continuation: function(s, n){
     // note: implementation of this function for final version doesn't exist in 3imp.pdf..
     var ss = this.push(n, s);
     return this.closure(["refer-local", 0,
@@ -240,7 +240,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         break;
       case "conti":
         var n=x[1], x=x[2];
-        a = this.continuation(s, n);
+        a = this.capture_continuation(s, n);
         break;
       case "nuate":
         var stack=x[1], x=x[2];
