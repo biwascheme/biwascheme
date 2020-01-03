@@ -1,4 +1,5 @@
 /node_modules/
+/demo/chat_with_socketio_and_node/node_modules
 /release/biwascheme.js
 /release/biwascheme-min.js
 /release/console_biwascheme.js
