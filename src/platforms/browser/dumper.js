@@ -199,6 +199,8 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     return $(".dump"+n, this.dumparea);
   },
   dump_move_to: function(n){
+    if (n < 0) n = this.n_dumps + n;
+
     if (0 <= n && n <= this.n_dumps){
       this.dump_el(this.cur).hide();
       this.cur = n;

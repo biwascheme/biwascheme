@@ -33,8 +33,10 @@
 
   <div id='bs-console'></div>
 
+  <input type=button value="&lt;&lt;" onclick="dumper.dump_move_to(0)">
   <input type=button value="&lt;" onclick="dumper.dump_move(-1)">
   <input type=button value="&gt;" onclick="dumper.dump_move(1)">
+  <input type=button value="&gt;&gt;" onclick="dumper.dump_move_to(-1)">
   <input type=button value="all" onclick="dumper.dump_toggle_fold()">
 
   <div id='dumparea'></div>
