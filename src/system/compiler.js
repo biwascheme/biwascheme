@@ -242,6 +242,8 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
   //
   // eg. (x y . z) -> (x y z)
   dotted2proper: function(ls){
+    if (ls === BiwaScheme.nil) return BiwaScheme.nil;
+
     var nreverse = function(ls){
       var res = BiwaScheme.nil;
       for (; ls instanceof BiwaScheme.Pair; ){
