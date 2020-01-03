@@ -350,7 +350,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
           var arity_of_arg = 1; // Always 1. (lambda (cc) ...)
           var c = ["conti", 
                     (this.is_tail(next) ? (e[0].size() + 1) : 0), //number of args for outer lambda
-                    ["argument",
+                    ["argument",  // Push the continuaion closure onto the stack
                     ["constant", arity_of_arg,
                     ["argument",
                       this.compile(x, e, s,f,  
