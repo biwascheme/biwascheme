@@ -242,6 +242,8 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
   //
   // eg. (x y . z) -> (x y z)
   dotted2proper: function(ls){
+    if (ls === BiwaScheme.nil) return BiwaScheme.nil;
+
     var nreverse = function(ls){
       var res = BiwaScheme.nil;
       for (; ls instanceof BiwaScheme.Pair; ){
@@ -347,15 +349,15 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
 
         case BiwaScheme.Sym("call/cc"): 
           var x=x.second();
+          var arity_of_arg = 1; // Always 1. (lambda (cc) ...)
           var c = ["conti", 
                     (this.is_tail(next) ? (e[0].size() + 1) : 0), //number of args for outer lambda
-                    ["argument",
-                    ["constant", 1,
+                    ["argument",  // Push the continuaion closure onto the stack
+                    ["constant", arity_of_arg,
                     ["argument",
                       this.compile(x, e, s,f,  
-                        (this.is_tail(next) ? ["shift", 1, ["tco_hinted_apply"]]
+                        (this.is_tail(next) ? ["shift", arity_of_arg, ["tco_hinted_apply"]]
                                             : ["apply"]))]]]];
-                  //note: proc for call/cc takes 1 argument (= ["apply", 1])
 
           // Do not push stack frame when call/cc is in a tail context
           return this.is_tail(next) ? c : ["frame", c, next];

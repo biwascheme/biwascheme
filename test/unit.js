@@ -1232,6 +1232,12 @@ describe('11.15  Control features', {
     ev("((lambda (z) ((lambda (x y) (call/cc (lambda (cc) (cc x) 99))) 3 4)) 100)").should_be(3);
     ev("((lambda (z a) ((lambda (x y) (call/cc (lambda (cc) (cc x) 99))) 3 4)) 100 99)").should_be(3);
     ev("(call-with-current-continuation (lambda (exit) (for-each (lambda (x) (if (negative? x) (exit x))) '(54 0 37 -3 245 19)) #t))").should_be(-3);
+
+    // Issue #152
+    ev("(define cc #f) (define (run) (call/cc (lambda (c) (set! cc c)))) (run) (cc 99)").should_be(99);
+    ev("((lambda () (call/cc (lambda (cc) (cc 99)))))").should_be(99);
+    ev("(call/cc (lambda (c) (c 99)))").should_be(99);
+
     ev("(call-with-current-continuation procedure?)").should_be(true);
     ev("(call-with-current-continuation vector?)").should_be(false);
 //(define list-length

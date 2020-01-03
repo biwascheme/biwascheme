@@ -16,6 +16,7 @@ BiwaScheme.nil = {
   toString: function() { return "nil"; },
   to_write: function() { return "()"; },
   to_array: function() { return []; },
+  to_set: function() { return new BiwaScheme.Set(); },
   length: function() { return 0; }
 };
 

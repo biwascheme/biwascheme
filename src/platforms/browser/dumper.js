@@ -115,6 +115,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
   },
 
   dump_closure: function(cls){
+    if(!cls) return "**BROKEN**";
     if(cls.length == 0) return "[]";
 
     var cls_num = null;
@@ -127,7 +128,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     }
 
     var c = _.clone(cls);
-    var body = c.shift();
+    var body = c.shift && c.shift();
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",
       this.dump_obj(c), " <span class='dump_closure'>body :</span> ",
@@ -199,6 +200,8 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     return $(".dump"+n, this.dumparea);
   },
   dump_move_to: function(n){
+    if (n < 0) n = this.n_dumps + n;
+
     if (0 <= n && n <= this.n_dumps){
       this.dump_el(this.cur).hide();
       this.cur = n;
