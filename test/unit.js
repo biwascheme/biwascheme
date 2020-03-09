@@ -1262,8 +1262,32 @@ describe('11.15  Control features', {
     ev("(call-with-values (lambda () (values 4 5)) \
                           (lambda (a b) b))").should_be(5);
     ev("(call-with-values * -)").should_be(-1);
+  },
+  'dynamic-wind' : function() {
+    ew(`
+      (define cc #f)
+      (define jumped #f)
+      (define ret '())
+      (dynamic-wind
+        (lambda () (set! ret (cons 'a ret)))
+        (lambda ()
+          (dynamic-wind
+            (lambda () (set! ret (cons 'b ret)))
+            (lambda ()
+              (dynamic-wind
+                (lambda () (set! ret (cons 'c ret)))
+                (lambda () (set! jumped (call/cc (lambda (c) (set! cc c) #f))))
+                (lambda () (set! ret (cons 'C ret)))))
+            (lambda () (set! ret (cons 'B ret))))
+          (dynamic-wind
+            (lambda () (set! ret (cons 'd ret)))
+            (lambda () (unless jumped (cc #t)))
+            (lambda () (set! ret (cons 'D ret)))))
+        (lambda () (set! ret (cons 'A ret))))
+      (reverse ret)
+    `).should_be("(a b c C B d " + // jump!
+                 "D b c C B d D A)")
   }
-  //dynamic-wind
 })
 
 describe('11.16  Iteration', {

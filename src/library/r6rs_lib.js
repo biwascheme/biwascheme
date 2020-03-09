@@ -1281,8 +1281,19 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     })
   })
 
-  //
-  //dynamic-wind
+  define_libfunc("dynamic-wind", 3, 3, function(ar, intp) {
+    var before = ar[0], thunk = ar[1], after = ar[2];
+    return new Call(before, [], function() {
+      intp.push_dynamic_winder(before, after);
+      return new Call(thunk, [], function(ar2) {
+        var result = ar2[0];
+        intp.pop_dynamic_winder();
+        return new Call(after, [], function(){
+          return result;
+        });
+      });
+    });
+  });
 
   //        11.16  Iteration
   //named let
