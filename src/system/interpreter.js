@@ -37,6 +37,9 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     // Maximum length of call_stack
     // (Note: we should cap call_stack for inifinite loop with recursion)
     this.max_trace_size = last_interpreter ? last_interpreter.max_trace_size : BiwaScheme.max_trace_size;
+
+    // dynamic-wind
+    this.current_dynamic_winder = BiwaScheme.Interpreter.DynamicWind.ROOT;
   },
 
   inspect: function(){
@@ -89,8 +92,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     // note: implementation of this function for final version doesn't exist in 3imp.pdf..
     var ss = this.push(n, s);
     return this.closure(["refer-local", 0,
-                          ["nuate", this.save_stack(ss), 
-                          ["return"]]], 
+                          ["nuate1", this.save_stack(ss), this.current_dynamic_winder]],
                         1,     //arity
                         0,     //n (number of frees)
                         null,  //s (stack position to get frees)
@@ -242,8 +244,16 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
         var n=x[1], x=x[2];
         a = this.capture_continuation(s, n);
         break;
-      case "nuate":
-        var stack=x[1], x=x[2];
+      case "nuate1":
+        var stack=x[1], to=x[2];
+        var from = this.current_dynamic_winder;
+        var winders = BiwaScheme.Interpreter.DynamicWind.listWinders(from, to);
+        x = BiwaScheme.Interpreter.DynamicWind.joinWinders(winders,
+          ["nuate2", stack]
+        )
+        break;
+      case "nuate2":
+        var stack=x[1], x=["return"];
         s = this.restore_stack(stack);
         break;
       case "frame":
@@ -488,6 +498,16 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
     var obj = BiwaScheme.Interpreter.read(str);
     var opc = BiwaScheme.Compiler.compile(obj);
     return opc;
+  },
+
+  // before, after: Scheme closure
+  push_dynamic_winder: function(before, after) {
+    this.current_dynamic_winder =
+      new BiwaScheme.Interpreter.DynamicWind(this.current_dynamic_winder, before, after);
+  },
+
+  pop_dynamic_winder: function(before, after) {
+    this.current_dynamic_winder = this.current_dynamic_winder.parent;
   }
 });
 
@@ -590,3 +610,71 @@ BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
   }
   return ret;
 };
+
+//
+// dynamic-wind
+//
+
+BiwaScheme.Interpreter.DynamicWind = BiwaScheme.Class.create({
+  initialize: function(parent, before, after) {
+    // Parent `DynamicWind` obj
+    this.parent = parent;
+    // "before" winder (Scheme closure)
+    this.before = before;
+    // "after" winder (Scheme closure)
+    this.after = after;
+  }
+});
+
+// A special value indicates the root of the winders
+// (the string is just for debugging purpose.)
+BiwaScheme.Interpreter.DynamicWind.ROOT = {_: "this is ROOT."};
+
+// Return the list of winders to call
+BiwaScheme.Interpreter.DynamicWind.listWinders = function(from, to) {
+  // List winders from `from` to `ROOT`
+  var fromStack = [from];
+  while (from !== BiwaScheme.Interpreter.DynamicWind.ROOT) {
+    from = from.parent;
+    fromStack.push(from);
+  }
+
+  // List winders from `to` to `ROOT` and find the common one
+  var toStack = [];
+  var common;
+  while (true) {
+    var matched = fromStack.find(function(item) { return item === to });
+    if (matched) {
+      common = matched;
+      break;
+    }
+    toStack.push(to);
+    to = to.parent;
+  }
+
+  // List `after`s to call
+  var ret = [];
+  for (var i=0; i<fromStack.length; i++) {
+    if (fromStack[i] === common) break;
+    ret.push(fromStack[i].after);
+  }
+  // List `before`s to call
+  toStack.reverse();
+  toStack.forEach(function(item) {
+    ret.push(item.before);
+  });
+
+  return ret;
+};
+
+// Return an opecode to run all the winders
+BiwaScheme.Interpreter.DynamicWind.joinWinders = function(winders, x) {
+  return winders.reduceRight(function(acc, winder) {
+    return ["frame",
+             ["constant", 0,
+             ["argument",
+             ["constant", winder,
+             ["apply"]]]],
+           acc];
+  }, x);
+}
