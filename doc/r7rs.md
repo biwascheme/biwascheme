@@ -161,7 +161,7 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 * `for-each` `string-for-each` `vector-for-each`
 * `call/cc` `call-with-current-continuation`
 * `values` `call-with-values`
-* [TODO] `dynamic-wind`
+* `dynamic-wind`
 
 ## 6.11Exceptions ........................ 54
 
