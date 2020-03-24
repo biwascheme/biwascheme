@@ -3,11 +3,11 @@
 * {
   margin: 0px;
   padding: 0px;
-  font-family: Helvetica, sans-serif;
 }
 
 body {
   margin: 1em 20%;
+  font-family: Helvetica, sans-serif;
 }
 
 em {
