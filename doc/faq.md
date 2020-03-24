@@ -6,7 +6,7 @@ It does not have `syntax-rules` nor `syntax-case`, but has `define-macro`.
 
 ### Q. Does BiwaScheme has first-class continuation (call/cc)?
 
-Yes. But note that `dynamic-wind` is not supported yet.
+Yes.
 
 ### Q. Can I use BiwaScheme on Node?
 

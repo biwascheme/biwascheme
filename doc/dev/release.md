@@ -1,6 +1,6 @@
 ## How to make a release
 
-1. Edit History.txt
+1. Edit CHANGELOG.md
 1. Edit VERSION
 1. Edit package.json
 1. Build

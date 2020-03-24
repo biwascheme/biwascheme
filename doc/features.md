@@ -1,8 +1,8 @@
 ## Features
 
-* Most of basic features of R7RS
+* Most of the basic features of R7RS small (see [doc/r7rs](/doc/r7rs.html))
 * Some of R6RS Standard Libraries and SRFIs
-  (see [doc/conformance](/doc/conformance.html) )
+  (see [doc/conformance](/doc/conformance.html))
 * First-class continuation (`call/cc`)
 
 See [doc/reference](/doc/reference.html) for full list of functions.

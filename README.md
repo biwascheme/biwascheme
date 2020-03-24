@@ -12,6 +12,18 @@ Demos
 
 see [http://www.biwascheme.org/](http://www.biwascheme.org/)
 
+
+Conformance
+===========
+
+BiwaScheme [implements](https://www.biwascheme.org/doc/features.html) most of the features of [R7RS small](https://small.r7rs.org/), including first-class continuation and tail call optimization.
+
+Major lacking features are:
+
+- syntax-rules
+- Exceptions
+- Library system
+
 Download
 ========
 
@@ -24,18 +36,21 @@ How to use
 
 Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
 
-    <!DOCTYPE html>
-    <html>
-    <body>
+```html
+<!DOCTYPE html>
+<html>
+<body>
 
-    <div id="bs-console"></div>
+<div id="bs-console"></div>
 
-    <script src="biwascheme.js">
-    (display "hello, world!")
-    </script>
+<script src="biwascheme.js"></script>
+<script type="text/biwascheme">
+(display "hello, world!")
+</script>
 
-    </body>
-    </html>
+</body>
+</html>
+```
 
 How to use with node.js to run a biwa script
 --------------------------------------------
@@ -86,7 +101,7 @@ Files
   + (experimental) TupleSpace implemented in Scheme
 * web/
   + HTMLs and CSS of www.biwascheme.org
-* www.biwascheme.org.js
+* local_website.js
   + web server
 
 Building biwascheme.js
@@ -133,11 +148,11 @@ jQuery:
 
 underscore:
 * update src/deps/underscore.js
-* update node_modules/biwascheme/package.json
+* update package.json, package-lock.json
 
 underscore.string:
 * update src/deps/underscore.string.js
-* update node_modules/biwascheme/package.json
+* update package.json, package-lock.json
 
 Website
 -------
