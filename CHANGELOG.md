@@ -1,6 +1,7 @@
-## HEAD
+## 2020-03-26 v0.7.0
 
   * new: Arity check for Scheme closures (#132)
+  * new: dynamic-wind (#154)
   * new: biwascheme_terminal got some features like syntax highlighting (#133, #135)
   * new: `date->string` supports V (week num) (#134)
   * fix: Allow an empty list of bindings in let* (#131)

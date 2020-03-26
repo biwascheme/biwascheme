@@ -28,7 +28,9 @@
 1. Create biwascheme-x.y.z.js
   - $ cp release/biwascheme{,-x.y.z}js
   - $ cp release/biwascheme{,-x.y.z}-min.js
+  - $ git add release/*
 1. Commit, `git tag` and push changes to github
+  - $ git ci -am vx.y.z
 1. Update website
   - see website.md
 1. Publish npm package
