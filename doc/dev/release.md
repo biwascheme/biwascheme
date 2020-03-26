@@ -30,9 +30,11 @@
   - $ cp release/biwascheme{,-x.y.z}-min.js
   - $ git add release/*
 1. Commit, `git tag` and push changes to github
-  - $ git ci -am vx.y.z
-1. Update website
-  - see website.md
+  - $ git ci -m vx.y.z
+  - $ git tag vx.y.z
+  - $ git push origin master --tags
 1. Publish npm package
   - `$ npm publish`
+1. Update website
+  - see website.md
 1. Update `VERSION` to x.y.z.dev

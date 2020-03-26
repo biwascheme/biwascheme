@@ -27,7 +27,7 @@
     <div id="content">
 <h2 id="how-to-make-a-release">How to make a release</h2>
 <ol>
-<li>Edit History.txt</li>
+<li>Edit CHANGELOG.md</li>
 <li>Edit VERSION</li>
 <li>Edit package.json</li>
 <li>Build<ul>
@@ -67,15 +67,21 @@
 <li>Create biwascheme-x.y.z.js<ul>
 <li>$ cp release/biwascheme{,-x.y.z}js</li>
 <li>$ cp release/biwascheme{,-x.y.z}-min.js</li>
+<li>$ git add release/*</li>
 </ul>
 </li>
-<li>Commit, <code>git tag</code> and push changes to github</li>
-<li>Update website<ul>
-<li>see website.md</li>
+<li>Commit, <code>git tag</code> and push changes to github<ul>
+<li>$ git ci -m vx.y.z</li>
+<li>$ git tag vx.y.z</li>
+<li>$ git push origin master --tags</li>
 </ul>
 </li>
 <li>Publish npm package<ul>
 <li><code>$ npm publish</code></li>
+</ul>
+</li>
+<li>Update website<ul>
+<li>see website.md</li>
 </ul>
 </li>
 <li>Update <code>VERSION</code> to x.y.z.dev</li>

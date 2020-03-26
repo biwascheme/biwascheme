@@ -46,28 +46,25 @@
       (console-log &quot;ok.&quot;)
     &lt;/script&gt;
   &lt;/body&gt;
-&lt;/html&gt;
-</code></pre><p>NOTE: The .js file name must be <code>biwascheme.js</code> or <code>biwascheme-min.js</code> to make the Scheme program to be loaded.</p>
-<h3 id="node-js">Node.js</h3>
-<p><a name="nodejs" /></p>
+&lt;/html&gt;</code></pre><p>NOTE: The .js file name must be <code>biwascheme.js</code> or <code>biwascheme-min.js</code> to make the Scheme program to be loaded.</p>
+<h3 id="nodejs">Node.js</h3>
+<a name="nodejs" />
+
 <p>There is a npm package of BiwaScheme for Node.js.</p>
 <pre><code>$ npm install biwascheme -g
 $ biwas
 &gt; (+ 1 2)
-3
-</code></pre><p>Running a script file</p>
+3</code></pre><p>Running a script file</p>
 <pre><code>$ cat hello.scm
 (print &quot;Hello, world!&quot;)
 $ biwas hello.scm
-Hello, world!
-</code></pre><p>Using Node.js functions</p>
+Hello, world!</code></pre><p>Using Node.js functions</p>
 <pre><code>(define fs (js-eval &quot;require(&#39;fs&#39;)&quot;))
 
 (define path &quot;.&quot;)
 (print (js-invoke fs &#39;readdirSync path))
 ; Alternatively you can use `..` macro syntax:
-; (print (.. fs `(readdirSync ,path)))
-</code></pre>    </div>
+; (print (.. fs `(readdirSync ,path)))</code></pre>    </div>
 
     <!-- Google Analytics -->
     <script>

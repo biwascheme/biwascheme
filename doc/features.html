@@ -27,9 +27,9 @@
     <div id="content">
 <h2 id="features">Features</h2>
 <ul>
-<li>Most of basic features of R7RS</li>
+<li>Most of the basic features of R7RS small (see <a href="/doc/r7rs.html">doc/r7rs</a>)</li>
 <li>Some of R6RS Standard Libraries and SRFIs
-(see <a href="/doc/conformance.html">doc/conformance</a> )</li>
+(see <a href="/doc/conformance.html">doc/conformance</a>)</li>
 <li>First-class continuation (<code>call/cc</code>)</li>
 </ul>
 <p>See <a href="/doc/reference.html">doc/reference</a> for full list of functions.</p>
@@ -37,11 +37,13 @@
 <p>BiwaScheme does not have <code>syntax-rules</code> or <code>syntax-case</code>, but has <a href="/doc/reference.html#macro"><code>define-macro</code></a>.</p>
 <h3 id="javascript-language-interface">Javascript language interface</h3>
 <ul>
-<li>JavaScript object<ul>
+<li><p>JavaScript object</p>
+<ul>
 <li>js-eval js-ref, etc.</li>
 </ul>
 </li>
-<li>Timer<ul>
+<li><p>Timer</p>
+<ul>
 <li><code>(timer proc sec)</code> = setTimeout, etc.</li>
 <li><code>(sleep sec)</code><ul>
 <li>Blocking sleep. <code>(sleep 3)</code> will wait 3 seconds and then 
@@ -72,8 +74,7 @@ functions.</p>
 for <code>sec</code> seconds, and then the rest of the program will be evaluated.</p>
 <pre><code>(alert &quot;Hello&quot;)
 (sleep 3)
-(alert &quot;World&quot;)  ; Evaluated after 3 seconds
-</code></pre><p>Other synchronous functions are listed below.</p>
+(alert &quot;World&quot;)  ; Evaluated after 3 seconds</code></pre><p>Other synchronous functions are listed below.</p>
 <ul>
 <li><code>(http-request path)</code> =&gt; string</li>
 <li><code>(http-post path params)</code> =&gt; string</li>
@@ -96,8 +97,7 @@ $.get(&quot;/a&quot;, function(a){
 (define a (http-request &quot;/a&quot;))
 (define b (http-request &quot;/b&quot;))
 (define c (http-request &quot;/c&quot;))
-...
-</code></pre><h3 id="srfis">SRFIs</h3>
+...</code></pre><h3 id="srfis">SRFIs</h3>
 <p>BiwaScheme implements some SRFIs (<a href="http://srfi.schemers.org/">Scheme Requests for Implementation</a>).</p>
 <ul>
 <li>1 List Utilities <ul>
@@ -130,7 +130,7 @@ $.get(&quot;/a&quot;, function(a){
 </ul>
 </li>
 </ul>
-<h3 id="node-js-support">Node.js support</h3>
+<h3 id="nodejs-support">Node.js support</h3>
 <p>You can use BiwaScheme on the server-side with <code>npm install biwascheme</code>
 (<a href="/doc/getting_started.html#nodejs">more...</a>)</p>
     </div>

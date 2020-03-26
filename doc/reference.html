@@ -40,7 +40,8 @@
 <li><a href="#js-api">BiwaScheme JavaScript API</a></li>
 </ul>
 <h3 id="basic-types">Basic types</h3>
-<p><a name="basic"/></p>
+<a name="basic"/>
+
 <ul>
 <li>List<ul>
 <li><code>length</code> <code>append</code> <code>reverse</code> <code>list-tail</code> <code>list-ref</code> <code>map</code> <code>for-each</code></li>
@@ -91,7 +92,8 @@
 </li>
 </ul>
 <h3 id="numeric-types">Numeric types</h3>
-<p><a name="numeric"/></p>
+<a name="numeric"/>
+
 <ul>
 <li>Integer (1, -2, etc.)<ul>
 <li><code>integer?</code> <code>odd?</code> <code>even?</code></li>
@@ -121,7 +123,8 @@
 </li>
 </ul>
 <h3 id="control-structure">Control structure</h3>
-<p><a name="control"/></p>
+<a name="control"/>
+
 <ul>
 <li>Conditional<ul>
 <li><code>if</code> <code>when</code> <code>unless</code> <code>cond</code> <code>case</code></li>
@@ -149,21 +152,22 @@
 <li><code>eq?</code> <code>eqv?</code> <code>equal?</code></li>
 </ul>
 <h3 id="macro">Macro</h3>
-<p><a name="macro"/></p>
+<a name="macro"/>
+
 <p>BiwaScheme does not have <code>syntax-rules</code> or <code>syntax-case</code>, but has <code>define-macro</code>.</p>
-<pre><code class="lang-scheme">(define-macro (test expr)
+<pre><code class="language-scheme">(define-macro (test expr)
   `(if ,expr
     #t
     (print (format &quot;test failed: ~a&quot; (quote ,expr)))))
 
-(test (= 1 2)) ;=&gt; test failed: (= 1 2)
-</code></pre>
+(test (= 1 2)) ;=&gt; test failed: (= 1 2)</code></pre>
 <p>Other macro-related functions:</p>
 <ul>
 <li><code>macroexpand</code> <code>macroexpand-1</code> <code>%macroexpand</code> <code>%macroexpand-1</code> <code>gensym</code></li>
 </ul>
 <h3 id="advanced-types">Advanced types</h3>
-<p><a name="advanced"/></p>
+<a name="advanced"/>
+
 <ul>
 <li>Port (I/O)</li>
 <li>Record<ul>
@@ -242,7 +246,8 @@ for full list of <code>~?</code></li>
 </li>
 </ul>
 <h3 id="utilities">Utilities</h3>
-<p><a name="utilities"/></p>
+<a name="utilities"/>
+
 <ul>
 <li>Simple format (srfi-28)<ul>
 <li>eg. <code>(format &quot;Result: ~s&quot; (some-calculation))</code></li>
@@ -265,7 +270,8 @@ for full list of <code>~?</code></li>
 </li>
 </ul>
 <h3 id="syntax">Syntax</h3>
-<p><a name="syntax"/></p>
+<a name="syntax"/>
+
 <ul>
 <li>Comment<ul>
 <li>Single line comment (<code>;</code>)</li>
@@ -280,14 +286,21 @@ for full list of <code>~?</code></li>
 </li>
 </ul>
 <h3 id="javascript-language-interface">JavaScript language interface</h3>
-<p><a name="js-interface" /></p>
+<a name="js-interface" />
+
 <ul>
-<li><code>(js-eval str)</code> evaluate <code>str</code> as JavaScript code</li>
-<li><code>(js-ref jsobj str)</code> = <code>a.b</code></li>
-<li><code>(js-set! jsobj str value)</code> = <code>a.b = c</code></li>
-<li><code>(js-call jsfunc args...)</code> = <code>a()</code></li>
-<li><code>(js-invoke jsobj methodname args...)</code> = <code>a.b()</code></li>
-<li><code>js-invocation</code></li>
+<li><p><code>(js-eval str)</code> evaluate <code>str</code> as JavaScript code</p>
+</li>
+<li><p><code>(js-ref jsobj str)</code> = <code>a.b</code></p>
+</li>
+<li><p><code>(js-set! jsobj str value)</code> = <code>a.b = c</code></p>
+</li>
+<li><p><code>(js-call jsfunc args...)</code> = <code>a()</code></p>
+</li>
+<li><p><code>(js-invoke jsobj methodname args...)</code> = <code>a.b()</code></p>
+</li>
+<li><p><code>js-invocation</code></p>
+</li>
 <li><p>macro <code>..</code></p>
 <ul>
 <li>TODO: write doc</li>
@@ -298,12 +311,14 @@ for full list of <code>~?</code></li>
 <li>eg. <code>(js-new (js-eval &quot;Date&quot;) 2017 1 2)</code></li>
 </ul>
 </li>
-<li><code>(js-new ctorname args...)</code> = <code>new a</code><ul>
+<li><p><code>(js-new ctorname args...)</code> = <code>new a</code></p>
+<ul>
 <li><code>ctorname</code> is evaluated as JavaScript program.</li>
 <li>eg. <code>(js-new &quot;Date&quot; 2008 1 2)</code></li>
 </ul>
 </li>
-<li>`(js-obj key1 value1 key2 value2...)<ul>
+<li><p>`(js-obj key1 value1 key2 value2...)</p>
+<ul>
 <li>eg. <code>(js-obj &quot;foo&quot; 1 &quot;bar&quot; 2)</code> → <code>{&quot;foo&quot;: 1, &quot;bar&quot;: 2}</code></li>
 </ul>
 </li>
@@ -347,7 +362,8 @@ BiwaScheme resumes running the rest of the code. </li>
 </li>
 </ul>
 <h3 id="browser-functions">Browser functions</h3>
-<p><a name="browser" /></p>
+<a name="browser" />
+
 <p>These functions are only available in browsers (i.e. does not work on Node.js.)</p>
 <ul>
 <li><p>Dialog</p>
@@ -394,18 +410,21 @@ BiwaScheme resumes running the rest of the code. </li>
   (element-new &#39;(&quot;div#main&quot; &quot;foo&quot;)) =&gt; &lt;div id=&#39;main&#39;&gt;foo&lt;/div&gt;
   (element-new &#39;(&quot;div.red&quot; &quot;foo&quot;))  =&gt; &lt;div class=&#39;red&#39;&gt;foo&lt;/div&gt;
   (element-new &#39;(div align &quot;right&quot; &quot;foo&quot;))  =&gt; &lt;div align=&#39;right&#39;&gt;foo&lt;/div&gt;
-  (element-new &#39;(div (span &quot;foo&quot;))  =&gt; &lt;div&gt;&lt;span&gt;foo&lt;/span&gt;&lt;/div&gt;
-</code></pre><ul>
-<li><code>(getelem selector)</code> = <code>($ selector)</code><ul>
+  (element-new &#39;(div (span &quot;foo&quot;))  =&gt; &lt;div&gt;&lt;span&gt;foo&lt;/span&gt;&lt;/div&gt;</code></pre><ul>
+<li><p><code>(getelem selector)</code> = <code>($ selector)</code></p>
+<ul>
 <li>Same as <code>jQuery(selector)</code> except returns <code>#f</code> when no element is found</li>
 </ul>
 </li>
-<li><code>(set-style! selector prop value)</code><ul>
+<li><p><code>(set-style! selector prop value)</code></p>
+<ul>
 <li>eg. <code>(set-style! &quot;#box&quot; &quot;left&quot; 300)</code></li>
 </ul>
 </li>
-<li><code>(get-style selector prop)</code></li>
-<li><code>(set-content! selector text)</code> <ul>
+<li><p><code>(get-style selector prop)</code></p>
+</li>
+<li><p><code>(set-content! selector text)</code> </p>
+<ul>
 <li>Replace content of <code>selector</code> with <code>text</code></li>
 <li>Newlines in <code>text</code> are replaced with <code>&lt;br&gt;</code></li>
 <li>Tabs in <code>text</code> are replaced with <code>&amp;nbsp;&amp;nbsp;&amp;nbsp;</code></li>
@@ -470,8 +489,9 @@ BiwaScheme waits until <code>window.Foo</code> is defined.</li>
 </ul>
 </li>
 </ul>
-<h3 id="node-js">Node.js</h3>
-<p><a name="nodejs" /></p>
+<h3 id="nodejs">Node.js</h3>
+<a name="nodejs" />
+
 <h4 id="system-functions">System functions</h4>
 <ul>
 <li><p>R6RS</p>
@@ -502,27 +522,26 @@ BiwaScheme waits until <code>window.Foo</code> is defined.</li>
 </ul>
 <p><code>path</code> is relative to the current directory, unless it starts with <code>/</code> or
 <code>/^\w:/</code> (i.e. <code>c:</code>, <code>d:</code>, etc.)</p>
-<h4 id="using-node-js-libraries">Using Node.js libraries</h4>
+<h4 id="using-nodejs-libraries">Using Node.js libraries</h4>
 <p>You can also use Node.js libraries via <code>js-eval</code>, etc.</p>
-<pre><code class="lang-scheme">(define fs (js-eval &quot;require(&#39;fs&#39;)&quot;))
+<pre><code class="language-scheme">(define fs (js-eval &quot;require(&#39;fs&#39;)&quot;))
 
 (define path &quot;.&quot;)
 (print (js-invoke fs &#39;readdirSync path))
 ; Alternatively you can use `..` macro syntax:
-; (print (.. fs `(readdirSync ,path)))
-</code></pre>
+; (print (.. fs `(readdirSync ,path)))</code></pre>
 <h3 id="biwascheme-javascript-api">BiwaScheme JavaScript API</h3>
-<p><a name="js-api" /></p>
+<a name="js-api" />
+
 <h4 id="evaluate-scheme-program">Evaluate Scheme program</h4>
-<pre><code class="lang-js">&lt;script type=&quot;text/javascript&quot; src=&quot;biwascheme.js&quot;&gt;&lt;/script&gt;
+<pre><code class="language-js">&lt;script type=&quot;text/javascript&quot; src=&quot;biwascheme.js&quot;&gt;&lt;/script&gt;
 &lt;script type=&quot;text/javascript&quot;&gt;
 var onError = function(e){ console.error(e); }
 var biwa = new BiwaScheme.Interpreter(onError)
 biwa.evaluate(&quot;(+ 1 2)&quot;, function(result) {
   alert(result);  //=&gt; 3
 });
-&lt;/script&gt;
-</code></pre>
+&lt;/script&gt;</code></pre>
 <h4 id="define-library-function">Define library function</h4>
 <p>You can write JavaScript library function with <code>BiwaScheme.define_libfunc</code>.</p>
 <ul>
@@ -531,12 +550,11 @@ biwa.evaluate(&quot;(+ 1 2)&quot;, function(result) {
 <li>3rd argument: maximum number of arguments (pass null for infinite)</li>
 <li>4th argument: function body</li>
 </ul>
-<pre><code class="lang-js">BiwaScheme.define_libfunc(&quot;add&quot;, 2, 2, function(ar){
+<pre><code class="language-js">BiwaScheme.define_libfunc(&quot;add&quot;, 2, 2, function(ar){
   BiwaScheme.assert_integer(ar[0]);
   BiwaScheme.assert_integer(ar[1]);
   return ar[0] + ar[1];
-});
-</code></pre>
+});</code></pre>
 <p>See <code>src/library/*.js</code> for more examples.</p>
     </div>
 
