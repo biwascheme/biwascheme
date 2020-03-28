@@ -1,3 +1,5 @@
+import Class from "./class.js"
+
 //
 // R6RS Records
 // http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-7.html#node_chap_6
@@ -9,7 +11,7 @@
 // Record 
 // represents each instance of record type
 //
-BiwaScheme.Record = BiwaScheme.Class.create({
+const Record = Class.create({
   initialize: function(rtd, values){
     BiwaScheme.assert_record_td(rtd, "new Record");
 
@@ -31,24 +33,24 @@ BiwaScheme.Record = BiwaScheme.Class.create({
   }
 });
 
-BiwaScheme.isRecord = function(o){
+const isRecord = function(o){
   return (o instanceof BiwaScheme.Record);
 };
 
 // Defined record types
-BiwaScheme.Record._DefinedTypes = {};
+Record._DefinedTypes = {};
 
-BiwaScheme.Record.define_type = function(name_str, rtd, cd){
+Record.define_type = function(name_str, rtd, cd){
   return BiwaScheme.Record._DefinedTypes[name_str] = {rtd: rtd, cd: cd};
 };
-BiwaScheme.Record.get_type = function(name_str){
+Record.get_type = function(name_str){
   return BiwaScheme.Record._DefinedTypes[name_str];
 };
 
 //
 // RTD (Record type descriptor)
 //
-BiwaScheme.Record.RTD = BiwaScheme.Class.create({
+Record.RTD = Class.create({
   //                   Symbol RTD        Symbol Bool  Bool    Array
   initialize: function(name, parent_rtd, uid, sealed, opaque, fields){
     this.name = name;
@@ -98,15 +100,15 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   }
 });
 
-BiwaScheme.Record.RTD.NongenerativeRecords = {};
-BiwaScheme.isRecordTD = function(o){
+Record.RTD.NongenerativeRecords = {};
+const isRecordTD = function(o){
   return (o instanceof BiwaScheme.Record.RTD);
 };
 
 //
 // CD (Record constructor descriptor)
 //
-BiwaScheme.Record.CD = BiwaScheme.Class.create({
+Record.CD = Class.create({
   initialize: function(rtd, parent_cd, protocol){
     this._check(rtd, parent_cd, protocol);
     this.rtd = rtd;
@@ -248,6 +250,8 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
   }
 });
 
-BiwaScheme.isRecordCD = function(o){
+const isRecordCD = function(o){
   return (o instanceof BiwaScheme.Record.CD);
 };
+
+export { Record, isRecord, isRecordTD, isRecordCD };

@@ -1,8 +1,10 @@
+import Class from "./class.js"
+
 ///
 /// Interpreter
 ///
 
-BiwaScheme.Interpreter = BiwaScheme.Class.create({
+const Interpreter = Class.create({
   // new BiwaScheme.Interpreter()
   // new BiwaScheme.Interpreter(lastInterpreter)
   // new BiwaScheme.Interpreter(errorHandler)
@@ -512,7 +514,7 @@ BiwaScheme.Interpreter = BiwaScheme.Class.create({
 });
 
 // Take a string and returns an expression.
-BiwaScheme.Interpreter.read = function(str){
+Interpreter.read = function(str){
   var parser = new BiwaScheme.Parser(str);
   var r      = parser.getObject();
   return (r == BiwaScheme.Parser.EOS)? BiwaScheme.eof: r;
@@ -524,7 +526,7 @@ BiwaScheme.Interpreter.read = function(str){
 // flag - used internally. do not specify this
 //
 // @throws {BiwaScheme.Error} when x has syntax error
-BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
+Interpreter.expand = function(x, flag/*optional*/){
   var expand = BiwaScheme.Interpreter.expand;
   flag || (flag = {})
   var ret = null;
@@ -599,7 +601,7 @@ BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
                           "or macro use: "+BiwaScheme.to_write(x));
         }
         expanded_cdr = BiwaScheme.array_to_list(
-                         _.map(x.cdr.to_array(),
+                         x.cdr.to_array().map(
                                function(item){ return expand(item, flag); }));
         ret = new BiwaScheme.Pair(expanded_car, expanded_cdr);
       }
@@ -615,7 +617,7 @@ BiwaScheme.Interpreter.expand = function(x, flag/*optional*/){
 // dynamic-wind
 //
 
-BiwaScheme.Interpreter.DynamicWind = BiwaScheme.Class.create({
+Interpreter.DynamicWind = Class.create({
   initialize: function(parent, before, after) {
     // Parent `DynamicWind` obj
     this.parent = parent;
@@ -628,10 +630,10 @@ BiwaScheme.Interpreter.DynamicWind = BiwaScheme.Class.create({
 
 // A special value indicates the root of the winders
 // (the string is just for debugging purpose.)
-BiwaScheme.Interpreter.DynamicWind.ROOT = {_: "this is ROOT."};
+Interpreter.DynamicWind.ROOT = {_: "this is ROOT."};
 
 // Return the list of winders to call
-BiwaScheme.Interpreter.DynamicWind.listWinders = function(from, to) {
+Interpreter.DynamicWind.listWinders = function(from, to) {
   // List winders from `from` to `ROOT`
   var fromStack = [from];
   while (from !== BiwaScheme.Interpreter.DynamicWind.ROOT) {
@@ -668,7 +670,7 @@ BiwaScheme.Interpreter.DynamicWind.listWinders = function(from, to) {
 };
 
 // Return an opecode to run all the winders
-BiwaScheme.Interpreter.DynamicWind.joinWinders = function(winders, x) {
+Interpreter.DynamicWind.joinWinders = function(winders, x) {
   return winders.reduceRight(function(acc, winder) {
     return ["frame",
              ["constant", 0,
@@ -678,3 +680,5 @@ BiwaScheme.Interpreter.DynamicWind.joinWinders = function(winders, x) {
            acc];
   }, x);
 }
+
+export default Interpreter;

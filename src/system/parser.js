@@ -1,8 +1,11 @@
+import Class from "./class.js"
+import { Pair } from "./pair.js"
+
   //
   // Parser 
   // copied from jsScheme - should be rewrriten (support #0=, etc)
   //
-  BiwaScheme.Parser = BiwaScheme.Class.create({
+  const Parser = Class.create({
     initialize: function(txt){
       this.tokens = this.tokenize(txt);
       this.i = 0;
@@ -190,6 +193,6 @@
     }
   });
   // indicates end of source file
-  BiwaScheme.Parser.EOS = new Object();
+  Parser.EOS = new Object();
   
-
+export default Parser;

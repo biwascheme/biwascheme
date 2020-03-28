@@ -1,3 +1,5 @@
+import Class from "./class.js"
+
 // 
 // R6RS Enumerations
 // http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-15.html#node_chap_14
@@ -13,7 +15,7 @@
 //   (enum-set->list
 //     (color-set maroon white))    ;=> #<enum-set (white maroon)>
 
-BiwaScheme.Enumeration = {};
+const Enumeration = {};
 
 // Represents an enum_type.
 //
@@ -24,7 +26,7 @@ BiwaScheme.Enumeration = {};
 //
 // members - Array of symbols (no duplicate)
 //
-BiwaScheme.Enumeration.EnumType = BiwaScheme.Class.create({
+Enumeration.EnumType = Class.create({
   // Creates a new enum_type.
   //
   // members - Array of symbols.
@@ -68,7 +70,7 @@ BiwaScheme.Enumeration.EnumType = BiwaScheme.Class.create({
     }, this);
   }
 });
-BiwaScheme.Class.memoize(BiwaScheme.Enumeration.EnumType,
+Class.memoize(Enumeration.EnumType,
   ["universe", "indexer", "constructor"]); 
 
 // Represents an enum_set of an enum_type.
@@ -78,7 +80,7 @@ BiwaScheme.Class.memoize(BiwaScheme.Enumeration.EnumType,
 // enum_type - The enum_type.
 // symbols   - Array of symbols (no duplicate, properly ordered)
 //
-BiwaScheme.Enumeration.EnumSet = BiwaScheme.Class.create({
+Enumeration.EnumSet = Class.create({
   // Creates a new enum_set.
   //
   // enum_type - An EnumType
@@ -194,8 +196,10 @@ BiwaScheme.Enumeration.EnumSet = BiwaScheme.Class.create({
     return "#<EnumSet "+BiwaScheme.inspect(this.symbols)+">";
   }
 });
-BiwaScheme.Class.memoize(BiwaScheme.Enumeration.EnumSet, "symbol_list");
+Class.memoize(Enumeration.EnumSet, "symbol_list");
 
-BiwaScheme.isEnumSet = function(obj){
+const isEnumSet = function(obj){
   return (obj instanceof BiwaScheme.Enumeration.EnumSet);
 };
+
+export { Enumeration, isEnumSet };

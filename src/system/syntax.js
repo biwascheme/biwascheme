@@ -1,7 +1,10 @@
+import Class from "./class.js"
+import { CoreEnv } from "../header.js"
+
 //
 // Syntax
 //
-BiwaScheme.Syntax = BiwaScheme.Class.create({
+const Syntax = Class.create({
   initialize: function(sname, func){
     this.sname = sname;
     this.func = func;
@@ -20,9 +23,11 @@ BiwaScheme.Syntax = BiwaScheme.Class.create({
 
 // A built-in syntax did not have associated Syntax object.
 // Following code installed dummy Syntax objects to built-in syntax.
-BiwaScheme.CoreEnv["define"] = new BiwaScheme.Syntax("define");
-BiwaScheme.CoreEnv["begin"]  = new BiwaScheme.Syntax("begin");
-BiwaScheme.CoreEnv["quote"]  = new BiwaScheme.Syntax("quote");
-BiwaScheme.CoreEnv["lambda"] = new BiwaScheme.Syntax("lambda");
-BiwaScheme.CoreEnv["if"]     = new BiwaScheme.Syntax("if");
-BiwaScheme.CoreEnv["set!"]   = new BiwaScheme.Syntax("set!");
+CoreEnv["define"] = new Syntax("define");
+CoreEnv["begin"]  = new Syntax("begin");
+CoreEnv["quote"]  = new Syntax("quote");
+CoreEnv["lambda"] = new Syntax("lambda");
+CoreEnv["if"]     = new Syntax("if");
+CoreEnv["set!"]   = new Syntax("set!");
+
+export default Syntax;

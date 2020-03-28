@@ -1,17 +1,30 @@
+import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
+         assert_number, assert_integer, assert_real, assert_between, assert_string,
+         assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+         assert_vector, assert_hashtable, assert_mutable_hashtable, assert_record,
+         assert_record_td, assert_record_cd, assert_enum_set, assert_promise,
+         assert_function, assert_closure, assert_procedure, assert_date } from "./infra.js"; 
+import { to_write, to_display, to_write_ss, inspect } from "../system/_writer.js"
+import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js"
+import { Symbol, Sym } from "../system/symbol.js"
+import Call from "../system/call.js"
+import Compiler from "../system/compiler.js"
+import Interpreter from "../system/interpreter.js"
+import Syntax from "../system/syntax.js"
+import { TopEnv, nil } from "../header.js";
 
-if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("html-escape", 1, 1, function(ar){
     assert_string(ar[0]);
     return _.escape(ar[0]);
   });
-  BiwaScheme.inspect_objs = function(objs){
+  const inspect_objs = function(objs){
     return _.map(objs, BiwaScheme.inspect).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
-    return BiwaScheme.inspect_objs(ar);
+    return inspect_objs(ar);
   });
   define_libfunc("inspect!", 1, null, function(ar){
-    Console.puts(BiwaScheme.inspect_objs(ar));
+    Console.puts(inspect_objs(ar));
     return BiwaScheme.undef;
   });
 
@@ -23,7 +36,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // Object -> alist
   // (number, boolean, string, 
   //
-  BiwaScheme.json2sexp = function(json){
+  const json2sexp = function(json){
     switch(true){
     case _.isNumber(json) ||
          _.isString(json) ||
@@ -414,7 +427,3 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //Macro: rxmatch-if match-expr (var ...) then-form else-form 
   //Macro: rxmatch-cond clause ... 
   //Macro: rxmatch-case string-expr clause ... 
-
-}
-
-

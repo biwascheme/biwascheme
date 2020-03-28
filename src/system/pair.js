@@ -1,9 +1,11 @@
+import Class from "./class.js"
+
 //
 // Pair 
 // cons cell
 //
 
-BiwaScheme.Pair = BiwaScheme.Class.create({
+const Pair = Class.create({
   initialize: function(car, cdr){
     this.car = car;
     this.cdr = cdr;
@@ -114,12 +116,12 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 // Example:
 //   BiwaScheme.List(1, 2, [3, 4]) ;=> (list 1 2 (vector 3 4))
 //   BiwaScheme.deep_array_to_list(1, 2, [3, 4]) ;=> (list 1 2 (list 3 4))
-var array_to_list = function(ary, deep) {
+const array_to_list_ = function(ary, deep) {
   var list = BiwaScheme.nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
     if(deep && _.isArray(obj) && !obj.is_vector){
-      obj = array_to_list(obj, deep);
+      obj = array_to_list_(obj, deep);
     }
     list = new BiwaScheme.Pair(obj, list);
   }
@@ -127,22 +129,24 @@ var array_to_list = function(ary, deep) {
 }
 
 // Shallow: List(1, 2, [3]) == (list 1 2 (vector 3 4))
-BiwaScheme.List = function() {
+const List = function() {
   var ary = _.toArray(arguments);
-  return array_to_list(ary, false);
+  return array_to_list_(ary, false);
 };
 
 // Shallow: array_to_list(1, 2, [3]) == (list 1 2 (vector 3 4))
-BiwaScheme.array_to_list = function(ary) {
-  return array_to_list(ary, false);
+const array_to_list = function(ary) {
+  return array_to_list_(ary, false);
 };
 
 // Deep: deep_array_to_list(1, 2, [3, 4]) == (list 1 2 (list 3 4))
 // deep_array_to_list([1, 2, 3]) - deep
-BiwaScheme.deep_array_to_list = function(ary) {
-  return array_to_list(ary, true);
+const deep_array_to_list = function(ary) {
+  return array_to_list_(ary, true);
 };
 
-BiwaScheme.Cons = function(car, cdr) {
+const Cons = function(car, cdr) {
   return new BiwaScheme.Pair(car, cdr);
 };
+
+export { Pair, List, array_to_list, deep_array_to_list, Cons };

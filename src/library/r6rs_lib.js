@@ -1,8 +1,28 @@
+import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
+         assert_number, assert_integer, assert_real, assert_between, assert_string,
+         assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+         assert_vector, assert_hashtable, assert_mutable_hashtable, assert_record,
+         assert_record_td, assert_record_cd, assert_enum_set, assert_promise,
+         assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
+         parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
+import { Pair, List, array_to_list, deep_array_to_list, Cons } from "../system/pair.js"
+import { Complex, Rational, isNumber, isComplex, isReal, isRational, isInteger } from "../system/number.js"
+import { Symbol, Sym, gensym } from "../system/symbol.js"
+import { to_write, to_display, write_ss, to_write_ss, inspect } from "../system/_writer.js"
+import { Port, eof } from "../system/port.js"
+import { TopEnv, CoreEnv, nil, undef } from "../header.js";
+import Call from "../system/call.js"
+import Char from "../system/char.js"
+import { Bug, BiwaError as Error, UserError } from "../system/error.js"
+import Hashtable from "../system/hashtable.js"
+import Interpreter from "../system/interpreter.js"
+import Values from "../system/values.js"
+import { isList } from "../system/_types.js"
+
 //
 // R6RS Base library
 //
 
-if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   ///
   /// R6RS Base library
   ///
@@ -767,7 +787,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 
     var radix = ar[1];
     
-    var int_res = BiwaScheme.parse_integer(
+    var int_res = parse_integer(
       s, radix === 0 ? 0 : radix || 10
     );
 
@@ -777,12 +797,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     if (radix !== undefined && radix !== 10)
       return false;
 
-    var fp_res = BiwaScheme.parse_float(s);
+    var fp_res = parse_float(s);
 
     if (fp_res !== false)
       return fp_res;
 
-    var frac_res = BiwaScheme.parse_fraction(s);
+    var frac_res = parse_fraction(s);
 
     if (frac_res !== false)
       return frac_res;
@@ -1447,7 +1467,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //(string-titlecase string)    procedure
 //(string-foldcase string)    procedure
 
-  BiwaScheme.make_string_ci_function = function(compare){
+  const make_string_ci_function = function(compare){
     return function(ar){
       assert_string(ar[0]);
       var str = ar[0].toUpperCase();
@@ -2973,7 +2993,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //               hashed - Object hashed
   //
   // Returns an instance of BiwaScheme.Call.
-  BiwaScheme.find_hash_pair = function(hash, key, callbacks){
+  const find_hash_pair = function(hash, key, callbacks){
     // invoke hash proc
     return new Call(hash.hash_proc, [key], function(ar){
       var hashed = ar[0];
@@ -3006,7 +3026,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var hash = ar[0], key = ar[1], ifnone = ar[2];
     assert_hashtable(hash);
 
-    return BiwaScheme.find_hash_pair(hash, key, {
+    return find_hash_pair(hash, key, {
       on_found: function(pair){
         return pair[1];
       },
@@ -3022,7 +3042,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_hashtable(hash);
     assert(hash.mutable, "hashtable is not mutable");
 
-    return BiwaScheme.find_hash_pair(hash, key, {
+    return find_hash_pair(hash, key, {
       on_found: function(pair){
         pair[1] = value;
         return BiwaScheme.undef;
@@ -3040,7 +3060,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_hashtable(hash);
     assert(hash.mutable, "hashtable is not mutable");
 
-    return BiwaScheme.find_hash_pair(hash, key, {
+    return find_hash_pair(hash, key, {
       on_found: function(pair, hashed){
         hash.remove_pair(hashed, pair);
         return BiwaScheme.undef;
@@ -3056,7 +3076,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var hash = ar[0], key = ar[1];
     assert_hashtable(hash);
 
-    return BiwaScheme.find_hash_pair(hash, key, {
+    return find_hash_pair(hash, key, {
       on_found: function(pair){
         return true;
       },
@@ -3073,7 +3093,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert(hash.mutable, "hashtable is not mutable");
     assert_procedure(proc);
 
-    return BiwaScheme.find_hash_pair(hash, key, {
+    return find_hash_pair(hash, key, {
       on_found: function(pair, hashed){
         // invoke proc and get new value
         return new Call(proc, [pair[1]], function(ar){
@@ -3445,4 +3465,3 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_procedure(ar[0]);
     return BiwaScheme.Promise.fresh(ar[0]);
   });
-}

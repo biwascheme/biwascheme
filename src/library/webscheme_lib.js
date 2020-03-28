@@ -1,4 +1,12 @@
-if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
+import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
+         assert_number, assert_integer, assert_real, assert_between, assert_string,
+         assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+         assert_vector, assert_hashtable, assert_mutable_hashtable, assert_record,
+         assert_record_td, assert_record_cd, assert_enum_set, assert_promise,
+         assert_function, assert_closure, assert_procedure, assert_date, deprecate } from "./infra.js"; 
+import Interpreter  from "../system/interpreter.js"
+import { Pair } from "../system/pair.js"
+import { Symbol, Sym } from "../system/symbol.js"
 
   define_libfunc("read-line", 0, 1, function(ar){
     var port = ar[0] || Port.current_input;
@@ -231,7 +239,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //  (element-new '(div (span "foo"))  => <div><span>foo</span></div>
   //
 
-  BiwaScheme.create_elements_by_string = function(spec){
+  const create_elements_by_string = function(spec){
     spec = spec.to_array();
     var name = spec.shift();
     if(name instanceof Symbol) name = name.name;
@@ -265,13 +273,13 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return s.join("");
   };
 
-  BiwaScheme.tree_all = function(tree, pred){
+  const tree_all = function(tree, pred){
     if(tree === nil)
       return true;
     else if(pred(tree.car) === false)
       return false;
     else
-      return BiwaScheme.tree_all(tree.cdr, pred); 
+      return tree_all(tree.cdr, pred); 
   };
   define_libfunc("element-new", 1, 1, function(ar){
     var string_or_symbol = function(item){
@@ -279,13 +287,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
              (item instanceof Symbol) ||
              (item instanceof Pair);
     };
-    if(BiwaScheme.tree_all(ar[0], string_or_symbol)){
+    if(tree_all(ar[0], string_or_symbol)){
       return $(create_elements_by_string(ar[0]))[0];
     } else {
       return nil;
     }
   });
-  BiwaScheme.element_content = function(selector) {
+
+  const element_content = function(selector) {
     if ($(selector).attr("value")) {
       return $(selector).val();
     } else {
@@ -293,7 +302,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     }
   };
   define_libfunc("element-content", 1, 1, function(ar){
-    return BiwaScheme.element_content(ar[0]);
+    return element_content(ar[0]);
   });
 
   //
@@ -322,7 +331,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   // Load javascript file on the server
-  _require = function(src, check, proc){
+  const _require = function(src, check, proc){
     var script = $("<script/>", { src: src });
     $("body").append(script);
 
@@ -349,7 +358,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // html modification
   //
 
-  BiwaScheme.getelem = function(ar){
+  const getelem = function(ar){
     // account for getelem returning false when no results (and that getting passed back in)
     if (ar.length > 1 && ar[1] === false) {
       ar[1] = [];
@@ -362,8 +371,8 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return false;
     }
   };
-  define_libfunc("$",       1, 2, BiwaScheme.getelem);
-  define_libfunc("getelem", 1, 2, BiwaScheme.getelem);
+  define_libfunc("$",       1, 2, getelem);
+  define_libfunc("getelem", 1, 2, getelem);
   define_libfunc("dom-element", 1, 1, function(ar) {
     return $(ar[0])[0];
   });
@@ -384,7 +393,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return BiwaScheme.undef;
   });
   define_libfunc("get-content", 1, 1, function(ar){
-    return BiwaScheme.element_content(ar[0]);
+    return element_content(ar[0]);
   });
 
   //
@@ -484,12 +493,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     });
   });
 
-  BiwaScheme.jsonp_receiver = [];
+  const jsonp_receiver = [];
   define_libfunc("receive-jsonp", 1, 1, function(ar){
     var url = ar[0];
     assert_string(url);
 
-    var receives = BiwaScheme.jsonp_receiver;
+    var receives = jsonp_receiver;
     for(var i=0; i<receives.length; i++)
       if(receives[i] === null) break;
     var receiver_id = i;
@@ -519,4 +528,4 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
 //    return eval(ar[0]);
 //  });
 
-}
+export { jsonp_receiver };

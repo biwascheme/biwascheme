@@ -1,4 +1,13 @@
-if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
+import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
+         assert_number, assert_integer, assert_real, assert_between, assert_string,
+         assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+         assert_vector, assert_hashtable, assert_mutable_hashtable, assert_record,
+         assert_record_td, assert_record_cd, assert_enum_set, assert_promise,
+         assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate } from "./infra.js"; 
+import Interpreter from "../system/interpreter.js"
+import { Pair, array_to_list } from "../system/pair.js"
+import { Symbol, Sym } from "../system/symbol.js"
+import { nil } from "../header.js";
 
   //
   // interface to javascript
@@ -84,7 +93,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
           args = _.map(args, function(arg){
               if(BiwaScheme.isClosure(arg)){
                 // closure -> JavaScript funciton
-                return BiwaScheme.js_closure(arg, intp);
+                return js_closure(arg, intp);
               }
               else if(BiwaScheme.isList(arg)){
                 // alist -> JavaScript Object
@@ -141,7 +150,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
         var key = ary[i], value = ary[i+1];
         assert_symbol(key);
         if(BiwaScheme.isClosure(value))
-          value = BiwaScheme.js_closure(value, intp);
+          value = js_closure(value, intp);
 
         obj[key.name] = value;
       }
@@ -186,7 +195,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return obj;
   });
 
-  BiwaScheme.js_closure = function(proc, intp){
+  const js_closure = function(proc, intp){
     var intp2 = new Interpreter(intp);
     return function(/*args*/){
       return intp2.invoke_closure(proc, _.toArray(arguments));
@@ -199,7 +208,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //   (add-handler! ($ "#btn") "click" (js-closure on-click))
   define_libfunc("js-closure", 1, 1, function(ar, intp){
     assert_closure(ar[0]);
-    return BiwaScheme.js_closure(ar[0], intp);
+    return js_closure(ar[0], intp);
   });
 
   define_libfunc("js-null?", 1, 1, function(ar){
@@ -232,7 +241,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return ar[0].to_array();
   });
 
-  BiwaScheme.alist_to_js_obj = function(alist) {
+  const alist_to_js_obj = function(alist) {
     if (alist === nil) {
       return {} ;
     }
@@ -246,14 +255,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   };
   define_libfunc("alist-to-js-obj", 1, 1, function(ar) {
     BiwaScheme.deprecate("alist-to-js-obj", "1.0", "alist->js-obj");
-    return BiwaScheme.alist_to_js_obj(ar[0]);
+    return alist_to_js_obj(ar[0]);
   });
 
   define_libfunc("alist->js-obj", 1, 1, function(ar) {
-    return BiwaScheme.alist_to_js_obj(ar[0]);
+    return alist_to_js_obj(ar[0]);
   });
 
-  BiwaScheme.js_obj_to_alist = function(obj) {
+  const js_obj_to_alist = function(obj) {
     if (obj === undefined) {
       return BiwaScheme.nil;
     }
@@ -266,10 +275,10 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   };
   define_libfunc("js-obj-to-alist", 1, 1, function(ar) {
     BiwaScheme.deprecate("js-obj-to-alist", "1.0", "js-obj->alist");
-    return BiwaScheme.js_obj_to_alist(ar[0]);
+    return js_obj_to_alist(ar[0]);
   });
   define_libfunc("js-obj->alist", 1, 1, function(ar) {
-    return BiwaScheme.js_obj_to_alist(ar[0]);
+    return js_obj_to_alist(ar[0]);
   });
 
   //
@@ -335,4 +344,3 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_console_func("warn");
   define_console_func("error");
 
-}

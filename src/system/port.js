@@ -1,11 +1,14 @@
+import Class from "./class.js"
+import Pause from "./pause.js"
+
 //
 // Port
 //
 
 // (eof-object)
-BiwaScheme.eof = new Object;
+const eof = new Object;
 
-BiwaScheme.Port = BiwaScheme.Class.create({
+const Port = Class.create({
   initialize: function(is_in, is_out){
     this.is_open = true;
     this.is_binary = false; //??
@@ -27,7 +30,7 @@ BiwaScheme.Port = BiwaScheme.Class.create({
 //
 // string ports (srfi-6)
 //
-BiwaScheme.Port.StringOutput = BiwaScheme.Class.extend(new BiwaScheme.Port(false, true), {
+Port.StringOutput = Class.extend(new Port(false, true), {
   initialize: function(){
     this.buffer = [];
   },
@@ -39,7 +42,7 @@ BiwaScheme.Port.StringOutput = BiwaScheme.Class.extend(new BiwaScheme.Port(false
   }
 });
 
-BiwaScheme.Port.StringInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true, false), {
+Port.StringInput = Class.extend(new Port(true, false), {
   initialize: function(str){
     this.str = str;
   },
@@ -48,7 +51,7 @@ BiwaScheme.Port.StringInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true, 
   }
 });
 
-BiwaScheme.Port.NullInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true, false), {
+Port.NullInput = Class.extend(new Port(true, false), {
   initialize: function(){
   },
   get_string: function(after){
@@ -57,14 +60,14 @@ BiwaScheme.Port.NullInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true, fa
   }
 });
 
-BiwaScheme.Port.NullOutput = BiwaScheme.Class.extend(new BiwaScheme.Port(false, true), {
+Port.NullOutput = Class.extend(new Port(false, true), {
   initialize: function(output_function){
     this.output_function = output_function;
   },
   put_string: function(str){}
 });
 
-BiwaScheme.Port.CustomOutput = BiwaScheme.Class.extend(new BiwaScheme.Port(false, true), {
+Port.CustomOutput = Class.extend(new Port(false, true), {
   initialize: function(output_function){
     this.output_function = output_function;
   },
@@ -73,13 +76,13 @@ BiwaScheme.Port.CustomOutput = BiwaScheme.Class.extend(new BiwaScheme.Port(false
   }
 });
 
-BiwaScheme.Port.CustomInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true, false), {
+Port.CustomInput = Class.extend(new Port(true, false), {
   initialize: function(input_function){
     this.input_function = input_function;
   },
   get_string: function(after){
     var input_function = this.input_function;
-    return new BiwaScheme.Pause(function(pause) {
+    return new Pause(function(pause) {
       input_function(function(input) {
         pause.resume(after(input));
       });
@@ -88,6 +91,8 @@ BiwaScheme.Port.CustomInput = BiwaScheme.Class.extend(new BiwaScheme.Port(true, 
 });
 
 // User must set the current input/output
-BiwaScheme.Port.current_input  = new BiwaScheme.Port.NullInput();
-BiwaScheme.Port.current_output = new BiwaScheme.Port.NullOutput();
-BiwaScheme.Port.current_error  = new BiwaScheme.Port.NullOutput();
+Port.current_input  = new Port.NullInput();
+Port.current_output = new Port.NullOutput();
+Port.current_error  = new Port.NullOutput();
+
+export { Port, eof };

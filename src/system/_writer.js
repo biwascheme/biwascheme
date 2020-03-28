@@ -6,7 +6,7 @@
 // write
 //
 
-BiwaScheme.to_write = function(obj){
+const to_write = function(obj){
   if(obj === undefined)
     return "undefined";
   else if(obj === null)
@@ -49,7 +49,7 @@ BiwaScheme.to_write = function(obj){
 // display
 //
 
-BiwaScheme.to_display = function(obj){
+const to_display = function(obj){
   if(_.isUndefined(obj))
     return 'undefined';
   else if(_.isNull(obj))
@@ -81,16 +81,17 @@ BiwaScheme.to_display = function(obj){
 //   * just write '#n#' for other appearance
 
 //TODO: support Values
-BiwaScheme.write_ss = function(obj, array_mode){
+const write_ss = function(obj, array_mode){
   var known = [obj], used = [false];
-  BiwaScheme.find_cyclic(obj, known, used);
-  var cyclic   = BiwaScheme.reduce_cyclic_info(known, used);
+  find_cyclic(obj, known, used);
+  var cyclic   = reduce_cyclic_info(known, used);
   var appeared = new Array(cyclic.length);
   for(var i=cyclic.length-1; i>=0; i--) appeared[i] = false;
 
   return BiwaScheme.to_write_ss(obj, cyclic, appeared, array_mode);
 }
-BiwaScheme.to_write_ss = function(obj, cyclic, appeared, array_mode){
+
+const to_write_ss = function(obj, cyclic, appeared, array_mode){
   var ret = "";
   var i = cyclic.indexOf(obj);
   if(i >= 0){
@@ -130,7 +131,8 @@ BiwaScheme.to_write_ss = function(obj, cyclic, appeared, array_mode){
   }
   return ret;
 }
-BiwaScheme.reduce_cyclic_info = function(known, used){
+
+const reduce_cyclic_info = function(known, used){
   var n_used = 0;
   for(var i=0; i<used.length; i++){
     if(used[i]){
@@ -140,7 +142,8 @@ BiwaScheme.reduce_cyclic_info = function(known, used){
   }
   return known.slice(0, n_used);
 }
-BiwaScheme.find_cyclic = function(obj, known, used){
+
+const find_cyclic = function(obj, known, used){
   var items = (obj instanceof BiwaScheme.Pair)  ? [obj.car, obj.cdr] :
               (obj instanceof Array) ? obj :
               null;
@@ -157,7 +160,7 @@ BiwaScheme.find_cyclic = function(obj, known, used){
     else{
       known.push(item);
       used.push(false);
-      BiwaScheme.find_cyclic(item, known, used);
+      find_cyclic(item, known, used);
     }
   });
 };
@@ -165,7 +168,7 @@ BiwaScheme.find_cyclic = function(obj, known, used){
 //
 // inspect
 //
-BiwaScheme.inspect = function(object, opts) {
+const inspect = function(object, opts) {
   try {
     if (_.isUndefined(object)) return 'undefined';
     if (object === null) return 'null';
@@ -190,3 +193,6 @@ BiwaScheme.inspect = function(object, opts) {
     throw e;
   }
 };
+
+export { to_write, to_display, write_ss, to_write_ss, inspect,
+         reduce_cyclic_info, find_cyclic };

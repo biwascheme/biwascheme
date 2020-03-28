@@ -1,10 +1,18 @@
+import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
+         assert_number, assert_integer, assert_real, assert_between, assert_string,
+         assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+         assert_vector, assert_hashtable, assert_mutable_hashtable, assert_record,
+         assert_record_td, assert_record_cd, assert_enum_set, assert_promise,
+         assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate } from "./infra.js"; 
+import { Pair, array_to_list, deep_array_to_list } from "../system/pair.js"
+import { Port } from "../system/port.js"
+import { Sym } from "../system/symbol.js"
+
 //
 // srfi.js - SRFI libraries
 //
 // should be src/library/srfi/1.js, etc (in the future).
 //
-
-with(BiwaScheme) {
   
   //
   // srfi-1 (list)
@@ -179,7 +187,7 @@ with(BiwaScheme) {
   //   * ~f 5.2 sec
   //   * ~p AM/PM
   //   * ~X 2007/01/01
-  BiwaScheme.date_names = {
+  const date_names = {
     weekday: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     full_weekday: ["Sunday", "Monday", "Tuesday", 
       "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -190,7 +198,7 @@ with(BiwaScheme) {
       "Octorber", "November", "December"]
   }
 
-  BiwaScheme.date2string = function(date, format){
+  const date2string = function(date, format){
     var zeropad  = function(n){ return n<10 ? "0"+n : ""+n }; 
     var spacepad = function(n){ return n<10 ? " "+n : ""+n }; 
     var isoweeknum  = function(x){
@@ -371,4 +379,3 @@ with(BiwaScheme) {
   // see src/library/node_functions.js for:
   // - srfi-98 (get-environment-variable)
   //
-}

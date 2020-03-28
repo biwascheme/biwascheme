@@ -1,9 +1,11 @@
+import Class from "./class.js"
+
 ///
 /// Compiler
 ///
 /// Note: macro expansion is done by Intepreter#expand
 
-BiwaScheme.Compiler = BiwaScheme.Class.create({
+const Compiler = Class.create({
   initialize: function(){
   },
 
@@ -39,6 +41,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
 
   compile_lookup: function(x, e, return_local, return_free, return_global){
     var locals = e[0], free = e[1];
+    var n;
     if((n = locals.index(x)) != null){
       //Console.puts("compile_refer:"+x.inspect()+" in "+e.inspect()+" results refer-local "+n);
       return return_local(n);
@@ -503,7 +506,7 @@ BiwaScheme.Compiler = BiwaScheme.Class.create({
 });
 
 // Compile an expression with new compiler
-BiwaScheme.Compiler.compile = function(expr, next){
+Compiler.compile = function(expr, next){
   expr = BiwaScheme.Interpreter.expand(expr);
   return (new BiwaScheme.Compiler).run(expr, next);
 };
@@ -523,7 +526,7 @@ BiwaScheme.Compiler.compile = function(expr, next){
 // 
 // Returns a letrec* expression, or
 // just returns x, when x does not contain definitions.
-(function(){
+
 // Returns true if x is a definition
 var is_definition = function(x){
   return BiwaScheme.isPair(x) &&
@@ -554,7 +557,7 @@ var define_to_lambda_bind = function(def){
   }
 };
 
-BiwaScheme.Compiler.transform_internal_define = function(x){
+Compiler.transform_internal_define = function(x){
   // 1. Split x into definitions and expressions
   var defs = [], item = x;
   while (is_definition(item.car)){
@@ -572,4 +575,5 @@ BiwaScheme.Compiler.transform_internal_define = function(x){
   return new BiwaScheme.Pair(BiwaScheme.Sym("letrec*"),
            new BiwaScheme.Pair(bindings, exprs));
 };
-})();
+
+export default Compiler;

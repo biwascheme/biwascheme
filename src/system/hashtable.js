@@ -1,3 +1,5 @@
+import Class from "./class.js"
+
 //
 // Hashtable
 //
@@ -6,7 +8,7 @@
 //  * R6RS hashtable needs its own hash function
 // so some hacks are needed.
 
-BiwaScheme.Hashtable = BiwaScheme.Class.create({
+const Hashtable = Class.create({
   initialize: function(_hash_proc, _equiv_proc, mutable){
     this.mutable = (mutable === undefined) ? true :
                    mutable ? true : false;
@@ -102,21 +104,21 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
 // Hash functions
 //
 
-BiwaScheme.Hashtable.equal_hash = function(ar){
+Hashtable.equal_hash = function(ar){
   return BiwaScheme.to_write(ar[0]);
 };
-BiwaScheme.Hashtable.eq_hash = BiwaScheme.Hashtable.equal_hash;
-BiwaScheme.Hashtable.eqv_hash = BiwaScheme.Hashtable.equal_hash;
+Hashtable.eq_hash = Hashtable.equal_hash;
+Hashtable.eqv_hash = Hashtable.equal_hash;
 
-BiwaScheme.Hashtable.string_hash = function(ar){
+Hashtable.string_hash = function(ar){
   return ar[0];
 };
 
-BiwaScheme.Hashtable.string_ci_hash = function(ar){
+Hashtable.string_ci_hash = function(ar){
   return _.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
 };
 
-BiwaScheme.Hashtable.symbol_hash = function(ar){
+Hashtable.symbol_hash = function(ar){
   return (ar[0] instanceof BiwaScheme.Symbol) ? ar[0].name : ar[0];
 };
 
@@ -124,10 +126,12 @@ BiwaScheme.Hashtable.symbol_hash = function(ar){
 // Equivalence functions
 //
 
-BiwaScheme.Hashtable.eq_equiv = function(ar){
+Hashtable.eq_equiv = function(ar){
   return BiwaScheme.eq(ar[0], ar[1]);
 };
 
-BiwaScheme.Hashtable.eqv_equiv = function(ar){
+Hashtable.eqv_equiv = function(ar){
   return BiwaScheme.eqv(ar[0], ar[1]);
 };
+
+export default Hashtable;

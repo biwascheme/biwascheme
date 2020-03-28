@@ -1,3 +1,16 @@
+## HEAD
+
+Possible breaking changes
+
+- On introducing rollup (#160), some of the properties of `window.BiwaScheme`
+  that are considered internal are made private (For example, `BiwaScheme.Class`).
+  If you have a program which relies on any of them, please file an issue
+  and I'll make it public again.
+
+Internal changes
+
+- Changed build system to rollup.js (#160)
+
 ## 2020-03-26 v0.7.0
 
   * new: Arity check for Scheme closures (#132)

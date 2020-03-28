@@ -1,7 +1,9 @@
+import Class from "./class.js"
+
 //
 // R7RS Promise (lazy library)
 //
-BiwaScheme.Promise = BiwaScheme.Class.create({
+const BiwaPromise = Class.create({
   initialize : function(done, thunk_or_value){
     this.box = [done, thunk_or_value];
   },
@@ -32,15 +34,18 @@ BiwaScheme.Promise = BiwaScheme.Class.create({
     new_promise.box = this.box;
   }
 });
-BiwaScheme.isPromise = function(obj) {
+
+const isPromise = function(obj) {
   return (obj instanceof BiwaScheme.Promise);
 };
 
 // Create fresh promise
-BiwaScheme.Promise.fresh = function(thunk) {
+BiwaPromise.fresh = function(thunk) {
   return new BiwaScheme.Promise(false, thunk);
 };
 // Create calculated promise
-BiwaScheme.Promise.done = function(value) {
+BiwaPromise.done = function(value) {
   return new BiwaScheme.Promise(true, value);
 };
+
+export { BiwaPromise, isPromise };

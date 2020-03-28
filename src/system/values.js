@@ -1,7 +1,9 @@
+import Class from "./class.js"
+
 //
 // Values
 //
-BiwaScheme.Values = BiwaScheme.Class.create({
+const Values = Class.create({
   initialize: function(values){
     this.content = values;
   },
@@ -12,3 +14,4 @@ BiwaScheme.Values = BiwaScheme.Class.create({
   }
 });
 
+export default Values;

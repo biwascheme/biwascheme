@@ -1,10 +1,14 @@
+import Class from "./class.js"
+
 //
 // Char
 //
 
-BiwaScheme.Char = BiwaScheme.Class.create({
+const Chars = {};
+
+const Char = Class.create({
   initialize: function(c){
-    BiwaScheme.Chars[ this.value = c ] = this;
+    Chars[ this.value = c ] = this;
   },
   to_write: function(){
     switch(this.value){
@@ -18,15 +22,16 @@ BiwaScheme.Char = BiwaScheme.Class.create({
     return this.to_write();
   }
 });
-BiwaScheme.Chars = {};
-BiwaScheme.Char.get = function(c) {
+
+Char.get = function(c) {
   if(typeof(c) != "string") {
     throw new BiwaScheme.Bug("Char.get: " +
                              BiwaScheme.inspect(c) + " is not a string");
   }
-  if( BiwaScheme.Chars[c] === undefined )
-    return new BiwaScheme.Char(c);
+  if( Chars[c] === undefined )
+    return new Char(c);
   else
-    return BiwaScheme.Chars[c];
+    return Chars[c];
 };
 
+export default Char;
