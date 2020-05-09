@@ -1,7 +1,7 @@
-import "./deps/underscore.js";
-import "./deps/jquery.js";
-
 import { TopEnv, CoreEnv, nil, undef, debug, max_trace_size, suppress_deprecation_warning } from "./header.js";
+
+import Platform from "./platforms/platform.js"
+import { run, run_file, node_setup } from "./platforms/node/module_postamble.js"
 
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
          isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
@@ -38,10 +38,9 @@ import { assert_symbol, assert_list } from "./library/infra.js"
 
 // For unit testing
 import { reduce_cyclic_info, find_cyclic } from "./system/_writer.js"
-import { define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float } from "./library/infra.js"
+import { define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float } from "./library/infra.js"
 
-window.BiwaScheme = window.BiwaScheme || {};
-Object.assign(window.BiwaScheme, {
+let BiwaScheme = {
   TopEnv, CoreEnv, nil, undef, debug, max_trace_size, suppress_deprecation_warning,
   isNil, isUndef, isBoolean, isString, isChar, isSymbol, isPort, isPair, isList,
     isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
@@ -71,5 +70,17 @@ Object.assign(window.BiwaScheme, {
   assert_symbol, assert_list,
 
   reduce_cyclic_info, find_cyclic,
-  define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float,
-});
+  define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float,
+};
+
+if (Platform.isBrowser()) {
+  window.BiwaScheme = window.BiwaScheme || {};
+  Object.assign(window.BiwaScheme, BiwaScheme);
+}
+else if (Platform.isNode()) {
+  BiwaScheme.run = run;
+  BiwaScheme.run_file = run_file;
+  node_setup(BiwaScheme);
+
+  module.exports = BiwaScheme;
+}
