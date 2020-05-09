@@ -24,6 +24,14 @@ const run_file = function(filename, encoding/*optional*/) {
 };
 
 const node_setup = (BiwaScheme) => {
+  Console.puts = function(str, no_newline) {
+    BiwaScheme.Port.current_output.put_string(str + (no_newline ? "" : "\n"))
+  };
+
+  Console.p = function() {
+    [].slice.call(arguments).forEach(BiwaScheme.Port.current_output.put_string);
+  };
+
   // (load scm-path)
   BiwaScheme.define_libfunc("load", 1, 1, function(ar) {
     var path = ar[0];
