@@ -1,7 +1,13 @@
+import _ from "../deps/underscore-1.10.2-esm.js"
+import { nil, undef } from "../header.js"
+import { isClosure } from "./_types.js"
+import Char from "./char.js"
+import { BiwaSymbol } from "./symbol.js"
+import { Pair } from "./pair.js"
+
 //
 // write.js: Functions to convert objects to strings
 //
-import _ from "../deps/underscore-1.10.2-esm.js"
 
 //
 // write
@@ -27,10 +33,10 @@ const to_write = function(obj){
               .replace(/\f/g, "\\f")
               .replace(/\r/g, "\\r") +
            '"';
-  else if(BiwaScheme.isClosure(obj))
+  else if(isClosure(obj))
     return "#<Closure>";
   else if(_.isArray(obj))
-    return "#(" + _.map(obj, function(e) { return BiwaScheme.to_write(e); }).join(" ") + ")";
+    return "#(" + _.map(obj, function(e) { return to_write(e); }).join(" ") + ")";
   else if(typeof(obj.to_write) == 'function')
     return obj.to_write();
   else if(isNaN(obj) && typeof(obj) == 'number')
@@ -43,7 +49,7 @@ const to_write = function(obj){
       case -Infinity: return "-inf.0";
     }
   }
-  return BiwaScheme.inspect(obj);
+  return inspect(obj);
 }
 
 //
@@ -57,16 +63,16 @@ const to_display = function(obj){
     return 'null';
   else if(typeof(obj.valueOf()) == "string")
     return obj;
-  else if(obj instanceof BiwaScheme.Symbol)
+  else if(obj instanceof BiwaSymbol)
     return obj.name;
   else if(obj instanceof Array)
-    return '#(' + _.map(obj, BiwaScheme.to_display).join(' ') + ')';
-  else if(obj instanceof BiwaScheme.Pair)
-    return obj.inspect(BiwaScheme.to_display);
-  else if(obj instanceof BiwaScheme.Char)
+    return '#(' + _.map(obj, to_display).join(' ') + ')';
+  else if(obj instanceof Pair)
+    return obj.inspect(to_display);
+  else if(obj instanceof Char)
     return obj.value;
   else
-    return BiwaScheme.to_write(obj);
+    return to_write(obj);
 }
 
 //
@@ -89,7 +95,7 @@ const write_ss = function(obj, array_mode){
   var appeared = new Array(cyclic.length);
   for(var i=cyclic.length-1; i>=0; i--) appeared[i] = false;
 
-  return BiwaScheme.to_write_ss(obj, cyclic, appeared, array_mode);
+  return to_write_ss(obj, cyclic, appeared, array_mode);
 }
 
 const to_write_ss = function(obj, cyclic, appeared, array_mode){
@@ -105,22 +111,22 @@ const to_write_ss = function(obj, cyclic, appeared, array_mode){
     }
   }
 
-  if(obj instanceof BiwaScheme.Pair){
+  if(obj instanceof Pair){
     var a = [];
-    a.push(BiwaScheme.to_write_ss(obj.car, cyclic, appeared, array_mode));
-    for(var o=obj.cdr; o != BiwaScheme.nil; o=o.cdr){
-      if(!(o instanceof BiwaScheme.Pair) || cyclic.indexOf(o) >= 0){
+    a.push(to_write_ss(obj.car, cyclic, appeared, array_mode));
+    for(var o=obj.cdr; o != nil; o=o.cdr){
+      if(!(o instanceof Pair) || cyclic.indexOf(o) >= 0){
         a.push(".");
-        a.push(BiwaScheme.to_write_ss(o, cyclic, appeared, array_mode));
+        a.push(to_write_ss(o, cyclic, appeared, array_mode));
         break;
       }
-      a.push(BiwaScheme.to_write_ss(o.car, cyclic, appeared, array_mode));
+      a.push(to_write_ss(o.car, cyclic, appeared, array_mode));
     }
     ret += "(" + a.join(" ") + ")";
   }
   else if(obj instanceof Array){
     var a = _.map(obj, function(item){
-      return BiwaScheme.to_write_ss(item, cyclic, appeared, array_mode);
+      return to_write_ss(item, cyclic, appeared, array_mode);
     })
     if(array_mode)
       ret += "[" + a.join(", ") + "]";
@@ -128,7 +134,7 @@ const to_write_ss = function(obj, cyclic, appeared, array_mode){
       ret += "#(" + a.join(" ") + ")";
   }
   else{
-    ret += BiwaScheme.to_write(obj);
+    ret += to_write(obj);
   }
   return ret;
 }
@@ -145,15 +151,15 @@ const reduce_cyclic_info = function(known, used){
 }
 
 const find_cyclic = function(obj, known, used){
-  var items = (obj instanceof BiwaScheme.Pair)  ? [obj.car, obj.cdr] :
+  var items = (obj instanceof Pair)  ? [obj.car, obj.cdr] :
               (obj instanceof Array) ? obj :
               null;
   if(!items) return;
 
   _.each(items, function(item){
     if(typeof(item)=='number' || typeof(item)=='string' ||
-      item === BiwaScheme.undef || item === true || item === false ||
-      item === BiwaScheme.nil || item instanceof BiwaScheme.Symbol) return;
+      item === undef || item === true || item === false ||
+      item === nil || item instanceof BiwaSymbol) return;
 
     var i = known.indexOf(item);
     if(i >= 0)
@@ -180,7 +186,7 @@ const inspect = function(object, opts) {
       return '"' + object.replace(/"/g, '\\"') + '"';
     }
     if (_.isArray(object)) {
-      return '[' + _.map(object, BiwaScheme.inspect).join(', ') + ']';
+      return '[' + _.map(object, inspect).join(', ') + ']';
     }
 
     if (opts && opts["fallback"]){
