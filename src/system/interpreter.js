@@ -1,22 +1,34 @@
-import Class from "./class.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { TopEnv, CoreEnv, nil, undef, max_trace_size } from "../header.js"
+import { isSymbol, isClosure, makeClosure } from "./_types.js"
+import { to_write, inspect } from "./_writer.js"
+import Call from "./call.js"
+import Class from "./class.js"
+import Compiler from "./compiler.js"
+import { BiwaError, Bug } from "./error.js"
+import { Pair, List, array_to_list } from "./pair.js"
+import Parser from "./parser.js"
+import Pause from "./pause.js"
+import { eof } from "./port.js"
+import { Sym } from "./symbol.js"
+import Syntax from "./syntax.js"
 
 ///
 /// Interpreter
 ///
 
 const Interpreter = Class.create({
-  // new BiwaScheme.Interpreter()
-  // new BiwaScheme.Interpreter(lastInterpreter)
-  // new BiwaScheme.Interpreter(errorHandler)
-  // new BiwaScheme.Interpreter(lastInterpreter, errorHandler)
+  // new Interpreter()
+  // new Interpreter(lastInterpreter)
+  // new Interpreter(errorHandler)
+  // new Interpreter(lastInterpreter, errorHandler)
   initialize: function(){
     var last_interpreter = null;
     var on_error = null;
     if (arguments.length == 2) {
       last_interpreter = arguments[0];
       on_error = arguments[1];
-    } else if (arguments.length == 1 && arguments[0] instanceof BiwaScheme.Interpreter) {
+    } else if (arguments.length == 1 && arguments[0] instanceof Interpreter) {
       last_interpreter = arguments[0];
     } else if (arguments.length == 1 && typeof(arguments[0]) == "function") {
       on_error = arguments[0];
@@ -39,10 +51,10 @@ const Interpreter = Class.create({
     this.tco_counter = [];
     // Maximum length of call_stack
     // (Note: we should cap call_stack for inifinite loop with recursion)
-    this.max_trace_size = last_interpreter ? last_interpreter.max_trace_size : BiwaScheme.max_trace_size;
+    this.max_trace_size = last_interpreter ? last_interpreter.max_trace_size : max_trace_size;
 
     // dynamic-wind
-    this.current_dynamic_winder = BiwaScheme.Interpreter.DynamicWind.ROOT;
+    this.current_dynamic_winder = Interpreter.DynamicWind.ROOT;
   },
 
   inspect: function(){
@@ -50,7 +62,7 @@ const Interpreter = Class.create({
       "#<Interpreter: stack size=>",
       this.stack.length, " ",
       "after_evaluate=",
-      BiwaScheme.inspect(this.after_evaluate),
+      inspect(this.after_evaluate),
       ">"
     ].join("");
   },
@@ -135,7 +147,7 @@ const Interpreter = Class.create({
     if(dotpos == -1)
       v.expected_args = args;
 
-    BiwaScheme.makeClosure(v);
+    makeClosure(v);
     return v;
   },
 
@@ -148,8 +160,8 @@ const Interpreter = Class.create({
     if (this.dumper) {
       dumper = this.dumper;
     }
-    else if (BiwaScheme.Interpreter.dumper) {
-      dumper = BiwaScheme.Interpreter.dumper;
+    else if (Interpreter.dumper) {
+      dumper = Interpreter.dumper;
     }
     else
       return;
@@ -189,12 +201,12 @@ const Interpreter = Class.create({
         break;
       case "refer-global":
         var sym=x[1], x=x[2];
-        if(BiwaScheme.TopEnv.hasOwnProperty(sym))
-          var val = BiwaScheme.TopEnv[sym];
-        else if(BiwaScheme.CoreEnv.hasOwnProperty(sym))
-          var val = BiwaScheme.CoreEnv[sym];
+        if(TopEnv.hasOwnProperty(sym))
+          var val = TopEnv[sym];
+        else if(CoreEnv.hasOwnProperty(sym))
+          var val = CoreEnv[sym];
         else
-          throw new BiwaScheme.Error("execute: unbound symbol: "+BiwaScheme.inspect(sym));
+          throw new BiwaError("execute: unbound symbol: "+inspect(sym));
 
         a = val;
         this.last_refer = sym || "(anon)";
@@ -224,24 +236,24 @@ const Interpreter = Class.create({
         break;
       case "assign-global":
         var name=x[1], x=x[2];
-        if(!BiwaScheme.TopEnv.hasOwnProperty(name) &&
-           !BiwaScheme.CoreEnv.hasOwnProperty(name))
-          throw new BiwaScheme.Error("global variable '"+name+"' is not defined");
+        if(!TopEnv.hasOwnProperty(name) &&
+           !CoreEnv.hasOwnProperty(name))
+          throw new BiwaError("global variable '"+name+"' is not defined");
         
-        BiwaScheme.TopEnv[name] = a;
-        a = BiwaScheme.undef;
+        TopEnv[name] = a;
+        a = undef;
         break;
       case "assign-local":
         var n=x[1], x=x[2];
         var box = this.index(f, n+1);
         box[0] = a;
-        a = BiwaScheme.undef;
+        a = undef;
         break;
       case "assign-free":
         var n=x[1], x=x[2];
         var box = c[n+1];
         box[0] = a;
-        a = BiwaScheme.undef;
+        a = undef;
         break;
       case "conti":
         var n=x[1], x=x[2];
@@ -250,8 +262,8 @@ const Interpreter = Class.create({
       case "nuate1":
         var stack=x[1], to=x[2];
         var from = this.current_dynamic_winder;
-        var winders = BiwaScheme.Interpreter.DynamicWind.listWinders(from, to);
-        x = BiwaScheme.Interpreter.DynamicWind.joinWinders(winders,
+        var winders = Interpreter.DynamicWind.listWinders(from, to);
+        x = Interpreter.DynamicWind.joinWinders(winders,
           ["nuate2", stack]
         )
         break;
@@ -297,7 +309,7 @@ const Interpreter = Class.create({
         // the number of arguments in the last call is
         // pushed to the stack.
         var n_args = this.index(s, 0);
-        if(BiwaScheme.isClosure(func)){
+        if(isClosure(func)){
           a = func;
           x = func[0];
 
@@ -308,9 +320,9 @@ const Interpreter = Class.create({
             // The dot is found
             // ----------------
             // => Process the &rest args: packing the rest args into a list.
-            var ls = BiwaScheme.nil;
+            var ls = nil;
             for (var i=n_args; --i>=dotpos; ) {
-              ls = new BiwaScheme.Pair(this.index(s, i+1), ls);
+              ls = new Pair(this.index(s, i+1), ls);
             }
             if (dotpos >= n_args) {
               // No rest argument is passed to this closure.
@@ -334,7 +346,7 @@ const Interpreter = Class.create({
             // (if the closure knows how many it wants)
             if(func.expected_args && n_args != func.expected_args) {
               var errMsg = "Function call error: got " + n_args + " but wanted " + func.expected_args;
-              throw new BiwaScheme.Error(errMsg);
+              throw new BiwaError(errMsg);
             }
           }
           f = s;
@@ -349,14 +361,14 @@ const Interpreter = Class.create({
           // invoke the function
           var result = func(args, this);
 
-          if(result instanceof BiwaScheme.Pause){
+          if(result instanceof Pause){
             // it requested the interpreter to suspend
             var pause = result;
             pause.set_state(this, ["return"], f, c, s);
             pause.ready();
             return pause;
           }
-          else if(result instanceof BiwaScheme.Call){
+          else if(result instanceof Call){
             // it requested the interpreter to call a scheme closure
 
             //   [frame,
@@ -397,7 +409,7 @@ const Interpreter = Class.create({
         }
         else{
           // unknown function type
-          throw new BiwaScheme.Error(BiwaScheme.inspect(func) + " is not a function");
+          throw new BiwaError(inspect(func) + " is not a function");
         }
         break;
       case "return":
@@ -415,12 +427,12 @@ const Interpreter = Class.create({
         this.tco_counter.pop();
         break;
       default:
-        throw new BiwaScheme.Bug("unknown opecode type: "+x[0]);
+        throw new Bug("unknown opecode type: "+x[0]);
       }
     }
 
 //      if(ret === null)
-//        throw new BiwaScheme.Bug("interpreter exited in unusual way");
+//        throw new Bug("interpreter exited in unusual way");
 //      else
 //        return ret;
     return a
@@ -429,12 +441,12 @@ const Interpreter = Class.create({
   // Compile and evaluate Scheme program
   evaluate: function(str, after_evaluate){
     this.call_stack = [];
-    this.parser = new BiwaScheme.Parser(str);
-    this.compiler = new BiwaScheme.Compiler();
+    this.parser = new Parser(str);
+    this.compiler = new Compiler();
     if(after_evaluate) 
       this.after_evaluate = after_evaluate;
 
-    if(BiwaScheme.Debug) Console.puts("executing: " + str);
+    //Console.puts("executing: " + str);
      
     this.is_top = true;
     this.file_stack = [];
@@ -451,7 +463,7 @@ const Interpreter = Class.create({
   // Resume evaluation
   // (internally used from Interpreter#execute and Pause#resume)
   resume: function(is_resume, a, x, f, c, s){
-    var ret = BiwaScheme.undef;
+    var ret = undef;
 
     for(;;){
       if(is_resume){
@@ -461,20 +473,20 @@ const Interpreter = Class.create({
       else{
         if(!this.parser) break; // adhoc: when Pause is used via invoke_closure
         var expr = this.parser.getObject();
-        if(expr === BiwaScheme.Parser.EOS) break;
+        if(expr === Parser.EOS) break;
 
         // expand
-        expr = BiwaScheme.Interpreter.expand(expr);
+        expr = Interpreter.expand(expr);
 
         // compile
         var opc = this.compiler.run(expr);
-        //if(BiwaScheme.Debug) Console.p(opc);
+        //Console.p(opc);
 
         // execute
         ret = this._execute(expr, opc, 0, [], 0);
       }
 
-      if(ret instanceof BiwaScheme.Pause){ //suspend evaluation
+      if(ret instanceof Pause){ //suspend evaluation
         return ret;
       }
     }
@@ -498,15 +510,15 @@ const Interpreter = Class.create({
 
   // only compiling (for debug use only)
   compile: function(str){
-    var obj = BiwaScheme.Interpreter.read(str);
-    var opc = BiwaScheme.Compiler.compile(obj);
+    var obj = Interpreter.read(str);
+    var opc = Compiler.compile(obj);
     return opc;
   },
 
   // before, after: Scheme closure
   push_dynamic_winder: function(before, after) {
     this.current_dynamic_winder =
-      new BiwaScheme.Interpreter.DynamicWind(this.current_dynamic_winder, before, after);
+      new Interpreter.DynamicWind(this.current_dynamic_winder, before, after);
   },
 
   pop_dynamic_winder: function(before, after) {
@@ -516,9 +528,9 @@ const Interpreter = Class.create({
 
 // Take a string and returns an expression.
 Interpreter.read = function(str){
-  var parser = new BiwaScheme.Parser(str);
+  var parser = new Parser(str);
   var r      = parser.getObject();
-  return (r == BiwaScheme.Parser.EOS)? BiwaScheme.eof: r;
+  return (r == Parser.EOS)? eof: r;
 };
 
 // Expand macro calls in a expression recursively.
@@ -526,53 +538,53 @@ Interpreter.read = function(str){
 // x - expression
 // flag - used internally. do not specify this
 //
-// @throws {BiwaScheme.Error} when x has syntax error
+// @throws {BiwaError} when x has syntax error
 Interpreter.expand = function(x, flag/*optional*/){
-  var expand = BiwaScheme.Interpreter.expand;
+  var expand = Interpreter.expand;
   flag || (flag = {})
   var ret = null;
 
-  if(x instanceof BiwaScheme.Pair){
+  if(x instanceof Pair){
     switch(x.car){
-    case BiwaScheme.Sym("define"):
+    case Sym("define"):
       var left = x.cdr.car, exp = x.cdr.cdr;
-      ret = new BiwaScheme.Pair(BiwaScheme.Sym("define"),
-              new BiwaScheme.Pair(left, expand(exp, flag)));
+      ret = new Pair(Sym("define"),
+              new Pair(left, expand(exp, flag)));
       break;
-    case BiwaScheme.Sym("begin"):
-      ret = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), expand(x.cdr, flag));
+    case Sym("begin"):
+      ret = new Pair(Sym("begin"), expand(x.cdr, flag));
       break;
-    case BiwaScheme.Sym("quote"):
+    case Sym("quote"):
       ret = x;
       break;
-    case BiwaScheme.Sym("lambda"):
+    case Sym("lambda"):
       var vars=x.cdr.car, body=x.cdr.cdr;
-      ret = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"),
-              new BiwaScheme.Pair(vars, expand(body, flag)));
+      ret = new Pair(Sym("lambda"),
+              new Pair(vars, expand(body, flag)));
       break;
-    case BiwaScheme.Sym("if"):
+    case Sym("if"):
       var testc=x.second(), thenc=x.third(), elsec=x.fourth();
-      ret = BiwaScheme.List(BiwaScheme.Sym("if"),
-                            expand(testc, flag),
-                            expand(thenc, flag),
-                            expand(elsec, flag));
+      ret = List(Sym("if"),
+                 expand(testc, flag),
+                 expand(thenc, flag),
+                 expand(elsec, flag));
       break;
-    case BiwaScheme.Sym("set!"):
+    case Sym("set!"):
       var v=x.second(), x=x.third();
-      ret = BiwaScheme.List(BiwaScheme.Sym("set!"), v, expand(x, flag));
+      ret = List(Sym("set!"), v, expand(x, flag));
       break;
-    case BiwaScheme.Sym("call-with-current-continuation"): 
-    case BiwaScheme.Sym("call/cc"): 
+    case Sym("call-with-current-continuation"): 
+    case Sym("call/cc"): 
       var x=x.second();
-      ret = BiwaScheme.List(BiwaScheme.Sym("call/cc"), expand(x, flag));
+      ret = List(Sym("call/cc"), expand(x, flag));
       break;
     default: //apply
       var transformer = null;
-      if(BiwaScheme.isSymbol(x.car)){
-        if(BiwaScheme.TopEnv[x.car.name] instanceof BiwaScheme.Syntax)
-          transformer = BiwaScheme.TopEnv[x.car.name];
-        else if(BiwaScheme.CoreEnv[x.car.name] instanceof BiwaScheme.Syntax)
-          transformer = BiwaScheme.CoreEnv[x.car.name];
+      if(isSymbol(x.car)){
+        if(TopEnv[x.car.name] instanceof Syntax)
+          transformer = TopEnv[x.car.name];
+        else if(CoreEnv[x.car.name] instanceof Syntax)
+          transformer = CoreEnv[x.car.name];
       }
 
       if(transformer){
@@ -580,8 +592,8 @@ Interpreter.expand = function(x, flag/*optional*/){
         ret = transformer.transform(x);
 
 //            // Debug
-//            var before = BiwaScheme.to_write(x);
-//            var after = BiwaScheme.to_write(ret);
+//            var before = to_write(x);
+//            var after = to_write(ret);
 //            if(before != after){
 //              console.log("before: " + before)
 //              console.log("expand: " + after)
@@ -597,14 +609,14 @@ Interpreter.expand = function(x, flag/*optional*/){
       else{
         var expanded_car = expand(x.car, flag);
         var expanded_cdr;
-        if(!(x.cdr instanceof BiwaScheme.Pair) && (x.cdr !== BiwaScheme.nil)){
-          throw new Error("proper list required for function application "+
-                          "or macro use: "+BiwaScheme.to_write(x));
+        if(!(x.cdr instanceof Pair) && (x.cdr !== nil)){
+          throw new BiwaError("proper list required for function application "+
+                              "or macro use: "+to_write(x));
         }
-        expanded_cdr = BiwaScheme.array_to_list(
+        expanded_cdr = array_to_list(
                          x.cdr.to_array().map(
                                function(item){ return expand(item, flag); }));
-        ret = new BiwaScheme.Pair(expanded_car, expanded_cdr);
+        ret = new Pair(expanded_car, expanded_cdr);
       }
     }
   }
@@ -637,7 +649,7 @@ Interpreter.DynamicWind.ROOT = {_: "this is ROOT."};
 Interpreter.DynamicWind.listWinders = function(from, to) {
   // List winders from `from` to `ROOT`
   var fromStack = [from];
-  while (from !== BiwaScheme.Interpreter.DynamicWind.ROOT) {
+  while (from !== Interpreter.DynamicWind.ROOT) {
     from = from.parent;
     fromStack.push(from);
   }
