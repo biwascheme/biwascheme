@@ -22,7 +22,7 @@ import { Port, eof } from "./system/port.js"
 import { BiwaPromise, isPromise } from "./system/promise.js"
 import { Record, isRecord, isRecordTD, isRecordCD } from "./system/record.js"
 import BiwaSet from "./system/set.js"
-import { Symbol, Sym, gensym } from "./system/symbol.js"
+import { BiwaSymbol, Sym, gensym } from "./system/symbol.js"
 import Syntax from "./system/syntax.js"
 import Values from "./system/values.js"
 
@@ -61,7 +61,7 @@ let BiwaScheme = {
   Promise: BiwaPromise, isPromise,
   Record, isRecord, isRecordTD, isRecordCD,
   Set: BiwaSet,
-  Symbol, Sym, gensym,
+  Symbol: BiwaSymbol, Sym, gensym,
   Syntax,
   Values,
 

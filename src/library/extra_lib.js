@@ -7,7 +7,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_function, assert_closure, assert_procedure, assert_date } from "./infra.js"; 
 import { to_write, to_display, to_write_ss, inspect } from "../system/_writer.js"
 import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js"
-import { Symbol, Sym } from "../system/symbol.js"
+import { BiwaSymbol, Sym } from "../system/symbol.js"
 import Call from "../system/call.js"
 import Compiler from "../system/compiler.js"
 import Interpreter from "../system/interpreter.js"
@@ -274,7 +274,7 @@ import { TopEnv, nil } from "../header.js";
 
   var macroexpand_1 = function(x){
     if(x instanceof Pair){
-      if(x.car instanceof Symbol && TopEnv[x.car.name] instanceof Syntax){
+      if(x.car instanceof BiwaSymbol && TopEnv[x.car.name] instanceof Syntax){
         var transformer = TopEnv[x.car.name];
         x = transformer.transform(x);
       }

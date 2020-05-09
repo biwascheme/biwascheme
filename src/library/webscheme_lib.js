@@ -7,7 +7,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_function, assert_closure, assert_procedure, assert_date, deprecate } from "./infra.js"; 
 import Interpreter  from "../system/interpreter.js"
 import { Pair } from "../system/pair.js"
-import { Symbol, Sym } from "../system/symbol.js"
+import { BiwaSymbol, Sym } from "../system/symbol.js"
 
   define_libfunc("read-line", 0, 1, function(ar){
     var port = ar[0] || Port.current_input;
@@ -243,7 +243,7 @@ import { Symbol, Sym } from "../system/symbol.js"
   const create_elements_by_string = function(spec){
     spec = spec.to_array();
     var name = spec.shift();
-    if(name instanceof Symbol) name = name.name;
+    if(name instanceof BiwaSymbol) name = name.name;
     var m = name.match(/(.*)\.(.*)/);
     if (m) {
       name = m[1];
@@ -257,7 +257,7 @@ import { Symbol, Sym } from "../system/symbol.js"
     var children = [];
     var s = ["<" + name];
     for(var i=0; i<spec.length; i++){
-      if(spec[i] instanceof Symbol){
+      if(spec[i] instanceof BiwaSymbol){
         s.push(' ' + spec[i].name + '="' + spec[i+1] + '"');
         i++;
       }
@@ -285,7 +285,7 @@ import { Symbol, Sym } from "../system/symbol.js"
   define_libfunc("element-new", 1, 1, function(ar){
     var string_or_symbol = function(item){
       return _.isString(item) ||
-             (item instanceof Symbol) ||
+             (item instanceof BiwaSymbol) ||
              (item instanceof Pair);
     };
     if(tree_all(ar[0], string_or_symbol)){

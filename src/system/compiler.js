@@ -6,7 +6,7 @@ import { BiwaError, Bug } from "./error.js"
 import Interpreter from "./interpreter.js"
 import { Pair, List } from "./pair.js"
 import BiwaSet from "./set.js"
-import { Sym } from "./symbol.js"
+import { BiwaSymbol, Sym } from "./symbol.js"
 
 ///
 /// Compiler
@@ -94,7 +94,7 @@ const Compiler = Class.create({
   find_sets: function(x, v){
     //Console.puts("find_sets: " + to_write(x) + " " + to_write(v))
     var ret=null;
-    if(x instanceof Symbol){
+    if(x instanceof BiwaSymbol){
       ret = new BiwaSet();
     }
     else if(x instanceof Pair){
@@ -162,7 +162,7 @@ const Compiler = Class.create({
   // ret: set of free vars
   find_free: function(x, b, f){
     var ret=null;
-    if(x instanceof Symbol){
+    if(x instanceof BiwaSymbol){
       if(f.member(x))
         ret = new BiwaSet(x);
       else
@@ -297,7 +297,7 @@ const Compiler = Class.create({
     var ret = null;
 
     while(1){
-      if(x instanceof Symbol){
+      if(x instanceof BiwaSymbol){
         // Variable reference
         // compiled into refer-(local|free|global)
         return this.compile_refer(x, e, (s.member(x) ? ["indirect", next] : next));
@@ -427,7 +427,7 @@ const Compiler = Class.create({
     var first = x.cdr.car;
     var rest = x.cdr.cdr;
     
-    if(first instanceof Symbol){    
+    if(first instanceof BiwaSymbol){    
       if (rest === nil) { // 1. (define a)
         x = undef;
       }

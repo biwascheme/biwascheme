@@ -8,7 +8,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
 import { Pair, List, array_to_list, deep_array_to_list, Cons } from "../system/pair.js"
 import { Complex, Rational, isNumber, isComplex, isReal, isRational, isInteger } from "../system/number.js"
-import { Symbol, Sym, gensym } from "../system/symbol.js"
+import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
 import { to_write, to_display, write_ss, to_write_ss, inspect } from "../system/_writer.js"
 import { Port, eof } from "../system/port.js"
 import { TopEnv, CoreEnv, nil, undef } from "../header.js";
@@ -192,7 +192,7 @@ import { isList } from "../system/_types.js"
     //(let ((a 1) (b 2)) (print a) (+ a b))
     //=> ((lambda (a b) (print a) (+ a b)) 1 2)
     var name = null;
-    if (x.cdr.car instanceof Symbol) {
+    if (x.cdr.car instanceof BiwaSymbol) {
       name = x.cdr.car;
       x = x.cdr;
     }
@@ -1012,7 +1012,7 @@ import { isList } from "../system/_types.js"
   //        11.10  Symbols
 
   define_libfunc("symbol?", 1, 1, function(ar){
-    return (ar[0] instanceof Symbol) ? true : false;
+    return (ar[0] instanceof BiwaSymbol) ? true : false;
   });
   define_libfunc("symbol->string", 1, 1, function(ar){
     assert_symbol(ar[0]);
@@ -1323,7 +1323,7 @@ import { isList } from "../system/_types.js"
   // `() is expanded to `cons` and `append`.
   // `#() is expanded to `vector` and `vector-append`.
   var expand_qq = function(f, lv){
-    if(f instanceof Symbol || f === nil){
+    if(f instanceof BiwaSymbol || f === nil){
       return List(Sym("quote"), f);
     }
     else if(f instanceof Pair){

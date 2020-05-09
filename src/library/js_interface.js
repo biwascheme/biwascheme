@@ -7,7 +7,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate } from "./infra.js"; 
 import Interpreter from "../system/interpreter.js"
 import { Pair, array_to_list } from "../system/pair.js"
-import { Symbol, Sym } from "../system/symbol.js"
+import { BiwaSymbol, Sym } from "../system/symbol.js"
 import { nil } from "../header.js";
 
   //
@@ -168,7 +168,7 @@ import { nil } from "../header.js";
       // pack args to js object, if symbol appears
       var args = [];
       for(var i=0; i<ar.length; i++){
-        if(ar[i] instanceof Symbol){
+        if(ar[i] instanceof BiwaSymbol){
           args.push(array_to_obj(ar.slice(i)));
           break;
         }

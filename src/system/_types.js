@@ -6,7 +6,7 @@ import { nil, undef } from "../header.js"
 import { to_write } from "./_writer.js"
 import Char from "./char.js"
 import Hashtable from "./hashtable.js"
-import { Symbol } from "./symbol.js"
+import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
 import { Pair } from "./pair.js"
 
@@ -31,7 +31,7 @@ const isChar = function(obj){
 };
 
 const isSymbol = function(obj){
-  return (obj instanceof Symbol);
+  return (obj instanceof BiwaSymbol);
 };
 
 const isPort = function(obj){

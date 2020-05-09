@@ -7,7 +7,7 @@ import _ from "../deps/underscore-1.10.2-esm.js"
 
 const Symbols = {};
 
-const Symbol = Class.create({
+const BiwaSymbol = Class.create({
   initialize: function(str){
     this.name = str;
     Symbols[ str ] = this;
@@ -29,10 +29,10 @@ const Symbol = Class.create({
 
 const Sym = function(name,leaveCase){
   if( Symbols[name] === undefined ){
-    return new Symbol(name);
+    return new BiwaSymbol(name);
   }
-  else if( ! (Symbols[name] instanceof Symbol) ){ //pre-defined member (like 'eval' in Firefox)
-    return new Symbol(name);
+  else if( ! (Symbols[name] instanceof BiwaSymbol) ){ //pre-defined member (like 'eval' in Firefox)
+    return new BiwaSymbol(name);
   }
   else{
     return Symbols[name];
@@ -43,4 +43,4 @@ const gensym = function(){
   return Sym(_.uniqueId("__gensym"));
 };
 
-export {Symbol, Symbols, Sym, gensym};
+export {BiwaSymbol, Symbols, Sym, gensym};
