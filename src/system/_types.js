@@ -2,45 +2,50 @@
 // types.js - type predicators, equality, compare
 //
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { nil, undef } from "../header.js"
+import { to_write } from "./_writer.js"
+import Char from "./char.js"
+import Hashtable from "./hashtable.js"
+import { Symbol } from "./symbol.js"
+import { Port } from "./port.js"
+import { Pair } from "./pair.js"
 
 const isNil = function(obj){
-  return (obj === BiwaScheme.nil);
+  return (obj === nil);
 };
 
 const isUndef = function(obj){
-  return (obj === BiwaScheme.undef);
+  return (obj === undef);
 };
 
 const isBoolean = _.isBoolean; // Return true if arg is either true or false
 
-//BiwaScheme.isNumber is defined in number.js (Return true if arg is scheme number)
+//isNumber is defined in number.js (Return true if arg is scheme number)
 
 const isString = _.isString;
 
 const isFunction = _.isFunction;
 
 const isChar = function(obj){
-  return (obj instanceof BiwaScheme.Char);
+  return (obj instanceof Char);
 };
 
 const isSymbol = function(obj){
-  return (obj instanceof BiwaScheme.Symbol);
+  return (obj instanceof Symbol);
 };
 
 const isPort = function(obj){
-  return (obj instanceof BiwaScheme.Port);
+  return (obj instanceof Port);
 };
 
 // Note: '() is not a pair in scheme
 const isPair = function(obj){
-  return (obj instanceof BiwaScheme.Pair);
+  return (obj instanceof Pair);
 };
 
 // Returns true if obj is a proper list
 // Note: isList returns true for '()
 const isList = function(obj){
-  var nil = BiwaScheme.nil, Pair = BiwaScheme.Pair;
-
   if (obj === nil) { // Empty list
     return true;
   }
@@ -78,11 +83,11 @@ const isVector = function(obj){
 };
 
 const isHashtable = function(obj){
-  return (obj instanceof BiwaScheme.Hashtable);
+  return (obj instanceof Hashtable);
 };
 
 const isMutableHashtable = function(obj){
-  return (obj instanceof BiwaScheme.Hashtable) && obj.mutable;
+  return (obj instanceof Hashtable) && obj.mutable;
 };
 
 // Returns true if `obj` is a Scheme closure.
@@ -99,15 +104,15 @@ const makeClosure = function(ary) {
 // procedure: Scheme closure or JavaScript function
 // valid argument for anywhere function is expected
 const isProcedure = function(obj){
-  return BiwaScheme.isClosure(obj) || _.isFunction(obj);
+  return isClosure(obj) || _.isFunction(obj);
 };
 
 // Return true if obj is a scheme value which evaluates to itself
 const isSelfEvaluating = function(obj) {
-  return BiwaScheme.isBoolean(obj) ||
-         BiwaScheme.isNumber(obj) ||
-         BiwaScheme.isString(obj) ||
-         BiwaScheme.isChar(obj);
+  return isBoolean(obj) ||
+         isNumber(obj) ||
+         isString(obj) ||
+         isChar(obj);
 };
 
 //
@@ -122,7 +127,7 @@ const eqv = function(a, b){
 };
 const equal = function(a, b){
   //TODO: must terminate for cyclic objects
-  return BiwaScheme.to_write(a) == BiwaScheme.to_write(b);
+  return to_write(a) == to_write(b);
 };
 
 //
