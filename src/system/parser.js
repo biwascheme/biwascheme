@@ -1,6 +1,11 @@
-import Class from "./class.js"
-import { Pair } from "./pair.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { nil } from "../header.js"
+import { inspect } from "./_writer.js"
+import Char from "./char.js"
+import Class from "./class.js"
+import { BiwaError } from "./error.js"
+import { Pair } from "./pair.js"
+import { Sym } from "./symbol.js"
 
 //
 // Parser 
@@ -16,7 +21,7 @@ const Parser = Class.create({
     return [
       "#<Parser:",
       this.i, "/", this.tokens.length, " ",
-      BiwaScheme.inspect(this.tokens),
+      inspect(this.tokens),
       ">"
     ].join("");
   },
@@ -39,7 +44,7 @@ const Parser = Class.create({
           if ( /(.*\|#)/.test(t) ) {
             in_srfi_30_comment--;
             if (in_srfi_30_comment < 0) {
-              throw new BiwaScheme.Error("Found an extra comment terminator: `|#'")
+              throw new BiwaError("Found an extra comment terminator: `|#'")
             }
             // Push back the rest substring to input stream.
             return t.substring(RegExp.$1.length, t.length);
@@ -65,15 +70,15 @@ const Parser = Class.create({
       return r;
 
     r = this.getObject();
-    if (r == BiwaScheme.Parser.EOS)
-      throw new BiwaScheme.Error("Readable object not found after S exression comment");
+    if (r == Parser.EOS)
+      throw new BiwaError("Readable object not found after S exression comment");
 
     r = this.getObject();
     return r;
   },
   
   getList: function( close ) {
-    var list = BiwaScheme.nil, prev = list;
+    var list = nil, prev = list;
     while( this.i < this.tokens.length ) {
 
       this.eatObjectsInSexpComment("Input stream terminated unexpectedly(in list)");
@@ -85,12 +90,12 @@ const Parser = Class.create({
       if( this.tokens[ this.i ] == '.' ) {
         this.i++;
         var o = this.getObject();
-        if( o != BiwaScheme.Parser.EOS && list != BiwaScheme.nil ) {
+        if( o != Parser.EOS && list != nil ) {
           prev.cdr = o;
         }
       } else {
-          var cur = new BiwaScheme.Pair( this.getObject(), BiwaScheme.nil);
-          if( list == BiwaScheme.nil ) list = cur;
+          var cur = new Pair( this.getObject(), nil);
+          if( list == nil ) list = cur;
           else prev.cdr = cur;
           prev = cur;
       }
@@ -115,14 +120,14 @@ const Parser = Class.create({
   eatObjectsInSexpComment: function(err_msg) {
     while( this.tokens[ this.i ] == '#;' ) {
       this.i++;
-      if ((this.getObject() == BiwaScheme.Parser.EOS) || (this.i >= this.tokens.length))
-        throw new BiwaScheme.Error(err_msg);  
+      if ((this.getObject() == Parser.EOS) || (this.i >= this.tokens.length))
+        throw new BiwaError(err_msg);  
     }
   }, 
 
   getObject0: function() {
     if( this.i >= this.tokens.length )
-      return BiwaScheme.Parser.EOS;
+      return Parser.EOS;
 
     var t = this.tokens[ this.i++ ];
     // if( t == ')' ) return null;
@@ -136,7 +141,7 @@ const Parser = Class.create({
             t == ",@" ? 'unquote-splicing' : false;
 
     if( s || t == '(' || t == '#(' || t == '[' || t == '#[' || t == '{' || t == '#{' ) {
-      return s ? new BiwaScheme.Pair( BiwaScheme.Sym(s), new BiwaScheme.Pair( this.getObject(), BiwaScheme.nil ))
+      return s ? new Pair(Sym(s), new Pair( this.getObject(), nil ))
       : (t=='(' || t=='[' || t=='{') ? this.getList(t) : this.getVector(t);
     } 
     else {
@@ -164,32 +169,32 @@ const Parser = Class.create({
       } else if( t == '#t' || t == '#T' ) {
         return true;
       } else if( t.toLowerCase() == '#\\newline' ) {
-        return BiwaScheme.Char.get('\n');
+        return Char.get('\n');
       } else if( t.toLowerCase() == '#\\space' ) {
-        return BiwaScheme.Char.get(' ');
+        return Char.get(' ');
       } else if( t.toLowerCase() == '#\\tab' ) {
-        return BiwaScheme.Char.get('\t');
+        return Char.get('\t');
       } else if( /^#\\.$/.test(t) ) {
-        return BiwaScheme.Char.get( t.charAt(2) );
+        return Char.get( t.charAt(2) );
       } else if( /^#\\x[a-zA-Z0-9]+$/.test(t) ) {
         var scalar = parseInt(t.slice(3), 16);
         // R6RS 11.11 (surrogate codepoints)
         if (scalar >= 0xD800 && scalar <= 0xDFFF) {
-          throw new BiwaScheme.Error("Character in Unicode excluded range.");
+          throw new BiwaError("Character in Unicode excluded range.");
         }
         // ECMA-262 4.3.16 -- Basically, strings are sequences of 16-bit
         // unsigned integers, so anything greater than 0xFFFF won't fit.
         // NOTE: This violates R6RS which requires the full Unicode range!
         else if (scalar > 0xFFFF) {
-          throw new BiwaScheme.Error("Character literal out of range.");
+          throw new BiwaError("Character literal out of range.");
         } else {
-          return BiwaScheme.Char.get(String.fromCharCode(scalar));
+          return Char.get(String.fromCharCode(scalar));
         }
       } else if( /^\"(\\(.|$)|[^\"\\])*\"?$/.test(t) ) {
         return t.replace(/(\r?\n|\\n)/g, "\n").replace( /^\"|\\(.|$)|\"$/g, function($0,$1) {
           return $1 ? $1 : '';
         } );
-      } else return BiwaScheme.Sym(t);  // 2Do: validate !!
+      } else return Sym(t);  // 2Do: validate !!
     }
   }
 });
