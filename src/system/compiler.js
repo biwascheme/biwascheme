@@ -1,5 +1,12 @@
-import Class from "./class.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { TopEnv, nil, undef } from "../header.js"
+import { isPair, isSymbol } from "./_types.js"
+import Class from "./class.js"
+import { BiwaError, Bug } from "./error.js"
+import Interpreter from "./interpreter.js"
+import { Pair, List } from "./pair.js"
+import BiwaSet from "./set.js"
+import { Sym } from "./symbol.js"
 
 ///
 /// Compiler
@@ -55,7 +62,7 @@ const Compiler = Class.create({
       var sym = x.name;
       return return_global(sym);
     }
-    //throw new BiwaScheme.Error("undefined symbol `" + sym + "'");
+    //throw new BiwaError("undefined symbol `" + sym + "'");
   },
 
   //generate boxing code (intersection of sets & vars)
@@ -68,7 +75,7 @@ const Compiler = Class.create({
     var vars = vars;
     var n = 0;
     var a = [];
-    while(vars instanceof BiwaScheme.Pair){
+    while(vars instanceof Pair){
       if(sets.member(vars.car))
         a.push(n);
       n++;
@@ -87,49 +94,49 @@ const Compiler = Class.create({
   find_sets: function(x, v){
     //Console.puts("find_sets: " + to_write(x) + " " + to_write(v))
     var ret=null;
-    if(x instanceof BiwaScheme.Symbol){
-      ret = new BiwaScheme.Set();
+    if(x instanceof Symbol){
+      ret = new BiwaSet();
     }
-    else if(x instanceof BiwaScheme.Pair){
+    else if(x instanceof Pair){
       switch(x.first()){
-      case BiwaScheme.Sym("define"):
+      case Sym("define"):
         var exp=x.third();
         ret = this.find_sets(exp, v);
-      case BiwaScheme.Sym("begin"):
+      case Sym("begin"):
         ret = this.find_sets(x.cdr, v); //(ignores improper list)
         break;
-      case BiwaScheme.Sym("quote"):
-        ret = new BiwaScheme.Set();
+      case Sym("quote"):
+        ret = new BiwaSet();
         break;
-      case BiwaScheme.Sym("lambda"):
+      case Sym("lambda"):
         var vars=x.second(), body=x.cdr.cdr;
-        if (vars instanceof BiwaScheme.Pair){ // (lambda (...) ...)
+        if (vars instanceof Pair){ // (lambda (...) ...)
           ret = this.find_sets(body, v.set_minus(vars.to_set()));
         }
         else { // (lambda args ...)
-          ret = this.find_sets(body, v.set_minus(new BiwaScheme.Set(vars)));
+          ret = this.find_sets(body, v.set_minus(new BiwaSet(vars)));
         }
         break;
-      case BiwaScheme.Sym("if"):
+      case Sym("if"):
         var testc=x.second(), thenc=x.third(), elsec=x.fourth();
         ret = this.find_sets(testc, v).set_union(
                         this.find_sets(thenc, v),
                         this.find_sets(elsec, v));
         break;
-      case BiwaScheme.Sym("set!"):
+      case Sym("set!"):
         var vari=x.second(), xx=x.third();
         if(v.member(vari))
           ret = this.find_sets(xx, v).set_cons(vari);
         else
           ret = this.find_sets(xx, v);
         break;
-      case BiwaScheme.Sym("call/cc"):
+      case Sym("call/cc"):
         var exp=x.second();
         ret = this.find_sets(exp, v);
         break;
       default:
-        var set = new BiwaScheme.Set();
-        for(var p=x; p instanceof BiwaScheme.Pair; p=p.cdr){
+        var set = new BiwaSet();
+        for(var p=x; p instanceof Pair; p=p.cdr){
           set = set.set_union(this.find_sets(p.car, v));
         }
         ret = set;
@@ -137,11 +144,11 @@ const Compiler = Class.create({
       }
     }
     else{
-      ret = new BiwaScheme.Set();
+      ret = new BiwaSet();
     }
 
     if(ret == null)
-      throw new BiwaScheme.Bug("find_sets() exited in unusual way");
+      throw new Bug("find_sets() exited in unusual way");
     else
       return ret;
   },
@@ -155,53 +162,53 @@ const Compiler = Class.create({
   // ret: set of free vars
   find_free: function(x, b, f){
     var ret=null;
-    if(x instanceof BiwaScheme.Symbol){
+    if(x instanceof Symbol){
       if(f.member(x))
-        ret = new BiwaScheme.Set(x);
+        ret = new BiwaSet(x);
       else
-        ret = new BiwaScheme.Set();
+        ret = new BiwaSet();
     }
-    else if(x instanceof BiwaScheme.Pair){
+    else if(x instanceof Pair){
       switch(x.first()){
-      case BiwaScheme.Sym("define"):
+      case Sym("define"):
         var exp=x.third();
         ret = this.find_free(exp, b, f);
         break;
-      case BiwaScheme.Sym("begin"):
+      case Sym("begin"):
         ret = this.find_free(x.cdr, b, f); //(ignores improper list)
         break;
-      case BiwaScheme.Sym("quote"):
-        ret = new BiwaScheme.Set();
+      case Sym("quote"):
+        ret = new BiwaSet();
         break;
-      case BiwaScheme.Sym("lambda"):
+      case Sym("lambda"):
         var vars=x.second(), body=x.cdr.cdr;
-        if (vars instanceof BiwaScheme.Pair){ // (lambda (...) ...)
+        if (vars instanceof Pair){ // (lambda (...) ...)
           ret = this.find_free(body, b.set_union(vars.to_set()), f);
         }
         else { // (lambda args ...)
           ret = this.find_free(body, b.set_cons(vars), f);
         }
         break;
-      case BiwaScheme.Sym("if"):
+      case Sym("if"):
         var testc=x.second(), thenc=x.third(), elsec=x.fourth();
         ret = this.find_free(testc, b, f).set_union(
                         this.find_free(thenc, b, f),
                         this.find_free(elsec, b, f));
         break;
-      case BiwaScheme.Sym("set!"):
+      case Sym("set!"):
         var vari=x.second(), exp=x.third();
         if(f.member(vari))
           ret = this.find_free(exp, b, f).set_cons(vari);
         else
           ret = this.find_free(exp, b, f)
         break;
-      case BiwaScheme.Sym("call/cc"):
+      case Sym("call/cc"):
         var exp=x.second();
         ret = this.find_free(exp, b, f);
         break;
       default:
-        var set = new BiwaScheme.Set();
-        for(var p=x; p instanceof BiwaScheme.Pair; p=p.cdr){
+        var set = new BiwaSet();
+        for(var p=x; p instanceof Pair; p=p.cdr){
           set = set.set_union(this.find_free(p.car, b, f));
         }
         ret = set;
@@ -209,12 +216,12 @@ const Compiler = Class.create({
       }
     }
     else{
-      ret = new BiwaScheme.Set();
+      ret = new BiwaSet();
     }
     //Console.p("find_free "+x.inspect()+" / "+b.inspect()+" => "+ret.inspect());
 
     if(ret == null)
-      throw new BiwaScheme.Bug("find_free() exited in unusual way");
+      throw new Bug("find_free() exited in unusual way");
     else
       return ret;
   },
@@ -225,9 +232,9 @@ const Compiler = Class.create({
   // eg. (a b . c) -> 2
   find_dot_pos: function(x){
     var idx = 0;
-    for (; x instanceof BiwaScheme.Pair; x = x.cdr, ++idx)
+    for (; x instanceof Pair; x = x.cdr, ++idx)
       ;
-    if (x != BiwaScheme.nil) {
+    if (x != nil) {
       return idx;
     } else {
       return -1;
@@ -235,8 +242,8 @@ const Compiler = Class.create({
   },
 
   last_pair: function(x){
-    if (x instanceof BiwaScheme.Pair){
-      for (; x.cdr instanceof BiwaScheme.Pair; x = x.cdr)
+    if (x instanceof Pair){
+      for (; x.cdr instanceof Pair; x = x.cdr)
         ;
     }
     return x;
@@ -246,11 +253,11 @@ const Compiler = Class.create({
   //
   // eg. (x y . z) -> (x y z)
   dotted2proper: function(ls){
-    if (ls === BiwaScheme.nil) return BiwaScheme.nil;
+    if (ls === nil) return nil;
 
     var nreverse = function(ls){
-      var res = BiwaScheme.nil;
-      for (; ls instanceof BiwaScheme.Pair; ){
+      var res = nil;
+      for (; ls instanceof Pair; ){
         var d = ls.cdr;
         ls.cdr = res;
         res = ls;
@@ -259,24 +266,24 @@ const Compiler = Class.create({
       return res;
     }
     var copy_list = function(ls){
-      var res = BiwaScheme.nil;
-      for (; ls instanceof BiwaScheme.Pair; ls = ls.cdr){
-        res = new BiwaScheme.Pair(ls.car, res);
+      var res = nil;
+      for (; ls instanceof Pair; ls = ls.cdr){
+        res = new Pair(ls.car, res);
       }
       return nreverse(res);
     }
 
-    if (ls instanceof BiwaScheme.Pair) {
+    if (ls instanceof Pair) {
       var last = this.last_pair(ls);
-      if (last instanceof BiwaScheme.Pair && last.cdr === BiwaScheme.nil){
+      if (last instanceof Pair && last.cdr === nil){
         return ls;
       } else {
         var copied = copy_list(ls);
-        this.last_pair(copied).cdr = new BiwaScheme.Pair(last.cdr, BiwaScheme.nil);
+        this.last_pair(copied).cdr = new Pair(last.cdr, nil);
         return copied;
       }
     } else {
-      return new BiwaScheme.Pair(ls, BiwaScheme.nil);
+      return new Pair(ls, nil);
     }
   },
 
@@ -290,23 +297,23 @@ const Compiler = Class.create({
     var ret = null;
 
     while(1){
-      if(x instanceof BiwaScheme.Symbol){
+      if(x instanceof Symbol){
         // Variable reference
         // compiled into refer-(local|free|global)
         return this.compile_refer(x, e, (s.member(x) ? ["indirect", next] : next));
       }
-      else if(x instanceof BiwaScheme.Pair){
+      else if(x instanceof Pair){
         switch(x.first()){
-        case BiwaScheme.Sym("define"):
+        case Sym("define"):
           ret = this._compile_define(x, next);
 
           x = ret[0];
           next = ret[1];
           break;
 
-        case BiwaScheme.Sym("begin"):
+        case Sym("begin"):
           var a = [];
-          for(var p=x.cdr; p instanceof BiwaScheme.Pair; p=p.cdr)
+          for(var p=x.cdr; p instanceof Pair; p=p.cdr)
             a.push(p.car);
 
           //compile each expression (in reverse order)
@@ -316,19 +323,19 @@ const Compiler = Class.create({
           }
           return c;
 
-        case BiwaScheme.Sym("quote"):
+        case Sym("quote"):
           if(x.length() < 2)
-              throw new BiwaScheme.Error("Invalid quote: "+x.to_write());
+              throw new BiwaError("Invalid quote: "+x.to_write());
 
           var obj=x.second();
           return ["constant", obj, next];
 
-        case BiwaScheme.Sym("lambda"):
+        case Sym("lambda"):
           return this._compile_lambda(x, e, s, f, next);
 
-        case BiwaScheme.Sym("if"):
+        case Sym("if"):
           if(x.length() < 3 || x.length() > 4)
-              throw new BiwaScheme.Error("Invalid if: "+x.to_write());
+              throw new BiwaError("Invalid if: "+x.to_write());
 
           var testc=x.second(), thenc=x.third(), elsec=x.fourth();
           var thenc = this.compile(thenc, e, s, f, next);
@@ -337,10 +344,10 @@ const Compiler = Class.create({
           next = ["test", thenc, elsec];
           break;
 
-        case BiwaScheme.Sym("set!"):
+        case Sym("set!"):
           // error-checking: should have only 3 things
           if(x.length() != 3)
-              throw new BiwaScheme.Error("Invalid set!: "+x.to_write());
+              throw new BiwaError("Invalid set!: "+x.to_write());
 
           var v=x.second(), x=x.third();
           var do_assign = this.compile_lookup(v, e,
@@ -351,7 +358,7 @@ const Compiler = Class.create({
           next = do_assign;
           break;
 
-        case BiwaScheme.Sym("call/cc"): 
+        case Sym("call/cc"): 
           var x=x.second();
           var arity_of_arg = 1; // Always 1. (lambda (cc) ...)
           var c = ["conti", 
@@ -379,7 +386,7 @@ const Compiler = Class.create({
 
           // VM will push the number of arguments to the stack.
           c = this.compile(args.length(), e, s, f, ["argument", c]);
-          for(var p=args; p instanceof BiwaScheme.Pair; p=p.cdr){
+          for(var p=args; p instanceof Pair; p=p.cdr){
             c = this.compile(p.car, e, s, f, ["argument", c]);
           }
 
@@ -395,7 +402,7 @@ const Compiler = Class.create({
     //Console.p(ret);
     //dump({"ret":ret, "x":x, "e":e, "s":s, "next":next, "stack":[]});
 //      if(ret == null)
-//        throw new BiwaScheme.Bug("compile() exited in unusual way");
+//        throw new Bug("compile() exited in unusual way");
 //      else
 //        return ret;
   },
@@ -414,42 +421,42 @@ const Compiler = Class.create({
   // <body> of these forms.
   _compile_define: function(x, next){
     if(x.length() == 1) { // 0. (define)
-      throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
+      throw new BiwaError("Invalid `define': "+x.to_write());
     }
 
     var first = x.cdr.car;
     var rest = x.cdr.cdr;
     
-    if(first instanceof BiwaScheme.Symbol){    
-      if (rest === BiwaScheme.nil) { // 1. (define a)
-        x = BiwaScheme.undef;
+    if(first instanceof Symbol){    
+      if (rest === nil) { // 1. (define a)
+        x = undef;
       }
       else {
-        if (rest.cdr === BiwaScheme.nil) // 2. (define a 1)
+        if (rest.cdr === nil) // 2. (define a 1)
           x = rest.car;
         else // 3. (define a 1 2)
-          throw new BiwaScheme.Error("Invalid `define': "+x.to_write());
+          throw new BiwaError("Invalid `define': "+x.to_write());
       }
 
-      if (!BiwaScheme.TopEnv.hasOwnProperty(first.name)) {
-        BiwaScheme.TopEnv[first.name] = BiwaScheme.undef;
+      if (!TopEnv.hasOwnProperty(first.name)) {
+        TopEnv[first.name] = undef;
       }
       next = ["assign-global", first.name, next];
     }
-    else if(first instanceof BiwaScheme.Pair){ // 4. (define (f x) ...)
+    else if(first instanceof Pair){ // 4. (define (f x) ...)
       // Note: define of this form may contain internal define.
       // They are handled in compilation of "lambda".
 
       var fname=first.car, args=first.cdr;
-      var lambda = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"), new BiwaScheme.Pair(args, rest));
+      var lambda = new Pair(Sym("lambda"), new Pair(args, rest));
       x = lambda;
-      if (!BiwaScheme.TopEnv.hasOwnProperty(first.name)) {
-        BiwaScheme.TopEnv[fname.name] = BiwaScheme.undef;
+      if (!TopEnv.hasOwnProperty(first.name)) {
+        TopEnv[fname.name] = undef;
       }
       next = ["assign-global", fname.name, next];
     }
     else{ // 5. (define 1 2)
-      throw new BiwaScheme.Error("define: symbol or pair expected but got "+first);
+      throw new BiwaError("define: symbol or pair expected but got "+first);
     }
 
     return [x, next];
@@ -462,24 +469,24 @@ const Compiler = Class.create({
   // * (lambda args ...)
   _compile_lambda: function(x, e, s, f, next){
     if(x.length() < 3)
-      throw new BiwaScheme.Error("Invalid lambda: "+x.to_write());
+      throw new BiwaError("Invalid lambda: "+x.to_write());
 
     var vars = x.cdr.car;
     var body = x.cdr.cdr;
 
     // Handle internal defines
-    var tbody = BiwaScheme.Compiler.transform_internal_define(body);
-    if(BiwaScheme.isPair(tbody) &&
-       BiwaScheme.isSymbol(tbody.car) &&
+    var tbody = Compiler.transform_internal_define(body);
+    if(isPair(tbody) &&
+       isSymbol(tbody.car) &&
        tbody.car.name == "letrec*"){
       // The body has internal defines.
       // Expand letrec* macro
-      var cbody = BiwaScheme.Interpreter.expand(tbody);
+      var cbody = Interpreter.expand(tbody);
     }
     else{
       // The body has no internal defines.
       // Just wrap the list with begin 
-      var cbody = new BiwaScheme.Pair(BiwaScheme.Sym("begin"), x.cdr.cdr);
+      var cbody = new Pair(Sym("begin"), x.cdr.cdr);
     }
 
     var dotpos = this.find_dot_pos(vars);
@@ -493,7 +500,7 @@ const Compiler = Class.create({
                     f.set_union(proper.to_set()),
                     ["return"]);
     var do_close = ["close",
-                     vars instanceof BiwaScheme.Pair ? vars.length() : 0,
+                     vars instanceof Pair ? vars.length() : 0,
                      free.size(),
                      this.make_boxes(sets, proper, do_body),
                      next,
@@ -502,14 +509,14 @@ const Compiler = Class.create({
   },
 
   run: function(expr){
-    return this.compile(expr, [new BiwaScheme.Set(), new BiwaScheme.Set()], new BiwaScheme.Set(), new BiwaScheme.Set(), ["halt"]);
+    return this.compile(expr, [new BiwaSet(), new BiwaSet()], new BiwaSet(), new BiwaSet(), ["halt"]);
   }
 });
 
 // Compile an expression with new compiler
 Compiler.compile = function(expr, next){
-  expr = BiwaScheme.Interpreter.expand(expr);
-  return (new BiwaScheme.Compiler).run(expr, next);
+  expr = Interpreter.expand(expr);
+  return (new Compiler).run(expr, next);
 };
 
 // Transform internal defines to letrec*.
@@ -530,8 +537,8 @@ Compiler.compile = function(expr, next){
 
 // Returns true if x is a definition
 var is_definition = function(x){
-  return BiwaScheme.isPair(x) &&
-         BiwaScheme.Sym("define") === x.car;
+  return isPair(x) &&
+         Sym("define") === x.car;
   // TODO: support "begin", nested "begin", "let(rec)-syntax"
 };
 
@@ -544,17 +551,17 @@ var define_to_lambda_bind = function(def){
   var sig  = def.cdr.car;
   var body = def.cdr.cdr;
 
-  if (BiwaScheme.isSymbol(sig)) {
+  if (isSymbol(sig)) {
     var variable = sig;
 
-    return new BiwaScheme.Pair(variable, body);
+    return new Pair(variable, body);
   }
   else {
     var variable = sig.car;
-    var value = new BiwaScheme.Pair(BiwaScheme.Sym("lambda"),
-                  new BiwaScheme.Pair(sig.cdr, body));
+    var value = new Pair(Sym("lambda"),
+                  new Pair(sig.cdr, body));
 
-    return BiwaScheme.List(variable, value);
+    return List(variable, value);
   }
 };
 
@@ -572,9 +579,9 @@ Compiler.transform_internal_define = function(x){
     return x;
   
   // 3. Return (letrec* <bindings> <expressions>)
-  var bindings = BiwaScheme.List.apply(null, _.map(defs, define_to_lambda_bind));
-  return new BiwaScheme.Pair(BiwaScheme.Sym("letrec*"),
-           new BiwaScheme.Pair(bindings, exprs));
+  var bindings = List.apply(null, _.map(defs, define_to_lambda_bind));
+  return new Pair(Sym("letrec*"),
+           new Pair(bindings, exprs));
 };
 
 export default Compiler;
