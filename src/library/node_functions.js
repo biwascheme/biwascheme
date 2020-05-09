@@ -1,3 +1,4 @@
+import _ from "../deps/underscore-1.10.2-esm.js"
 //
 // Library functions only work on Node.js
 // see also: test/node_functions.js

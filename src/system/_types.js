@@ -1,6 +1,7 @@
 //
 // types.js - type predicators, equality, compare
 //
+import _ from "../deps/underscore-1.10.2-esm.js"
 
 const isNil = function(obj){
   return (obj === BiwaScheme.nil);

@@ -2,6 +2,7 @@ import Class from "./class.js"
 ///
 /// Call
 ///
+import _ from "../deps/underscore-1.10.2-esm.js"
 
 // The class Call is used to invoke scheme closure from 
 // library functions.

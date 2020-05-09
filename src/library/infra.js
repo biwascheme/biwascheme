@@ -1,3 +1,4 @@
+import _ from "../deps/underscore-1.10.2-esm.js"
 import { CoreEnv, suppress_deprecation_warning } from "../header.js";
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
          isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,

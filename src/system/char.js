@@ -3,6 +3,7 @@ import Class from "./class.js"
 //
 // Char
 //
+import _ from "../deps/underscore-1.10.2-esm.js"
 
 const Chars = {};
 

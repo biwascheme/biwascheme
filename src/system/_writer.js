@@ -1,6 +1,7 @@
 //
 // write.js: Functions to convert objects to strings
 //
+import _ from "../deps/underscore-1.10.2-esm.js"
 
 //
 // write
