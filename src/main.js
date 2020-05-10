@@ -31,8 +31,6 @@ import "./library/js_interface.js"
 import "./library/r6rs_lib.js"
 import "./library/srfi.js"
 import { jsonp_receiver } from "./library/webscheme_lib.js"
-// TODO: Refactor system/record.js to remove these
-import { assert_record, assert_record_td, assert_procedure } from "./library/infra.js"
 
 // For unit testing
 import { reduce_cyclic_info, find_cyclic } from "./system/_writer.js"
@@ -64,7 +62,6 @@ let BiwaScheme = {
   Values,
 
   jsonp_receiver,
-  assert_record, assert_record_td, assert_procedure,
 
   reduce_cyclic_info, find_cyclic,
   define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float,

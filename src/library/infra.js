@@ -106,9 +106,6 @@ const assert_list = make_simple_assert("list", isList);
 const assert_vector = make_simple_assert("vector", isVector);
 const assert_hashtable = make_simple_assert("hashtable", isHashtable);
 const assert_mutable_hashtable = make_simple_assert("mutable hashtable", isMutableHashtable); 
-const assert_record = make_simple_assert("record", isRecord);
-const assert_record_td = make_simple_assert("record type descriptor", isRecordTD);
-const assert_record_cd = make_simple_assert("record constructor descriptor", isRecordCD);
 const assert_promise = make_simple_assert("promise", isPromise);
 
 const assert_function = make_simple_assert("JavaScript function", isFunction);
@@ -286,7 +283,6 @@ const parse_float = function(rep) {
 export { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
-         assert_vector, assert_hashtable, assert_mutable_hashtable, assert_record,
-         assert_record_td, assert_record_cd, assert_promise,
+         assert_vector, assert_hashtable, assert_mutable_hashtable, assert_promise,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
          parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float }; 
