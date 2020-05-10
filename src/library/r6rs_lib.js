@@ -3,7 +3,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
          assert_vector, assert_hashtable, assert_mutable_hashtable, assert_record,
-         assert_record_td, assert_record_cd, assert_enum_set, assert_promise,
+         assert_record_td, assert_record_cd, assert_promise,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
          parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
 import { Pair, List, array_to_list, deep_array_to_list, Cons } from "../system/pair.js"
@@ -15,6 +15,7 @@ import { TopEnv, CoreEnv, nil, undef } from "../header.js";
 import Call from "../system/call.js"
 import Char from "../system/char.js"
 import { Bug, BiwaError as Error, UserError } from "../system/error.js"
+import { assert_enum_set } from "../system/enumeration.js"
 import Hashtable from "../system/hashtable.js"
 import Interpreter from "../system/interpreter.js"
 import Values from "../system/values.js"

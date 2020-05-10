@@ -3,8 +3,8 @@ import { CoreEnv, suppress_deprecation_warning } from "../header.js";
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
          isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt } from "../system/_types.js"
+import { make_assert, make_simple_assert } from "../system/assert.js"
 import { isRecord, isRecordTD, isRecordCD } from "../system/record.js"
-import { isEnumSet } from "../system/enumeration.js"
 import { isPromise } from "../system/promise.js"
 import Syntax from "../system/syntax.js"
 
@@ -70,27 +70,6 @@ const define_scmfunc = function(fname, min, max, str){
 // assertions - type checks
 //
 
-const make_assert = function(check){
-  return function(/*args*/){
-    var fname = arguments.callee.caller
-                  ? arguments.callee.caller.fname
-                  : "";
-    check.apply(this, [fname].concat(_.toArray(arguments)));
-  }
-}
-
-const make_simple_assert = function(type, test, _fname){
-  return make_assert(function(fname, obj, opt){
-    if(_fname) fname = _fname;
-    option = opt ? ("("+opt+")") : ""
-    if(!test(obj)){
-      throw new BiwaScheme.Error(fname + option + ": " +
-                                 type + " required, but got " +
-                                 BiwaScheme.to_write(obj));
-    }
-  })
-}
-
 const assert_number = make_simple_assert("number", function(obj){
   return typeof(obj) == 'number' || (obj instanceof BiwaScheme.Complex);
 });
@@ -130,7 +109,6 @@ const assert_mutable_hashtable = make_simple_assert("mutable hashtable", isMutab
 const assert_record = make_simple_assert("record", isRecord);
 const assert_record_td = make_simple_assert("record type descriptor", isRecordTD);
 const assert_record_cd = make_simple_assert("record constructor descriptor", isRecordCD);
-const assert_enum_set = make_simple_assert("enum_set", isEnumSet);
 const assert_promise = make_simple_assert("promise", isPromise);
 
 const assert_function = make_simple_assert("JavaScript function", isFunction);
@@ -309,6 +287,6 @@ export { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
          assert_vector, assert_hashtable, assert_mutable_hashtable, assert_record,
-         assert_record_td, assert_record_cd, assert_enum_set, assert_promise,
+         assert_record_td, assert_record_cd, assert_promise,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
          parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float }; 

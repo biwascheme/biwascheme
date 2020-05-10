@@ -1,5 +1,6 @@
 import _ from "../deps/underscore-1.10.2-esm.js"
 import { inspect } from "./_writer.js"
+import { make_simple_assert } from "./assert.js"
 import Class from "./class.js"
 import { array_to_list } from "./pair.js"
 import { assert_symbol, assert_list } from "../library/infra.js"
@@ -206,4 +207,6 @@ const isEnumSet = function(obj){
   return (obj instanceof Enumeration.EnumSet);
 };
 
-export { Enumeration, isEnumSet };
+const assert_enum_set = make_simple_assert("enum_set", isEnumSet);
+
+export { Enumeration, isEnumSet, assert_enum_set };
