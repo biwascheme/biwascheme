@@ -1,9 +1,11 @@
+import _ from "../deps/underscore-1.10.2-esm.js"
+import { inspect } from "./_writer.js"
 import Class from "./class.js"
+import { Bug } from "./error.js"
 
 //
 // Char
 //
-import _ from "../deps/underscore-1.10.2-esm.js"
 
 const Chars = {};
 
@@ -26,8 +28,7 @@ const Char = Class.create({
 
 Char.get = function(c) {
   if(typeof(c) != "string") {
-    throw new BiwaScheme.Bug("Char.get: " +
-                             BiwaScheme.inspect(c) + " is not a string");
+    throw new Bug("Char.get: " + inspect(c) + " is not a string");
   }
   if( Chars[c] === undefined )
     return new Char(c);
