@@ -1,8 +1,13 @@
+import _ from "../deps/underscore-1.10.2-esm.js"
+import { nil } from "./header.js";
+import { inspect } from "./_writer.js"
 import Class from "./class.js"
+import Char from "./char.js"
+import { Bug } from "./error.js"
+import { Pair } from "./pair.js"
 ///
 /// Call
 ///
-import _ from "../deps/underscore-1.10.2-esm.js"
 
 // The class Call is used to invoke scheme closure from 
 // library functions.
@@ -72,7 +77,7 @@ const Iterator = {
       return this.i < this.str.length;
     },
     next: function(){
-      return BiwaScheme.Char.get(this.str.charAt(this.i++));
+      return Char.get(this.str.charAt(this.i++));
     }
   }),
   ForList: Class.create({
@@ -80,8 +85,8 @@ const Iterator = {
       this.ls = ls;
     },
     has_next: function(){
-      return (this.ls instanceof BiwaScheme.Pair) &&
-             this.ls != BiwaScheme.nil;
+      return (this.ls instanceof Pair) &&
+             this.ls != nil;
     },
     next: function(){
       var pair = this.ls;
@@ -116,11 +121,11 @@ const Iterator = {
         return new this.ForArray(obj);
       case (typeof(obj) == "string"):
         return new this.ForString(obj);
-      case (obj instanceof BiwaScheme.Pair):
-      case (obj === BiwaScheme.nil):
+      case (obj instanceof Pair):
+      case (obj === nil):
         return new this.ForList(obj);
       default:
-        throw new BiwaScheme.Bug("Iterator.of: unknown class: "+BiwaScheme.inspect(obj));
+        throw new Bug("Iterator.of: unknown class: "+inspect(obj));
     }
   }
 }
@@ -153,7 +158,7 @@ const Iterator = {
 //   });
 
 Call.default_callbacks = {
-  call: function(x){ return new BiwaScheme.Call(this.proc, [x]) },
+  call: function(x){ return new Call(this.proc, [x]) },
   result: function(){},
   finish: function(){}
 }
