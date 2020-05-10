@@ -1,5 +1,8 @@
-import Class from "./class.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { inspect } from "./_writer.js"
+import Class from "./class.js"
+import { array_to_list } from "./pair.js"
+import { assert_symbol, assert_list } from "../library/infra.js"
 
 // 
 // R6RS Enumerations
@@ -38,7 +41,7 @@ Enumeration.EnumType = Class.create({
 
   // Returns an EnumSet.
   universe: function(){
-    return new BiwaScheme.Enumeration.EnumSet(this, this.members);
+    return new Enumeration.EnumSet(this, this.members);
   }, 
 
   // Returns a function which map a symbol to an integer (or #f, if 
@@ -49,7 +52,7 @@ Enumeration.EnumType = Class.create({
     // ar[0] - a symbol
     // Returns an integer or #f.
     return _.bind(function(ar){
-      BiwaScheme.assert_symbol(ar[0], "(enum-set indexer)");
+      assert_symbol(ar[0], "(enum-set indexer)");
       var idx = _.indexOf(this.members, ar[0]);
       return (idx === -1) ? false : idx;
     }, this);
@@ -61,13 +64,13 @@ Enumeration.EnumType = Class.create({
     // ar[0] - a list of symbol
     // Returns a enum_set.
     return _.bind(function(ar){
-      BiwaScheme.assert_list(ar[0], "(enum-set constructor)");
+      assert_list(ar[0], "(enum-set constructor)");
       var symbols = ar[0].to_array();
       _.each(symbols, function(arg){
-        BiwaScheme.assert_symbol(arg, "(enum-set constructor)");
+        assert_symbol(arg, "(enum-set constructor)");
       });
 
-      return new BiwaScheme.Enumeration.EnumSet(this, symbols);
+      return new Enumeration.EnumSet(this, symbols);
     }, this);
   }
 });
@@ -99,7 +102,7 @@ Enumeration.EnumSet = Class.create({
 
   // Returns a list of symbols.
   symbol_list: function(){
-    return BiwaScheme.array_to_list(this.symbols); 
+    return array_to_list(this.symbols); 
   },
   
   // Returns true if the enum_set includes the symbol.
@@ -150,7 +153,7 @@ Enumeration.EnumSet = Class.create({
                  return _.include(this.symbols, sym) ||
                         _.include(other.symbols, sym);
                }, this));
-    return new BiwaScheme.Enumeration.EnumSet(this.enum_type, syms);
+    return new Enumeration.EnumSet(this.enum_type, syms);
   },
 
   // Returns a enum_set which has:
@@ -160,7 +163,7 @@ Enumeration.EnumSet = Class.create({
     var syms = _.filter(this.symbols, function(sym){
                  return _.include(other.symbols, sym);
                });
-    return new BiwaScheme.Enumeration.EnumSet(this.enum_type, syms);
+    return new Enumeration.EnumSet(this.enum_type, syms);
   },
 
   // Returns a enum_set which has:
@@ -170,7 +173,7 @@ Enumeration.EnumSet = Class.create({
     var syms = _.filter(this.symbols, function(sym){
                  return !_.include(other.symbols, sym);
                });
-    return new BiwaScheme.Enumeration.EnumSet(this.enum_type, syms);
+    return new Enumeration.EnumSet(this.enum_type, syms);
   },
 
   // Returns a enum_set which has:
@@ -179,7 +182,7 @@ Enumeration.EnumSet = Class.create({
     var syms = _.filter(this.enum_type.members, _.bind(function(sym){
                  return !_.include(this.symbols, sym);
                }, this));
-    return new BiwaScheme.Enumeration.EnumSet(this.enum_type, syms);
+    return new Enumeration.EnumSet(this.enum_type, syms);
   },
 
   // Returns a enum_set which has:
@@ -189,18 +192,18 @@ Enumeration.EnumSet = Class.create({
     var syms = _.filter(this.symbols, function(sym){
                  return _.include(other.enum_type.members, sym);
                });
-    return new BiwaScheme.Enumeration.EnumSet(other.enum_type, syms);
+    return new Enumeration.EnumSet(other.enum_type, syms);
   },
 
   // Returns a string which represents the enum_set.
   toString: function(){
-    return "#<EnumSet "+BiwaScheme.inspect(this.symbols)+">";
+    return "#<EnumSet "+inspect(this.symbols)+">";
   }
 });
 Class.memoize(Enumeration.EnumSet, "symbol_list");
 
 const isEnumSet = function(obj){
-  return (obj instanceof BiwaScheme.Enumeration.EnumSet);
+  return (obj instanceof Enumeration.EnumSet);
 };
 
 export { Enumeration, isEnumSet };
