@@ -12,7 +12,7 @@
 
 <div id="bs-console"></div>
 
-<script src="../release/biwascheme.js">
+<script src="../src/development_initializer.js">
 ;; access twitter
 (define (get-timeline type)
   (json->sexp (receive-jsonp (string-append "http://twitter.com/statuses/" type "_timeline.json"))))
