@@ -1,5 +1,6 @@
-import Class from "./class.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import Class from "./class.js"
+import { Bug } from "./error.js"
 
 //
 // R7RS Promise (lazy library)
@@ -17,14 +18,14 @@ const BiwaPromise = Class.create({
   // Return calculated value of this promise
   value: function() {
     if (!this.is_done()) {
-      throw new BiwaScheme.Bug("this promise is not calculated yet");
+      throw new Bug("this promise is not calculated yet");
     }
     return this.box[1];
   },
 
   thunk: function() {
     if (this.is_done()) {
-      throw new BiwaScheme.Bug("this promise does not know the thunk");
+      throw new Bug("this promise does not know the thunk");
     }
     return this.box[1];
   },
@@ -37,16 +38,16 @@ const BiwaPromise = Class.create({
 });
 
 const isPromise = function(obj) {
-  return (obj instanceof BiwaScheme.Promise);
+  return (obj instanceof BiwaPromise);
 };
 
 // Create fresh promise
 BiwaPromise.fresh = function(thunk) {
-  return new BiwaScheme.Promise(false, thunk);
+  return new BiwaPromise(false, thunk);
 };
 // Create calculated promise
 BiwaPromise.done = function(value) {
-  return new BiwaScheme.Promise(true, value);
+  return new BiwaPromise(true, value);
 };
 
 export { BiwaPromise, isPromise };
