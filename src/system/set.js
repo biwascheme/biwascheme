@@ -1,5 +1,6 @@
-import Class from "./class.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import Class from "./class.js"
+import { BiwaError } from "./error.js"
 
 //
 // Set - set of string
@@ -39,7 +40,7 @@ const BiwaSet = Class.create({
     for(var k=0; k<arguments.length; k++){
       var s2 = arguments[k];
       if(!(s2 instanceof BiwaSet))
-        throw new BiwaScheme.Error("set_union: arguments must be a set");
+        throw new BiwaError("set_union: arguments must be a set");
 
       for(var i=0; i<s2.arr.length; i++)
         o.add(s2.arr[i]);
@@ -48,7 +49,7 @@ const BiwaSet = Class.create({
   },
   set_intersect : function(s2){
     if(!(s2 instanceof BiwaSet))
-      throw new BiwaScheme.Error("set_intersect: arguments must be a set");
+      throw new BiwaError("set_intersect: arguments must be a set");
 
     var o = new BiwaSet();
     for(var i=0; i<this.arr.length; i++)
@@ -58,7 +59,7 @@ const BiwaSet = Class.create({
   },
   set_minus : function(s2){
     if(!(s2 instanceof BiwaSet))
-      throw new BiwaScheme.Error("set_minus: arguments must be a set");
+      throw new BiwaError("set_minus: arguments must be a set");
 
     var o = new BiwaSet();
     for(var i=0; i<this.arr.length; i++)
