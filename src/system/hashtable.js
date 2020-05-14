@@ -1,5 +1,9 @@
-import Class from "./class.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { to_write } from "./_writer.js"
+import { eq, eqv } from "./_types.js"
+import Class from "./class.js"
+import { Bug } from "./error.js"
+import { BiwaSymbol } from "./symbol.js"
 
 //
 // Hashtable
@@ -44,7 +48,7 @@ const Hashtable = Class.create({
     var pairs = this.pairs_of[hashed];
     var i = pairs.indexOf(pair);
     if (i == -1){
-      throw new BiwaScheme.Bug("Hashtable#remove_pair: pair not found!");
+      throw new Bug("Hashtable#remove_pair: pair not found!");
     }
     else {
       pairs.splice(i, 1); //remove 1 element from i-th index
@@ -52,7 +56,7 @@ const Hashtable = Class.create({
   },
 
   create_copy: function(mutable){
-    var copy = new BiwaScheme.Hashtable(this.hash_proc, this.equiv_proc,
+    var copy = new Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
     _.each(_.keys(this.pairs_of), _.bind(function(hashed){
@@ -106,7 +110,7 @@ const Hashtable = Class.create({
 //
 
 Hashtable.equal_hash = function(ar){
-  return BiwaScheme.to_write(ar[0]);
+  return to_write(ar[0]);
 };
 Hashtable.eq_hash = Hashtable.equal_hash;
 Hashtable.eqv_hash = Hashtable.equal_hash;
@@ -120,7 +124,7 @@ Hashtable.string_ci_hash = function(ar){
 };
 
 Hashtable.symbol_hash = function(ar){
-  return (ar[0] instanceof BiwaScheme.Symbol) ? ar[0].name : ar[0];
+  return (ar[0] instanceof BiwaSymbol) ? ar[0].name : ar[0];
 };
 
 //
@@ -128,11 +132,11 @@ Hashtable.symbol_hash = function(ar){
 //
 
 Hashtable.eq_equiv = function(ar){
-  return BiwaScheme.eq(ar[0], ar[1]);
+  return eq(ar[0], ar[1]);
 };
 
 Hashtable.eqv_equiv = function(ar){
-  return BiwaScheme.eqv(ar[0], ar[1]);
+  return eqv(ar[0], ar[1]);
 };
 
 export default Hashtable;
