@@ -1,6 +1,7 @@
-import Class from "./class.js"
-import { CoreEnv } from "../header.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { CoreEnv } from "../header.js"
+import Class from "./class.js"
+import { Bug } from "./error.js"
 
 //
 // Syntax
@@ -12,8 +13,8 @@ const Syntax = Class.create({
   },
   transform: function(x){
     if (!this.func){
-      throw new BiwaScheme.Bug("sorry, syntax "+this.sname+
-                               " is a pseudo syntax now");
+      throw new Bug("sorry, syntax "+this.sname+
+                    " is a pseudo syntax now");
     }
     return this.func(x);
   },
