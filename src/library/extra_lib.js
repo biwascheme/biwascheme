@@ -1,31 +1,33 @@
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { TopEnv, nil, undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
          assert_vector,
          assert_function, assert_closure, assert_procedure, assert_date } from "./infra.js"; 
+import { makeClosure } from "./_types.js"
 import { to_write, to_display, to_write_ss, inspect } from "../system/_writer.js"
 import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js"
-import { BiwaSymbol, Sym } from "../system/symbol.js"
+import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
 import Call from "../system/call.js"
 import Compiler from "../system/compiler.js"
 import Interpreter from "../system/interpreter.js"
+import { Port } from "./port.js"
 import Syntax from "../system/syntax.js"
-import { TopEnv, nil } from "../header.js";
 
   define_libfunc("html-escape", 1, 1, function(ar){
     assert_string(ar[0]);
     return _.escape(ar[0]);
   });
   const inspect_objs = function(objs){
-    return _.map(objs, BiwaScheme.inspect).join(", ");
+    return _.map(objs, inspect).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
     return inspect_objs(ar);
   });
   define_libfunc("inspect!", 1, null, function(ar){
     Console.puts(inspect_objs(ar));
-    return BiwaScheme.undef;
+    return undef;
   });
 
   //
@@ -52,7 +54,7 @@ import { TopEnv, nil } from "../header.js";
       }
       return ls;
     default:
-      throw new Error("json->sexp: detected invalid value for json: "+BiwaScheme.inspect(json));
+      throw new Error("json->sexp: detected invalid value for json: "+inspect(json));
     }
     throw new Bug("must not happen");
   }
@@ -173,7 +175,7 @@ import { TopEnv, nil } from "../header.js";
     var variable = spec.car,
         limit = spec.cdr.car,
         result = spec.cdr.cdr.car;
-    var tlimit = BiwaScheme.gensym();
+    var tlimit = gensym();
 
     var do_vars = deep_array_to_list([[tlimit, limit],
                                       [variable, 0, [Sym("+"), variable, 1]]]);
@@ -191,7 +193,7 @@ import { TopEnv, nil } from "../header.js";
   // returns sorted array
   var sort_with_comp = function(ary, proc, intp){
     return ary.sort(function(a, b){
-        var intp2 = new BiwaScheme.Interpreter(intp);
+        var intp2 = new Interpreter(intp);
         return intp2.invoke_closure(proc, [a, b]);
       });
   };
@@ -213,7 +215,7 @@ import { TopEnv, nil } from "../header.js";
     assert_vector(ar[1]);
 
     sort_with_comp(ar[1], ar[0], intp);
-    return BiwaScheme.undef;
+    return undef;
   });
   
   // macros
@@ -255,7 +257,7 @@ import { TopEnv, nil } from "../header.js";
     var opc = Compiler.compile(lambda);
     if(opc[2] != 0)
       throw new Bug("you cannot use free variables in macro expander (or define-macro must be on toplevel)")
-    var cls = BiwaScheme.makeClosure([opc[3]]);
+    var cls = makeClosure([opc[3]]);
 
     TopEnv[name.name] = new Syntax(name.name, function(sexp){
       var given_args = sexp.to_array();
@@ -268,7 +270,7 @@ import { TopEnv, nil } from "../header.js";
       return result;
     });
 
-    return BiwaScheme.undef;
+    return undef;
   })
 
   var macroexpand_1 = function(x){
@@ -283,7 +285,7 @@ import { TopEnv, nil } from "../header.js";
     return x;
   }
   define_syntax("%macroexpand", function(x){
-    var expanded = BiwaScheme.Interpreter.expand(x.cdr.car);
+    var expanded = Interpreter.expand(x.cdr.car);
     return List(Sym("quote"), expanded);
   });
   define_syntax("%macroexpand-1", function(x){
@@ -292,14 +294,14 @@ import { TopEnv, nil } from "../header.js";
   });
 
   define_libfunc("macroexpand", 1, 1, function(ar){
-    return BiwaScheme.Interpreter.expand(ar[0]);
+    return Interpreter.expand(ar[0]);
   });
   define_libfunc("macroexpand-1", 1, 1, function(ar){
     return macroexpand_1(ar[0]);
   });
 
   define_libfunc("gensym", 0, 0, function(ar){
-    return BiwaScheme.gensym();
+    return gensym();
   });
   
   // i/o
@@ -309,7 +311,7 @@ import { TopEnv, nil } from "../header.js";
       Console.puts(to_display(item), true);
     })
     Console.puts(""); //newline
-    return BiwaScheme.undef;
+    return undef;
   })
   define_libfunc("write-to-string", 1, 1, function(ar){
     return to_write(ar[0]);
@@ -329,12 +331,12 @@ import { TopEnv, nil } from "../header.js";
     assert_port(port);
     assert_procedure(proc);
 
-    var original_port = BiwaScheme.Port.current_output;
-    BiwaScheme.Port.current_output = port
+    var original_port = Port.current_output;
+    Port.current_output = port
 
     return new Call(proc, [port], function(ar){
       port.close();
-      BiwaScheme.Port.current_output = original_port;
+      Port.current_output = original_port;
 
       return ar[0];
     });
