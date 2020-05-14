@@ -1,5 +1,5 @@
-import Class from "./class.js"
 import _ from "../deps/underscore-1.10.2-esm.js"
+import Class from "./class.js"
 
 //
 // number.js
@@ -23,10 +23,10 @@ const Complex = Class.create({
     return this.imag == 0;
   },
   isRational: function() {
-    return this.imag == 0 && BiwaScheme.isRational(this.real);
+    return this.imag == 0 && isRational(this.real);
   },
   isInteger: function(){
-    return this.imag == 0 && BiwaScheme.isInteger(this.real);
+    return this.imag == 0 && isInteger(this.real);
   },
   toString: function(radix){
     if (this.real === 0 && this.imag === 0)
@@ -55,13 +55,13 @@ const Complex = Class.create({
 Complex.from_polar = function(r, theta){
   var real = r * Math.cos(theta);
   var imag = r * Math.sin(theta);
-  return new BiwaScheme.Complex(real, imag);
+  return new Complex(real, imag);
 }
 Complex.assure = function(num){
-  if(num instanceof BiwaScheme.Complex)
+  if(num instanceof Complex)
     return num
   else
-    return new BiwaScheme.Complex(num, 0);
+    return new Complex(num, 0);
 }
 
 //
@@ -82,13 +82,13 @@ const Rational = Class.create({
 // Predicates
 //
 const isNumber = function(x) {
-  return (x instanceof BiwaScheme.Complex)  ||
-         (x instanceof BiwaScheme.Rational) ||
+  return (x instanceof Complex)  ||
+         (x instanceof Rational) ||
          (typeof(x) == 'number');
 };
 const isComplex = isNumber;
 const isReal = function(x) {
-  if (x instanceof BiwaScheme.Complex || x instanceof BiwaScheme.Rational) {
+  if (x instanceof Complex || x instanceof Rational) {
     return x.isReal()
   }
   else {
@@ -96,10 +96,10 @@ const isReal = function(x) {
   }
 };
 const isRational = function(x) {
-  if (x instanceof BiwaScheme.Complex) {
+  if (x instanceof Complex) {
     return x.isRational();
   }
-  else if (x instanceof BiwaScheme.Rational) {
+  else if (x instanceof Rational) {
     return true;
   }
   else {
@@ -107,7 +107,7 @@ const isRational = function(x) {
   }
 };
 const isInteger = function(x) {
-  if (x instanceof BiwaScheme.Complex || x instanceof BiwaScheme.Rational) {
+  if (x instanceof Complex || x instanceof Rational) {
     return x.isInteger();
   }
   else {
