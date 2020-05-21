@@ -1,9 +1,12 @@
 import _ from "../deps/underscore-1.10.2-esm.js"
 import { CoreEnv, suppress_deprecation_warning } from "../header.js";
-import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
-         isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
-         isSelfEvaluating, eq, eqv, equal, lt } from "../system/_types.js"
+import { isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
+         isVector, isHashtable, isMutableHashtable, isClosure } from "../system/_types.js"
+import { to_write } from "../system/_writer.js"
 import { make_assert, make_simple_assert } from "../system/assert.js"
+import { BiwaError } from "../system/error.js"
+import Interpreter from "../system/interpreter.js"
+import { Complex } from "../system/number.js"
 import { isRecord, isRecordTD, isRecordCD } from "../system/record.js"
 import { isPromise } from "../system/promise.js"
 import Syntax from "../system/syntax.js"
@@ -18,12 +21,12 @@ import Syntax from "../system/syntax.js"
 const check_arity = function(fname, len, min, max){
   if(len < min){
     if(max && max == min)
-      throw new BiwaScheme.Error(fname+": wrong number of arguments (expected: "+min+" got: "+len+")");
+      throw new BiwaError(fname+": wrong number of arguments (expected: "+min+" got: "+len+")");
     else
-      throw new BiwaScheme.Error(fname+": too few arguments (at least: "+min+" got: "+len+")");
+      throw new BiwaError(fname+": too few arguments (at least: "+min+" got: "+len+")");
   }
   else if(max && max < len)
-    throw new BiwaScheme.Error(fname+": too many arguments (at most: "+max+" got: "+len+")");
+    throw new BiwaError(fname+": too many arguments (at most: "+max+" got: "+len+")");
 }
 
 const define_libfunc = function(fname, min, max, func){
@@ -40,7 +43,7 @@ const define_libfunc = function(fname, min, max, func){
 const alias_libfunc = function(fname, aliases) {
   if (CoreEnv[fname]) {
     if (_.isArray(aliases)) {
-      _.map(aliases, function(a) { BiwaScheme.alias_libfunc(fname, a); });
+      _.map(aliases, function(a) { alias_libfunc(fname, a); });
     } else if (_.isString(aliases)) {
       CoreEnv[aliases] = CoreEnv[fname];
     } else {
@@ -60,7 +63,7 @@ const define_syntax = function(sname, func) {
 }
 
 const define_scmfunc = function(fname, min, max, str){
-  (new BiwaScheme.Interpreter).evaluate("(define "+fname+" "+str+"\n)");
+  (new Interpreter).evaluate("(define "+fname+" "+str+"\n)");
 }
 
 //  define_scmfunc("map+", 2, null, 
@@ -71,7 +74,7 @@ const define_scmfunc = function(fname, min, max, str){
 //
 
 const assert_number = make_simple_assert("number", function(obj){
-  return typeof(obj) == 'number' || (obj instanceof BiwaScheme.Complex);
+  return typeof(obj) == 'number' || (obj instanceof Complex);
 });
 
 const assert_integer = make_simple_assert("integer", function(obj){
@@ -84,16 +87,16 @@ const assert_real = make_simple_assert("real number", function(obj){
 
 const assert_between = make_assert(function(fname, obj, from, to){
   if( typeof(obj) != 'number' || obj != Math.round(obj) ){
-    throw new BiwaScheme.Error(fname + ": " +
+    throw new BiwaError(fname + ": " +
                                "number required, but got " +
-                               BiwaScheme.to_write(obj));
+                               to_write(obj));
   }
 
   if( obj < from || to < obj ){
-    throw new BiwaScheme.Error(fname + ": " +
+    throw new BiwaError(fname + ": " +
                                "number must be between " +
                                from + " and " + to + ", but got " +
-                               BiwaScheme.to_write(obj));
+                               to_write(obj));
   }
 });
 
@@ -111,7 +114,7 @@ const assert_promise = make_simple_assert("promise", isPromise);
 const assert_function = make_simple_assert("JavaScript function", isFunction);
 const assert_closure = make_simple_assert("scheme function", isClosure);
 const assert_procedure = make_simple_assert("scheme/js function", function(obj){
-  return BiwaScheme.isClosure(obj) || isFunction(obj);
+  return isClosure(obj) || isFunction(obj);
 });
 
 const assert_date = make_simple_assert("date", function(obj){
@@ -130,7 +133,7 @@ const assert_date = make_simple_assert("date", function(obj){
 
 const assert = make_assert(function(fname, success, message, _fname){
   if(!success){
-    throw new BiwaScheme.Error((_fname || fname)+": "+message);
+    throw new BiwaError((_fname || fname)+": "+message);
   }
 });
 
