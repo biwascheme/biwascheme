@@ -1,12 +1,16 @@
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { nil, undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate } from "./infra.js"; 
+import { isSymbol, isList, isClosure } from "../system/_types.js"
+import { inspect } from "../system/_writer.js"
+import { BiwaError } from "../system/error.js"
 import Interpreter from "../system/interpreter.js"
 import { Pair, array_to_list } from "../system/pair.js"
+import Pause from "../system/pause.js"
 import { BiwaSymbol, Sym } from "../system/symbol.js"
-import { nil } from "../header.js";
 
   //
   // interface to javascript
@@ -26,7 +30,7 @@ import { nil } from "../header.js";
   define_libfunc("js-set!", 3, 3, function(ar){
     assert_string(ar[1]);
     ar[0][ar[1]] = ar[2];
-    return BiwaScheme.undef;
+    return undef;
   });
 
   // (js-call (js-eval "Math.pow") 2 4)
@@ -69,7 +73,7 @@ import { nil } from "../header.js";
   define_libfunc("js-invocation", 2, null, function(ar, intp){
     var receiver = ar.shift();
     // TODO: convert lambdas by js-closure 
-    if(BiwaScheme.isSymbol(receiver)){
+    if(isSymbol(receiver)){
       receiver = eval(receiver.name); //XXX: is this ok?
     }
 
@@ -77,11 +81,11 @@ import { nil } from "../header.js";
 
     // Process each method call
     _.each(ar, function(callspec){
-        if(BiwaScheme.isSymbol(callspec)){
+        if(isSymbol(callspec)){
           // Property access
           v = v[callspec.name];
         }
-        else if(BiwaScheme.isList(callspec)){
+        else if(isList(callspec)){
           // Method call
           var args = callspec.to_array();
 
@@ -90,11 +94,11 @@ import { nil } from "../header.js";
 
           // Convert arguments
           args = _.map(args, function(arg){
-              if(BiwaScheme.isClosure(arg)){
+              if(isClosure(arg)){
                 // closure -> JavaScript funciton
                 return js_closure(arg, intp);
               }
-              else if(BiwaScheme.isList(arg)){
+              else if(BiwaSchemisList(arg)){
                 // alist -> JavaScript Object
                 var o = {};
                 arg.foreach(function(pair){
@@ -109,13 +113,13 @@ import { nil } from "../header.js";
 
           // Call the method
           if(!_.isFunction(v[method])){
-            throw new BiwaScheme.Error("js-invocation: the method `"+method+"' not found");
+            throw new BiwaError("js-invocation: the method `"+method+"' not found");
           }
           v = v[method].apply(v, args);
         }
         else{
           // (wrong argument)
-          throw new BiwaScheme.Error("js-invocation: expected list or symbol for callspec but got " + BiwaScheme.inspect(callspec));
+          throw new BiwaError("js-invocation: expected list or symbol for callspec but got " + inspect(callspec));
         }
       });
 
@@ -148,7 +152,7 @@ import { nil } from "../header.js";
       for(var i=0; i<ary.length; i+=2){
         var key = ary[i], value = ary[i+1];
         assert_symbol(key);
-        if(BiwaScheme.isClosure(value))
+        if(isClosure(value))
           value = js_closure(value, intp);
 
         obj[key.name] = value;
@@ -223,16 +227,16 @@ import { nil } from "../header.js";
   });
 
   define_libfunc("js-array-to-list", 1, 1, function(ar){
-    BiwaScheme.deprecate("js-array-to-list", "1.0", "js-array->list");
-    return BiwaScheme.array_to_list(ar[0]);
+    deprecate("js-array-to-list", "1.0", "js-array->list");
+    return array_to_list(ar[0]);
   });
 
   define_libfunc("js-array->list", 1, 1, function(ar){
-    return BiwaScheme.array_to_list(ar[0]);
+    return array_to_list(ar[0]);
   });
 
   define_libfunc("list-to-js-array", 1, 1, function(ar){
-    BiwaScheme.deprecate("list-to-js-array", "1.0", "list->js-array");
+    deprecate("list-to-js-array", "1.0", "list->js-array");
     return ar[0].to_array();
   });
 
@@ -253,7 +257,7 @@ import { nil } from "../header.js";
     return obj;
   };
   define_libfunc("alist-to-js-obj", 1, 1, function(ar) {
-    BiwaScheme.deprecate("alist-to-js-obj", "1.0", "alist->js-obj");
+    deprecate("alist-to-js-obj", "1.0", "alist->js-obj");
     return alist_to_js_obj(ar[0]);
   });
 
@@ -263,17 +267,17 @@ import { nil } from "../header.js";
 
   const js_obj_to_alist = function(obj) {
     if (obj === undefined) {
-      return BiwaScheme.nil;
+      return nil;
     }
     var arr = [];
     _.each(obj, function(val, key) {
       arr.push(new Pair(key, val));
     });
-    var alist = BiwaScheme.array_to_list(arr);
+    var alist = array_to_list(arr);
     return alist;
   };
   define_libfunc("js-obj-to-alist", 1, 1, function(ar) {
-    BiwaScheme.deprecate("js-obj-to-alist", "1.0", "js-obj->alist");
+    deprecate("js-obj-to-alist", "1.0", "js-obj->alist");
     return js_obj_to_alist(ar[0]);
   });
   define_libfunc("js-obj->alist", 1, 1, function(ar) {
@@ -289,7 +293,7 @@ import { nil } from "../header.js";
     assert_real(sec);
     var intp2 = new Interpreter(intp);
     setTimeout(function(){ intp2.invoke_closure(proc); }, sec * 1000);
-    return BiwaScheme.undef;
+    return undef;
   });
   define_libfunc("set-timer!", 2, 2, function(ar, intp){
     var proc = ar[0], sec = ar[1];
@@ -301,12 +305,12 @@ import { nil } from "../header.js";
   define_libfunc("clear-timer!", 1, 1, function(ar){
     var timer_id = ar[0];
     clearInterval(timer_id);
-    return BiwaScheme.undef;
+    return undef;
   });
   define_libfunc("sleep", 1, 1, function(ar){
     var sec = ar[0];
     assert_real(sec);
-    return new BiwaScheme.Pause(function(pause){
+    return new Pause(function(pause){
       setTimeout(function(){ pause.resume(nil); }, sec * 1000);
     });
   });
@@ -329,7 +333,7 @@ import { nil } from "../header.js";
       var con = window.console;
       if(con){
         var vals = _.map(ar, function(item){
-          return BiwaScheme.inspect(item, {fallback: item});
+          return inspect(item, {fallback: item});
         });
 
         con[name].apply(con, vals);
