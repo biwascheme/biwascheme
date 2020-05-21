@@ -8,7 +8,7 @@ import { isSymbol, isList, isClosure } from "../system/_types.js"
 import { inspect } from "../system/_writer.js"
 import { BiwaError } from "../system/error.js"
 import Interpreter from "../system/interpreter.js"
-import { Pair, array_to_list } from "../system/pair.js"
+import { Pair, array_to_list, js_obj_to_alist } from "../system/pair.js"
 import Pause from "../system/pause.js"
 import { BiwaSymbol, Sym } from "../system/symbol.js"
 
@@ -265,17 +265,6 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     return alist_to_js_obj(ar[0]);
   });
 
-  const js_obj_to_alist = function(obj) {
-    if (obj === undefined) {
-      return nil;
-    }
-    var arr = [];
-    _.each(obj, function(val, key) {
-      arr.push(new Pair(key, val));
-    });
-    var alist = array_to_list(arr);
-    return alist;
-  };
   define_libfunc("js-obj-to-alist", 1, 1, function(ar) {
     deprecate("js-obj-to-alist", "1.0", "js-obj->alist");
     return js_obj_to_alist(ar[0]);

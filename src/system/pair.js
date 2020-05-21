@@ -154,4 +154,16 @@ const Cons = function(car, cdr) {
   return new Pair(car, cdr);
 };
 
-export { Pair, List, array_to_list, deep_array_to_list, Cons };
+const js_obj_to_alist = function(obj) {
+  if (obj === undefined) {
+    return nil;
+  }
+  var arr = [];
+  _.each(obj, function(val, key) {
+    arr.push(new Pair(key, val));
+  });
+  var alist = array_to_list(arr);
+  return alist;
+};
+
+export { Pair, List, array_to_list, deep_array_to_list, Cons, js_obj_to_alist };

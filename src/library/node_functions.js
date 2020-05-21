@@ -1,11 +1,15 @@
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { undef } from "../header.js";
+import Platform from "../platforms/platform.js"
+import { define_libfunc, assert_string } from "./infra.js"; 
+import { BiwaError } from "../system/error.js"
+import { List, js_obj_to_alist } from "../system/pair.js"
 //
 // Library functions only work on Node.js
 // see also: test/node_functions.js
 //
 
-(function(){
-  if(BiwaScheme.on_node){
+  if(Platform.isNode){
     var node = {
       fs: require('fs'),
       path: require('path'),
@@ -19,19 +23,19 @@ import _ from "../deps/underscore-1.10.2-esm.js"
   var define_node_libfunc = function(/*arguments*/){
     var args = _.toArray(arguments);
 
-    if(BiwaScheme.on_node){
-      BiwaScheme.define_libfunc.apply(null, args);
+    if(Platform.isNode){
+      define_libfunc.apply(null, args);
     }
     else{
       var func_name = args[0];
       var func = function(ar){
-        throw new BiwaScheme.Error("the function '"+func_name+"' "+
+        throw new BiwaError("the function '"+func_name+"' "+
           "is not supported in the browser "+
           "(works only on Node.js).");
       };
       args.pop();
       args.push(func);
-      BiwaScheme.define_libfunc.apply(null, args);
+      define_libfunc.apply(null, args);
     }
   };
 
@@ -41,15 +45,15 @@ import _ from "../deps/underscore-1.10.2-esm.js"
 
   //(file-exists? filename)    procedure 
   define_node_libfunc("file-exists?", 1, 1, function(ar){
-    BiwaScheme.assert_string(ar[0]);
+    assert_string(ar[0]);
     return node.fs.existsSync(ar[0]);
   });
 
   //(delete-file filename)    procedure 
   define_node_libfunc("delete-file", 1, 1, function(ar){
-    BiwaScheme.assert_string(ar[0]);
+    assert_string(ar[0]);
     node.fs.unlinkSync(ar[0]);
-    return BiwaScheme.undef;
+    return undef;
   });
 
   //
@@ -58,7 +62,7 @@ import _ from "../deps/underscore-1.10.2-esm.js"
   
   //(command-line)    procedure
   define_node_libfunc("command-line", 0, 0, function(ar){
-    return BiwaScheme.List.apply(null, node.process.argv);
+    return List.apply(null, node.process.argv);
   });
 
   //(exit)    procedure 
@@ -78,14 +82,12 @@ import _ from "../deps/underscore-1.10.2-esm.js"
 
   // (get-environment-variable name) -> string or #f
   define_node_libfunc("get-environment-variable", 1, 1, function(ar){
-    BiwaScheme.assert_string(ar[0]);
+    assert_string(ar[0]);
     var val = node.process.env[ar[0]];
     return _.isUndefined(val) ? false : val;
   });
 
   // (get-environment-variables) -> alist of string (("key" . "value"))
   define_node_libfunc("get-environment-variables", 0, 0, function(ar){
-    return BiwaScheme.js_obj_to_alist(node.process.env);
+    return js_obj_to_alist(node.process.env);
   });
-
-})();
