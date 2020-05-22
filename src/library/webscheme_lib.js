@@ -1,10 +1,12 @@
 import _ from "../deps/underscore-1.10.2-esm.js"
+import { undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
          assert_function, assert_closure, assert_procedure, assert_date, deprecate } from "./infra.js"; 
 import Interpreter  from "../system/interpreter.js"
 import { Pair } from "../system/pair.js"
+import Pause from "../system/pause.js"
 import { BiwaSymbol, Sym } from "../system/symbol.js"
 
   define_libfunc("read-line", 0, 1, function(ar){
@@ -106,8 +108,8 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     return $(ar[0]).attr(ar[1], ar[2]);
   };
   define_libfunc("element-write-attribute", 3, 3, function(ar){
-    BiwaScheme.deprecate("element-write-attribute", "1.0",
-                         "element-write-attribute!");
+    deprecate("element-write-attribute", "1.0",
+              "element-write-attribute!");
     return element_write_attribute(ar);
   });
   define_libfunc("element-write-attribute!", 3, 3, element_write_attribute);
@@ -132,8 +134,8 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     return $(ar[0]).addClass(ar[1]);
   };
   define_libfunc("element-add-class-name", 2, 2, function(ar){
-    BiwaScheme.deprecate("element-add-class-name", "1.0",
-                         "element-add-class-name!");
+    deprecate("element-add-class-name", "1.0",
+              "element-add-class-name!");
     return element_add_class_name(ar);
   });
   define_libfunc("element-add-class-name!", 2, 2, element_add_class_name);
@@ -143,8 +145,8 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     return $(ar[0]).removeClass(ar[1]);
   };
   define_libfunc("element-remove-class-name", 2, 2, function(ar){
-    BiwaScheme.deprecate("element-remove-class-name", "1.0",
-                         "element-remove-class-name!");
+    deprecate("element-remove-class-name", "1.0",
+              "element-remove-class-name!");
     return element_remove_class_name(ar);
   });
   define_libfunc("element-remove-class-name!", 2, 2, element_remove_class_name);
@@ -154,8 +156,8 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     return $(ar[0]).toggleClass(ar[1]);
   };
   define_libfunc("element-toggle-class-name", 2, 2, function(ar){
-    BiwaScheme.deprecate("element-toggle-class-name", "1.0",
-                         "element-toggle-class-name!");
+    deprecate("element-toggle-class-name", "1.0",
+              "element-toggle-class-name!");
     return element_toggle_class_name(ar);
   });
   define_libfunc("element-toggle-class-name!", 2, 2, element_toggle_class_name);
@@ -311,7 +313,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     var path = ar[0];
     assert_string(path);
     var intp2 = new Interpreter(intp);
-    return new BiwaScheme.Pause(function(pause){
+    return new Pause(function(pause){
       $.ajax(path, {
         dataType: "text",
         mimeType: "text/plain; charset=UTF-8", // For Firefox (#88)
@@ -319,7 +321,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
           // create new interpreter not to destroy current stack.
           intp2.evaluate(data,
                          function(){
-                           return pause.resume(BiwaScheme.undef);
+                           return pause.resume(undef);
                          });
         },
         error: function() {
@@ -346,9 +348,9 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     assert_string(path);
     assert_string(check);
 
-    return new BiwaScheme.Pause(function(pause){
+    return new Pause(function(pause){
       _require(path, "window." + check, function(){
-        pause.resume(BiwaScheme.undef);
+        pause.resume(undef);
       });
     });
   });
@@ -379,7 +381,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
   define_libfunc("set-style!", 3, 3, function(ar){
     assert_string(ar[1]);
     $(ar[0]).css(ar[1], ar[2]);
-    return BiwaScheme.undef;
+    return undef;
   });
   define_libfunc("get-style", 2, 2, function(ar){
     assert_string(ar[1]);
@@ -389,7 +391,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     assert_string(ar[1]);
     var str = ar[1].replace(/\n/g,"<br>").replace(/\t/g,"&nbsp;&nbsp;&nbsp;");
     $(ar[0]).html(str);
-    return BiwaScheme.undef;
+    return undef;
   });
   define_libfunc("get-content", 1, 1, function(ar){
     return element_content(ar[0]);
@@ -413,7 +415,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
   define_libfunc("remove-handler!", 3, 3, function(ar, intp){
     var selector = ar[0], evtype = ar[1], handler = ar[2];
     $(selector).off(evtype, handler);
-    return BiwaScheme.undef;
+    return undef;
   });
   define_libfunc("wait-for", 2, 2, function(ar){
     var selector = ar[0], evtype = ar[1];
@@ -427,7 +429,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
       elem.off(evtype, prev_handler);
     }
 
-    return new BiwaScheme.Pause(function(pause){
+    return new Pause(function(pause){
       var handler = function(event){
         elem.biwascheme_wait_for[evtype] = undefined;
         elem.off(evtype, handler);
@@ -448,7 +450,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
   define_libfunc("dom-remove-children!", 1, 1, function(ar){
     Console.puts("warning: dom-remove-children! is obsolete. use element-empty! instead");
     $(ar[0]).empty();
-    return BiwaScheme.undef;
+    return undef;
   });
   define_libfunc("dom-create-element", 1, 1, function(ar){
     throw new Error("obsolete");
@@ -471,7 +473,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     var path = ar[0];
     assert_string(path);
 
-    return new BiwaScheme.Pause(function(pause){
+    return new Pause(function(pause){
       $.get(path, function(data) {
         pause.resume(data);
       }, "text");
@@ -485,7 +487,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     assert_list(alist);
     var h = alist_to_js_obj(alist);
 
-    return new BiwaScheme.Pause(function(pause){
+    return new Pause(function(pause){
       $.post(path, h, function(data) {
         pause.resume(data);
       }, "text");
@@ -503,7 +505,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
     var receiver_id = i;
     url += "?callback=BiwaScheme.jsonp_receiver[" + receiver_id + "]";
 
-    return new BiwaScheme.Pause(function(pause){
+    return new Pause(function(pause){
       receives[receiver_id] = function(data){
         pause.resume(data);
         receives[receiver_id] = null;
@@ -518,7 +520,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
   //
   define_libfunc("alert", 1, 1, function(ar){
     alert(ar[0]);
-    return BiwaScheme.undef;
+    return undef;
   });
   define_libfunc("confirm", 1, 1, function(ar){
     return confirm(ar[0]);
