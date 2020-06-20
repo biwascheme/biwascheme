@@ -88,8 +88,8 @@ const Interpreter = Class.create({
   //v: stack array to restore
   //ret: lenght of restored stack
   restore_stack: function(stuff){
-    v = stuff.stack;
-    var s = v.length;
+    const v = stuff.stack;
+    const s = v.length;
     for(var i=0; i<s; i++){
       this.stack[i] = v[i];
     }

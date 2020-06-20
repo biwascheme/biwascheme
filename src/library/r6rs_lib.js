@@ -2935,7 +2935,7 @@ import Values from "../system/values.js"
 
   //(bitwise-reverse-bit-field ei1 ei2 ei3)    procedure
   define_libfunc("bitwise-reverse-bit-field", 3, 3, function(ar){
-    var ret=n=ar[0], start=ar[1], end=ar[2];
+    var ret=ar[0], n=ar[0], start=ar[1], end=ar[2];
     var orig_field = ((~(-1 << end) & n) >> start);
     for (var i=0; i<(end-start); i++, orig_field>>=1) {
       var bit = orig_field & 1;

@@ -17,7 +17,7 @@ const make_assert = function(check){
 const make_simple_assert = function(type, test, _fname){
   return make_assert(function(fname, obj, opt){
     if(_fname) fname = _fname;
-    option = opt ? ("("+opt+")") : ""
+    const option = opt ? ("("+opt+")") : ""
     if(!test(obj)){
       throw new BiwaError(fname + option + ": " +
                           type + " required, but got " +

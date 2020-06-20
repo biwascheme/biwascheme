@@ -85,7 +85,7 @@ Record.RTD = Class.create({
   field_name: function(k){
     var names = this._field_names();
 
-    for(par = this.parent_rtd; par; par = par.parent_rtd){
+    for(var par = this.parent_rtd; par; par = par.parent_rtd){
       names = par._field_names() + names;
     }
 
