@@ -1,4 +1,4 @@
-import _ from "../deps/underscore-1.10.2-esm.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { TopEnv, nil, undef } from "../header.js"
 import { isPair, isSymbol } from "./_types.js"
 import Class from "./class.js"

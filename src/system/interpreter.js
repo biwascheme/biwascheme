@@ -1,4 +1,4 @@
-import _ from "../deps/underscore-1.10.2-esm.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { TopEnv, CoreEnv, nil, undef, max_trace_size } from "../header.js"
 import { isSymbol, isClosure, makeClosure } from "./_types.js"
 import { to_write, inspect } from "./_writer.js"

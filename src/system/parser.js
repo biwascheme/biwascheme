@@ -1,4 +1,4 @@
-import _ from "../deps/underscore-1.10.2-esm.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { nil } from "../header.js"
 import { inspect } from "./_writer.js"
 import Char from "./char.js"
