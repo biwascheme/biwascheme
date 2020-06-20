@@ -58,38 +58,39 @@ function js_should_raise_error(fun) {
   }
 }
 
-var Set = BiwaScheme.Set;
+var BiwaSet;
 describe('Set', {
   'before each' : function(){
-    s123 = new Set(1,2,3);
-    s345 = new Set(3,4,5);
-    s6 = new Set(6);
-    s1_6 = new Set(1,2,3,4,5,6);
+    BiwaSet = BiwaScheme.Set;
+    s123 = new BiwaSet(1,2,3);
+    s345 = new BiwaSet(3,4,5);
+    s6 = new BiwaSet(6);
+    s1_6 = new BiwaSet(1,2,3,4,5,6);
   },
   'initialize, equals' : function(){
-    expect( s123.equals(new Set(1,2,3)) ).should_be_true();
-    expect( s123.equals(new Set(1,2,3)) ).should_be_true(); //s1 should not destructed
+    expect( s123.equals(new BiwaSet(1,2,3)) ).should_be_true();
+    expect( s123.equals(new BiwaSet(1,2,3)) ).should_be_true(); //s1 should not destructed
   },
   'set_cons' : function(){
-    expect( s123.set_cons(4).equals(new Set(1,2,3,4)) ).should_be_true();
+    expect( s123.set_cons(4).equals(new BiwaSet(1,2,3,4)) ).should_be_true();
   },
   'set_union' : function(){
     expect( s123.set_union(s345, s6).equals(s1_6) ).should_be_true();
   },
   'set_intersect' : function(){
-    expect( s123.set_intersect(s345).equals(new Set(3)) ).should_be_true();
-    expect( s345.set_intersect(s123).equals(new Set(3)) ).should_be_true();
+    expect( s123.set_intersect(s345).equals(new BiwaSet(3)) ).should_be_true();
+    expect( s345.set_intersect(s123).equals(new BiwaSet(3)) ).should_be_true();
   },
   'set_minus' : function(){
-    expect( s1_6.set_minus(s123).equals(new Set(4,5,6)) ).should_be_true();
-    expect( s1_6.equals(new Set(1,2,3,4,5,6)) ).should_be_true();
+    expect( s1_6.set_minus(s123).equals(new BiwaSet(4,5,6)) ).should_be_true();
+    expect( s1_6.equals(new BiwaSet(1,2,3,4,5,6)) ).should_be_true();
   },
   'add' : function(){
-    var s = new Set(1,2,3);
+    var s = new BiwaSet(1,2,3);
     s.add(4);
-    expect( s.equals(new Set(1,2,3,4)) ).should_be_true();
+    expect( s.equals(new BiwaSet(1,2,3,4)) ).should_be_true();
     s.add(4);
-    expect( s.equals(new Set(1,2,3,4)) ).should_be_true();
+    expect( s.equals(new BiwaSet(1,2,3,4)) ).should_be_true();
   },
   'member' : function(){
     expect( s123.member(1) ).should_be_true();
