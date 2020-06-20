@@ -9,19 +9,19 @@ export default {
   ],
   input: "src/main.js",
   output: [
-//    {
-//      file: "release/biwascheme.js",
-//      format: "iife",
-//      name: "BiwaScheme",
-//      strict: false,
-//    },
-//    {
-//      file: "release/biwascheme-min.js",
-//      format: "iife",
-//      name: "BiwaScheme",
-//      strict: false,
-//      plugins: [terser()],
-//    },
+    {
+      file: "release/biwascheme.js",
+      format: "iife",
+      name: "BiwaScheme",
+      strict: false,
+    },
+    {
+      file: "release/biwascheme-min.js",
+      format: "iife",
+      name: "BiwaScheme",
+      strict: false,
+      plugins: [terser()],
+    },
     {
       file: "release/node_biwascheme.js",
       format: "cjs",
