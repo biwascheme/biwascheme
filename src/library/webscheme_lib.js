@@ -1,4 +1,5 @@
-import _ from "../deps/underscore-1.10.2-esm.js"
+import $ from "../deps/jquery-3.5.1-esm.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,

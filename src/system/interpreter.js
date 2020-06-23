@@ -1,4 +1,4 @@
-import _ from "../deps/underscore-1.10.2-esm.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { TopEnv, CoreEnv, nil, undef, max_trace_size } from "../header.js"
 import { isSymbol, isClosure, makeClosure } from "./_types.js"
 import { to_write, inspect } from "./_writer.js"
@@ -88,8 +88,8 @@ const Interpreter = Class.create({
   //v: stack array to restore
   //ret: lenght of restored stack
   restore_stack: function(stuff){
-    v = stuff.stack;
-    var s = v.length;
+    const v = stuff.stack;
+    const s = v.length;
     for(var i=0; i<s; i++){
       this.stack[i] = v[i];
     }

@@ -1,4 +1,4 @@
-import _ from "../deps/underscore-1.10.2-esm.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { undef } from "../header.js";
 import Platform from "../platforms/platform.js"
 import { define_libfunc, assert_string } from "./infra.js"; 

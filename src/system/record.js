@@ -1,4 +1,4 @@
-import _ from "../deps/underscore-1.10.2-esm.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { to_write } from "./_writer.js"
 import { make_simple_assert } from "./assert.js"
 import Call from "./call.js"
@@ -85,7 +85,7 @@ Record.RTD = Class.create({
   field_name: function(k){
     var names = this._field_names();
 
-    for(par = this.parent_rtd; par; par = par.parent_rtd){
+    for(var par = this.parent_rtd; par; par = par.parent_rtd){
       names = par._field_names() + names;
     }
 
