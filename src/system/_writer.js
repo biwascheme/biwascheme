@@ -13,6 +13,11 @@ import { Pair } from "./pair.js"
 // write
 //
 
+const truncate = function(str, length) {
+  const truncateStr = '...';
+  return str.length > length ? str.slice(0, length) + truncateStr : str;
+};
+
 const to_write = function(obj){
   if(obj === undefined)
     return "undefined";
@@ -20,7 +25,7 @@ const to_write = function(obj){
     return "null";
   else if(_.isFunction(obj))
     return "#<Function "+(obj.fname ? obj.fname :
-                          obj.toSource ? _.str.truncate(obj.toSource(), 40) :
+                          obj.toSource ? truncate(obj.toSource(), 40) :
                           "")+">";
   else if(_.isString(obj))
     return '"' +
