@@ -1,6 +1,5 @@
 var _ = require('underscore');
 var _$1 = require('underscore');
-_.str = require('underscore.string');
 
 var Console = {};
 
