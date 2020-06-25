@@ -1,9 +1,14 @@
 import { terser } from "rollup-plugin-terser"
+import { VERSION } from "./src/version.js";
+
+const banner = `/*
+ * BiwaScheme ${VERSION} - R6RS/R7RS Scheme in JavaScript
+ *
+ * Copyright (c) 2007-${(new Date).getFullYear()} Yutaka HARA (http://www.biwascheme.org/)
+ * Licensed under the MIT license.
+ */`
 
 export default {
-  plugins: [
-      terser({ output: { comments: /@license/i } }),
-  ],
   input: "src/main-browser.js",
   output: [
     {
@@ -11,13 +16,15 @@ export default {
       format: "iife",
       name: "BiwaScheme",
       strict: false,
+      banner: banner,
     },
     {
       file: "release/biwascheme-min.js",
       format: "iife",
       name: "BiwaScheme",
       strict: false,
-      plugins: [terser()],
+      banner: banner,
+      plugins: [terser({output: {comments: /Copyright/}})],
     },
   ]
 }

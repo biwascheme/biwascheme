@@ -1,4 +1,5 @@
 import { TopEnv, CoreEnv, nil, undef, debug, max_trace_size, suppress_deprecation_warning } from "./header.js";
+import { VERSION, GitCommit } from "./version.js";
 
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
          isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
@@ -34,6 +35,7 @@ import { define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notati
 
 export default {
   TopEnv, CoreEnv, nil, undef, debug, max_trace_size, suppress_deprecation_warning,
+  Version: VERSION, VERSION, GitCommit,
   isNil, isUndef, isBoolean, isString, isChar, isSymbol, isPort, isPair, isList,
     isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
     isSelfEvaluating, eq, eqv, equal, lt,
