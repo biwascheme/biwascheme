@@ -24,14 +24,6 @@ const run_file = function(filename, encoding/*optional*/) {
 };
 
 const node_setup = (BiwaScheme) => {
-  Console.puts = function(str, no_newline) {
-    BiwaScheme.Port.current_output.put_string(str + (no_newline ? "" : "\n"))
-  };
-
-  Console.p = function() {
-    [].slice.call(arguments).forEach(BiwaScheme.Port.current_output.put_string);
-  };
-
   // (load scm-path)
   BiwaScheme.define_libfunc("load", 1, 1, function(ar) {
     var path = ar[0];
@@ -60,28 +52,6 @@ const node_setup = (BiwaScheme) => {
 
     return require(fullpath);
   });
-
-  BiwaScheme.Port.current_error =
-  BiwaScheme.Port.current_output = new BiwaScheme.Port.CustomOutput(
-    function (str) {
-      process.stdout.write(str)
-    }
-  );
-
-  var readline = require('readline');
-  BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(
-    function (callback) {
-      var rl = readline.createInterface({
-        input: process.stdin
-      });
-      rl.on('line', function (line) {
-        rl.close();
-        callback(line);
-      });
-      rl.setPrompt('', 0);
-      rl.prompt()
-    }
-  );
 };
 
 export {run, run_file, node_setup};
