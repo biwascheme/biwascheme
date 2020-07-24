@@ -67,3 +67,35 @@ define_libfunc("get-environment-variables", 0, 0, function(ar){
   return js_obj_to_alist(node.process.env);
 });
 
+//
+// Extras
+//
+
+// (load scm-path)
+define_libfunc("load", 1, 1, function(ar) {
+  var path = ar[0];
+  assert_string(path);
+
+  var fullpath;
+  if (path[0] == "/" || /^\w:/.test(path))
+    fullpath = path;
+  else
+    fullpath = process.cwd() + "/" + path;
+
+  var code = require("fs").readFileSync(fullpath, "utf8");
+  return BiwaScheme.run(code);
+});
+
+// (js-load js-path)
+define_libfunc("js-load", 1, 1, function(ar) {
+  var path = ar[0];
+  assert_string(path);
+
+  var fullpath;
+  if (path[0] == "/" || /^\w:/.test(path))
+    fullpath = path;
+  else
+    fullpath = process.cwd() + "/" + path;
+
+  return require(fullpath);
+});
