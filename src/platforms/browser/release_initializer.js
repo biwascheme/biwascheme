@@ -1,9 +1,7 @@
 //
 // release_initializer.js - read user's program and eval it (if it exists)
 //
-// This file is put on the end the lib/biwascheme.js.
-//
-(function(){ //local namespace
+const execute_user_program = function() {
   var dumper = null;
   if ($("#biwascheme-debugger")[0]) {
     dumper = new BiwaScheme.Dumper($("#biwascheme-debugger")[0]);
@@ -43,4 +41,6 @@
       run($(this).html());
     });
   });
-})();
+};
+
+export { execute_user_program }

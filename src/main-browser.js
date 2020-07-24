@@ -15,3 +15,6 @@ BiwaScheme.Port.current_error = current_error;
 // TODO: ideally this should just be `window.BiwaScheme = BiwaScheme` but it will break test/spec.html (grep with `register_tests`)
 window.BiwaScheme = window.BiwaScheme || {};
 Object.assign(window.BiwaScheme, BiwaScheme);
+
+import { execute_user_program } from "./platforms/browser/release_initializer.js"
+execute_user_program();
