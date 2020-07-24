@@ -1,5 +1,4 @@
 import prettier from "rollup-plugin-prettier"
-import fs from "fs"
 
 export default {
   plugins: [
