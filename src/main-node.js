@@ -3,10 +3,9 @@ BiwaScheme.on_node = true;
 
 import "./platforms/node/node_functions.js"
 
-import { run, run_file, node_setup } from "./platforms/node/module_postamble.js"
+import { run, run_file } from "./platforms/node/module_postamble.js"
 BiwaScheme.run = run;
 BiwaScheme.run_file = run_file;
-node_setup(BiwaScheme);
 
 import Console from "./platforms/node/console.js"
 BiwaScheme.Console = Console;

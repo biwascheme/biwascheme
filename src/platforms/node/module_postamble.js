@@ -23,7 +23,4 @@ const run_file = function(filename, encoding/*optional*/) {
   return run(src);
 };
 
-const node_setup = (BiwaScheme) => {
-};
-
-export {run, run_file, node_setup};
+export { run, run_file };
