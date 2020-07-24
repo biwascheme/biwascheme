@@ -3,6 +3,7 @@ import { undef } from "../../header.js";
 import { define_libfunc, assert_string } from "../../library/infra.js"; 
 import { BiwaError } from "../../system/error.js"
 import { List, js_obj_to_alist } from "../../system/pair.js"
+import { run } from "./run.js"
 //
 // Library functions only work on Node.js
 // see also: test/node_functions.js
@@ -83,7 +84,7 @@ define_libfunc("load", 1, 1, function(ar) {
     fullpath = process.cwd() + "/" + path;
 
   var code = require("fs").readFileSync(fullpath, "utf8");
-  return BiwaScheme.run(code);
+  return run(code);
 });
 
 // (js-load js-path)
