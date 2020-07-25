@@ -11,6 +11,7 @@ import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js
 import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
 import Call from "../system/call.js"
 import Compiler from "../system/compiler.js"
+import Console from "../system/console.js"
 import Interpreter from "../system/interpreter.js"
 import { Port } from "../system/port.js"
 import Syntax from "../system/syntax.js"

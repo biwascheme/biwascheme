@@ -1,7 +1,7 @@
 import BiwaScheme from "./main.js";
 BiwaScheme.on_node = false;
 
-import Console from "./platforms/node/console.js"
+import Console from "./platforms/browser/console.js"
 BiwaScheme.Console = Console;
 
 import { current_input, current_output, current_error } from "./platforms/browser/default_ports.js"
