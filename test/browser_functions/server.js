@@ -16,9 +16,9 @@ app.get('/fs/spec.js', function(req, res){
   res.send(fs.readFileSync("spec.js"))
 });
 
-app.get('/fs/biwascheme-min.js', function(req, res){
+app.get('/fs/release-biwascheme.js', function(req, res){
   res.set('Content-Type', 'text/javascript');
-  res.send(fs.readFileSync("../../release/biwascheme-min.js"));
+  res.send(fs.readFileSync("../../release/biwascheme.js"));
 });
 
 // GET /greet (name)
