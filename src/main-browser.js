@@ -16,6 +16,9 @@ BiwaScheme.Port.current_error = current_error;
 import { jsonp_receiver } from "./library/webscheme_lib.js"
 BiwaScheme.jsonp_receiver = jsonp_receiver;
 
+import Dumper from "./platforms/browser/dumper.js"
+BiwaScheme.Dumper = Dumper;
+
 // TODO: ideally this should just be `window.BiwaScheme = BiwaScheme` but it will break test/spec.html (grep with `register_tests`)
 window.BiwaScheme = window.BiwaScheme || {};
 Object.assign(window.BiwaScheme, BiwaScheme);
