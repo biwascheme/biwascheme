@@ -166,4 +166,17 @@ const js_obj_to_alist = function(obj) {
   return alist;
 };
 
-export { Pair, List, array_to_list, deep_array_to_list, Cons, js_obj_to_alist };
+const alist_to_js_obj = function(alist) {
+  if (alist === nil) {
+    return {} ;
+  }
+  var obj = {};
+  alist.foreach(function(item){
+    obj[item.car] = item.cdr;
+  });
+  return obj;
+};
+
+
+export { Pair, List, array_to_list, deep_array_to_list, Cons,
+         js_obj_to_alist, alist_to_js_obj };
