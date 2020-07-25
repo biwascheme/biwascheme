@@ -98,7 +98,7 @@ import { BiwaSymbol, Sym } from "../system/symbol.js"
                 // closure -> JavaScript funciton
                 return js_closure(arg, intp);
               }
-              else if(BiwaSchemisList(arg)){
+              else if(isList(arg)){
                 // alist -> JavaScript Object
                 var o = {};
                 arg.foreach(function(pair){
