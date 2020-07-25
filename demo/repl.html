@@ -87,14 +87,14 @@
     </td></tr></table>
   </div>
 
-<script type="text/javascript" src="../src/development_initializer.js"></script>
-<script type="text/javascript">
+<script type="module" src="../src/main-browser.js"></script>
+<script type="module">
 var on_error = function(e){
   BiwaScheme.Port.current_error.put_string(e.message);
   throw(e);
 };
 var biwascheme = new BiwaScheme.Interpreter(on_error);
-function bs_eval(){
+window.bs_eval = function(){
   $("#bs-console").empty();
   var str = $("#bs-input").val();
 

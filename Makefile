@@ -63,7 +63,7 @@ release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
 release/biwascheme-min.js: release/biwascheme.js
 	rollup -c
 
-release/node_biwascheme.js: src/platforms/node/module_postamble.js
+release/node_biwascheme.js:
 	rollup -c rollup-node.config.js
 
 #

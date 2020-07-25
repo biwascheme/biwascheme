@@ -1,9 +1,11 @@
+import * as _ from "../../deps/underscore-1.10.2-esm.js"
+import Class from "../../system/class.js"
+import { inspect, write_ss, truncate } from "../../system/_writer.js"
 //
 // Dumper - graphical state dumper
 //
-with(BiwaScheme) {
 
-BiwaScheme.Dumper = BiwaScheme.Class.create({
+const Dumper = Class.create({
   initialize: function(dumparea){
     this.dumparea = dumparea || $("#dumparea")[0] || null;
     this.reset();
@@ -81,7 +83,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
 
   stack_max_len: 80,
   dump_stack: function(stk, size){
-    if(stk === null || stk === undefined) return BiwaScheme.inspect(stk);
+    if(stk === null || stk === undefined) return inspect(stk);
     var s = "<table>";
 
     // show the 'physical' stack top
@@ -92,14 +94,14 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       var l = stk.length - 1;
       s += "<tr><td class='dump_dead'>[" + l + "]</td>" +
            "<td class='dump_dead'>" + 
-           _.str.truncate(this.dump_obj(stk[l]), this.stack_max_len) +
+           truncate(this.dump_obj(stk[l]), this.stack_max_len) +
            "</td></tr>";
     }
 
     // show the element in the stack
     for(var i=size-1; i >= 0; i--){
       s += "<tr><td class='dump_stknum'>[" + i + "]</td>" +
-           "<td>" + _.str.truncate(this.dump_obj(stk[i]), this.stack_max_len) +
+           "<td>" + truncate(this.dump_obj(stk[i]), this.stack_max_len) +
            "</td></tr>";
     }
     return s + "</table>";
@@ -132,7 +134,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",
       this.dump_obj(c), " <span class='dump_closure'>body :</span> ",
-      _.str.truncate(this.dump_obj(body), 100)
+      truncate(this.dump_obj(body), 100)
     ].join("");
   },
 
@@ -178,7 +180,7 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       s += "</table>";
     }
     else{
-      s = _.escape(BiwaScheme.inspect(obj)) + "<br>\n";
+      s = _.escape(inspect(obj)) + "<br>\n";
     }
     var dumpitem = $("<div/>", { class: ("dump" + this.n_dumps) });
     dumpitem.html(s);
@@ -240,8 +242,9 @@ BiwaScheme.Dumper = BiwaScheme.Class.create({
       this.dump_fold();
   }
 });
-} // with(BiwaScheme);
 
-BiwaScheme.Dumper.toggle_fold = function(n){
+Dumper.toggle_fold = function(n){
   $(".fold"+n, this.dumparea).toggle();
 };
+
+export default Dumper;

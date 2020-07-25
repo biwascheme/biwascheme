@@ -207,4 +207,4 @@ const inspect = function(object, opts) {
 };
 
 export { to_write, to_display, write_ss, to_write_ss, inspect,
-         reduce_cyclic_info, find_cyclic };
+         reduce_cyclic_info, find_cyclic, truncate };
