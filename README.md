@@ -1,5 +1,4 @@
-BiwaScheme
-==========
+# BiwaScheme
 
 [![biwascheme logo](http://www.biwascheme.org/website/images/biwascheme_logo.png)](http://www.biwascheme.org)
 
@@ -7,32 +6,17 @@ BiwaScheme is a Scheme interpreter written in JavaScript.
 
 Works with web browsers (including mobile devices) and Node.js.
 
-Demos
------
+## Demos
 
 see [http://www.biwascheme.org/](http://www.biwascheme.org/)
 
-
-Conformance
-===========
-
-BiwaScheme [implements](https://www.biwascheme.org/doc/features.html) most of the features of [R7RS small](https://small.r7rs.org/), including first-class continuation and tail call optimization.
-
-Major lacking features are:
-
-- syntax-rules
-- Exceptions
-- Library system
-
-Download
-========
+## Download
 
 * http://www.biwascheme.org/
 
 (Or you can just copy the file from [`./release`](release/).)
 
-How to use
-==========
+## How to use
 
 Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
 
@@ -52,8 +36,7 @@ Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
 </html>
 ```
 
-How to use with node.js to run a biwa script
---------------------------------------------
+### How to use with node.js to run a biwa script
 
 1. $ npm install biwascheme
 2. create a file a.scm:
@@ -63,121 +46,49 @@ How to use with node.js to run a biwa script
 
 3. $ biwas a.scm
 
-How to use from inside node.js as a module
-------------------------------------------
+### How to use from inside node.js as a module
 
 1. $ npm install biwascheme
-2. create a file server.js:
+2. create a file a.js:
 
     var BiwaScheme = require("biwascheme");
-    BiwaScheme.run("(+ 1 2)");
-    // or
-    // BiwaScheme.run_file("a.scm");
+    BiwaScheme.run("(+ 1 2)"); // or BiwaScheme.run_file("a.scm");
 
-3. $ node server.js
+3. $ node a.js
 
-Files
-=====
+## Conformance
 
-* release/
-  + the following files are generated here with $ make
-    - biwascheme.js
-    - biwascheme-min.js
-    - node_biwascheme.js
-* demo/
-  + Demos
-* src/
-  + deps/
-     - Dependencies (jQuery, underscore)
-  + system/
-     - Source code of the interpreter
-  + library/
-     - Built-in library functions
-  + platform/
-     - Platform dependent code (browser, node, etc.)
-* test/
-  + Unit tests
-* tuplespace/
-  + (experimental) TupleSpace implemented in Scheme
-* web/
-  + HTMLs and CSS of www.biwascheme.org
-* local_website.js
-  + web server
+BiwaScheme [implements](https://www.biwascheme.org/doc/features.html) most of the features of [R7RS small](https://small.r7rs.org/), including first-class continuation and tail call optimization.
 
-Building biwascheme.js
-----------------------
+Major lacking features are:
 
-Prerequisites:
+- syntax-rules
+- Exceptions
+- Library system
 
-* make
-* sed
-* node, npm, npx (Node.js)
+There are two limitations that arise from JavaScript. These will not be fixed (it's technically possible to fix but will be very unefficient.)
 
-Make compiles src/\*.js into release/biwascheme.js.
+- Strings are immutable
+- Integers are not distinguished from float
 
-    $ npm install
-    $ make
+## Building biwascheme.js
 
-Links
-=====
+See doc/dev/build.md
+
+## Links
 
 - [Repository](https://github.com/biwascheme/biwascheme)
 - [Issues](https://github.com/biwascheme/biwascheme/issues)
 - [Mailing-list](http://groups.google.co.jp/group/biwascheme)
 - [Mailing-list(Japanese)](http://groups.google.co.jp/group/biwascheme-ja)
 
-Development memos
-=================
-
-How to add a new file
----------------------
-
-* edit Makefile
-* edit src/development_loader.js
-
-How to release
---------------
-
-(moved to doc/dev/release.md)
-
-How to upgrade dependencies
----------------------------
-
-jQuery:
-* update src/deps/jquery.js
-
-underscore:
-* update src/deps/underscore.js
-* update package.json, package-lock.json
-
-underscore.string:
-* update src/deps/underscore.string.js
-* update package.json, package-lock.json
-
-Website
--------
-
-The source of www.biwascheme.org is in `./website`.
-
-### Run local website
-
-You can run the website locally with Node and express.
-
-    $ make
-    $ make website
-    $ npm install
-    $ node local_website.js
-    $ open http://localhost:7001
-
-License
-=======
+## License
 
 MIT-LICENSE
 
 BiwaScheme logo by [@jcubic](https://github.com/jcubic): [Creative Commons Attribution 3.0](http://creativecommons.org/licenses/by/3.0/)
 
-Acknowledgements
-================
+## Acknowledgements
 
 * Kent Dyvbig, Three implementation models for scheme
   * http://www.cs.indiana.edu/~dyb/pubs/3imp.pdf
@@ -188,8 +99,7 @@ Acknowledgements
 * ExplorerCanvas (demo/excanvas.js)
   * http://excanvas.sourceforge.net/
 
-Contact
-=======
+## Contact
 
 https://github.com/biwascheme/biwascheme
 

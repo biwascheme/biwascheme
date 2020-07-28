@@ -15,7 +15,8 @@
   <body>
     <div id="bs-console">
     </div>
-    <script src="biwascheme.js">
+    <script src="biwascheme.js"></script>
+    <script type="text/biwascheme">
       (print "Hello, world!")
       (print (current-date))
       (console-log "ok.")
@@ -23,8 +24,6 @@
   </body>
 </html>
 ```
-
-NOTE: The .js file name must be `biwascheme.js` or `biwascheme-min.js` to make the Scheme program to be loaded.
 
 ### Node.js
 

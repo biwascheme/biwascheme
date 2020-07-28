@@ -15,5 +15,6 @@
 
 ## Development docs
 
-* [dev/website](/doc/dev/website.html)
-* [dev/release](/doc/dev/release.html)
+* [How to build BiwaScheme](/doc/dev/build.html)
+* [How to update/preview website](/doc/dev/website.html)
+* [How to release a new version](/doc/dev/release.html)

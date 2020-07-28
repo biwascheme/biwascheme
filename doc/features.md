@@ -7,6 +7,13 @@
 
 See [doc/reference](/doc/reference.html) for full list of functions.
 
+### Limitation
+
+There are two limitations that arise from JavaScript. These will not be fixed (it's technically possible to fix but will be very unefficient.)
+
+- Strings are immutable
+- Integers are not distinguished from float
+
 ### Macro
 
 BiwaScheme does not have `syntax-rules` or `syntax-case`, but has [`define-macro`](/doc/reference.html#macro).
