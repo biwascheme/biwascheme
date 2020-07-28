@@ -1,3 +1,10 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import { to_write } from "./_writer.js"
+import { eq, eqv } from "./_types.js"
+import Class from "./class.js"
+import { Bug } from "./error.js"
+import { BiwaSymbol } from "./symbol.js"
+
 //
 // Hashtable
 //
@@ -6,7 +13,7 @@
 //  * R6RS hashtable needs its own hash function
 // so some hacks are needed.
 
-BiwaScheme.Hashtable = BiwaScheme.Class.create({
+const Hashtable = Class.create({
   initialize: function(_hash_proc, _equiv_proc, mutable){
     this.mutable = (mutable === undefined) ? true :
                    mutable ? true : false;
@@ -41,7 +48,7 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
     var pairs = this.pairs_of[hashed];
     var i = pairs.indexOf(pair);
     if (i == -1){
-      throw new BiwaScheme.Bug("Hashtable#remove_pair: pair not found!");
+      throw new Bug("Hashtable#remove_pair: pair not found!");
     }
     else {
       pairs.splice(i, 1); //remove 1 element from i-th index
@@ -49,7 +56,7 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
   },
 
   create_copy: function(mutable){
-    var copy = new BiwaScheme.Hashtable(this.hash_proc, this.equiv_proc,
+    var copy = new Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
     _.each(_.keys(this.pairs_of), _.bind(function(hashed){
@@ -102,32 +109,34 @@ BiwaScheme.Hashtable = BiwaScheme.Class.create({
 // Hash functions
 //
 
-BiwaScheme.Hashtable.equal_hash = function(ar){
-  return BiwaScheme.to_write(ar[0]);
+Hashtable.equal_hash = function(ar){
+  return to_write(ar[0]);
 };
-BiwaScheme.Hashtable.eq_hash = BiwaScheme.Hashtable.equal_hash;
-BiwaScheme.Hashtable.eqv_hash = BiwaScheme.Hashtable.equal_hash;
+Hashtable.eq_hash = Hashtable.equal_hash;
+Hashtable.eqv_hash = Hashtable.equal_hash;
 
-BiwaScheme.Hashtable.string_hash = function(ar){
+Hashtable.string_hash = function(ar){
   return ar[0];
 };
 
-BiwaScheme.Hashtable.string_ci_hash = function(ar){
+Hashtable.string_ci_hash = function(ar){
   return _.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
 };
 
-BiwaScheme.Hashtable.symbol_hash = function(ar){
-  return (ar[0] instanceof BiwaScheme.Symbol) ? ar[0].name : ar[0];
+Hashtable.symbol_hash = function(ar){
+  return (ar[0] instanceof BiwaSymbol) ? ar[0].name : ar[0];
 };
 
 //
 // Equivalence functions
 //
 
-BiwaScheme.Hashtable.eq_equiv = function(ar){
-  return BiwaScheme.eq(ar[0], ar[1]);
+Hashtable.eq_equiv = function(ar){
+  return eq(ar[0], ar[1]);
 };
 
-BiwaScheme.Hashtable.eqv_equiv = function(ar){
-  return BiwaScheme.eqv(ar[0], ar[1]);
+Hashtable.eqv_equiv = function(ar){
+  return eqv(ar[0], ar[1]);
 };
+
+export default Hashtable;

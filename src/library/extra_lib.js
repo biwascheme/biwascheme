@@ -1,18 +1,34 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import { TopEnv, nil, undef } from "../header.js";
+import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
+         assert_number, assert_integer, assert_real, assert_between, assert_string,
+         assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+         assert_vector,
+         assert_function, assert_closure, assert_procedure, assert_date } from "./infra.js"; 
+import { makeClosure } from "../system/_types.js"
+import { to_write, to_display, to_write_ss, inspect } from "../system/_writer.js"
+import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js"
+import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
+import Call from "../system/call.js"
+import Compiler from "../system/compiler.js"
+import Console from "../system/console.js"
+import Interpreter from "../system/interpreter.js"
+import { Port } from "../system/port.js"
+import Syntax from "../system/syntax.js"
 
-if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   define_libfunc("html-escape", 1, 1, function(ar){
     assert_string(ar[0]);
     return _.escape(ar[0]);
   });
-  BiwaScheme.inspect_objs = function(objs){
-    return _.map(objs, BiwaScheme.inspect).join(", ");
+  const inspect_objs = function(objs){
+    return _.map(objs, inspect).join(", ");
   };
   define_libfunc("inspect", 1, null, function(ar){
-    return BiwaScheme.inspect_objs(ar);
+    return inspect_objs(ar);
   });
   define_libfunc("inspect!", 1, null, function(ar){
-    Console.puts(BiwaScheme.inspect_objs(ar));
-    return BiwaScheme.undef;
+    Console.puts(inspect_objs(ar));
+    return undef;
   });
 
   //
@@ -23,7 +39,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // Object -> alist
   // (number, boolean, string, 
   //
-  BiwaScheme.json2sexp = function(json){
+  const json2sexp = function(json){
     switch(true){
     case _.isNumber(json) ||
          _.isString(json) ||
@@ -39,7 +55,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       }
       return ls;
     default:
-      throw new Error("json->sexp: detected invalid value for json: "+BiwaScheme.inspect(json));
+      throw new Error("json->sexp: detected invalid value for json: "+inspect(json));
     }
     throw new Bug("must not happen");
   }
@@ -160,7 +176,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var variable = spec.car,
         limit = spec.cdr.car,
         result = spec.cdr.cdr.car;
-    var tlimit = BiwaScheme.gensym();
+    var tlimit = gensym();
 
     var do_vars = deep_array_to_list([[tlimit, limit],
                                       [variable, 0, [Sym("+"), variable, 1]]]);
@@ -178,7 +194,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   // returns sorted array
   var sort_with_comp = function(ary, proc, intp){
     return ary.sort(function(a, b){
-        var intp2 = new BiwaScheme.Interpreter(intp);
+        var intp2 = new Interpreter(intp);
         return intp2.invoke_closure(proc, [a, b]);
       });
   };
@@ -200,7 +216,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_vector(ar[1]);
 
     sort_with_comp(ar[1], ar[0], intp);
-    return BiwaScheme.undef;
+    return undef;
   });
   
   // macros
@@ -242,7 +258,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     var opc = Compiler.compile(lambda);
     if(opc[2] != 0)
       throw new Bug("you cannot use free variables in macro expander (or define-macro must be on toplevel)")
-    var cls = BiwaScheme.makeClosure([opc[3]]);
+    var cls = makeClosure([opc[3]]);
 
     TopEnv[name.name] = new Syntax(name.name, function(sexp){
       var given_args = sexp.to_array();
@@ -255,12 +271,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       return result;
     });
 
-    return BiwaScheme.undef;
+    return undef;
   })
 
   var macroexpand_1 = function(x){
     if(x instanceof Pair){
-      if(x.car instanceof Symbol && TopEnv[x.car.name] instanceof Syntax){
+      if(x.car instanceof BiwaSymbol && TopEnv[x.car.name] instanceof Syntax){
         var transformer = TopEnv[x.car.name];
         x = transformer.transform(x);
       }
@@ -270,7 +286,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     return x;
   }
   define_syntax("%macroexpand", function(x){
-    var expanded = BiwaScheme.Interpreter.expand(x.cdr.car);
+    var expanded = Interpreter.expand(x.cdr.car);
     return List(Sym("quote"), expanded);
   });
   define_syntax("%macroexpand-1", function(x){
@@ -279,14 +295,14 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   });
 
   define_libfunc("macroexpand", 1, 1, function(ar){
-    return BiwaScheme.Interpreter.expand(ar[0]);
+    return Interpreter.expand(ar[0]);
   });
   define_libfunc("macroexpand-1", 1, 1, function(ar){
     return macroexpand_1(ar[0]);
   });
 
   define_libfunc("gensym", 0, 0, function(ar){
-    return BiwaScheme.gensym();
+    return gensym();
   });
   
   // i/o
@@ -296,7 +312,7 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
       Console.puts(to_display(item), true);
     })
     Console.puts(""); //newline
-    return BiwaScheme.undef;
+    return undef;
   })
   define_libfunc("write-to-string", 1, 1, function(ar){
     return to_write(ar[0]);
@@ -316,12 +332,12 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
     assert_port(port);
     assert_procedure(proc);
 
-    var original_port = BiwaScheme.Port.current_output;
-    BiwaScheme.Port.current_output = port
+    var original_port = Port.current_output;
+    Port.current_output = port
 
     return new Call(proc, [port], function(ar){
       port.close();
-      BiwaScheme.Port.current_output = original_port;
+      Port.current_output = original_port;
 
       return ar[0];
     });
@@ -414,7 +430,3 @@ if( typeof(BiwaScheme)!='object' ) BiwaScheme={}; with(BiwaScheme) {
   //Macro: rxmatch-if match-expr (var ...) then-form else-form 
   //Macro: rxmatch-cond clause ... 
   //Macro: rxmatch-case string-expr clause ... 
-
-}
-
-

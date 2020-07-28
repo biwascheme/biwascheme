@@ -1,3 +1,11 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import { to_write } from "./_writer.js"
+import { make_simple_assert } from "./assert.js"
+import Call from "./call.js"
+import Class from "./class.js"
+import { Sym } from "./symbol.js"
+import { assert_procedure } from "../library/infra.js"
+
 //
 // R6RS Records
 // http://www.r6rs.org/final/html/r6rs-lib/r6rs-lib-Z-H-7.html#node_chap_6
@@ -9,9 +17,9 @@
 // Record 
 // represents each instance of record type
 //
-BiwaScheme.Record = BiwaScheme.Class.create({
+const Record = Class.create({
   initialize: function(rtd, values){
-    BiwaScheme.assert_record_td(rtd, "new Record");
+    assert_record_td(rtd, "new Record");
 
     this.rtd = rtd;
     this.fields = values;
@@ -26,29 +34,29 @@ BiwaScheme.Record = BiwaScheme.Class.create({
   },
 
   toString: function(){
-    var contents = BiwaScheme.to_write(this.fields);
+    var contents = to_write(this.fields);
     return "#<Record "+this.rtd.name+" "+contents+">";
   }
 });
 
-BiwaScheme.isRecord = function(o){
-  return (o instanceof BiwaScheme.Record);
+const isRecord = function(o){
+  return (o instanceof Record);
 };
 
 // Defined record types
-BiwaScheme.Record._DefinedTypes = {};
+Record._DefinedTypes = {};
 
-BiwaScheme.Record.define_type = function(name_str, rtd, cd){
-  return BiwaScheme.Record._DefinedTypes[name_str] = {rtd: rtd, cd: cd};
+Record.define_type = function(name_str, rtd, cd){
+  return Record._DefinedTypes[name_str] = {rtd: rtd, cd: cd};
 };
-BiwaScheme.Record.get_type = function(name_str){
-  return BiwaScheme.Record._DefinedTypes[name_str];
+Record.get_type = function(name_str){
+  return Record._DefinedTypes[name_str];
 };
 
 //
 // RTD (Record type descriptor)
 //
-BiwaScheme.Record.RTD = BiwaScheme.Class.create({
+Record.RTD = Class.create({
   //                   Symbol RTD        Symbol Bool  Bool    Array
   initialize: function(name, parent_rtd, uid, sealed, opaque, fields){
     this.name = name;
@@ -77,7 +85,7 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   field_name: function(k){
     var names = this._field_names();
 
-    for(par = this.parent_rtd; par; par = par.parent_rtd){
+    for(var par = this.parent_rtd; par; par = par.parent_rtd){
       names = par._field_names() + names;
     }
 
@@ -90,7 +98,7 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   },
 
   _generate_new_uid: function(){
-    return BiwaScheme.Sym(_.uniqueId("__record_td_uid"));
+    return Sym(_.uniqueId("__record_td_uid"));
   },
 
   toString: function(){
@@ -98,15 +106,15 @@ BiwaScheme.Record.RTD = BiwaScheme.Class.create({
   }
 });
 
-BiwaScheme.Record.RTD.NongenerativeRecords = {};
-BiwaScheme.isRecordTD = function(o){
-  return (o instanceof BiwaScheme.Record.RTD);
+Record.RTD.NongenerativeRecords = {};
+const isRecordTD = function(o){
+  return (o instanceof Record.RTD);
 };
 
 //
 // CD (Record constructor descriptor)
 //
-BiwaScheme.Record.CD = BiwaScheme.Class.create({
+Record.CD = Class.create({
   initialize: function(rtd, parent_cd, protocol){
     this._check(rtd, parent_cd, protocol);
     this.rtd = rtd;
@@ -143,7 +151,7 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
     // called with `p' as an argument
     return function(ar){
       var p = ar[0];
-      BiwaScheme.assert_procedure(p, "_default_protocol/base");
+      assert_procedure(p, "_default_protocol/base");
       return p;
     };
   },
@@ -156,7 +164,7 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
     var rtd = this.rtd;
     return function(ar){
       var n = ar[0];
-      BiwaScheme.assert_procedure(n, "_default_protocol/n");
+      assert_procedure(n, "_default_protocol/n");
 
       var ctor = function(args){
         var my_argc = rtd.fields.length;
@@ -166,14 +174,14 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
         var my_values       = args.slice(ancestor_argc);
 
         // (n a b x y) => p
-        return new BiwaScheme.Call(n, ancestor_values, function(ar){
+        return new Call(n, ancestor_values, function(ar){
           var p = ar[0];
-          BiwaScheme.assert_procedure(p, "_default_protocol/p");
+          assert_procedure(p, "_default_protocol/p");
 
           // (p s t) => record
-          return new BiwaScheme.Call(p, my_values, function(ar){
+          return new Call(p, my_values, function(ar){
             var record = ar[0];
-            BiwaScheme.assert_record(record, "_default_protocol/result");
+            assert_record(record, "_default_protocol/result");
 
             return record;
           });
@@ -192,9 +200,9 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
                                            : this._make_p());
     arg_for_protocol = _.bind(arg_for_protocol, this);
 
-    return new BiwaScheme.Call(this.protocol, [arg_for_protocol], function(ar){
+    return new Call(this.protocol, [arg_for_protocol], function(ar){
       var ctor = ar[0];
-      BiwaScheme.assert_procedure(ctor, "record_constructor");
+      assert_procedure(ctor, "record_constructor");
       return ctor;
     });
   },
@@ -202,7 +210,7 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
   // Create the function `p' which is given to the protocol.
   _make_p: function(){
     return function(values){
-      return new BiwaScheme.Record(this.rtd, values);
+      return new Record(this.rtd, values);
       // TODO: check argc 
     };
   },
@@ -222,13 +230,13 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
           var values = [].concat(args_for_p[0]).concat(children_values)
           var parent_n = parent_cd._make_n(values, rtd);
 
-          return new BiwaScheme.Call(parent_cd.protocol, [parent_n], function(ar){
+          return new Call(parent_cd.protocol, [parent_n], function(ar){
             var ctor = ar[0];
-            BiwaScheme.assert_procedure(ctor, "_make_n");
+            assert_procedure(ctor, "_make_n");
 
-            return new BiwaScheme.Call(ctor, args_for_n, function(ar){
+            return new Call(ctor, args_for_n, function(ar){
               var record = ar[0];
-              BiwaScheme.assert_record(record);
+              assert_record(record);
               return record;
             });
           });
@@ -240,7 +248,7 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
     else{
       var n = function(my_values){
         var values = my_values.concat(children_values);
-        return new BiwaScheme.Record(rtd, values);
+        return new Record(rtd, values);
         // TODO: check argc 
       };
       return n;
@@ -248,6 +256,13 @@ BiwaScheme.Record.CD = BiwaScheme.Class.create({
   }
 });
 
-BiwaScheme.isRecordCD = function(o){
-  return (o instanceof BiwaScheme.Record.CD);
+const isRecordCD = function(o){
+  return (o instanceof Record.CD);
 };
+
+const assert_record = make_simple_assert("record", isRecord);
+const assert_record_td = make_simple_assert("record type descriptor", isRecordTD);
+const assert_record_cd = make_simple_assert("record constructor descriptor", isRecordCD);
+
+export { Record, isRecord, isRecordTD, isRecordCD,
+         assert_record, assert_record_td, assert_record_cd };

@@ -1,8 +1,11 @@
+import Class from "./class.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+
 //
 // Errors
 //
 
-BiwaScheme.Error = BiwaScheme.Class.create({
+const BiwaError = Class.create({
   initialize: function(msg){
     this.message = "Error: "+msg;
   },
@@ -11,16 +14,17 @@ BiwaScheme.Error = BiwaScheme.Class.create({
   }
 });
 
-BiwaScheme.Bug = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
+const Bug = Class.extend(new BiwaError(), {
   initialize: function(msg){
     this.message = "[BUG] "+msg;
   }
 });
 
 // currently used by "raise"
-BiwaScheme.UserError = BiwaScheme.Class.extend(new BiwaScheme.Error(), {
+const UserError = Class.extend(new BiwaError(), {
   initialize: function(msg){
     this.message = msg;
   }
 });
 
+export { BiwaError, Bug, UserError };

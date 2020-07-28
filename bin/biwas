@@ -78,6 +78,7 @@ function repl(){
       try{
         var result = BiwaScheme.run(code_to_evaluate);
       } catch (e) {
+        console.error(e);
         var result = erred;
       }
 

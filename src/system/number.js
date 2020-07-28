@@ -1,3 +1,6 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import Class from "./class.js"
+
 //
 // number.js
 //
@@ -5,7 +8,7 @@
 //
 // Complex
 //
-BiwaScheme.Complex = BiwaScheme.Class.create({
+const Complex = Class.create({
   initialize: function(real, imag){
     this.real = real;
     this.imag = imag;
@@ -20,10 +23,10 @@ BiwaScheme.Complex = BiwaScheme.Class.create({
     return this.imag == 0;
   },
   isRational: function() {
-    return this.imag == 0 && BiwaScheme.isRational(this.real);
+    return this.imag == 0 && isRational(this.real);
   },
   isInteger: function(){
-    return this.imag == 0 && BiwaScheme.isInteger(this.real);
+    return this.imag == 0 && isInteger(this.real);
   },
   toString: function(radix){
     if (this.real === 0 && this.imag === 0)
@@ -49,22 +52,22 @@ BiwaScheme.Complex = BiwaScheme.Class.create({
     return real+img;
   }
 })
-BiwaScheme.Complex.from_polar = function(r, theta){
+Complex.from_polar = function(r, theta){
   var real = r * Math.cos(theta);
   var imag = r * Math.sin(theta);
-  return new BiwaScheme.Complex(real, imag);
+  return new Complex(real, imag);
 }
-BiwaScheme.Complex.assure = function(num){
-  if(num instanceof BiwaScheme.Complex)
+Complex.assure = function(num){
+  if(num instanceof Complex)
     return num
   else
-    return new BiwaScheme.Complex(num, 0);
+    return new Complex(num, 0);
 }
 
 //
 // Rational (unfinished)
 //
-BiwaScheme.Rational = BiwaScheme.Class.create({
+const Rational = Class.create({
   initialize: function(numerator, denominator){
     this.numerator = numerator;
     this.denominator = denominator;
@@ -78,36 +81,38 @@ BiwaScheme.Rational = BiwaScheme.Class.create({
 //
 // Predicates
 //
-BiwaScheme.isNumber = function(x) {
-  return (x instanceof BiwaScheme.Complex)  ||
-         (x instanceof BiwaScheme.Rational) ||
+const isNumber = function(x) {
+  return (x instanceof Complex)  ||
+         (x instanceof Rational) ||
          (typeof(x) == 'number');
 };
-BiwaScheme.isComplex = BiwaScheme.isNumber;
-BiwaScheme.isReal = function(x) {
-  if (x instanceof BiwaScheme.Complex || x instanceof BiwaScheme.Rational) {
+const isComplex = isNumber;
+const isReal = function(x) {
+  if (x instanceof Complex || x instanceof Rational) {
     return x.isReal()
   }
   else {
     return (typeof(x) == 'number');
   }
 };
-BiwaScheme.isRational = function(x) {
-  if (x instanceof BiwaScheme.Complex) {
+const isRational = function(x) {
+  if (x instanceof Complex) {
     return x.isRational();
   }
-  else if (x instanceof BiwaScheme.Rational) {
+  else if (x instanceof Rational) {
     return true;
   }
   else {
     return (typeof(x) == 'number');
   }
 };
-BiwaScheme.isInteger = function(x) {
-  if (x instanceof BiwaScheme.Complex || x instanceof BiwaScheme.Rational) {
+const isInteger = function(x) {
+  if (x instanceof Complex || x instanceof Rational) {
     return x.isInteger();
   }
   else {
     return (typeof(x) == 'number') && (x % 1 == 0);
   }
 };
+
+export { Complex, Rational, isNumber, isComplex, isReal, isRational, isInteger };

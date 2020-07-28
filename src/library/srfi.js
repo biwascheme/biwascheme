@@ -1,10 +1,22 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import { nil, undef } from "../header.js";
+import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
+         assert_number, assert_integer, assert_real, assert_between, assert_string,
+         assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+         assert_vector,
+         assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate } from "./infra.js"; 
+import { isPair } from "../system/_types.js"
+import { to_write, to_display } from "../system/_writer.js"
+import Console from "../system/console.js"
+import { Pair, array_to_list, deep_array_to_list } from "../system/pair.js"
+import { Port } from "../system/port.js"
+import { Sym } from "../system/symbol.js"
+
 //
 // srfi.js - SRFI libraries
 //
 // should be src/library/srfi/1.js, etc (in the future).
 //
-
-with(BiwaScheme) {
   
   //
   // srfi-1 (list)
@@ -27,19 +39,19 @@ with(BiwaScheme) {
   });
 
   var copy_pair = function(pair){
-    var car = BiwaScheme.isPair(pair.car) ? copy_pair(pair.car)
-                                          : pair.car;
-    var cdr = BiwaScheme.isPair(pair.cdr) ? copy_pair(pair.cdr)
-                                          : pair.cdr;
+    var car = isPair(pair.car) ? copy_pair(pair.car)
+                               : pair.car;
+    var cdr = isPair(pair.cdr) ? copy_pair(pair.cdr)
+                               : pair.cdr;
     return new Pair(car, cdr);
   };
   // (list-copy list)
   define_libfunc("list-copy", 1, 1, function(ar){
-    if(BiwaScheme.isPair(ar[0])){
+    if(isPair(ar[0])){
       return copy_pair(ar[0]);
     }
     else{
-      return BiwaScheme.nil;
+      return nil;
     }
   });
 
@@ -68,18 +80,18 @@ with(BiwaScheme) {
   // -> (call-with-values (lambda () expression)
   //                        (lambda formals body ...))
   define_syntax("receive", function(x){
-    assert(BiwaScheme.isPair(x.cdr),
+    assert(isPair(x.cdr),
            "missing formals", "receive");
     var formals = x.cdr.car;
-    assert(BiwaScheme.isPair(x.cdr.cdr),
+    assert(isPair(x.cdr.cdr),
            "missing expression", "receive");
     var expression = x.cdr.cdr.car;
     var body       = x.cdr.cdr.cdr;
     
     return deep_array_to_list([Sym("call-with-values"),
-      [Sym("lambda"), BiwaScheme.nil, expression],
-      new BiwaScheme.Pair(Sym("lambda"),
-        new BiwaScheme.Pair(formals, body))]);
+      [Sym("lambda"), nil, expression],
+      new Pair(Sym("lambda"),
+        new Pair(formals, body))]);
   });
 
   // srfi-19 (time)
@@ -179,7 +191,7 @@ with(BiwaScheme) {
   //   * ~f 5.2 sec
   //   * ~p AM/PM
   //   * ~X 2007/01/01
-  BiwaScheme.date_names = {
+  const date_names = {
     weekday: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     full_weekday: ["Sunday", "Monday", "Tuesday", 
       "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -190,7 +202,7 @@ with(BiwaScheme) {
       "Octorber", "November", "December"]
   }
 
-  BiwaScheme.date2string = function(date, format){
+  const date2string = function(date, format){
     var zeropad  = function(n){ return n<10 ? "0"+n : ""+n }; 
     var spacepad = function(n){ return n<10 ? " "+n : ""+n }; 
     var isoweeknum  = function(x){
@@ -316,7 +328,7 @@ with(BiwaScheme) {
     }
     else if (ar[0] === true) {
       ar.shift();
-      var port = BiwaScheme.Port.current_output,
+      var port = Port.current_output,
           format_str = ar.shift();
     }
     else {
@@ -328,14 +340,14 @@ with(BiwaScheme) {
                  assert(ar.length > 0,
                         "insufficient number of arguments", "format");
                  if (matched == "~a")
-                   return BiwaScheme.to_display(ar.shift());
+                   return to_display(ar.shift());
                  else
-                   return BiwaScheme.to_write(ar.shift());
+                   return to_write(ar.shift());
               }).replace(/~%/, "\n")
                 .replace(/~~/, "~");
     if (port) {
       port.put_string(str);
-      return BiwaScheme.undef;
+      return undef;
     }
     else {
       return str;
@@ -347,7 +359,7 @@ with(BiwaScheme) {
   //
   var user_write_ss = function(ar){
     Console.puts(write_ss(ar[0]), true);
-    return BiwaScheme.undef;
+    return undef;
   }
   define_libfunc("write/ss", 1, 2, user_write_ss);
   define_libfunc("write-with-shared-structure", 1, 2, user_write_ss);
@@ -371,4 +383,3 @@ with(BiwaScheme) {
   // see src/library/node_functions.js for:
   // - srfi-98 (get-environment-variable)
   //
-}

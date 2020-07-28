@@ -62,7 +62,7 @@
 <img src="lenna.jpg" id="img1" title="img1" /><br />
 
 <p>
-  Source: <a href="https://github.com/yhara/biwascheme/blob/master/demo/pictlang.html#L73">github:demo/pictlang.html</a>
+  Source: <a href="https://github.com/biwascheme/biwascheme/blob/master/demo/pictlang.html#L78">github:demo/pictlang.html</a>
 </p>
 <p>
   Author: <a href="https://github.com/mokehehe">mokehehe</a>
@@ -72,7 +72,7 @@
 </p>
 
 
-<script type="text/javascript" src="../src/development_initializer.js"></script>
+<script type="module" src="../src/main-browser.js"></script>
 
 <script id="basic-functions" type="text/scheme">
 ;; PI
@@ -299,7 +299,7 @@
 ;;(load "pictlang.scm")
 </script>
 
-<script type="text/javascript"><!--
+<script type="module">
 $("#code").keypress(function(e) {
 	if (e.ctrlKey && e.keyCode == 13) {
         e.preventDefault();
@@ -307,7 +307,7 @@ $("#code").keypress(function(e) {
 	}
 });
 
-biwascheme = new BiwaScheme.Interpreter(function(e) { console.log(e.message); });
+const biwascheme = new BiwaScheme.Interpreter(function(e) { console.log(e.message); });
 
 function get_code_block(id) {
     return $("#" + id).text();
@@ -316,7 +316,7 @@ function get_code_block(id) {
 biwascheme.evaluate(get_code_block("basic-functions"));
 
 // run pict language
-function draw() {
+window.draw = function() {
 	try {
 		$("#bs-console").empty();
 		// Compile Scheme to JavaScript
@@ -335,12 +335,12 @@ function clear_canvas() {
 	ctx.clearRect(0, 0, 384, 384);
 }
 
-function sample(name) {
+window.sample = function(name) {
 	var code = get_code_block(name);
 	$("#code").val(code);
 }
 
-// --></script>
+</script>
 
 <script id="parallelogram" type="text/scheme">
 (define (transform-painter painter origin corner1 corner2)

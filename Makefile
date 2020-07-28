@@ -45,46 +45,26 @@ PLAIN_FILES =                                     \
   src/platforms/browser/release_initializer.js
 
 BROWSER_FILES =                                   \
-  src/deps/jquery.js                              \
-  src/deps/underscore.js                          \
-  src/deps/underscore.string.js                   \
+#  src/deps/jquery.js                              \
+#  src/deps/underscore.js                          \
+#  src/deps/underscore.string.js                   \
   $(PLAIN_FILES)
 
 all: build
 
-build: release/biwascheme.js release/console_biwascheme.js release/node_biwascheme.js release/biwascheme-min.js release/biwascheme-plain.js release/biwascheme-plain-min.js
+build: release/biwascheme.js release/node_biwascheme.js release/biwascheme-min.js
 
 $(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
 release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
-	cat $(VERSION_FILE) > $@
-	cat $(BROWSER_FILES) >> $@
-	@echo "Wrote " $@
+	rollup -c
 
 release/biwascheme-min.js: release/biwascheme.js
-	npx --no-install uglifyjs -o $@ release/biwascheme.js --comments
-	@echo "Wrote " $@
+	rollup -c
 
-release/biwascheme-plain.js: $(VERSION_FILE) $(PLAIN_FILES) Makefile
-	cat $(VERSION_FILE) > $@
-	cat $(PLAIN_FILES) >> $@
-	@echo "Wrote " $@
-
-release/biwascheme-plain-min.js: release/biwascheme-plain.js
-	npx --no-install uglifyjs -o $@ release/biwascheme-plain.js --comments
-	@echo "Wrote " $@
-
-release/console_biwascheme.js: $(VERSION_FILE) $(CONSOLE_FILES) Makefile
-	cat $(VERSION_FILE) > $@
-	cat $(CONSOLE_FILES) >> $@
-	@echo "Wrote " $@
-
-release/node_biwascheme.js: src/platforms/node/module_preamble.js release/console_biwascheme.js src/platforms/node/module_postamble.js
-	cat src/platforms/node/module_preamble.js > $@
-	cat release/console_biwascheme.js >> $@
-	cat src/platforms/node/module_postamble.js >> $@
-	@echo "Wrote " $@
+release/node_biwascheme.js:
+	rollup -c rollup-node.config.js
 
 #
 # Test

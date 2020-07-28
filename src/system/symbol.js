@@ -1,11 +1,16 @@
+import Class from "./class.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+
 //
 // Symbol
 //
 
-BiwaScheme.Symbol = BiwaScheme.Class.create({
+const Symbols = {};
+
+const BiwaSymbol = Class.create({
   initialize: function(str){
     this.name = str;
-    BiwaScheme.Symbols[ str ] = this;
+    Symbols[ str ] = this;
   },
 
   inspect: function(){
@@ -21,19 +26,21 @@ BiwaScheme.Symbol = BiwaScheme.Class.create({
     return this.name;
   }
 });
-BiwaScheme.Symbols = {};
-BiwaScheme.Sym = function(name,leaveCase){
-  if( BiwaScheme.Symbols[name] === undefined ){
-    return new BiwaScheme.Symbol(name);
+
+const Sym = function(name,leaveCase){
+  if( Symbols[name] === undefined ){
+    return new BiwaSymbol(name);
   }
-  else if( ! (BiwaScheme.Symbols[name] instanceof BiwaScheme.Symbol) ){ //pre-defined member (like 'eval' in Firefox)
-    return new BiwaScheme.Symbol(name);
+  else if( ! (Symbols[name] instanceof BiwaSymbol) ){ //pre-defined member (like 'eval' in Firefox)
+    return new BiwaSymbol(name);
   }
   else{
-    return BiwaScheme.Symbols[name];
+    return Symbols[name];
   }
 }
 
-BiwaScheme.gensym = function(){
-  return BiwaScheme.Sym(_.uniqueId("__gensym"));
+const gensym = function(){
+  return Sym(_.uniqueId("__gensym"));
 };
+
+export {BiwaSymbol, Symbols, Sym, gensym};

@@ -1,3 +1,4 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
 //
 // Super-simple class implementation
 //
@@ -27,7 +28,7 @@
 //   }
 // });
 
-BiwaScheme.Class = {
+const Class = {
   create: function(methods) {
     var klass = function(){ this.initialize.apply(this, arguments); };
     _.extend(klass.prototype, methods);
@@ -72,7 +73,7 @@ BiwaScheme.Class = {
 //       return ...
 //     }
 //   ...
-BiwaScheme.Class.memoize = function(klass, name_or_names){
+Class.memoize = function(klass, name_or_names){
   var proto = klass.prototype;
   var names = _.isArray(name_or_names) ? name_or_names : [name_or_names];
 
@@ -89,3 +90,5 @@ BiwaScheme.Class.memoize = function(klass, name_or_names){
     }
   });
 }
+
+export default Class;

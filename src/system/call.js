@@ -1,3 +1,10 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import { nil } from "../header.js";
+import { inspect } from "./_writer.js"
+import Class from "./class.js"
+import Char from "./char.js"
+import { Bug } from "./error.js"
+import { Pair } from "./pair.js"
 ///
 /// Call
 ///
@@ -22,7 +29,7 @@
 // example:
 //   return new Call(proc, [x, y], function(ar){ ar[0] });
 //
-BiwaScheme.Call = BiwaScheme.Class.create({
+const Call = Class.create({
   initialize: function(proc, args, after){
     this.proc = proc;
     this.args = args;
@@ -48,8 +55,8 @@ BiwaScheme.Call = BiwaScheme.Class.create({
 //
 // Iterator - external iterator for Call.foreach
 //
-BiwaScheme.Iterator = {
-  ForArray: BiwaScheme.Class.create({
+const Iterator = {
+  ForArray: Class.create({
     initialize: function(arr){
       this.arr = arr;
       this.i = 0;
@@ -61,7 +68,7 @@ BiwaScheme.Iterator = {
       return this.arr[this.i++];
     }
   }),
-  ForString: BiwaScheme.Class.create({
+  ForString: Class.create({
     initialize: function(str){
       this.str = str;
       this.i = 0;
@@ -70,16 +77,16 @@ BiwaScheme.Iterator = {
       return this.i < this.str.length;
     },
     next: function(){
-      return BiwaScheme.Char.get(this.str.charAt(this.i++));
+      return Char.get(this.str.charAt(this.i++));
     }
   }),
-  ForList: BiwaScheme.Class.create({
+  ForList: Class.create({
     initialize: function(ls){
       this.ls = ls;
     },
     has_next: function(){
-      return (this.ls instanceof BiwaScheme.Pair) &&
-             this.ls != BiwaScheme.nil;
+      return (this.ls instanceof Pair) &&
+             this.ls != nil;
     },
     next: function(){
       var pair = this.ls;
@@ -87,12 +94,12 @@ BiwaScheme.Iterator = {
       return pair;
     }
   }),
-  ForMulti: BiwaScheme.Class.create({
+  ForMulti: Class.create({
     initialize: function(objs){
       this.objs = objs;
       this.size = objs.length;
       this.iterators = _.map(objs, function(x){
-        return BiwaScheme.Iterator.of(x);
+        return Iterator.of(x);
       })
     },
     has_next: function(){
@@ -114,11 +121,11 @@ BiwaScheme.Iterator = {
         return new this.ForArray(obj);
       case (typeof(obj) == "string"):
         return new this.ForString(obj);
-      case (obj instanceof BiwaScheme.Pair):
-      case (obj === BiwaScheme.nil):
+      case (obj instanceof Pair):
+      case (obj === nil):
         return new this.ForList(obj);
       default:
-        throw new BiwaScheme.Bug("Iterator.of: unknown class: "+BiwaScheme.inspect(obj));
+        throw new Bug("Iterator.of: unknown class: "+inspect(obj));
     }
   }
 }
@@ -150,16 +157,16 @@ BiwaScheme.Iterator = {
 //     }
 //   });
 
-BiwaScheme.Call.default_callbacks = {
-  call: function(x){ return new BiwaScheme.Call(this.proc, [x]) },
+Call.default_callbacks = {
+  call: function(x){ return new Call(this.proc, [x]) },
   result: function(){},
   finish: function(){}
 }
-BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
+Call.foreach = function(obj, callbacks, is_multi){
   is_multi || (is_multi = false);
   _.each(["call", "result", "finish"], function(key){
     if(!callbacks[key])
-      callbacks[key] = BiwaScheme.Call.default_callbacks[key];
+      callbacks[key] = Call.default_callbacks[key];
   })
   
   var iterator = null;
@@ -172,9 +179,9 @@ BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
     }
     else{ // first lap
       if(is_multi)
-        iterator = new BiwaScheme.Iterator.ForMulti(obj);
+        iterator = new Iterator.ForMulti(obj);
       else
-        iterator = BiwaScheme.Iterator.of(obj);
+        iterator = Iterator.of(obj);
     }
 
     if(!iterator.has_next()){
@@ -189,7 +196,8 @@ BiwaScheme.Call.foreach = function(obj, callbacks, is_multi){
   }
   return loop(null);
 }
-BiwaScheme.Call.multi_foreach = function(obj, callbacks){
-  return BiwaScheme.Call.foreach(obj, callbacks, true);
+Call.multi_foreach = function(obj, callbacks){
+  return Call.foreach(obj, callbacks, true);
 }
 
+export default Call;

@@ -15,8 +15,8 @@
 
 <script type="text/javascript">// <![CDATA[
 var loader_development = function(){
-  document.write("<script src='../src/development_initializer.js'><\/script>" +
-    "<script type='text/javascript'>"+
+  document.write("<script type='module' src='../src/main-browser.js'><\/script>" +
+    "<script type='module'>"+
       "if(console) console.log('BiwaScheme '+BiwaScheme.VERSION);" +
       "BiwaScheme.register_tests();" +
       "JSSpec.start_test();" +

@@ -24,7 +24,8 @@
       <pre id="source_view"></pre>
 
       <script type="text/javascript" src="raphael-min.js"></script>
-      <script type="text/javascript" src="../../src/development_initializer.js" id="source">
+      <script type="module" src="../../src/main-browser.js"></script>
+      <script type="text/biwascheme" id="source">
 ;; Show source code
 (js-invoke ($ "#source_view") 'html (js-invoke ($ "#source") 'html))
 ;(.. ($ "#source_view")

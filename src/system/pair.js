@@ -1,9 +1,16 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import { nil } from "../header.js"
+import { to_write, inspect } from "./_writer.js"
+import Class from "./class.js"
+import BiwaSet from "./set.js"
+import { isPair } from "./_types.js"
+
 //
 // Pair 
 // cons cell
 //
 
-BiwaScheme.Pair = BiwaScheme.Class.create({
+const Pair = Class.create({
   initialize: function(car, cdr){
     this.car = car;
     this.cdr = cdr;
@@ -25,15 +32,15 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
   // '(1 2 . 3) => [1,2]
   to_array: function(){
     var ary = [];
-    for(var o = this; o instanceof BiwaScheme.Pair; o=o.cdr){
+    for(var o = this; o instanceof Pair; o=o.cdr){
       ary.push(o.car);
     }
     return ary;
   },
 
   to_set: function(){
-    var set = new BiwaScheme.Set();
-    for(var o = this; o instanceof BiwaScheme.Pair; o=o.cdr){
+    var set = new BiwaSet();
+    for(var o = this; o instanceof Pair; o=o.cdr){
       set.add(o.car);
     }
     return set;
@@ -41,7 +48,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 
   length: function(){
     var n = 0;
-    for(var o = this; o instanceof BiwaScheme.Pair; o=o.cdr){
+    for(var o = this; o instanceof Pair; o=o.cdr){
       n++;
     }
     return n;
@@ -50,7 +57,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
   // Return the last cdr
   last_cdr: function(){
     var o;
-    for(o = this; o instanceof BiwaScheme.Pair; o = o.cdr)
+    for(o = this; o instanceof Pair; o = o.cdr)
       ;
     return o;
   },
@@ -58,7 +65,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
   // calls the given func passing each car of list
   // returns cdr of last Pair
   foreach: function(func){
-    for(var o = this; o instanceof BiwaScheme.Pair; o=o.cdr){
+    for(var o = this; o instanceof Pair; o=o.cdr){
       func(o.car);
     }
     return o;
@@ -70,7 +77,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
   // The receiver must not be a cyclic list.
   map: function(func){
     var ary = [];
-    for(var o = this; BiwaScheme.isPair(o); o = o.cdr){
+    for(var o = this; isPair(o); o = o.cdr){
       ary.push(func(o.car));
     }
     return ary;
@@ -81,7 +88,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
   // Returns the receiver.
   concat: function(list){
     var o = this;
-    while(o instanceof BiwaScheme.Pair && o.cdr != BiwaScheme.nil){
+    while(o instanceof Pair && o.cdr != nil){
       o = o.cdr;
     }
     o.cdr = list;
@@ -90,12 +97,12 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 
   // returns human-redable string of pair
   inspect: function(conv){
-    conv || (conv = BiwaScheme.inspect);
+    conv || (conv = inspect);
     var a = [];
     var last = this.foreach(function(o){
       a.push(conv(o));
     });
-    if(last != BiwaScheme.nil){
+    if(last != nil){
       a.push(".");
       a.push(conv(last));
     }
@@ -106,7 +113,7 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
   },
 
   to_write: function(){
-    return this.inspect(BiwaScheme.to_write);
+    return this.inspect(to_write);
   }
 });
 
@@ -114,35 +121,62 @@ BiwaScheme.Pair = BiwaScheme.Class.create({
 // Example:
 //   BiwaScheme.List(1, 2, [3, 4]) ;=> (list 1 2 (vector 3 4))
 //   BiwaScheme.deep_array_to_list(1, 2, [3, 4]) ;=> (list 1 2 (list 3 4))
-var array_to_list = function(ary, deep) {
-  var list = BiwaScheme.nil;
+const array_to_list_ = function(ary, deep) {
+  var list = nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
     if(deep && _.isArray(obj) && !obj.is_vector){
-      obj = array_to_list(obj, deep);
+      obj = array_to_list_(obj, deep);
     }
-    list = new BiwaScheme.Pair(obj, list);
+    list = new Pair(obj, list);
   }
   return list;
 }
 
 // Shallow: List(1, 2, [3]) == (list 1 2 (vector 3 4))
-BiwaScheme.List = function() {
+const List = function() {
   var ary = _.toArray(arguments);
-  return array_to_list(ary, false);
+  return array_to_list_(ary, false);
 };
 
 // Shallow: array_to_list(1, 2, [3]) == (list 1 2 (vector 3 4))
-BiwaScheme.array_to_list = function(ary) {
-  return array_to_list(ary, false);
+const array_to_list = function(ary) {
+  return array_to_list_(ary, false);
 };
 
 // Deep: deep_array_to_list(1, 2, [3, 4]) == (list 1 2 (list 3 4))
 // deep_array_to_list([1, 2, 3]) - deep
-BiwaScheme.deep_array_to_list = function(ary) {
-  return array_to_list(ary, true);
+const deep_array_to_list = function(ary) {
+  return array_to_list_(ary, true);
 };
 
-BiwaScheme.Cons = function(car, cdr) {
-  return new BiwaScheme.Pair(car, cdr);
+const Cons = function(car, cdr) {
+  return new Pair(car, cdr);
 };
+
+const js_obj_to_alist = function(obj) {
+  if (obj === undefined) {
+    return nil;
+  }
+  var arr = [];
+  _.each(obj, function(val, key) {
+    arr.push(new Pair(key, val));
+  });
+  var alist = array_to_list(arr);
+  return alist;
+};
+
+const alist_to_js_obj = function(alist) {
+  if (alist === nil) {
+    return {} ;
+  }
+  var obj = {};
+  alist.foreach(function(item){
+    obj[item.car] = item.cdr;
+  });
+  return obj;
+};
+
+
+export { Pair, List, array_to_list, deep_array_to_list, Cons,
+         js_obj_to_alist, alist_to_js_obj };

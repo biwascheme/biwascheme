@@ -1,12 +1,2 @@
-/*
- * BiwaScheme @VERSION@ - R6RS Scheme in JavaScript
- *
- * Copyright (c) 2007-2014 Yutaka HARA (http://www.biwascheme.org/)
- * @license Licensed under the MIT license.
- */
-
-var BiwaScheme = BiwaScheme || {};
-
-BiwaScheme.Version = "@VERSION@";  // TODO: deprecate this
-BiwaScheme.VERSION = "@VERSION@";
-BiwaScheme.GitCommit = "@GIT_COMMIT@";
+export const VERSION = "@VERSION@";
+export const GitCommit = "@GIT_COMMIT@";

@@ -1,14 +1,19 @@
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import Class from "./class.js"
+import { to_write } from "./_writer.js"
+
 //
 // Values
 //
-BiwaScheme.Values = BiwaScheme.Class.create({
+const Values = Class.create({
   initialize: function(values){
     this.content = values;
   },
   to_write: function(){
     return "#<Values " +
-             _.map(this.content, BiwaScheme.to_write).join(" ") +
+             _.map(this.content, to_write).join(" ") +
            ">";
   }
 });
 
+export default Values;

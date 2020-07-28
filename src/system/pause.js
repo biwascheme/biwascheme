@@ -1,7 +1,10 @@
+import Class from "./class.js"
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+
 //
 // pause object (facility to stop/resume interpreting)
 //
-BiwaScheme.Pause = BiwaScheme.Class.create({
+var Pause = Class.create({
   //new (on_pause: javascript function calling setTimeout, Ajax.Request, ..)
   initialize: function(on_pause){
     this.on_pause = on_pause;
@@ -27,3 +30,4 @@ BiwaScheme.Pause = BiwaScheme.Class.create({
   }
 });
 
+export default Pause;

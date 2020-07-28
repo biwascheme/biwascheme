@@ -1,43 +1,51 @@
 //
 // types.js - type predicators, equality, compare
 //
+import * as _ from "../deps/underscore-1.10.2-esm.js"
+import { nil, undef } from "../header.js"
+import { to_write } from "./_writer.js"
+import Char from "./char.js"
+import Hashtable from "./hashtable.js"
+import { BiwaSymbol } from "./symbol.js"
+import { Port } from "./port.js"
+import { Pair } from "./pair.js"
 
-BiwaScheme.isNil = function(obj){
-  return (obj === BiwaScheme.nil);
+const isNil = function(obj){
+  return (obj === nil);
 };
 
-BiwaScheme.isUndef = function(obj){
-  return (obj === BiwaScheme.undef);
+const isUndef = function(obj){
+  return (obj === undef);
 };
 
-BiwaScheme.isBoolean = _.isBoolean; // Return true if arg is either true or false
+const isBoolean = _.isBoolean; // Return true if arg is either true or false
 
-//BiwaScheme.isNumber is defined in number.js (Return true if arg is scheme number)
+//isNumber is defined in number.js (Return true if arg is scheme number)
 
-BiwaScheme.isString = _.isString;
+const isString = _.isString;
 
-BiwaScheme.isChar = function(obj){
-  return (obj instanceof BiwaScheme.Char);
+const isFunction = _.isFunction;
+
+const isChar = function(obj){
+  return (obj instanceof Char);
 };
 
-BiwaScheme.isSymbol = function(obj){
-  return (obj instanceof BiwaScheme.Symbol);
+const isSymbol = function(obj){
+  return (obj instanceof BiwaSymbol);
 };
 
-BiwaScheme.isPort = function(obj){
-  return (obj instanceof BiwaScheme.Port);
+const isPort = function(obj){
+  return (obj instanceof Port);
 };
 
 // Note: '() is not a pair in scheme
-BiwaScheme.isPair = function(obj){
-  return (obj instanceof BiwaScheme.Pair);
+const isPair = function(obj){
+  return (obj instanceof Pair);
 };
 
 // Returns true if obj is a proper list
 // Note: isList returns true for '()
-BiwaScheme.isList = function(obj){
-  var nil = BiwaScheme.nil, Pair = BiwaScheme.Pair;
-
+const isList = function(obj){
   if (obj === nil) { // Empty list
     return true;
   }
@@ -70,65 +78,69 @@ BiwaScheme.isList = function(obj){
   }
 };
 
-BiwaScheme.isVector = function(obj){
+const isVector = function(obj){
   return (obj instanceof Array) && (obj.closure_p !== true);
 };
 
-BiwaScheme.isHashtable = function(obj){
-  return (obj instanceof BiwaScheme.Hashtable);
+const isHashtable = function(obj){
+  return (obj instanceof Hashtable);
 };
 
-BiwaScheme.isMutableHashtable = function(obj){
-  return (obj instanceof BiwaScheme.Hashtable) && obj.mutable;
+const isMutableHashtable = function(obj){
+  return (obj instanceof Hashtable) && obj.mutable;
 };
 
 // Returns true if `obj` is a Scheme closure.
-BiwaScheme.isClosure = function(obj){
+const isClosure = function(obj){
   return (obj instanceof Array) && (obj.closure_p === true);
 };
 
 // Change `ary` into a Scheme closure (destructive).
-BiwaScheme.makeClosure = function(ary) {
+const makeClosure = function(ary) {
   ary.closure_p = true;
   return ary;
 };
 
 // procedure: Scheme closure or JavaScript function
 // valid argument for anywhere function is expected
-BiwaScheme.isProcedure = function(obj){
-  return BiwaScheme.isClosure(obj) || _.isFunction(obj);
+const isProcedure = function(obj){
+  return isClosure(obj) || _.isFunction(obj);
 };
 
 // Return true if obj is a scheme value which evaluates to itself
-BiwaScheme.isSelfEvaluating = function(obj) {
-  return BiwaScheme.isBoolean(obj) ||
-         BiwaScheme.isNumber(obj) ||
-         BiwaScheme.isString(obj) ||
-         BiwaScheme.isChar(obj);
+const isSelfEvaluating = function(obj) {
+  return isBoolean(obj) ||
+         isNumber(obj) ||
+         isString(obj) ||
+         isChar(obj);
 };
 
 //
 // equality
 //
-BiwaScheme.eq = function(a, b){
+const eq = function(a, b){
   return a === b;
 };
 // TODO: Records (etc.)
-BiwaScheme.eqv = function(a, b){
+const eqv = function(a, b){
   return a == b && (typeof(a) == typeof(b));
 };
-BiwaScheme.equal = function(a, b){
+const equal = function(a, b){
   //TODO: must terminate for cyclic objects
-  return BiwaScheme.to_write(a) == BiwaScheme.to_write(b);
+  return to_write(a) == to_write(b);
 };
 
 //
 // comaprator
 //
 // Return true when a < b
-BiwaScheme.lt = function(a, b) {
+const lt = function(a, b) {
   if(typeof a !== typeof b){
     return compareFn(typeof a, typeof b); 	
   }
   return a < b;
 };
+
+export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
+         isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
+         isSelfEvaluating, eq, eqv, equal, lt };
