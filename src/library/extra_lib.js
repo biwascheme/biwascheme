@@ -276,6 +276,7 @@ define_syntax("define-macro", function(x){
 
 var macroexpand_1 = function(x){
   if(x instanceof Pair){
+    // TODO: Should we check CoreEnv too?
     if(x.car instanceof BiwaSymbol && TopEnv[x.car.name] instanceof Syntax){
       var transformer = TopEnv[x.car.name];
       x = transformer.transform(x);

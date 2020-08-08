@@ -2075,7 +2075,7 @@ describe('19 R5RS compatibility', {
 //(scheme-report-environment n)    procedure 
 })
 
-describe('R6RS Promise', {
+describe('R7RS', {
   'delay' : function() {
     ev('(define i 0) (define d (delay (begin (inc! i) i))) \
         (force d) (force d) (force d) \
@@ -2109,6 +2109,18 @@ describe('R6RS Promise', {
   'make-promise' : function() {
     ev('(force (make-promise 99))').should_be(99);
     ev('(force (make-promise (make-promise 98)))').should_be(98);
+  },
+
+  'parameterize (basic)' : function() {
+    ev(`(define foo (make-parameter 7))
+        (+ (foo)
+           (parameterize ((foo 8)) (foo))
+           (foo))
+    `).should_be(22);
+    // With converter function
+    ev(`(define foo (make-parameter 7 number->string))
+        (parameterize ((foo 8)) (foo))
+    `).should_be("8");
   }
 })
 
