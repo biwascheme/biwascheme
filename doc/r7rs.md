@@ -5,23 +5,6 @@ BiwaScheme supports basic feature of R7RS, but currently not all.
 The following list is based on r7rs.pdf (the final draft)
 on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 
-# 1 OverviewofScheme....................... 5
-## 1.1 Semantics ......................... 5
-## 1.2 Syntax........................... 5
-## 1.3 Notationandterminology ................ 5
-#2 Lexicalconventions ....................... 7
-## 2.1 Identifiers ......................... 7
-## 2.2 Whitespaceandcomments................ 8
-## 2.3 Othernotations...................... 8
-## 2.4 Datumlabels ....................... 9
-# 3 Basicconcepts.......................... 9
-## 3.1 Variables, syntactic keywords, and regions . . . . . . . 9
-## 3.2 Disjointnessoftypes ................... 10
-## 3.3 Externalrepresentations................. 10
-## 3.4 Storagemodel....................... 10
-## 3.5 Propertailrecursion ................... 11
-# 4 Expressions ........................... 12
-
 ## 4.1 Primitiveexpressiontypes................ 12
 
 * variable reference
@@ -40,8 +23,8 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 * `let` `let*` `letrec` `letrec*` `let-values`
 * `begin`
 * `do` named let
-* [TODO]`delay`, `delay-force`, `force`, `promise?`, `make-promise`
-* [TODO]`make-paremeter`, `parameterize`
+* `delay`, `delay-force`, `force`, `promise?`, `make-promise`
+* `make-paremeter`, `parameterize`
 * [TODO]`guard`
 * quasiquote
 * `case-lambda`
@@ -211,8 +194,3 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 * [TODO] `get-environment-variable` `get-environment-variables`
 * [TODO] `current-second` `current-jiffy` `jiffies-per-second`
 * [TODO] `features`
-
-# 7 Formalsyntaxandsemantics.................. 61
-## 7.1 Formalsyntax....................... 61
-## 7.2 Formalsemantics..................... 65
-## 7.3 Derivedexpressiontypes................. 68

@@ -7,6 +7,10 @@ Possible breaking changes
   If you have a program which relies on any of them, please file an issue
   and I'll make it public again.
 
+New features
+
+- parameterize (#188)
+
 Internal changes
 
 - Changed build system to rollup.js (#160)
