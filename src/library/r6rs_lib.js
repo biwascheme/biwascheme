@@ -7,7 +7,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
          parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
 import { to_write, to_display, write_ss, to_write_ss, inspect } from "../system/_writer.js"
-import { isNil, isSymbol, isPair, isList, isVector, isProcedure,
+import { isNil, isSymbol, isPair, isList, isVector, makeClosure, isProcedure,
          eq, eqv, equal, lt } from "../system/_types.js"
 import Call from "../system/call.js"
 import Char from "../system/char.js"
@@ -3464,4 +3464,75 @@ define_libfunc("make-promise", 1, 1, function(ar, intp){
 define_libfunc(" procedure->promise", 1, 1, function(ar, intp){
   assert_procedure(ar[0]);
   return BiwaPromise.fresh(ar[0]);
+});
+
+//
+// parameterize
+//
+
+// (make-parameter init)
+// (make-parameter init converter)
+define_libfunc("make-parameter", 1, 2, function(ar, intp){
+  let currentValue;
+  const converter = ar[1];
+  // A parameter is represented by a JS function.
+  // (parameterObj)   ;=> Return the current value
+  // (parameterObj v) ;=> Set v as the value and return the original value
+  const parameterObj = function(ar2) {
+    if (ar2.length == 0) { // Get
+      return currentValue;
+    }
+    else { // Set
+      const origValue = currentValue;
+      if (converter) {
+        return new Call(converter, [ar2[0]], ar3 => {
+          currentValue = ar3[0];
+          return origValue;
+        });
+      }
+      else {
+        currentValue = ar2[0];
+        return origValue;
+      }
+    }
+  };
+
+  if (converter) {
+    return new Call(converter, [ar[0]], initialValue => {
+      currentValue = initialValue;
+      return parameterObj;
+    });
+  }
+  else {
+    const initialValue = ar[0];
+    currentValue = initialValue;
+    return parameterObj;
+  }
+});
+
+// (parameterize ((param val) ...) body ...)
+define_syntax("parameterize", function(x){
+  const inits = x.cdr.car.to_array();
+  const body = x.cdr.cdr;
+  const tmpNames = inits.map(() => gensym());
+  // (let ((tmp0 val0) (tmp1 val1) ...)
+  //   (dynamic-wind
+  //     (lambda () (begin (set! tmp0 (param0 tmp0))) ...)
+  //     (lambda () body ...)
+  //     (lambda () (begin (set! tmp0 (param0 tmp0))) ...)))
+  const givenValues = List(...inits.map((item, i) =>
+    List(tmpNames[i], item.cdr.car)
+  ));
+  const updateValues = Cons(Sym("begin"), List(...inits.map((item, i) =>
+    List(Sym("set!"), tmpNames[i], List(item.car, tmpNames[i]))
+  )));
+  
+  const before = List(Sym("lambda"), nil, updateValues);
+  const thunk = Cons(Sym("lambda"),
+                  Cons(nil, body));
+  const after = List(Sym("lambda"), nil, updateValues);
+  //return List(Sym("quote"),
+  return List(Sym("let"), givenValues,
+           List(Sym("dynamic-wind"), before, thunk, after))
+  //)
 });
