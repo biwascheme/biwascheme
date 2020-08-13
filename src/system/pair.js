@@ -83,6 +83,11 @@ const Pair = Class.create({
     return ary;
   },
 
+  // Returns a new list made by applying `func` to each element
+  mapList: function(func) {
+    return array_to_list(this.map(func));
+  },
+
   // Destructively concat the given list to the receiver.
   // The receiver must be a proper list.
   // Returns the receiver.
