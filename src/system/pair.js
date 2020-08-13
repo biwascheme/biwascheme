@@ -64,6 +64,14 @@ const Pair = Class.create({
 
   // calls the given func passing each car of list
   // returns cdr of last Pair
+  forEach: function(func){
+    for(var o = this; o instanceof Pair; o=o.cdr){
+      func(o.car);
+    }
+    return o;
+  },
+
+  // Alias of `forEach` (for backward compatibility)
   foreach: function(func){
     for(var o = this; o instanceof Pair; o=o.cdr){
       func(o.car);
