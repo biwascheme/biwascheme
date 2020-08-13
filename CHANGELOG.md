@@ -10,6 +10,7 @@ Possible breaking changes
 New features
 
 - parameterize (#188)
+- BiwaScheme.Parser.parse
 
 Internal changes
 

@@ -200,5 +200,17 @@ const Parser = Class.create({
 });
 // indicates end of source file
 Parser.EOS = new Object();
+
+// Parser the text and return an array of exprs
+Parser.parse = txt => {
+  const parser = new Parser(txt);
+  const ret = [];
+  while (true) {
+    var expr = parser.getObject();
+    if (expr === Parser.EOS) break;
+    ret.push(expr);
+  }
+  return ret;
+};
   
 export default Parser;
