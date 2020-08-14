@@ -6,7 +6,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_vector,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate } from "./infra.js"; 
 import { isPair } from "../system/_types.js"
-import { to_write, to_display } from "../system/_writer.js"
+import { to_write, to_display, write_ss } from "../system/_writer.js"
 import Console from "../system/console.js"
 import { Pair, array_to_list, deep_array_to_list } from "../system/pair.js"
 import { Port } from "../system/port.js"
@@ -357,7 +357,7 @@ define_libfunc("format", 1, null, function(ar){
 //
 // srfi-38 (write/ss)
 //
-var user_write_ss = function(ar){
+const user_write_ss = function(ar){
   Console.puts(write_ss(ar[0]), true);
   return undef;
 }
