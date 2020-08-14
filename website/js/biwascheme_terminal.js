@@ -148,6 +148,9 @@ jQuery(document).ready(function($, undefined) {
        term.error(e.message);
     });
 
+    // TODO v0.7.1: This is no longer needed
+    if (Console) BiwaScheme.Console = Console;
+
     BiwaScheme.Console.puts = function(string) {
         term.echo(string);
     };
