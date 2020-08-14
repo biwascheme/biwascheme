@@ -100,10 +100,11 @@ const write_ss = function(obj, array_mode){
   var appeared = new Array(cyclic.length);
   for(var i=cyclic.length-1; i>=0; i--) appeared[i] = false;
 
-  return to_write_ss(obj, cyclic, appeared, array_mode);
+  return _write_ss(obj, cyclic, appeared, array_mode);
 }
+const to_write_ss = write_ss; // Alias
 
-const to_write_ss = function(obj, cyclic, appeared, array_mode){
+const _write_ss = function(obj, cyclic, appeared, array_mode){
   var ret = "";
   var i = cyclic.indexOf(obj);
   if(i >= 0){
@@ -118,20 +119,20 @@ const to_write_ss = function(obj, cyclic, appeared, array_mode){
 
   if(obj instanceof Pair){
     var a = [];
-    a.push(to_write_ss(obj.car, cyclic, appeared, array_mode));
+    a.push(_write_ss(obj.car, cyclic, appeared, array_mode));
     for(var o=obj.cdr; o != nil; o=o.cdr){
       if(!(o instanceof Pair) || cyclic.indexOf(o) >= 0){
         a.push(".");
-        a.push(to_write_ss(o, cyclic, appeared, array_mode));
+        a.push(_write_ss(o, cyclic, appeared, array_mode));
         break;
       }
-      a.push(to_write_ss(o.car, cyclic, appeared, array_mode));
+      a.push(_write_ss(o.car, cyclic, appeared, array_mode));
     }
     ret += "(" + a.join(" ") + ")";
   }
   else if(obj instanceof Array){
     var a = _.map(obj, function(item){
-      return to_write_ss(item, cyclic, appeared, array_mode);
+      return _write_ss(item, cyclic, appeared, array_mode);
     })
     if(array_mode)
       ret += "[" + a.join(", ") + "]";
