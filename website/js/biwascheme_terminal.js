@@ -144,14 +144,15 @@ jQuery(document).ready(function($, undefined) {
     //NOTE: $ is jQuery in this scope
     var trace = false;
     var bscheme = new BiwaScheme.Interpreter(function(e, state) {
+       console.error(e);
        term.error(e.message);
     });
 
-    Console.puts = function(string) {
+    BiwaScheme.Console.puts = function(string) {
         term.echo(string);
     };
     BiwaScheme.Port.current_output = new BiwaScheme.Port.CustomOutput(
-        Console.puts
+        BiwaScheme.Console.puts
     );
     BiwaScheme.Port.current_input = new BiwaScheme.Port.CustomInput(function(callback){
         term.read('read> ', callback);
@@ -178,7 +179,7 @@ jQuery(document).ready(function($, undefined) {
             }
             var result = bscheme.evaluate(code, function(result) {
                 if (result !== undefined && result !== BiwaScheme.undef) {
-                    term.echo('=> ' + BiwaScheme.to_write(result));
+                    term.echo('=> ' + BiwaScheme.write_ss(result));
                 }
             });
         } catch(e) {
