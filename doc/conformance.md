@@ -84,7 +84,7 @@ The biggest features not implemented are errors and `syntax-rules`
 * 19 R5RS compatibility
  * no plan
 
-(no plan = paches are welcome)
+(no plan = patches are welcome)
 
 ### SRFIs
 

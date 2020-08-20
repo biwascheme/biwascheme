@@ -66,7 +66,7 @@ Major lacking features are:
 - Exceptions
 - Library system
 
-There are two limitations that arise from JavaScript. These will not be fixed (it's technically possible to fix but will be very unefficient.)
+There are two limitations that arise from JavaScript. These will not be fixed (it's technically possible to fix but will be very inefficient).
 
 - Strings are immutable
 - Integers are not distinguished from float

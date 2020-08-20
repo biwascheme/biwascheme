@@ -167,7 +167,7 @@ op_close creates closure object onto the 'a' register.
 * n
   * number of free variables (i.e. local variables defined outside) which this closure contains
   * eg. (lambda (a) a) -> 0
-  * eg. (lamdba () (+ b c)) -> 2
+  * eg. (lambda () (+ b c)) -> 2
 * body
   * opecodes (compiled closure body)
 * dotpos
@@ -239,7 +239,7 @@ But when the freevar may reassigned by set!, a box (JS array contains the actual
 
 Capture the current continuation.
 
-Caputred continuation is just a Scheme closure which includes whole copy of current stack and op_nuate1 to restore it (see also: op_nuate1).
+Captured continuation is just a Scheme closure which includes whole copy of current stack and op_nuate1 to restore it (see also: op_nuate1).
 
 #### format
 
@@ -475,7 +475,7 @@ Same as op_apply, but used for tail calls. Added for stack trace.
 
 #### description
 
-See op_apply for how it retrieves the funcion and its arguments.
+See op_apply for how it retrieves the function and its arguments.
 
 #### Stack trace
 
@@ -493,10 +493,10 @@ BiwaScheme.Interpreter has three variables to handle stack trace:
   - Number of tail calls happened
   - tco_counter.length is equal to number of stack frames
     (Note that this is different from stack.length,
-     because this.stack is one-dimentional array).
+     because this.stack is one-dimensional array).
   - However, call_stack.length may not be the same as number of frames
     because tail call does not push stack frame.
-  - tco_counter holds this difference, i.e. how many funcalls have occured
+  - tco_counter holds this difference, i.e. how many funcalls have occurred
     without pushing stack frame.
 
 Here is the difference between normal call and tail call.

@@ -32,7 +32,7 @@ Some of the most important files are:
 - src/system/compiler.js
   - `BiwaScheme.Compiler` compiles parsed program into BiwaScheme intermediate language
 - src/system/interpreter.js
-  - `BiwaScheme.Interpreter` executes the intermediate lanugage
+  - `BiwaScheme.Interpreter` executes the intermediate language
 
 ## The intermediate language
 

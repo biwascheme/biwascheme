@@ -18,7 +18,7 @@
 
 * List
   * `length` `append` `reverse` `list-tail` `list-ref` `map` `for-each`
-  * `find` `for-all` `exists` `filter` `partition` `fold-left` `fold-righ`
+  * `find` `for-all` `exists` `filter` `partition` `fold-left` `fold-right`
   * `remp` `remove` `remv` `remq`
   * `memp` `member` `memv` `memq`
   * `assp` `assoc` `assv` `assq`
@@ -125,7 +125,7 @@ Other macro-related functions:
   * `hashtable-equivalence-function` `hashtable-hash-function` `hashtable-mutable?`
 * Enumeration
   * `define-enumeration`
-  * `enum-set-member?` `enum-set-subset?` `snum-set=?` `enum-set->list`
+  * `enum-set-member?` `enum-set-subset?` `enum-set=?` `enum-set->list`
   * `enum-set-union` `enum-set-intersection` `enum-set-difference`
      `enum-set-complement` `enum-set-projection`
 * Date (srfi-19)
@@ -209,7 +209,7 @@ Other macro-related functions:
 * `(js-new ctorname args...)` = `new a`
   * `ctorname` is evaluated as JavaScript program.
   * eg. `(js-new "Date" 2008 1 2)`
-* `(js-obj key1 value1 key2 value2...)
+* `(js-obj key1 value1 key2 value2...)`
   * eg. `(js-obj "foo" 1 "bar" 2)` → `{"foo": 1, "bar": 2}`
 * `(js-closure proc)` returns a JS function that executes a Scheme function `proc`
 
