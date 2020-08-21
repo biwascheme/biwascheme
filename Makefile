@@ -58,13 +58,13 @@ $(VERSION_FILE): $(VERSION_FILE_IN) $(BROWSER_FILES) VERSION Makefile
 	cat $< | sed -e "s/@GIT_COMMIT@/`git log -1 --pretty=format:%H`/" | sed -e "s/@VERSION@/`cat VERSION`/" > $@
 
 release/biwascheme.js: $(VERSION_FILE) $(BROWSER_FILES) Makefile
-	rollup -c
+	npx rollup -c
 
 release/biwascheme-min.js: release/biwascheme.js
-	rollup -c
+	npx rollup -c
 
 release/node_biwascheme.js:
-	rollup -c rollup-node.config.js
+	npx rollup -c rollup-node.config.js
 
 #
 # Test
