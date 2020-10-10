@@ -7,6 +7,7 @@ function unbalanced_parentheses(text_code) {
             case "[": ++brakets; break;
             case "]": --brakets; break;
             case "(": ++parentheses; break;
+            case "#(": ++parentheses; break;
             case ")": --parentheses; break;
         }
     }
