@@ -7,6 +7,7 @@ function unbalanced_parentheses(text_code) {
             case "[": ++brakets; break;
             case "]": --brakets; break;
             case "(": ++parentheses; break;
+            case "#(": ++parentheses; break;
             case ")": --parentheses; break;
         }
     }
@@ -182,7 +183,14 @@ jQuery(document).ready(function($, undefined) {
             }
             var result = bscheme.evaluate(code, function(result) {
                 if (result !== undefined && result !== BiwaScheme.undef) {
-                    term.echo('=> ' + BiwaScheme.write_ss(result));
+                    var str;
+                    // write_ss will work with list cycles and to_write with functions #203
+                    if (result instanceof BiwaScheme.Pair) {
+                        str = BiwaScheme.write_ss(result);
+                    } else {
+                        str = BiwaScheme.to_write(result);
+                    }
+                    term.echo('=> ' + str);
                 }
             });
         } catch(e) {
