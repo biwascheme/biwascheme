@@ -1,3 +1,6 @@
+import BiwaSet from "./system/set.js"
+import { inspect } from "./system/_writer.js"
+import { Bug } from "./system/error.js"
 // 
 // Heap based scheme from 3imp.pdf
 //
@@ -16,7 +19,7 @@ const nil = {
   toString: function() { return "nil"; },
   to_write: function() { return "()"; },
   to_array: function() { return []; },
-  to_set: function() { return new BiwaScheme.Set(); },
+  to_set: function() { return new BiwaSet(); },
   length: function() { return 0; }
 };
 
@@ -30,7 +33,7 @@ undef.toString = function(){ return "#<undef>"; }
 // Prints the arguments to console.debug.
 const debug = function(/*arguments*/){
   var args = _.toArray(arguments);
-  console.debug.apply(console, _.map(args, BiwaScheme.inspect));
+  console.debug.apply(console, _.map(args, inspect));
 }
 
 //
@@ -38,7 +41,7 @@ const debug = function(/*arguments*/){
 //
 const assert = function(cond, desc) {
   if (!cond) {
-    throw new BiwaScheme.Bug("[BUG] Assertion failed: "+desc);
+    throw new Bug("[BUG] Assertion failed: "+desc);
   }
 }
 
