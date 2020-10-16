@@ -82,8 +82,14 @@
     BiwaScheme.Interpreter.dumper = window.dumper;
 
     window.eval_it();
-  });
 
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'j': window.dumper.dump_move(+1); break;
+        case 'k': window.dumper.dump_move(-1); break;
+      }
+    });
+  })
   </script>
 </body>
 </html>
