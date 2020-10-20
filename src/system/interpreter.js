@@ -106,8 +106,7 @@ const Interpreter = Class.create({
   capture_continuation: function(s, n){
     // note: implementation of this function for final version doesn't exist in 3imp.pdf..
     var ss = this.push(n, s);
-    return this.closure(["refer-local", 0,
-                          ["nuate1", this.save_stack(ss), this.current_dynamic_winder]],
+    return this.closure(["nuate1", this.save_stack(ss), this.current_dynamic_winder],
                         1,     //arity
                         0,     //n (number of frees)
                         null,  //s (stack position to get frees)
@@ -264,7 +263,7 @@ const Interpreter = Class.create({
         var from = this.current_dynamic_winder;
         var winders = Interpreter.DynamicWind.listWinders(from, to);
         x = Interpreter.DynamicWind.joinWinders(winders,
-          ["nuate2", stack]
+          ["refer-local", 0, ["nuate2", stack]]
         )
         break;
       case "nuate2":
