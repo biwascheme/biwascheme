@@ -6,7 +6,9 @@
         position: relative;
         width: 500px;
         height: 400px;
-        float: left;
+      }
+      #left {
+        float: left
       }
       
       div#bs-console{ border:1px solid black }
@@ -19,9 +21,11 @@
       span.dump_constant{ color:limegreen; }
       td.dump_dead{ color:lightgray; }
       td.dump_stknum{ color:gold; }
+      td{ vertical-align: top; }
     </style>
   </head>
 <body>
+  <div id="left">
   <h1>
     <a href='../index.html'>BiwaScheme</a> tracer
     <small id="biwa_ver"></small>
@@ -32,6 +36,7 @@
   <input type=button value="eval" onclick="eval_it()">
 
   <div id='bs-console'></div>
+</div>
 
   <input type=button value="&lt;&lt;" onclick="dumper.dump_move_to(0)">
   <input type=button value="&lt;" onclick="dumper.dump_move(-1)">
@@ -78,8 +83,14 @@
     BiwaScheme.Interpreter.dumper = window.dumper;
 
     window.eval_it();
-  });
 
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'j': window.dumper.dump_move(+1); break;
+        case 'k': window.dumper.dump_move(-1); break;
+      }
+    });
+  })
   </script>
 </body>
 </html>

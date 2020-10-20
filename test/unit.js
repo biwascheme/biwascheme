@@ -1288,6 +1288,23 @@ describe('11.15  Control features', {
       (reverse ret)
     `).should_be("(a b c C B d " + // jump!
                  "D b c C B d D A)")
+  },
+  'dynamic-wind 2': function() {
+    ew(`
+      (define a #())
+      (define c #f)
+      (define (add s) (vector-push! a s))
+      (begin
+        (dynamic-wind
+          (lambda () (add 'connect))
+          (lambda ()
+            (add (call/cc (lambda (cc) (set! c cc) 'talk1))))
+          (lambda () (add 'disconnect)))
+        (when (< (vector-length a) 4)
+          (c 'talk2)))
+      a
+     `).should_be("#(connect talk1 disconnect " +
+                   "connect talk2 disconnect)")
   }
 })
 

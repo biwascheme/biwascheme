@@ -299,8 +299,7 @@ program:
 compiled (excerpt):
 
 ```
-[refer-local 0
-[nuate #<Object{stack,last_refer,call_stack,tco_counter}> #<DynamicWind>]]
+[nuate1 #<Object{stack,last_refer,call_stack,tco_counter}> #<DynamicWind>]
 ```
 ### op_nuate2
 <a name="op_nuate2" />
@@ -309,8 +308,11 @@ On invoking a continuation, restore the stack saved by op_conti (see op_conti).
 
 #### format
 
+nuate2 is paired by refer-local which restores the register `a`.
+
 ```
-["nuate2", <saved_stack>]
+["refer-local", 0,
+["nuate2", <saved_stack>]]
 ```
 
 #### description
