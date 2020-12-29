@@ -28,7 +28,7 @@
   - $ cp release/biwascheme{,-x.y.z}-min.js
   - $ git add release/*
 1. Rebuild website
-  - $ make website
+  - $ make website -B
 1. Commit, `git tag` and push changes to github
   - $ git ci -m vx.y.z
   - $ git tag vx.y.z

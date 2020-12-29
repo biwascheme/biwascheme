@@ -33,6 +33,12 @@
 <li>First-class continuation (<code>call/cc</code>)</li>
 </ul>
 <p>See <a href="/doc/reference.html">doc/reference</a> for full list of functions.</p>
+<h3 id="limitation">Limitation</h3>
+<p>There are two limitations that arise from JavaScript. These will not be fixed (it&#39;s technically possible to fix but will be very inefficient).</p>
+<ul>
+<li>Strings are immutable</li>
+<li>Integers are not distinguished from float</li>
+</ul>
 <h3 id="macro">Macro</h3>
 <p>BiwaScheme does not have <code>syntax-rules</code> or <code>syntax-case</code>, but has <a href="/doc/reference.html#macro"><code>define-macro</code></a>.</p>
 <h3 id="javascript-language-interface">Javascript language interface</h3>

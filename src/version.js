@@ -1,2 +1,2 @@
-export const VERSION = "0.7.0";
-export const GitCommit = "3c117d2ade60b5ef77f0170a3b3106d5eae8915a";
+export const VERSION = "0.7.1";
+export const GitCommit = "1bfb393a46219e14a226ed479d60352a2ddbec1b";

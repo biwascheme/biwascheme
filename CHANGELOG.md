@@ -1,4 +1,4 @@
-## HEAD
+## 2020-12-29 v0.7.1
 
 Possible breaking changes
 
@@ -7,14 +7,11 @@ Possible breaking changes
   If you have a program which relies on any of them, please file an issue
   and I'll make it public again.
 
-New features
+Other changes
 
-- parameterize (#188)
-- BiwaScheme.Parser.parse
-
-Internal changes
-
-- Changed build system to rollup.js (#160)
+- feat: parameterize (#188)
+- feat: BiwaScheme.Parser.parse
+- fixes: #136 #197 #198 #204
 
 ## 2020-03-26 v0.7.0
 

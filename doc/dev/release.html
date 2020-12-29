@@ -31,7 +31,6 @@
 <li>Edit VERSION</li>
 <li>Edit package.json</li>
 <li>Build<ul>
-<li>$ npm install uglifyjs -g</li>
 <li>$ make -B</li>
 </ul>
 </li>
@@ -42,7 +41,7 @@
 <li>open <a href="http://localhost:7001/test/spec.html#release">http://localhost:7001/test/spec.html#release</a></li>
 <li>open <a href="http://localhost:7001/test/spec.html#min">http://localhost:7001/test/spec.html#min</a></li>
 <li>run test/browser_functions/<ul>
-<li><code>$ cd test/browser_functions &amp;&amp; node server.js &amp;&amp; open http://localhost:7001/</code></li>
+<li><code>$ cd test/browser_functions &amp;&amp; node server.js &amp;&amp; open http://localhost:7002/</code></li>
 </ul>
 </li>
 <li>$ npm run node-test</li>
@@ -53,21 +52,24 @@
 <li>open <a href="http://localhost:7001/demo/repl.html">http://localhost:7001/demo/repl.html</a></li>
 <li>open <a href="http://localhost:7001/website/i.html">http://localhost:7001/website/i.html</a></li>
 <li>open <a href="http://localhost:7001/test/tracer.html">http://localhost:7001/test/tracer.html</a></li>
-<li>open <a href="http://localhost:7001/test/tracer_auto.html">http://localhost:7001/test/tracer_auto.html</a></li>
 </ul>
 </li>
 <li>try npm package<ul>
 <li><code>$ npm pack</code></li>
-<li><code>$ npm install biwascheme-x.y.z.tgz -g</code></li>
+<li><code>$ npm install -g biwascheme-x.y.z.tgz</code></li>
 <li><code>$ biwas -v</code></li>
 </ul>
 </li>
 </ul>
 </li>
 <li>Create biwascheme-x.y.z.js<ul>
-<li>$ cp release/biwascheme{,-x.y.z}js</li>
+<li>$ cp release/biwascheme{,-x.y.z}.js</li>
 <li>$ cp release/biwascheme{,-x.y.z}-min.js</li>
 <li>$ git add release/*</li>
+</ul>
+</li>
+<li>Rebuild website<ul>
+<li>$ make website</li>
 </ul>
 </li>
 <li>Commit, <code>git tag</code> and push changes to github<ul>
@@ -78,10 +80,6 @@
 </li>
 <li>Publish npm package<ul>
 <li><code>$ npm publish</code></li>
-</ul>
-</li>
-<li>Update website<ul>
-<li>see website.md</li>
 </ul>
 </li>
 <li>Update <code>VERSION</code> to x.y.z.dev</li>
