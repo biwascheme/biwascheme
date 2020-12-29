@@ -6,6 +6,9 @@ Possible breaking changes
   that are considered internal are made private (For example, `BiwaScheme.Class`).
   If you have a program which relies on any of them, please file an issue
   and I'll make it public again.
+- Updated bundled dependencies.
+  - Underscore.js 1.2.2 -> 1.10.2
+  - jQuery 1.7.1 -> 3.5.1
 
 Other changes
 
