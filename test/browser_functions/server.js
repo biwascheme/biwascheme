@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // vim: set ft=javascript:
 
-var PORT = 7001;
+var PORT = 7002;
 
 var express = require('express'),
     app = require('express')(),

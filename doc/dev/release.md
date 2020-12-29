@@ -4,7 +4,6 @@
 1. Edit VERSION
 1. Edit package.json
 1. Build
-  - $ npm install uglifyjs -g
   - $ make -B
 1. Make sure it is working:
   - run tests
@@ -13,28 +12,27 @@
     - open http://localhost:7001/test/spec.html#release
     - open http://localhost:7001/test/spec.html#min
     - run test/browser_functions/
-      - `$ cd test/browser_functions && node server.js && open http://localhost:7001/`
+      - `$ cd test/browser_functions && node server.js && open http://localhost:7002/`
     - $ npm run node-test
   - run demos
     - demo/*
     - open http://localhost:7001/demo/repl.html
     - open http://localhost:7001/website/i.html
     - open http://localhost:7001/test/tracer.html
-    - open http://localhost:7001/test/tracer_auto.html
   - try npm package
     - `$ npm pack`
-    - `$ npm install biwascheme-x.y.z.tgz -g`
+    - `$ npm install -g biwascheme-x.y.z.tgz`
     - `$ biwas -v`
 1. Create biwascheme-x.y.z.js
-  - $ cp release/biwascheme{,-x.y.z}js
+  - $ cp release/biwascheme{,-x.y.z}.js
   - $ cp release/biwascheme{,-x.y.z}-min.js
   - $ git add release/*
+1. Rebuild website
+  - $ make website
 1. Commit, `git tag` and push changes to github
   - $ git ci -m vx.y.z
   - $ git tag vx.y.z
   - $ git push origin master --tags
 1. Publish npm package
   - `$ npm publish`
-1. Update website
-  - see website.md
 1. Update `VERSION` to x.y.z.dev
