@@ -15,7 +15,7 @@
       - `$ cd test/browser_functions && node server.js && open http://localhost:7002/`
     - $ npm run node-test
   - run demos
-    - demo/*
+    - open http://localhost:7001/
     - open http://localhost:7001/demo/repl.html
     - open http://localhost:7001/website/i.html
     - open http://localhost:7001/test/tracer.html
