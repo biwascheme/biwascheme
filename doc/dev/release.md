@@ -35,4 +35,6 @@
   - $ git push origin master --tags
 1. Publish npm package
   - `$ npm publish`
+1. Make a release on [github](https://github.com/biwascheme/biwascheme/releases)
+1. Post release mail to mailing list
 1. Update `VERSION` to x.y.z.dev
