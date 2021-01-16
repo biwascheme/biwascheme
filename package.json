@@ -37,6 +37,7 @@
     },
     "scripts": {
         "build": "rollup -c",
+        "dev": "rollup -c -w",
         "node-test": "node test/node_functions.js"
     },
     "files": [
