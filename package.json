@@ -38,7 +38,8 @@
     "scripts": {
         "build": "rollup -c",
         "dev": "rollup -c -w",
-        "node-test": "node test/node_functions.js"
+        "node-test": "node test/node_functions.js",
+        "prepare": "npm run build"
     },
     "files": [
         "bin/biwas",
