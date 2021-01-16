@@ -23,7 +23,7 @@ let replaceVersion = () =>
 
 export default [
   {
-    plugins: [prettier({}), replaceVersion()],
+    plugins: [prettier({ parser: "babel" }), replaceVersion()],
     input: "src/main-node.js",
     output: [
       {
@@ -31,13 +31,12 @@ export default [
         format: "cjs",
         name: "BiwaScheme",
         strict: false,
-        plugins: [prettier()],
       },
     ],
   },
   {
     input: "src/main-browser.js",
-    plugins: [replaceVersion()],
+    plugins: [prettier({ parser: "babel" }), replaceVersion()],
     output: [
       {
         file: "release/biwascheme.js",
