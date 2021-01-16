@@ -17,6 +17,7 @@
         "url": "git://github.com/biwascheme/biwascheme.git"
     },
     "main": "./release/node_biwascheme.js",
+    "browser": "./release/biwascheme.js",
     "dependencies": {
         "optparse": "1.0.5",
         "underscore": "1.9.1"
@@ -40,6 +41,8 @@
     },
     "files": [
         "bin/biwas",
-        "release/node_biwascheme.js"
+        "release/node_biwascheme.js",
+        "release/biwascheme.js",
+        "release/biwascheme-min.js"
     ]
 }
