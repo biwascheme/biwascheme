@@ -25,3 +25,5 @@ Object.assign(window.BiwaScheme, BiwaScheme);
 
 import { execute_user_program } from "./platforms/browser/release_initializer.js"
 execute_user_program();
+
+module.exports = BiwaScheme;

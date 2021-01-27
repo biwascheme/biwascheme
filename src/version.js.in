@@ -1,2 +1,0 @@
-export const VERSION = "@VERSION@";
-export const GitCommit = "@GIT_COMMIT@";

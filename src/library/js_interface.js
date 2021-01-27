@@ -12,11 +12,17 @@ import { Pair, array_to_list, js_obj_to_alist, alist_to_js_obj } from "../system
 import Pause from "../system/pause.js"
 import { BiwaSymbol, Sym } from "../system/symbol.js"
 
+
 //
 // interface to javascript
 //
+
+// Rebind uses of eval to the global scope, to avoid polluting downstream code.
+// See: https://github.com/rollup/rollup/wiki/Troubleshooting#avoiding-eval
+let eval2 = eval;
+
 define_libfunc("js-eval", 1, 1, function(ar){
-  return eval(ar[0]);
+  return eval2(ar[0]);
 });
 define_libfunc("js-ref", 2, 2, function(ar){
   if(_.isString(ar[1])){
@@ -74,7 +80,7 @@ define_libfunc("js-invocation", 2, null, function(ar, intp){
   var receiver = ar.shift();
   // TODO: convert lambdas by js-closure 
   if(isSymbol(receiver)){
-    receiver = eval(receiver.name); //XXX: is this ok?
+    receiver = eval2(receiver.name); //XXX: is this ok?
   }
 
   var v = receiver;
@@ -161,7 +167,7 @@ define_libfunc("js-new", 1, null, function(ar, intp){
   };
 
   var ctor = ar.shift();
-  if (_.isString(ctor)) ctor = eval(ctor);
+  if (_.isString(ctor)) ctor = eval2(ctor);
 
   if(ar.length == 0){
     return new ctor();
