@@ -6,7 +6,7 @@ all: build
 
 .PHONY: build
 build:
-  npm run build
+	npm run build
 
 #
 # Test
