@@ -2,13 +2,18 @@
 
 ### Prerequisites
 
-- Node.js, npm
-- make
-- sed
+- Node.js
+- npm
 
 ### Command
 
 ```
 $ npm install
-$ make -B
+$ npm run build
 ```
+
+This will create these js files.
+
+- ./release/biwascheme.js
+- ./release/biwascheme-min.js
+- ./release/node_biwascheme.js

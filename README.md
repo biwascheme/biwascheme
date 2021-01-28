@@ -38,7 +38,7 @@ Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
 
 ### How to use with node.js to run a biwa script
 
-1. $ npm install biwascheme
+1. $ npm install -g biwascheme
 2. create a file a.scm:
 
     (display "Hello, world!")
