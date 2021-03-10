@@ -21,7 +21,7 @@ define_libfunc("read-line", 0, 1, function(ar){
 // element
 //
 define_libfunc("element-empty!", 1, 1, function(ar){
-  if ($(ar[0]).attr("value")) {
+  if ($(ar[0]).prop("value")) {
     return $(ar[0]).val("");
   } else {
     return $(ar[0]).empty();
@@ -102,12 +102,12 @@ define_libfunc("element-identify", 1, 1, function(ar){
 });
 define_libfunc("element-read-attribute", 2, 2, function(ar){
   assert_string(ar[1]);
-  return $(ar[0]).attr(ar[1]);
+  return $(ar[0]).prop(ar[1]);
 });
 
 var element_write_attribute = function(ar) {
   assert_string(ar[1]);
-  return $(ar[0]).attr(ar[1], ar[2]);
+  return $(ar[0]).prop(ar[1], ar[2]);
 };
 define_libfunc("element-write-attribute", 3, 3, function(ar){
   deprecate("element-write-attribute", "1.0",
@@ -298,7 +298,7 @@ define_libfunc("element-new", 1, 1, function(ar){
 });
 
 const element_content = function(selector) {
-  if ($(selector).attr("value")) {
+  if ($(selector).prop("value")) {
     return $(selector).val();
   } else {
     return _.escape($(selector).html());
