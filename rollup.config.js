@@ -46,6 +46,13 @@ export default [
         banner: banner,
       },
       {
+        file: "release/biwascheme.mjs",
+        format: "esm",
+        name: "BiwaScheme",
+        strict: false,
+        banner: banner,
+      },
+      {
         file: "release/biwascheme-min.js",
         format: "iife",
         name: "BiwaScheme",
