@@ -56,6 +56,10 @@ Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
 
 3. $ node a.js
 
+### Statically build biwa-powered website
+
+The npm package contains `biwascheme.mjs` for module bundlers like [rollup](https://rollupjs.org/guide/en/). See https://github.com/acmiyaguchi/svelte-biwascheme-example for an example.
+
 ## Conformance
 
 BiwaScheme [implements](https://www.biwascheme.org/doc/features.html) most of the features of [R7RS small](https://small.r7rs.org/), including first-class continuation and tail call optimization.

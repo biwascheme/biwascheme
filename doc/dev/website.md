@@ -13,16 +13,9 @@ Execute `$ make website -B` to
 
 Just push these html files to the `master` branch.
 
-### Browse locally (with Node.js)
+### Browse locally
 
 ```
-$ ./local_website.js`
+$ npm run serve
 $ open http://localhost:7001/
-```
-
-### Browse locally (with [Pow](http://pow.cx))
-
-```
-$ ln -s . ~/.pow/biwascheme
-$ open http://biwascheme.dev/index.html
 ```
