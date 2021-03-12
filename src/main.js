@@ -33,6 +33,9 @@ import "./library/srfi.js"
 import { reduce_cyclic_info, find_cyclic } from "./system/_writer.js"
 import { define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float } from "./library/infra.js"
 
+// Avoid circular dependency
+nil.to_set = function(){ return new BiwaSet(); };
+
 export default {
   TopEnv, CoreEnv, nil, undef, debug, max_trace_size, suppress_deprecation_warning,
   Version: VERSION, VERSION, GitCommit,

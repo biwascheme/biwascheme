@@ -1,4 +1,3 @@
-import BiwaSet from "./system/set.js"
 import { inspect } from "./system/_writer.js"
 import { Bug } from "./system/error.js"
 // 
@@ -19,8 +18,9 @@ const nil = {
   toString: function() { return "nil"; },
   to_write: function() { return "()"; },
   to_array: function() { return []; },
-  to_set: function() { return new BiwaSet(); },
-  length: function() { return 0; }
+  length: function() { return 0; },
+  // Moved to main.js to avoid circular dependency
+  //to_set: function() { return new BiwaSet(); },
 };
 
 //
