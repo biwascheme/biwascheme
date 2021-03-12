@@ -1,9 +1,3 @@
-import { inspect } from "./system/_writer.js"
-import { Bug } from "./system/error.js"
-// 
-// Heap based scheme from 3imp.pdf
-//
-
 //
 // variables
 //
@@ -30,21 +24,6 @@ const nil = {
 const undef = new Object();
 undef.toString = function(){ return "#<undef>"; }
 
-// Prints the arguments to console.debug.
-const debug = function(/*arguments*/){
-  var args = _.toArray(arguments);
-  console.debug.apply(console, _.map(args, inspect));
-}
-
-//
-// Assertion
-//
-const assert = function(cond, desc) {
-  if (!cond) {
-    throw new Bug("[BUG] Assertion failed: "+desc);
-  }
-}
-
 //
 // Configurations
 //
@@ -56,4 +35,4 @@ const max_trace_size = 40;
 // Stop showing deprecation warning
 const suppress_deprecation_warning = false;
 
-export { TopEnv, CoreEnv, nil, undef, debug, max_trace_size, suppress_deprecation_warning };
+export { TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warning };
