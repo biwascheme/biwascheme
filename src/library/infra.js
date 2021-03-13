@@ -7,7 +7,6 @@ import { make_assert, make_simple_assert } from "../system/assert.js"
 import { BiwaError } from "../system/error.js"
 import Interpreter from "../system/interpreter.js"
 import { Complex } from "../system/number.js"
-import { isRecord, isRecordTD, isRecordCD } from "../system/record.js"
 import { isPromise } from "../system/promise.js"
 import Syntax from "../system/syntax.js"
 
