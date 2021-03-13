@@ -8,7 +8,7 @@ root = this;
 
 var BiwaScheme = BiwaScheme || {};
 
-BiwaScheme.register_tests = function(){
+RegisterBiwaSchemeTests = function(){
 
 var on_error = function(e){
   console.warn(e);
