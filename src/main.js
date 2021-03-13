@@ -2,7 +2,7 @@ import { TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warni
 import { VERSION, GitCommit } from "./version.js";
 
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
-         isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
+         isVector, isClosure, makeClosure, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
 import { to_write, to_display, inspect } from "./system/_writer.js"
 import { write_ss, to_write_ss } from "./system/write_ss.js"
@@ -11,7 +11,7 @@ import Char from "./system/char.js"
 import Compiler from "./system/compiler.js"
 import { Enumeration, isEnumSet } from "./system/enumeration.js"
 import { BiwaError, Bug, UserError } from "./system/error.js"
-import Hashtable from "./system/hashtable.js"
+import { Hashtable, isHashtable, isMutableHashtable } from "./system/hashtable.js"
 import Interpreter from "./system/interpreter.js"
 import { Complex, Rational, isNumber, isComplex, isReal, isRational, isInteger } from "./system/number.js"
 import { Pair, List, isPair, isList, array_to_list, deep_array_to_list, Cons } from "./system/pair.js"

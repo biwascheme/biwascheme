@@ -5,7 +5,6 @@ import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { nil, undef } from "../header.js"
 import { to_write_ss } from "./write_ss.js"
 import Char from "./char.js"
-import Hashtable from "./hashtable.js"
 import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
 
@@ -39,14 +38,6 @@ const isPort = function(obj){
 
 const isVector = function(obj){
   return (obj instanceof Array) && (obj.closure_p !== true);
-};
-
-const isHashtable = function(obj){
-  return (obj instanceof Hashtable);
-};
-
-const isMutableHashtable = function(obj){
-  return (obj instanceof Hashtable) && obj.mutable;
 };
 
 // Returns true if `obj` is a Scheme closure.
@@ -100,5 +91,5 @@ const lt = function(a, b) {
 };
 
 export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
-         isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
+         isVector, isClosure, makeClosure, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt };

@@ -8,6 +8,8 @@ import { BiwaSymbol } from "./symbol.js"
 //
 // Hashtable
 //
+// TODO: Reimplement with JavaScript Map
+//
 // Based on the base JavaScript Object class, but
 //  * Object takes only strings as keys
 //  * R6RS hashtable needs its own hash function
@@ -105,6 +107,14 @@ const Hashtable = Class.create({
   }
 });
 
+const isHashtable = function(obj){
+  return (obj instanceof Hashtable);
+};
+
+const isMutableHashtable = function(obj){
+  return (obj instanceof Hashtable) && obj.mutable;
+};
+
 //
 // Hash functions
 //
@@ -139,4 +149,4 @@ Hashtable.eqv_equiv = function(ar){
   return eqv(ar[0], ar[1]);
 };
 
-export default Hashtable;
+export { Hashtable, isHashtable, isMutableHashtable };

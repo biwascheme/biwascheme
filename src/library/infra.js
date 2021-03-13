@@ -1,10 +1,11 @@
 import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { CoreEnv, suppress_deprecation_warning } from "../header.js";
 import { isString, isFunction, isChar, isSymbol, isPort,
-         isVector, isHashtable, isMutableHashtable, isClosure } from "../system/_types.js"
+         isVector, isClosure } from "../system/_types.js"
 import { to_write } from "../system/_writer.js"
 import { make_assert, make_simple_assert } from "../system/assert.js"
 import { BiwaError } from "../system/error.js"
+import { isHashtable, isMutableHashtable } from "../system/hashtable.js"
 import Interpreter from "../system/interpreter.js"
 import { Complex } from "../system/number.js"
 import { isPair, isList } from "../system/pair.js"
