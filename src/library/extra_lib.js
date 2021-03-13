@@ -6,7 +6,8 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_vector,
          assert_function, assert_closure, assert_procedure, assert_date } from "./infra.js"; 
 import { makeClosure } from "../system/_types.js"
-import { to_write, to_display, to_write_ss, inspect } from "../system/_writer.js"
+import { to_write, to_display, inspect } from "../system/_writer.js"
+import { to_write_ss } from "../system/write_ss.js"
 import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js"
 import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
 import Call from "../system/call.js"

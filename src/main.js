@@ -4,7 +4,8 @@ import { VERSION, GitCommit } from "./version.js";
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
          isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
-import { to_write, to_display, write_ss, to_write_ss, inspect } from "./system/_writer.js"
+import { to_write, to_display, inspect } from "./system/_writer.js"
+import { write_ss, to_write_ss } from "./system/write_ss.js"
 import Call from "./system/call.js"
 import Char from "./system/char.js"
 import Compiler from "./system/compiler.js"
@@ -30,7 +31,7 @@ import "./library/r6rs_lib.js"
 import "./library/srfi.js"
 
 // For unit testing
-import { reduce_cyclic_info, find_cyclic } from "./system/_writer.js"
+import { reduce_cyclic_info, find_cyclic } from "./system/write_ss.js"
 import { define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float } from "./library/infra.js"
 
 // Avoid circular dependency
@@ -42,7 +43,8 @@ export default {
   isNil, isUndef, isBoolean, isString, isChar, isSymbol, isPort, isPair, isList,
     isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
     isSelfEvaluating, eq, eqv, equal, lt,
-  to_write, to_display, write_ss, to_write_ss, inspect,
+  to_write, to_display, inspect,
+  write_ss, to_write_ss,
   Call,
   Char,
   Compiler,
