@@ -125,6 +125,10 @@ const Pair = Class.create({
     return this.inspect();
   },
 
+  to_display: function(to_display) {
+    return this.inspect(to_display);
+  },
+
   to_write: function(){
     return this.inspect(to_write);
   }

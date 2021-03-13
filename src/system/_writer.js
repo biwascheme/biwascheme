@@ -2,7 +2,6 @@ import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { nil, undef } from "../header.js"
 import { isClosure } from "./_types.js"
 import { BiwaSymbol } from "./symbol.js"
-import { Pair } from "./pair.js"
 
 //
 // write.js: Functions to convert objects to strings
@@ -62,7 +61,7 @@ const to_write = function(obj){
 
 const to_display = function(obj){
   if(obj.to_display)
-    return obj.to_display();
+    return obj.to_display(to_display);
   if(_.isUndefined(obj))
     return 'undefined';
   else if(_.isNull(obj))
@@ -73,8 +72,6 @@ const to_display = function(obj){
     return obj.name;
   else if(obj instanceof Array)
     return '#(' + _.map(obj, to_display).join(' ') + ')';
-  else if(obj instanceof Pair)
-    return obj.inspect(to_display);
   else
     return to_write(obj);
 }
