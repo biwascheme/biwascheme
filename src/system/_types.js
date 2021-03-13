@@ -3,7 +3,7 @@
 //
 import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { nil, undef } from "../header.js"
-import { to_write } from "./_writer.js"
+import { to_write_ss } from "./write_ss.js"
 import Char from "./char.js"
 import Hashtable from "./hashtable.js"
 import { BiwaSymbol } from "./symbol.js"
@@ -126,8 +126,7 @@ const eqv = function(a, b){
   return a == b && (typeof(a) == typeof(b));
 };
 const equal = function(a, b){
-  //TODO: must terminate for cyclic objects
-  return to_write(a) == to_write(b);
+  return to_write_ss(a) == to_write_ss(b);
 };
 
 //
