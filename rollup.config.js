@@ -2,6 +2,7 @@ import prettier from "rollup-plugin-prettier";
 import { terser } from "rollup-plugin-terser";
 import replace from "@rollup/plugin-replace";
 import child_process from "child_process";
+import package_json from "./package.json"
 
 const banner = `/*
  * BiwaScheme __VERSION__ - R6RS/R7RS Scheme in JavaScript
@@ -14,7 +15,7 @@ const banner = `/*
 // commit programmatically.
 let replaceVersion = () =>
   replace({
-    __VERSION__: process.env.npm_package_version,
+    __VERSION__: package_json["version"],
     __GIT_COMMIT__: child_process
       .execSync("git rev-parse HEAD")
       .toString()
