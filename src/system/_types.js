@@ -5,10 +5,8 @@ import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { nil, undef } from "../header.js"
 import { to_write } from "./_writer.js"
 import Char from "./char.js"
-import Hashtable from "./hashtable.js"
 import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
-import { Pair } from "./pair.js"
 
 const isNil = function(obj){
   return (obj === nil);
@@ -38,56 +36,8 @@ const isPort = function(obj){
   return (obj instanceof Port);
 };
 
-// Note: '() is not a pair in scheme
-const isPair = function(obj){
-  return (obj instanceof Pair);
-};
-
-// Returns true if obj is a proper list
-// Note: isList returns true for '()
-const isList = function(obj){
-  if (obj === nil) { // Empty list
-    return true;
-  }
-  if (!(obj instanceof Pair)) { // Argument isn't even a pair
-    return false;
-  }
-
-  var tortoise = obj;
-  var hare = obj.cdr;
-  while (true) {
-    if (hare === nil) { // End of list
-      return true;
-    }
-    if (hare === tortoise) { // Cycle
-      return false;
-    }
-    if (!(hare instanceof Pair)) { // Improper list
-      return false;
-    }
-
-    if (hare.cdr === nil) { // End of list
-      return true;
-    }
-    if (!(hare.cdr instanceof Pair)) { // Improper list
-      return false;
-    }
-
-    hare = hare.cdr.cdr;
-    tortoise = tortoise.cdr;
-  }
-};
-
 const isVector = function(obj){
   return (obj instanceof Array) && (obj.closure_p !== true);
-};
-
-const isHashtable = function(obj){
-  return (obj instanceof Hashtable);
-};
-
-const isMutableHashtable = function(obj){
-  return (obj instanceof Hashtable) && obj.mutable;
 };
 
 // Returns true if `obj` is a Scheme closure.
@@ -141,6 +91,6 @@ const lt = function(a, b) {
   return a < b;
 };
 
-export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
-         isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
+export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
+         isVector, isClosure, makeClosure, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt };

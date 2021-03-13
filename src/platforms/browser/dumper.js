@@ -1,6 +1,7 @@
 import * as _ from "../../deps/underscore-1.10.2-esm.js"
 import Class from "../../system/class.js"
-import { inspect, write_ss, truncate } from "../../system/_writer.js"
+import { inspect, truncate } from "../../system/_writer.js"
+import { write_ss } from "../../system/write_ss.js"
 //
 // Dumper - graphical state dumper
 //

@@ -3,7 +3,6 @@ import { nil } from "../header.js"
 import { to_write, inspect } from "./_writer.js"
 import Class from "./class.js"
 import BiwaSet from "./set.js"
-import { isPair } from "./_types.js"
 
 //
 // Pair 
@@ -125,10 +124,54 @@ const Pair = Class.create({
     return this.inspect();
   },
 
+  to_display: function(to_display) {
+    return this.inspect(to_display);
+  },
+
   to_write: function(){
     return this.inspect(to_write);
   }
 });
+
+// Note: '() is not a pair in scheme
+const isPair = function(obj){
+  return (obj instanceof Pair);
+};
+
+// Returns true if obj is a proper list
+// Note: isList returns true for '()
+const isList = function(obj){
+  if (obj === nil) { // Empty list
+    return true;
+  }
+  if (!(obj instanceof Pair)) { // Argument isn't even a pair
+    return false;
+  }
+
+  var tortoise = obj;
+  var hare = obj.cdr;
+  while (true) {
+    if (hare === nil) { // End of list
+      return true;
+    }
+    if (hare === tortoise) { // Cycle
+      return false;
+    }
+    if (!(hare instanceof Pair)) { // Improper list
+      return false;
+    }
+
+    if (hare.cdr === nil) { // End of list
+      return true;
+    }
+    if (!(hare.cdr instanceof Pair)) { // Improper list
+      return false;
+    }
+
+    hare = hare.cdr.cdr;
+    tortoise = tortoise.cdr;
+  }
+};
 
 // Creates a list out of the arguments, optionally converting any nested arrays into nested lists if the deep argument is true.
 // Example:
@@ -191,5 +234,5 @@ const alist_to_js_obj = function(alist) {
 };
 
 
-export { Pair, List, array_to_list, deep_array_to_list, Cons,
+export { Pair, List, isPair, isList, array_to_list, deep_array_to_list, Cons,
          js_obj_to_alist, alist_to_js_obj };

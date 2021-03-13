@@ -21,6 +21,9 @@ const Char = Class.create({
       default:   return "#\\"+this.value;
     }
   },
+  to_display: function(){
+    return this.value;
+  },
   inspect: function(){
     return this.to_write();
   }

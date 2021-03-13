@@ -6,7 +6,8 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_vector,
          assert_function, assert_closure, assert_procedure, assert_date } from "./infra.js"; 
 import { makeClosure } from "../system/_types.js"
-import { to_write, to_display, to_write_ss, inspect } from "../system/_writer.js"
+import { to_write, to_display, inspect } from "../system/_writer.js"
+import { to_write_ss } from "../system/write_ss.js"
 import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js"
 import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
 import Call from "../system/call.js"
@@ -287,7 +288,7 @@ var macroexpand_1 = function(x){
   return x;
 }
 define_syntax("%macroexpand", function(x){
-  var expanded = Interpreter.expand(x.cdr.car);
+  var expanded = Compiler.expand(x.cdr.car);
   return List(Sym("quote"), expanded);
 });
 define_syntax("%macroexpand-1", function(x){
@@ -296,7 +297,7 @@ define_syntax("%macroexpand-1", function(x){
 });
 
 define_libfunc("macroexpand", 1, 1, function(ar){
-  return Interpreter.expand(ar[0]);
+  return Compiler.expand(ar[0]);
 });
 define_libfunc("macroexpand-1", 1, 1, function(ar){
   return macroexpand_1(ar[0]);
