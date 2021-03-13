@@ -4,14 +4,13 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate } from "./infra.js"; 
-import { isSymbol, isList, isClosure } from "../system/_types.js"
+import { isSymbol, isClosure } from "../system/_types.js"
 import { inspect } from "../system/_writer.js"
 import { BiwaError } from "../system/error.js"
 import Interpreter from "../system/interpreter.js"
-import { Pair, array_to_list, js_obj_to_alist, alist_to_js_obj } from "../system/pair.js"
+import { Pair, isList, array_to_list, js_obj_to_alist, alist_to_js_obj } from "../system/pair.js"
 import Pause from "../system/pause.js"
 import { BiwaSymbol, Sym } from "../system/symbol.js"
-
 
 //
 // interface to javascript

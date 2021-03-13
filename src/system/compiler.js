@@ -1,10 +1,10 @@
 import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { TopEnv, nil, undef } from "../header.js"
-import { isPair, isSymbol } from "./_types.js"
+import { isSymbol } from "./_types.js"
 import Class from "./class.js"
 import { BiwaError, Bug } from "./error.js"
 import Interpreter from "./interpreter.js"
-import { Pair, List } from "./pair.js"
+import { Pair, List, isPair } from "./pair.js"
 import BiwaSet from "./set.js"
 import { BiwaSymbol, Sym } from "./symbol.js"
 

@@ -8,7 +8,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
 import { to_write, to_display, inspect } from "../system/_writer.js"
 import { to_write_ss } from "../system/write_ss.js"
-import { isNil, isSymbol, isPair, isList, isVector, makeClosure, isProcedure,
+import { isNil, isSymbol, isVector, makeClosure, isProcedure,
          eq, eqv, equal, lt } from "../system/_types.js"
 import Call from "../system/call.js"
 import Char from "../system/char.js"
@@ -17,7 +17,7 @@ import { Enumeration, assert_enum_set } from "../system/enumeration.js"
 import Hashtable from "../system/hashtable.js"
 import Interpreter from "../system/interpreter.js"
 import { Complex, Rational, isNumber, isComplex, isReal, isRational, isInteger } from "../system/number.js"
-import { Pair, List, array_to_list, deep_array_to_list, Cons } from "../system/pair.js"
+import { Pair, List, isPair, isList, array_to_list, deep_array_to_list, Cons } from "../system/pair.js"
 import { Port, eof } from "../system/port.js"
 import { BiwaPromise } from "../system/promise.js"
 import { Record, isRecord, assert_record, assert_record_td, assert_record_cd } from "../system/record.js"

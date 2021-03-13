@@ -8,7 +8,6 @@ import Char from "./char.js"
 import Hashtable from "./hashtable.js"
 import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
-import { Pair } from "./pair.js"
 
 const isNil = function(obj){
   return (obj === nil);
@@ -36,46 +35,6 @@ const isSymbol = function(obj){
 
 const isPort = function(obj){
   return (obj instanceof Port);
-};
-
-// Note: '() is not a pair in scheme
-const isPair = function(obj){
-  return (obj instanceof Pair);
-};
-
-// Returns true if obj is a proper list
-// Note: isList returns true for '()
-const isList = function(obj){
-  if (obj === nil) { // Empty list
-    return true;
-  }
-  if (!(obj instanceof Pair)) { // Argument isn't even a pair
-    return false;
-  }
-
-  var tortoise = obj;
-  var hare = obj.cdr;
-  while (true) {
-    if (hare === nil) { // End of list
-      return true;
-    }
-    if (hare === tortoise) { // Cycle
-      return false;
-    }
-    if (!(hare instanceof Pair)) { // Improper list
-      return false;
-    }
-
-    if (hare.cdr === nil) { // End of list
-      return true;
-    }
-    if (!(hare.cdr instanceof Pair)) { // Improper list
-      return false;
-    }
-
-    hare = hare.cdr.cdr;
-    tortoise = tortoise.cdr;
-  }
 };
 
 const isVector = function(obj){
@@ -140,6 +99,6 @@ const lt = function(a, b) {
   return a < b;
 };
 
-export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort, isPair, isList,
+export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
          isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt };
