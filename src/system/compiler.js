@@ -1,12 +1,12 @@
 import * as _ from "../deps/underscore-1.10.2-esm.js"
-import { TopEnv, nil, undef } from "../header.js"
+import { TopEnv, CoreEnv, nil, undef } from "../header.js"
 import { isSymbol } from "./_types.js"
 import Class from "./class.js"
 import { BiwaError, Bug } from "./error.js"
-import Interpreter from "./interpreter.js"
-import { Pair, List, isPair } from "./pair.js"
+import { Pair, List, isPair, array_to_list } from "./pair.js"
 import BiwaSet from "./set.js"
 import { BiwaSymbol, Sym } from "./symbol.js"
+import Syntax from "./syntax.js"
 
 ///
 /// Compiler
@@ -481,7 +481,7 @@ const Compiler = Class.create({
        tbody.car.name == "letrec*"){
       // The body has internal defines.
       // Expand letrec* macro
-      var cbody = Interpreter.expand(tbody);
+      var cbody = Compiler.expand(tbody);
     }
     else{
       // The body has no internal defines.
@@ -515,8 +515,101 @@ const Compiler = Class.create({
 
 // Compile an expression with new compiler
 Compiler.compile = function(expr, next){
-  expr = Interpreter.expand(expr);
+  expr = Compiler.expand(expr);
   return (new Compiler).run(expr, next);
+};
+
+// Expand macro calls in a expression recursively.
+//
+// x - expression
+// flag - used internally. do not specify this
+//
+// @throws {BiwaError} when x has syntax error
+Compiler.expand = function(x, flag/*optional*/){
+  var expand = Compiler.expand;
+  flag || (flag = {})
+  var ret = null;
+
+  if(x instanceof Pair){
+    switch(x.car){
+    case Sym("define"):
+      var left = x.cdr.car, exp = x.cdr.cdr;
+      ret = new Pair(Sym("define"),
+              new Pair(left, expand(exp, flag)));
+      break;
+    case Sym("begin"):
+      ret = new Pair(Sym("begin"), expand(x.cdr, flag));
+      break;
+    case Sym("quote"):
+      ret = x;
+      break;
+    case Sym("lambda"):
+      var vars=x.cdr.car, body=x.cdr.cdr;
+      ret = new Pair(Sym("lambda"),
+              new Pair(vars, expand(body, flag)));
+      break;
+    case Sym("if"):
+      var testc=x.second(), thenc=x.third(), elsec=x.fourth();
+      ret = List(Sym("if"),
+                 expand(testc, flag),
+                 expand(thenc, flag),
+                 expand(elsec, flag));
+      break;
+    case Sym("set!"):
+      var v=x.second(), x=x.third();
+      ret = List(Sym("set!"), v, expand(x, flag));
+      break;
+    case Sym("call-with-current-continuation"): 
+    case Sym("call/cc"): 
+      var x=x.second();
+      ret = List(Sym("call/cc"), expand(x, flag));
+      break;
+    default: //apply
+      var transformer = null;
+      if(isSymbol(x.car)){
+        if(TopEnv[x.car.name] instanceof Syntax)
+          transformer = TopEnv[x.car.name];
+        else if(CoreEnv[x.car.name] instanceof Syntax)
+          transformer = CoreEnv[x.car.name];
+      }
+
+      if(transformer){
+        flag["modified"] = true;
+        ret = transformer.transform(x);
+
+//            // Debug
+//            var before = to_write(x);
+//            var after = to_write(ret);
+//            if(before != after){
+//              console.log("before: " + before)
+//              console.log("expand: " + after)
+//            }
+
+        var fl;
+        for(;;){
+          ret = expand(ret, fl={});
+          if(!fl["modified"]) 
+            break;
+        }
+      }
+      else{
+        var expanded_car = expand(x.car, flag);
+        var expanded_cdr;
+        if(!(x.cdr instanceof Pair) && (x.cdr !== nil)){
+          throw new BiwaError("proper list required for function application "+
+                              "or macro use: "+to_write(x));
+        }
+        expanded_cdr = array_to_list(
+                         x.cdr.to_array().map(
+                               function(item){ return expand(item, flag); }));
+        ret = new Pair(expanded_car, expanded_cdr);
+      }
+    }
+  }
+  else{
+    ret = x;
+  }
+  return ret;
 };
 
 // Transform internal defines to letrec*.

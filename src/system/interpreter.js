@@ -6,12 +6,11 @@ import Call from "./call.js"
 import Class from "./class.js"
 import Compiler from "./compiler.js"
 import { BiwaError, Bug } from "./error.js"
-import { Pair, List, array_to_list } from "./pair.js"
+import { Pair, List } from "./pair.js"
 import Parser from "./parser.js"
 import Pause from "./pause.js"
 import { eof } from "./port.js"
 import { Sym } from "./symbol.js"
-import Syntax from "./syntax.js"
 
 ///
 /// Interpreter
@@ -475,7 +474,7 @@ const Interpreter = Class.create({
         if(expr === Parser.EOS) break;
 
         // expand
-        expr = Interpreter.expand(expr);
+        expr = Compiler.expand(expr);
 
         // compile
         var opc = this.compiler.run(expr);
@@ -532,98 +531,7 @@ Interpreter.read = function(str){
   return (r == Parser.EOS)? eof: r;
 };
 
-// Expand macro calls in a expression recursively.
-//
-// x - expression
-// flag - used internally. do not specify this
-//
-// @throws {BiwaError} when x has syntax error
-Interpreter.expand = function(x, flag/*optional*/){
-  var expand = Interpreter.expand;
-  flag || (flag = {})
-  var ret = null;
-
-  if(x instanceof Pair){
-    switch(x.car){
-    case Sym("define"):
-      var left = x.cdr.car, exp = x.cdr.cdr;
-      ret = new Pair(Sym("define"),
-              new Pair(left, expand(exp, flag)));
-      break;
-    case Sym("begin"):
-      ret = new Pair(Sym("begin"), expand(x.cdr, flag));
-      break;
-    case Sym("quote"):
-      ret = x;
-      break;
-    case Sym("lambda"):
-      var vars=x.cdr.car, body=x.cdr.cdr;
-      ret = new Pair(Sym("lambda"),
-              new Pair(vars, expand(body, flag)));
-      break;
-    case Sym("if"):
-      var testc=x.second(), thenc=x.third(), elsec=x.fourth();
-      ret = List(Sym("if"),
-                 expand(testc, flag),
-                 expand(thenc, flag),
-                 expand(elsec, flag));
-      break;
-    case Sym("set!"):
-      var v=x.second(), x=x.third();
-      ret = List(Sym("set!"), v, expand(x, flag));
-      break;
-    case Sym("call-with-current-continuation"): 
-    case Sym("call/cc"): 
-      var x=x.second();
-      ret = List(Sym("call/cc"), expand(x, flag));
-      break;
-    default: //apply
-      var transformer = null;
-      if(isSymbol(x.car)){
-        if(TopEnv[x.car.name] instanceof Syntax)
-          transformer = TopEnv[x.car.name];
-        else if(CoreEnv[x.car.name] instanceof Syntax)
-          transformer = CoreEnv[x.car.name];
-      }
-
-      if(transformer){
-        flag["modified"] = true;
-        ret = transformer.transform(x);
-
-//            // Debug
-//            var before = to_write(x);
-//            var after = to_write(ret);
-//            if(before != after){
-//              console.log("before: " + before)
-//              console.log("expand: " + after)
-//            }
-
-        var fl;
-        for(;;){
-          ret = expand(ret, fl={});
-          if(!fl["modified"]) 
-            break;
-        }
-      }
-      else{
-        var expanded_car = expand(x.car, flag);
-        var expanded_cdr;
-        if(!(x.cdr instanceof Pair) && (x.cdr !== nil)){
-          throw new BiwaError("proper list required for function application "+
-                              "or macro use: "+to_write(x));
-        }
-        expanded_cdr = array_to_list(
-                         x.cdr.to_array().map(
-                               function(item){ return expand(item, flag); }));
-        ret = new Pair(expanded_car, expanded_cdr);
-      }
-    }
-  }
-  else{
-    ret = x;
-  }
-  return ret;
-};
+Interpreter.expand = function(){ throw "Interpreter.expand is moved to Compiler.expand" };
 
 //
 // dynamic-wind
