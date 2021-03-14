@@ -3,11 +3,12 @@ import { Port } from "../../system/port.js"
 
 const current_input = new Port.CustomInput(
   function (callback) {
-    var form = $("<form/>");
-    form.html("<input id='webscheme-read-line' type='text'><input type='submit' value='ok'>");
-    $("#bs-console").append(form);
-    form.submit(function(){
-      var input = $("#webscheme-read-line").val();
+    const out = document.querySelector("#bs-console");
+    const form = document.createElement("form");
+    form.innerHTML = "<input id='webscheme-read-line' type='text'><input type='submit' value='ok'>";
+    out.appendChild(form);
+    form.addEventListener("submit", function(){
+      const input = document.querySelector("#webscheme-read-line").value;
       form.remove();
       callback(input);
       return false;
@@ -17,15 +18,13 @@ const current_input = new Port.CustomInput(
 
 const current_output = new Port.CustomOutput(
   function (str) {
-    var console;
-    var text;
-    console = $("#bs-console");
-    if (console[0]) {
-      text = _.escape(str);
-      var span = $("<span>");
-      span.html(text.replace(/\n/g,"<br>").replace(/ /g,"&nbsp;"));
-      console.append(span);
-    }
+    const out = document.querySelector("#bs-console");
+    if (!out) return;
+    const span = document.createElement("span");
+    span.innerHTML = _.escape(str)
+      .replace(/\n/g,"<br>")
+      .replace(/ /g,"&nbsp;");
+    out.appendChild(span);
   }
 );
 
