@@ -1,14 +1,18 @@
+import Dumper from "./dumper.js"
+
 //
 // release_initializer.js - read user's program and eval it (if it exists)
 //
+
 const execute_user_program = function() {
-  var dumper = null;
-  if ($("#biwascheme-debugger")[0]) {
-    dumper = new BiwaScheme.Dumper($("#biwascheme-debugger")[0]);
+  const dumper = null;
+  const debug_area = document.querySelector("#biwascheme-debugger");
+  if (debug_area) {
+    dumper = new Dumper(debug_area);
   }
 
   // Error handler (show message to console div)
-  var onError = function(e, state){
+  const onError = function(e, state){
     BiwaScheme.Port.current_error.put_string(e.message + "\n");
     if (dumper) {
       dumper.dump(state);
@@ -20,8 +24,8 @@ const execute_user_program = function() {
     }
   };
 
-  var run = function(script) {
-    var intp = new BiwaScheme.Interpreter(onError);
+  const run = function(script) {
+    const intp = new BiwaScheme.Interpreter(onError);
     try{
       intp.evaluate(script, function(){});
     }
@@ -31,15 +35,21 @@ const execute_user_program = function() {
   };
 
   // Start user's program (old style)
-  var script = $("script[src$='biwascheme.js']").html() ||
-               $("script[src$='biwascheme-min.js']").html();
-  if (script) run(script);
+  let script = "";
+  for (const s of document.querySelectorAll("script[src$='biwascheme.js']")) {
+    script += s.innerHTML;
+  }
+  for (const s of document.querySelectorAll("script[src$='biwascheme-min.js']")) {
+    script += s.innerHTML;
+  }
+
+  if (script.length > 0) run(script);
 
   // Start user's program (new style)
-  $(function(){
-    $("script[type='text/biwascheme']").each(function(){
-      run($(this).html());
-    });
+  window.addEventListener('DOMContentLoaded', function(){
+    for (const s of document.querySelectorAll("script[type='text/biwascheme']")) {
+      run(s.innerHTML);
+    }
   });
 };
 
