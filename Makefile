@@ -1,7 +1,3 @@
-#
-# Makefile - gather javascripts and compress it
-#
-
 all: build
 
 .PHONY: build

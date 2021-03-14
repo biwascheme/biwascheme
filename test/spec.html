@@ -13,9 +13,10 @@
 <div id="div1">div tag sample <span class="inner">stuff</span></div>
 <div id="bs-console"></div>
 
-<script type="text/javascript">// <![CDATA[
+<script type="text/javascript">
 var loader_development = function(){
-  document.write("<script type='module' src='../src/main-browser.js'><\/script>" +
+  document.write("<script type='text/javascript' src='../src/deps/jquery.js'><\/script>" +
+    "<script type='module' src='../src/main-browser.js'><\/script>" +
     "<script type='module'>"+
       "if(console) console.log('BiwaScheme '+BiwaScheme.VERSION);" +
       "RegisterBiwaSchemeTests();" +
@@ -47,8 +48,7 @@ switch(location.hash){
     if(console) console.log("starting tests for src/*.js");
     loader_development();
 }
-
-// ]]></script>
+</script>
 </body>
 </html>
 <!-- vim:set ft=javascript: -->

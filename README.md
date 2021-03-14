@@ -60,6 +60,14 @@ Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
 
 The npm package contains `biwascheme.mjs` for module bundlers like [rollup](https://rollupjs.org/guide/en/). See https://github.com/acmiyaguchi/svelte-biwascheme-example for an example.
 
+Note that biwascheme.mjs does not include jQuery unlike biwascheme-x.y.z.js.
+You need to bundle jQuery by your own if you want to use functions defined in
+src/library/webscheme_lib.js.
+
+### Building biwascheme.js
+
+See [doc/dev/build.md](doc/dev/build.md).
+
 ## Conformance
 
 BiwaScheme [implements](https://www.biwascheme.org/doc/features.html) most of the features of [R7RS small](https://small.r7rs.org/), including first-class continuation and tail call optimization.
@@ -74,10 +82,6 @@ There are two limitations that arise from JavaScript. These will not be fixed (i
 
 - Strings are immutable
 - Integers are not distinguished from float
-
-## Building biwascheme.js
-
-See doc/dev/build.md
 
 ## Links
 
