@@ -8,6 +8,7 @@ import Console from "../system/console.js"
 import Interpreter  from "../system/interpreter.js"
 import { Pair, alist_to_js_obj } from "../system/pair.js"
 import Pause from "../system/pause.js"
+import { Port } from "../system/port.js"
 import { BiwaSymbol, Sym } from "../system/symbol.js"
 
 // To use webscheme_lib, jQuery must be loaded beforehand
@@ -16,7 +17,7 @@ const $ = window.jQuery;
 define_libfunc("read-line", 0, 1, function(ar){
   var port = ar[0] || Port.current_input;
   assert_port(port);
-  return port.get_string();
+  return port.get_string(str => str);
 });
 
 //
