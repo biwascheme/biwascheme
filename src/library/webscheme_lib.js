@@ -1,4 +1,3 @@
-import $ from "../deps/jquery-3.5.1-esm.js"
 import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
@@ -10,6 +9,9 @@ import Interpreter  from "../system/interpreter.js"
 import { Pair, alist_to_js_obj } from "../system/pair.js"
 import Pause from "../system/pause.js"
 import { BiwaSymbol, Sym } from "../system/symbol.js"
+
+// To use webscheme_lib, jQuery must be loaded beforehand
+const $ = window.jQuery;
 
 define_libfunc("read-line", 0, 1, function(ar){
   var port = ar[0] || Port.current_input;

@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import prettier from "rollup-plugin-prettier";
 import { terser } from "rollup-plugin-terser";
 import replace from "@rollup/plugin-replace";
@@ -44,22 +45,22 @@ export default [
         format: "iife",
         name: "BiwaScheme",
         strict: false,
-        banner: banner,
-      },
-      {
-        file: "release/biwascheme.mjs",
-        format: "esm",
-        name: "BiwaScheme",
-        strict: false,
-        banner: banner,
+        banner: banner + readFileSync("src/deps/jquery.js"),
       },
       {
         file: "release/biwascheme-min.js",
         format: "iife",
         name: "BiwaScheme",
         strict: false,
-        banner: banner,
+        banner: banner + readFileSync("src/deps/jquery.js"),
         plugins: [terser({ output: { comments: /Copyright/ } })],
+      },
+      {
+        file: "release/biwascheme.mjs",
+        format: "esm",
+        name: "BiwaScheme",
+        strict: false,
+        banner: banner
       },
     ],
   },
