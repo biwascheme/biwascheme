@@ -6,7 +6,7 @@ import child_process from "child_process";
 import package_json from "./package.json"
 
 const banner = `/*
- * BiwaScheme __VERSION__ - R6RS/R7RS Scheme in JavaScript
+ * BiwaScheme __DEVELOPMENT__ - R6RS/R7RS Scheme in JavaScript
  *
  * Copyright (c) 2007-${new Date().getFullYear()} Yutaka HARA (http://www.biwascheme.org/)
  * Licensed under the MIT license.
@@ -16,7 +16,7 @@ const banner = `/*
 // commit programmatically.
 let replaceVersion = () =>
   replace({
-    __VERSION__: package_json["version"],
+    __DEVELOPMENT__: package_json["version"],
     __GIT_COMMIT__: child_process
       .execSync("git rev-parse HEAD")
       .toString()
