@@ -357,6 +357,10 @@ These functions are only available in browsers (i.e. does not work on Node.js.)
 `path` is relative to the current directory, unless it starts with `/` or
 `/^\w:/` (i.e. `c:`, `d:`, etc.)
 
+* (node-require name)
+  - Load an npm package or Node.js stdlib
+  - eg. `(node-require "fs")` `(node-require "marked")`
+
 #### Using Node.js libraries
 
 You can also use Node.js libraries via `js-eval`, etc.

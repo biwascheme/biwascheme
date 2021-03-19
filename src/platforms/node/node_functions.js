@@ -100,3 +100,11 @@ define_libfunc("js-load", 1, 1, function(ar) {
 
   return require(fullpath);
 });
+
+// (node-require "fs")
+define_libfunc("node-require", 1, 1, function(ar) {
+  var name = ar[0];
+  assert_string(name);
+
+  return require(name);
+});

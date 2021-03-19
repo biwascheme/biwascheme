@@ -1,6 +1,6 @@
 ;; Load npm markdown package
-(define marked (js-eval "require('marked')"))
-(define fs (js-eval "require('fs')"))
+(define marked (node-require "marked"))
+(define fs (node-require "fs"))
 
 ;; Return list of entries in the directory `path`
 (define (dir-ls path)
