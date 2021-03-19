@@ -1,7 +1,7 @@
 {
     "name": "biwascheme",
     "description": "A practical Scheme interpreter written in JavaScript",
-    "version": "0.7.1",
+    "version": "0.7.2",
     "author": "Yutaka HARA <yutaka.hara.gmail.com>",
     "license": "MIT",
     "homepage": "https://www.biwascheme.org/",
@@ -42,6 +42,7 @@
         "node-test": "node test/node_functions.js",
         "prepare": "npm run build",
         "prepare-release": "node --experimental-json-modules tools/prepare-release.mjs",
+        "release": "node --experimental-json-modules tools/release.mjs",
         "serve": "sirv . --dev --port 7001"
     },
     "files": [

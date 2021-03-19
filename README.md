@@ -61,7 +61,7 @@ Just load biwascheme.js (or biwascheme-min.js) and write Scheme code.
 The npm package contains `biwascheme.mjs` for module bundlers like [rollup](https://rollupjs.org/guide/en/). See https://github.com/acmiyaguchi/svelte-biwascheme-example for an example.
 
 Note that biwascheme.mjs does not include jQuery unlike biwascheme-x.y.z.js.
-You need to bundle jQuery by your own if you want to use functions defined in
+You need to bundle jQuery manually if you want to use functions defined in
 src/library/webscheme_lib.js.
 
 ### Building biwascheme.js

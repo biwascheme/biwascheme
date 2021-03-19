@@ -28,13 +28,19 @@
 <h2 id="how-to-build-biwascheme">How to build BiwaScheme</h2>
 <h3 id="prerequisites">Prerequisites</h3>
 <ul>
-<li>Node.js, npm</li>
-<li>make</li>
-<li>sed</li>
+<li>Node.js</li>
+<li>npm</li>
 </ul>
 <h3 id="command">Command</h3>
 <pre><code>$ npm install
-$ make -B</code></pre>    </div>
+$ npm run build</code></pre><p>This will create these js files.</p>
+<ul>
+<li>./release/biwascheme.js (IIFE, contains jQuery)</li>
+<li>./release/biwascheme-min.js (IIFE, contains jQuery, compressed)</li>
+<li>./release/biwascheme.mjs (ESM, without jQuery)</li>
+<li>./release/node_biwascheme.js (Contains some Node-only functions instead of those for browsers)</li>
+</ul>
+    </div>
 
     <!-- Google Analytics -->
     <script>

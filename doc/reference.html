@@ -522,6 +522,13 @@ BiwaScheme waits until <code>window.Foo</code> is defined.</li>
 </ul>
 <p><code>path</code> is relative to the current directory, unless it starts with <code>/</code> or
 <code>/^\w:/</code> (i.e. <code>c:</code>, <code>d:</code>, etc.)</p>
+<ul>
+<li>(node-require name)<ul>
+<li>Load an npm package or Node.js stdlib</li>
+<li>eg. <code>(node-require &quot;fs&quot;)</code> <code>(node-require &quot;marked&quot;)</code></li>
+</ul>
+</li>
+</ul>
 <h4 id="using-nodejs-libraries">Using Node.js libraries</h4>
 <p>You can also use Node.js libraries via <code>js-eval</code>, etc.</p>
 <pre><code class="language-scheme">(define fs (js-eval &quot;require(&#39;fs&#39;)&quot;))

@@ -1,10 +1,9 @@
 ## How to make a release
 
 1. Edit CHANGELOG.md
-1. Edit VERSION
 1. Edit package.json
 1. Build
-  - $ make -B
+  - $ rollup -c
 1. Make sure it is working:
   - run tests
     - npm run serve
@@ -23,18 +22,11 @@
     - `$ npm pack`
     - `$ npm install -g biwascheme-x.y.z.tgz`
     - `$ biwas -v`
-1. Create biwascheme-x.y.z.js
-  - $ cp release/biwascheme{,-x.y.z}.js
-  - $ cp release/biwascheme{,-x.y.z}-min.js
-  - $ git add release/*
+1. Create release/biwascheme-x.y.z.js
+  - $ npm run prepare-release
 1. Rebuild website
   - $ make website -B
-1. Commit, `git tag` and push changes to github
-  - $ git ci -m vx.y.z
-  - $ git tag vx.y.z
-  - $ git push origin master --tags
-1. Publish npm package
-  - `$ npm publish`
+1. Commit, `git tag` and push changes to github. Publish npm package
+  - $ npm run release
 1. Make a release on [github](https://github.com/biwascheme/biwascheme/releases)
-1. Post release mail to mailing list
-1. Update `VERSION` to x.y.z.dev
+1. Post release mail to the mailing list

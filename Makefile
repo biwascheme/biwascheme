@@ -16,7 +16,7 @@ browser_test:
 #
 
 index.html: website/_header.html index_.html website/_footer.html
-	sed -e  "s/@VERSION@/`npm info biwascheme version`/g" website/_header.html >> $@
+	sed -e  "s/@VERSION@/`npm info biwascheme version`/g" website/_header.html > $@
 	sed -e  "s/@VERSION@/`npm info biwascheme version`/g" index_.html >> $@
 	sed -e  "s/@VERSION@/`npm info biwascheme version`/g" website/_footer.html >> $@
 

@@ -1,3 +1,17 @@
+## 2021-03-19 v0.7.2
+
+Possible breaking change
+
+- To surpress rollup's warning, `js-eval` now evaluates the argument in the global scope (#233)
+- For example, `(js-eval "require('fs')")` now results in ReferenceError. Please use `(node-require "fs")` instead
+
+Other changes
+
+- feat: Npm package now includes biwascheme.mjs (#230)
+- feat: New function `node-require` (#233)
+- fix: `element-read-attribute` of v0.7.1 returns different value from v0.7.0 (#212)
+- dev: Removed `local_website.js`. Use `npm run serve` instead
+
 ## 2020-12-29 v0.7.1
 
 Possible breaking changes
