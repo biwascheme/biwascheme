@@ -10,6 +10,9 @@ function scm_eval(str, func){
   return intp.evaluate(str, func || function(result){});
 }
 
+function div1() { return document.querySelector("#div1") }
+function input1() { return document.querySelector("#input1") }
+
 describe("http-request", function(){
   it("should get a text file", function(){
     var result = null;
@@ -71,3 +74,58 @@ describe("receive-jsonp", function(){
     });
   });
 });
+
+describe("element-content", () => {
+  it("should get the content of a div", () => {
+    div1().innerHTML = "ok"
+    const result = scm_eval('(element-content ($ "#div1"))')
+    expect(result).toBe("ok")
+  })
+
+  it("should get the value of an input", () => {
+    input1().value = "ok"
+    const result = scm_eval('(element-content ($ "#input1"))')
+    expect(result).toBe("ok")
+  })
+})
+
+describe("element-read-attribute", () => {
+  it("should get the attribute of a div", () => {
+    const result = scm_eval('(element-read-attribute ($ "#div1") "class")')
+    expect(result).toBe("class1")
+  })
+
+  it("should get the attribute of an input", () => {
+    input1().value = "ok"
+    const result = scm_eval('(element-read-attribute ($ "#input1") "value")')
+    expect(result).toBe("ok")
+  })
+})
+
+describe("element-write-attribute!", () => {
+  it("should set the attribute of a div", () => {
+    scm_eval('(element-write-attribute! ($ "#div1") "class" "wrote")')
+    const result = div1().classList[0]
+    expect(result).toBe("wrote")
+  })
+
+  it("should set the attribute of an input", () => {
+    scm_eval('(element-write-attribute! ($ "#input1") "value" "wrote")')
+    const result = input1().value
+    expect(result).toBe("wrote")
+  })
+})
+
+describe("element-empty!", () => {
+  it("should clear the content of a div", () => {
+    scm_eval('(element-empty! ($ "#div1"))')
+    const result = div1().innerHTML
+    expect(result).toBe("")
+  })
+
+  it("should clear the value of an input", () => {
+    scm_eval('(element-empty! ($ "#input1"))')
+    const result = input1().value
+    expect(result).toBe("")
+  })
+})
