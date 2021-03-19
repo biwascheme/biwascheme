@@ -41,6 +41,7 @@
         "dev": "rollup -c -w",
         "node-test": "node test/node_functions.js",
         "prepare": "npm run build",
+        "prepare-release": "node --experimental-json-modules tools/prepare-release.mjs",
         "serve": "sirv . --dev --port 7001"
     },
     "files": [
