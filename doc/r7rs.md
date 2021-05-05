@@ -1,11 +1,9 @@
 # [R7RS](http://www.r7rs.org/)
 
 BiwaScheme supports basic feature of R7RS, but currently not all.
+Unimplemented features are marked with `[TODO]`.
 
-The following list is based on r7rs.pdf (the final draft)
-on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
-
-## 4.1 Primitiveexpressiontypes................ 12
+## 4.1 Primitive expression types................ 12
 
 * variable reference
 * `quote`
@@ -13,10 +11,9 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 * `lambda`
 * `if`
 * `set!`
-* `include` `include-ci`
-  * like `#include` in C
+* [TODO]`include` `include-ci`
 
-## 4.2 Derivedexpressiontypes................. 14
+## 4.2 Derived expression types................. 14
 
 * `cond` `case` `and` `or` `when` `unless`
 * [TODO]`cond-expand`
@@ -34,8 +31,6 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 * [TODO]`let-syntax`, `letrec-syntax`, `syntax-rules`, `syntax-error`
 
 # 5 Programstructure........................ 25
-
-## 5.1 Programs ......................... 25
 
 ## 5.2 Import declarations.................... 25
 
@@ -56,8 +51,6 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 ## 5.6 Libraries.......................... 28
 
 * [TODO]`define-library`
-
-## 5.7 TheREPL ........................ 29
 
 # 6 Standardprocedures ...................... 30
 
@@ -138,7 +131,7 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
   `bytevector-copy` `bytevector-copy!` `bytevector-append`
   `utf8->string` `string->utf8`
 
-## 6.10Controlfeatures...................... 50
+## 6.10 Control features...................... 50
 
 * `procedure?` `apply` `map` `string-map` `vector-map`
 * `for-each` `string-for-each` `vector-for-each`
@@ -146,20 +139,20 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 * `values` `call-with-values`
 * `dynamic-wind`
 
-## 6.11Exceptions ........................ 54
+## 6.11 Exceptions ........................ 54
 
 * [TODO] `with-exception-handler` `raise-continuable`
   `error` `error-object?` `error-object-message`
   `error-object-irritants` `read-error?` `file-error?`
 * `raise`
 
-## 6.12Environmentsandevaluation .............. 55
+## 6.12 Environments and evaluation .............. 55
 
 * [TODO] `environment` `scheme-report-environment`
   `null-environment` `interaction-environment`
 * `eval`
 
-## 6.13Inputandoutput..................... 55
+## 6.13 Input and output..................... 55
 
 * `call-with-port`
 * [TODO] `call-with-input-file` `call-with-output-file`
@@ -186,7 +179,7 @@ on the [Wiki](http://trac.sacrideo.us/wg/wiki#no1).
 * `display` `newline` `write-char`
 * [TODO] `write-string` `write-u8` `write-bytevector` `flush-output-port`
 
-## 6.14Systeminterface ..................... 59
+## 6.14 System interface ..................... 59
 
 * `load`
 * `file-exists?` `delete-file` `command-line` `exit

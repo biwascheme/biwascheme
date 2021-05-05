@@ -1,10 +1,12 @@
 # Conformance
 
-## Implementation Status
+## R7RS
 
-BiwaScheme has most features of [R6RS](http://www.r6rs.org/) Base library.
-The biggest features not implemented are errors and `syntax-rules`
-(you can use `define-macro` instead).
+(see [doc/r7rs](/doc/r7rs.html))
+
+## R6RS
+
+Since R6RS was the latest spec when the development of BiwaScheme is started (2007), BiwaScheme has some R6RS specific features, but not all of them. Currently there is no plan to complete them because conformance to R7RS-small has higher priority.
 
 ### R6RS Base library
 
@@ -29,7 +31,7 @@ The biggest features not implemented are errors and `syntax-rules`
 * 11.13 Vectors
   * ok
 * 11.14 Errors and violations
-  * not yet
+  * no
 * 11.15 Control features
   * ok
 * 11.16 Iteration
@@ -37,18 +39,18 @@ The biggest features not implemented are errors and `syntax-rules`
 * 11.17 Quasiquotation
   * ok
 * 11.18 Binding constructs for syntactic keywords
-  * not yet
+  * no
 * 11.19 Macro transformers
-  * not yet
+  * no
 * 11.20 Tail calls and tail contexts
   * ok
 
 ### R6RS Standard Libraries
       
 * 1 Unicode
-  * not yet
+  * no
 * 2 Bytevectors
-  * no plan
+  * no
 * 3 List utilities
   * ok
 * 4 Sorting
@@ -58,7 +60,7 @@ The biggest features not implemented are errors and `syntax-rules`
 * 6 Records
   * ok
 * 7 Exceptions and conditions
-  * not yet
+  * no
 * 8 I/O
   * partially ok
 * 9 File system
@@ -66,26 +68,24 @@ The biggest features not implemented are errors and `syntax-rules`
 * 10 Command-line access and exit values
   * ok (on Node.js)
 * 11 Arithmetic
-  * not yet
+  * no
 * 12 syntax-case
-  * not yet
+  * no
 * 13 Hashtables
   * ok
 * 14 Enumerations
   * ok
 * 15 Composite library
-  * not yet
+  * no
 * 16 eval
   * almost ok (eval)
 * 17 Mutable pairs
-  * no plan
+  * no
 * 18 Mutable strings
-  * maybe? (JavaScript strings are immutable, so this will make string operations much slower)
+  * no
 * 19 R5RS compatibility
- * no plan
+  * no
 
-(no plan = patches are welcome)
-
-### SRFIs
+## SRFIs
 
 (Moved to [doc/features](/doc/features.html))
