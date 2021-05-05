@@ -1,5 +1,5 @@
 import * as _ from "../deps/underscore-1.10.2-esm.js"
-import { undef } from "../header.js";
+import { nil, undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
