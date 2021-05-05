@@ -1,3 +1,7 @@
+## (TBD) v0.7.3
+
+- fix: `element-new` raises error (#234)
+
 ## 2021-03-19 v0.7.2
 
 Possible breaking change
