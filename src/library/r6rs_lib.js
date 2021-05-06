@@ -2703,6 +2703,18 @@ define_libfunc("display", 1, 2, function(ar){
 define_libfunc("write", 1, 2, function(ar){
   var port = ar[1] || Port.current_output;
   assert_port(port);
+  port.put_string(to_write_ss(ar[0]));
+  return undef;
+});
+define_libfunc("write-shared", 1, 2, function(ar){
+  var port = ar[1] || Port.current_output;
+  assert_port(port);
+  port.put_string(to_write_ss(ar[0]));
+  return undef;
+});
+define_libfunc("write-simple", 1, 2, function(ar){
+  var port = ar[1] || Port.current_output;
+  assert_port(port);
   port.put_string(to_write(ar[0]));
   return undef;
 });

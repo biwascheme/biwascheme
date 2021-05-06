@@ -8,7 +8,8 @@ import { Pair } from "./pair.js"
 // write/ss (write with substructure)
 //
 
-// example:  > (let ((x (list 'a))) (list x x))                   //           (#0=(a) #0#)
+// example:  > (let ((x (list 'a))) (list x x))
+//           (#0=(a) #0#)
 // 2-pass algorithm.
 // (1) detect all the objects which appears more than once
 //     (find_cyclic, reduce_cyclic_info)
@@ -16,7 +17,6 @@ import { Pair } from "./pair.js"
 //   * add prefix '#n=' for first appearance
 //   * just write '#n#' for other appearance
 
-//TODO: support Values
 const write_ss = function(obj, array_mode){
   var known = [obj], used = [false];
   find_cyclic(obj, known, used);
