@@ -143,7 +143,7 @@ const Dumper = Class.create({
     if(obj && typeof(obj.to_html) == 'function')
       return obj.to_html();
     else{
-      var s = write_ss(obj, true); //true=Array mode
+      var s = write_ss(obj);
       if(s == "[object Object]") s = this.dump_object(obj);
       return _.escape(s);
     }

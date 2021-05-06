@@ -17,17 +17,17 @@ import { Pair } from "./pair.js"
 //   * add prefix '#n=' for first appearance
 //   * just write '#n#' for other appearance
 
-const write_ss = function(obj, array_mode){
+const write_ss = function(obj){
   var known = [obj], used = [false];
   find_cyclic(obj, known, used);
   var cyclic   = reduce_cyclic_info(known, used);
   var appeared = new Array(cyclic.length);
   for(var i=cyclic.length-1; i>=0; i--) appeared[i] = false;
 
-  return _write_ss(obj, cyclic, appeared, array_mode);
+  return _write_ss(obj, cyclic, appeared);
 }
 
-const _write_ss = function(obj, cyclic, appeared, array_mode){
+const _write_ss = function(obj, cyclic, appeared){
   var ret = "";
   var i = cyclic.indexOf(obj);
   if(i >= 0){
@@ -42,25 +42,22 @@ const _write_ss = function(obj, cyclic, appeared, array_mode){
 
   if(obj instanceof Pair){
     var a = [];
-    a.push(_write_ss(obj.car, cyclic, appeared, array_mode));
+    a.push(_write_ss(obj.car, cyclic, appeared));
     for(var o=obj.cdr; o != nil; o=o.cdr){
       if(!(o instanceof Pair) || cyclic.indexOf(o) >= 0){
         a.push(".");
-        a.push(_write_ss(o, cyclic, appeared, array_mode));
+        a.push(_write_ss(o, cyclic, appeared));
         break;
       }
-      a.push(_write_ss(o.car, cyclic, appeared, array_mode));
+      a.push(_write_ss(o.car, cyclic, appeared));
     }
     ret += "(" + a.join(" ") + ")";
   }
   else if(obj instanceof Array){
     var a = _.map(obj, function(item){
-      return _write_ss(item, cyclic, appeared, array_mode);
+      return _write_ss(item, cyclic, appeared);
     })
-    if(array_mode)
-      ret += "[" + a.join(", ") + "]";
-    else
-      ret += "#(" + a.join(" ") + ")";
+    ret += "#(" + a.join(" ") + ")";
   }
   else{
     ret += to_write(obj);
