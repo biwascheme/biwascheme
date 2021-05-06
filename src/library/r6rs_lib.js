@@ -7,7 +7,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
          parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
 import { to_write, to_display, inspect } from "../system/_writer.js"
-import { to_write_ss } from "../system/write_ss.js"
+import { write_ss } from "../system/write_ss.js"
 import { isNil, isSymbol, isVector, makeClosure, isProcedure,
          eq, eqv, equal, lt } from "../system/_types.js"
 import Call from "../system/call.js"
@@ -45,20 +45,20 @@ define_syntax("cond", function(x){
   var clauses = x.cdr;
   if(!(clauses instanceof Pair) || clauses === nil){
     throw new BiwaError("malformed cond: cond needs list but got " +
-                    to_write_ss(clauses));
+                    write_ss(clauses));
   }
   // TODO: assert that clauses is a proper list
 
   var ret = null;
   _.each(clauses.to_array().reverse(), function(clause){
     if(!(clause instanceof Pair)){
-      throw new BiwaError("bad clause in cond: " + to_write_ss(clause));
+      throw new BiwaError("bad clause in cond: " + write_ss(clause));
     }
 
     if(clause.car === Sym("else")){
       if(ret !== null){
         throw new BiwaError("'else' clause of cond followed by more clauses: " +
-                        to_write_ss(clauses));
+                        write_ss(clauses));
       }
       else if(clause.cdr === nil){
         // pattern A: (else)
@@ -136,7 +136,7 @@ define_syntax("case", function(x){
         }
         else{
           throw new BiwaError("case: 'else' clause followed by more clauses: " +
-                          to_write_ss(clauses));
+                          write_ss(clauses));
         }
       }
       else{
@@ -2703,13 +2703,13 @@ define_libfunc("display", 1, 2, function(ar){
 define_libfunc("write", 1, 2, function(ar){
   var port = ar[1] || Port.current_output;
   assert_port(port);
-  port.put_string(to_write_ss(ar[0]));
+  port.put_string(write(ar[0]));
   return undef;
 });
 define_libfunc("write-shared", 1, 2, function(ar){
   var port = ar[1] || Port.current_output;
   assert_port(port);
-  port.put_string(to_write_ss(ar[0]));
+  port.put_string(write_ss(ar[0]));
   return undef;
 });
 define_libfunc("write-simple", 1, 2, function(ar){
@@ -3402,7 +3402,7 @@ define_syntax("delay", function(x){
   }
   if (x.cdr.cdr !== nil) {
     throw new BiwaError("malformed delay: too many arguments: "+
-                    to_write_ss(x));
+                    write_ss(x));
   }
   var expr = x.cdr.car;
   // Expand into call of internal function
@@ -3422,7 +3422,7 @@ define_syntax("delay-force", function(x){
   }
   if (x.cdr.cdr !== nil) {
     throw new BiwaError("malformed delay-force: too many arguments: "+
-                    to_write_ss(x));
+                    write_ss(x));
   }
   var expr = x.cdr.car;
   // Expand into call of internal function

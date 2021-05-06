@@ -5,7 +5,7 @@ import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPo
          isVector, isClosure, makeClosure, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
 import { to_write, to_display, inspect } from "./system/_writer.js"
-import { write_ss, to_write_ss } from "./system/write_ss.js"
+import { write_ss } from "./system/write_ss.js"
 import Call from "./system/call.js"
 import Char from "./system/char.js"
 import Compiler from "./system/compiler.js"
@@ -44,7 +44,8 @@ export default {
     isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
     isSelfEvaluating, eq, eqv, equal, lt,
   to_write, to_display, inspect,
-  write_ss, to_write_ss,
+  write_ss,
+  to_write_ss: write_ss, // For backward compatibility
   Call,
   Char,
   Compiler,

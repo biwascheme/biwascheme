@@ -26,7 +26,6 @@ const write_ss = function(obj, array_mode){
 
   return _write_ss(obj, cyclic, appeared, array_mode);
 }
-const to_write_ss = write_ss; // Alias
 
 const _write_ss = function(obj, cyclic, appeared, array_mode){
   var ret = "";
@@ -102,4 +101,4 @@ const find_cyclic = function(obj, known, used){
   });
 };
 
-export { write_ss, to_write_ss, reduce_cyclic_info, find_cyclic };
+export { write_ss, reduce_cyclic_info, find_cyclic };
