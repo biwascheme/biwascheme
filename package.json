@@ -20,7 +20,7 @@
     "browser": "./release/biwascheme.mjs",
     "dependencies": {
         "optparse": "1.0.5",
-        "underscore": "1.9.1"
+        "underscore": "1.12.1"
     },
     "devDependencies": {
         "@rollup/plugin-replace": "^2.3.4",
