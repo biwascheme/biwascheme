@@ -241,22 +241,6 @@ describe('utilities', {
       expect( deep_array_to_list([[1,2],[3,[4,[5,6]]]]).to_write() ).should_be("((1 2) (3 (4 (5 6))))");
     }
   },
-  'reduce_cyclic_info' : function(){
-    with(BiwaScheme){
-      var known = [1,2,3,4], used = [false,true,false,true];
-      expect( reduce_cyclic_info(known, used) ).should_be([2,4]);
-    }
-  },
-  'find_cyclic' : function(){
-    with(BiwaScheme){
-      var obj = [1,2,3];
-      obj.push(obj);
-      var known = [obj], used = [false];
-      find_cyclic(obj, known, used);
-      expect( known[0] == obj ).should_be(true);
-      expect( used ).should_be([true]);
-    }
-  },
   'write_ss' : function(){
     with(BiwaScheme){
       var obj = new Pair(nil, nil);

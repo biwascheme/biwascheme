@@ -1,101 +1,119 @@
 import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { to_write } from "./_writer.js"
+import { isVector } from "./_types.js"
 import { nil, undef } from "../header.js"
 import { BiwaSymbol } from "./symbol.js"
-import { Pair } from "./pair.js"
+import { Pair, isPair } from "./pair.js"
 
 //
 // write/ss (write with substructure)
 //
 
-// example:  > (let ((x (list 'a))) (list x x))
-//           (#0=(a) #0#)
-// 2-pass algorithm.
-// (1) detect all the objects which appears more than once
-//     (find_cyclic, reduce_cyclic_info)
-// (2) write object using this information
-//   * add prefix '#n=' for first appearance
-//   * just write '#n#' for other appearance
-
-const write_ss = function(obj){
-  var known = [obj], used = [false];
-  find_cyclic(obj, known, used);
-  var cyclic   = reduce_cyclic_info(known, used);
-  var appeared = new Array(cyclic.length);
-  for(var i=cyclic.length-1; i>=0; i--) appeared[i] = false;
-
-  return _write_ss(obj, cyclic, appeared);
+// Uses datum label if cyclic. Otherwise does not
+function write(obj) {
+  const wstate = _preprocess(obj);
+  if (wstate.cyclic) {
+    return _write_shared(obj, wstate);
+  } else {
+    return write_simple(obj);
+  }
 }
 
-const _write_ss = function(obj, cyclic, appeared){
-  var ret = "";
-  var i = cyclic.indexOf(obj);
-  if(i >= 0){
-    if(appeared[i]){
-      return "#"+i+"#";
-    }
-    else{
-      appeared[i] = true;
-      ret = "#"+i+"=";
+function _preprocess(obj) {
+  const state = {
+    objs: new Set(),
+    shared_objs: new Set(),
+    parents: new Set(),
+    cyclic: false,
+  };
+  _gather_information(obj, state);
+
+  // Create initial writer state
+  const ids = new Map();
+  for (const o of state.shared_objs) {
+    ids.set(o, null);
+  }
+  const wstate = {
+    ids: ids,
+    last_id: -1,
+    cyclic: state.cyclic,
+  };
+  return wstate;
+}
+
+function _gather_information(obj, state) {
+  if (state.parents.has(obj)) {
+    // Already seen and this is a cyclic object
+    state.cyclic = true;
+  }
+  if (state.shared_objs.has(obj)) {
+    return;
+  } else if (state.objs.has(obj)) {
+    state.shared_objs.add(obj);
+    return;
+  }
+  // Found a new object
+  state.objs.add(obj);
+  if (isPair(obj)) {
+    state.parents.add(obj);
+    _gather_information(obj.car, state);
+    _gather_information(obj.cdr, state);
+    state.parents.delete(obj);
+  } else if (isVector(obj)) {
+    state.parents.add(obj);
+    obj.forEach((item) => {
+      _gather_information(item, state);
+    });
+    state.parents.delete(obj);
+  }
+}
+
+// Always use datum label
+function write_shared(obj) {
+  const wstate = _preprocess(obj);
+  return _write_shared(obj, wstate);
+}
+
+function _write_shared(obj, wstate) {
+  let s = "";
+  if (wstate.ids.has(obj)) {
+    const id = wstate.ids.get(obj);
+    if (id === null) {
+      // First occurrence of a shared object; Give it a number
+      const new_id = wstate.last_id + 1;
+      wstate.ids.set(obj, new_id);
+      wstate.last_id = new_id;
+      s += `#${new_id}=`;
+    } else {
+      // Already printed. Just show the reference
+      return `#${id}#`;
     }
   }
-
-  if(obj instanceof Pair){
-    var a = [];
-    a.push(_write_ss(obj.car, cyclic, appeared));
-    for(var o=obj.cdr; o != nil; o=o.cdr){
-      if(!(o instanceof Pair) || cyclic.indexOf(o) >= 0){
+  if (isPair(obj)) {
+    const a = [];
+    // Note that we cannot use obj.forEach (because it does not stop)
+    a.push(_write_shared(obj.car, wstate));
+    for (let o=obj.cdr; o !== nil; o=o.cdr) {
+      if (!isPair(o) || wstate.ids.has(o)) {
         a.push(".");
-        a.push(_write_ss(o, cyclic, appeared));
+        a.push(_write_shared(o, wstate));
         break;
       }
-      a.push(_write_ss(o.car, cyclic, appeared));
+      a.push(_write_shared(o.car, wstate));
     }
-    ret += "(" + a.join(" ") + ")";
+    s += "(" + a.join(" ") + ")";
+  } else if (isVector(obj)) {
+    const a = obj.map((item) => _write_shared(item, wstate));
+    s += "#(" + a.join(" ") + ")";
+  } else {
+    s += to_write(obj);
   }
-  else if(obj instanceof Array){
-    var a = _.map(obj, function(item){
-      return _write_ss(item, cyclic, appeared);
-    })
-    ret += "#(" + a.join(" ") + ")";
-  }
-  else{
-    ret += to_write(obj);
-  }
-  return ret;
+  return s;
 }
 
-const reduce_cyclic_info = function(known, used){
-  var n_used = 0;
-  for(var i=0; i<used.length; i++){
-    if(used[i]){
-      known[n_used] = known[i];
-      n_used++;
-    }
-  }
-  return known.slice(0, n_used);
+// Never use datum label
+function write_simple(obj) {
+  return to_write(obj);
 }
 
-const find_cyclic = function(obj, known, used){
-  var items = (obj instanceof Pair)  ? [obj.car, obj.cdr] :
-              (obj instanceof Array) ? obj :
-              null;
-  if(!items) return;
-
-  _.each(items, function(item){
-    if(typeof(item)=='number' || typeof(item)=='string' ||
-      item === undef || item === true || item === false ||
-      item === nil || item instanceof BiwaSymbol) return;
-
-    var i = known.indexOf(item);
-    if(i >= 0)
-      used[i] = true;
-    else{
-      known.push(item);
-      used.push(false);
-      find_cyclic(item, known, used);
-    }
-  });
-};
-
-export { write_ss, reduce_cyclic_info, find_cyclic };
+export { write, write_shared, write_simple };
