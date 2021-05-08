@@ -5,7 +5,7 @@ import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPo
          isVector, isClosure, makeClosure, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
 import { to_write, to_display, inspect } from "./system/_writer.js"
-import { write_ss } from "./system/write_ss.js"
+import { write_shared } from "./system/write_ss.js"
 import Call from "./system/call.js"
 import Char from "./system/char.js"
 import Compiler from "./system/compiler.js"
@@ -31,7 +31,6 @@ import "./library/r6rs_lib.js"
 import "./library/srfi.js"
 
 // For unit testing
-import { reduce_cyclic_info, find_cyclic } from "./system/write_ss.js"
 import { define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float } from "./library/infra.js"
 
 // Avoid circular dependency
@@ -44,8 +43,7 @@ export default {
     isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
     isSelfEvaluating, eq, eqv, equal, lt,
   to_write, to_display, inspect,
-  write_ss,
-  to_write_ss: write_ss, // For backward compatibility
+  write_ss: write_shared, to_write_ss: write_shared, // For backward compatibility
   Call,
   Char,
   Compiler,
@@ -65,6 +63,5 @@ export default {
   Syntax,
   Values,
 
-  reduce_cyclic_info, find_cyclic,
   define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float,
 };
