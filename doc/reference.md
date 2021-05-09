@@ -409,3 +409,9 @@ BiwaScheme.define_libfunc("add", 2, 2, function(ar){
 ```
 
 See `src/library/*.js` for more examples.
+
+#### Stringify scheme object
+
+- `BiwaScheme.write(obj)`
+  - Returns a JS string whose content is the same as `(write obj)` generates.
+  - Supports cyclic list/vector
