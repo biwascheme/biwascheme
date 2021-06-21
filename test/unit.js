@@ -1,8 +1,6 @@
 //
 // test/unit.js - unit tests of BiwaScheme
 //
-// This file is utf-8
-// このファイルはUTF-8です
 
 root = this;
 
@@ -57,6 +55,10 @@ function js_should_raise_error(fun) {
     expect(e.message).should_not_match("\[BUG\]");
   }
 }
+
+// port
+let output = "";
+BiwaScheme.Port.current_output = new BiwaScheme.Port.CustomOutput((str) => output = str);
 
 var BiwaSet;
 describe('Set', {
@@ -237,22 +239,6 @@ describe('utilities', {
         Sym("define"), Sym("x"), [Sym("+"), 1, 2]
       ]).to_write() ).should_be("(define x (+ 1 2))");
       expect( deep_array_to_list([[1,2],[3,[4,[5,6]]]]).to_write() ).should_be("((1 2) (3 (4 (5 6))))");
-    }
-  },
-  'reduce_cyclic_info' : function(){
-    with(BiwaScheme){
-      var known = [1,2,3,4], used = [false,true,false,true];
-      expect( reduce_cyclic_info(known, used) ).should_be([2,4]);
-    }
-  },
-  'find_cyclic' : function(){
-    with(BiwaScheme){
-      var obj = [1,2,3];
-      obj.push(obj);
-      var known = [obj], used = [false];
-      find_cyclic(obj, known, used);
-      expect( known[0] == obj ).should_be(true);
-      expect( used ).should_be([true]);
     }
   },
   'write_ss' : function(){
@@ -2138,6 +2124,25 @@ describe('R7RS', {
     ev(`(define foo (make-parameter 7 number->string))
         (parameterize ((foo 8)) (foo))
     `).should_be("8");
+  },
+
+  'write' : function() {
+    // Must stop for a cyclic obj
+    ev(`(let1 x (list 1) (set-cdr! x x) (write x))`);
+    expect(output).should_be("#0=(1 . #0#)");
+    // Must not use datum label for non-cyclic obj
+    ev(`(let1 x (list 1) (write (list x x)))`);
+    expect(output).should_be("((1) (1))");
+  },
+  'write-shared' : function() {
+    // Must use datum label
+    ev(`(let1 x (list 1) (write-shared (list x x)))`);
+    expect(output).should_be("(#0=(1) #0#)");
+  },
+  'write-simple' : function() {
+    // Must not use datum label
+    ev(`(let1 x (list 1) (write-simple (list x x)))`);
+    expect(output).should_be("((1) (1))");
   }
 })
 
