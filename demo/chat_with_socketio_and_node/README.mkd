@@ -1,3 +1,5 @@
+NOTE: This example is no longer maintained and may not work now
+
 Install node.js (http://nodejs.org/) if you don't already have it.
 
 Install BiwaScheme & other dependencies:
