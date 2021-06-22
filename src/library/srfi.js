@@ -8,6 +8,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
 import { to_write, to_display } from "../system/_writer.js"
 import { write_shared } from "../system/write_ss.js"
 import Console from "../system/console.js"
+import { Bug } from "../system/error.js"
 import { Pair, isPair, array_to_list, deep_array_to_list } from "../system/pair.js"
 import { Port } from "../system/port.js"
 import { Sym } from "../system/symbol.js"

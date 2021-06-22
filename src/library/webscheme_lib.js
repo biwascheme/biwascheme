@@ -5,6 +5,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
          assert_function, assert_closure, assert_procedure, assert_date, deprecate } from "./infra.js"; 
 import Console from "../system/console.js"
+import { Bug } from "../system/error.js"
 import Interpreter  from "../system/interpreter.js"
 import { Pair, alist_to_js_obj } from "../system/pair.js"
 import Pause from "../system/pause.js"
