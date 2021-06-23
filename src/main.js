@@ -24,6 +24,7 @@ import BiwaSet from "./system/set.js"
 import { BiwaSymbol, Sym, gensym } from "./system/symbol.js"
 import Syntax from "./system/syntax.js"
 import Values from "./system/values.js"
+import VMCode from "./system/vmcode.js"
 
 import "./library/extra_lib.js"
 import "./library/js_interface.js"
@@ -63,6 +64,7 @@ export default {
   Symbol: BiwaSymbol, Sym, gensym,
   Syntax,
   Values,
+  VMCode,
 
   define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float,
 };

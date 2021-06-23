@@ -98,8 +98,8 @@ window.bs_eval = function(){
   $("#bs-console").empty();
   var str = $("#bs-input").val();
 
-  var opc = biwascheme.compile(str);
-  var dump = (new BiwaScheme.Dumper()).dump_opc(opc);
+  var vmcode = biwascheme.compile(str);
+  var dump = (new BiwaScheme.Dumper()).dump_opc(vmcode.il);
   $("#bs-opecode").html(dump);
   var before = new Date();
   biwascheme.evaluate(str, function(result){

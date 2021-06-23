@@ -477,11 +477,10 @@ const Interpreter = Class.create({
         expr = Compiler.expand(expr);
 
         // compile
-        var opc = this.compiler.run(expr);
-        //Console.p(opc);
+        const vmcode = this.compiler.run(expr);
 
         // execute
-        ret = this._execute(expr, opc, 0, [], 0);
+        ret = this._execute(expr, vmcode.il, 0, [], 0);
       }
 
       if(ret instanceof Pause){ //suspend evaluation

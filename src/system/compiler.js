@@ -7,6 +7,7 @@ import { Pair, List, isPair, array_to_list } from "./pair.js"
 import BiwaSet from "./set.js"
 import { BiwaSymbol, Sym } from "./symbol.js"
 import Syntax from "./syntax.js"
+import VMCode from "./vmcode.js"
 
 ///
 /// Compiler
@@ -509,7 +510,8 @@ const Compiler = Class.create({
   },
 
   run: function(expr){
-    return this.compile(expr, [new BiwaSet(), new BiwaSet()], new BiwaSet(), new BiwaSet(), ["halt"]);
+    const opc = this.compile(expr, [new BiwaSet(), new BiwaSet()], new BiwaSet(), new BiwaSet(), ["halt"]);
+    return new VMCode(opc);
   }
 });
 

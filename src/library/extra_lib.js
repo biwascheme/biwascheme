@@ -257,7 +257,7 @@ define_syntax("define-macro", function(x){
   }
 
   //["close", <args>, <n>, <body>, <opecodes_next>, <dotpos>]
-  var opc = Compiler.compile(lambda);
+  var opc = Compiler.compile(lambda).il;
   if(opc[2] != 0)
     throw new Bug("you cannot use free variables in macro expander (or define-macro must be on toplevel)")
   var cls = makeClosure([opc[3]]);
