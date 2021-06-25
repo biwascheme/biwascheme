@@ -1,9 +1,9 @@
 import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { CoreEnv, suppress_deprecation_warning } from "../header.js";
-import { isString, isFunction, isChar, isSymbol, isPort,
-         isVector, isClosure } from "../system/_types.js"
+import { isString, isFunction, isChar, isSymbol, isPort, isVector } from "../system/_types.js"
 import { to_write } from "../system/_writer.js"
 import { make_assert, make_simple_assert } from "../system/assert.js"
+import { isClosure } from "../system/closure.js"
 import { BiwaError } from "../system/error.js"
 import { isHashtable, isMutableHashtable } from "../system/hashtable.js"
 import Interpreter from "../system/interpreter.js"
@@ -113,7 +113,7 @@ const assert_mutable_hashtable = make_simple_assert("mutable hashtable", isMutab
 const assert_promise = make_simple_assert("promise", isPromise);
 
 const assert_function = make_simple_assert("JavaScript function", isFunction);
-const assert_closure = make_simple_assert("scheme function", isClosure);
+const assert_closure = make_simple_assert("scheme closure", isClosure);
 const assert_procedure = make_simple_assert("scheme/js function", function(obj){
   return isClosure(obj) || isFunction(obj);
 });

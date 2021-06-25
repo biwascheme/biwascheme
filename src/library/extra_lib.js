@@ -5,12 +5,12 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_char, assert_symbol, assert_port, assert_pair, assert_list,
          assert_vector,
          assert_function, assert_closure, assert_procedure, assert_date } from "./infra.js"; 
-import { makeClosure } from "../system/_types.js"
 import { to_write, to_display, inspect } from "../system/_writer.js"
 import { write } from "../system/write_ss.js"
 import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js"
 import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
 import Call from "../system/call.js"
+import { Closure } from "../system/closure.js"
 import Compiler from "../system/compiler.js"
 import Console from "../system/console.js"
 import { Bug } from "../system/error.js"
@@ -257,10 +257,10 @@ define_syntax("define-macro", function(x){
   }
 
   //["close", <args>, <n>, <body>, <opecodes_next>, <dotpos>]
-  var opc = Compiler.compile(lambda);
+  var opc = Compiler.compile(lambda).il;
   if(opc[2] != 0)
     throw new Bug("you cannot use free variables in macro expander (or define-macro must be on toplevel)")
-  var cls = makeClosure([opc[3]]);
+  var cls = new Closure(opc[3], [], -1, undefined);
 
   TopEnv[name.name] = new Syntax(name.name, function(sexp){
     var given_args = sexp.to_array();

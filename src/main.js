@@ -2,12 +2,13 @@ import { TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warni
 import { VERSION, GitCommit } from "./version.js";
 
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
-         isVector, isClosure, makeClosure, isProcedure,
+         isVector, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
 import { to_write, to_display, inspect } from "./system/_writer.js"
 import { write, write_shared } from "./system/write_ss.js"
 import Call from "./system/call.js"
 import Char from "./system/char.js"
+import { Closure, isClosure } from "./system/closure.js"
 import Compiler from "./system/compiler.js"
 import { Enumeration, isEnumSet } from "./system/enumeration.js"
 import { BiwaError, Bug, UserError } from "./system/error.js"
@@ -24,6 +25,7 @@ import BiwaSet from "./system/set.js"
 import { BiwaSymbol, Sym, gensym } from "./system/symbol.js"
 import Syntax from "./system/syntax.js"
 import Values from "./system/values.js"
+import VMCode from "./system/vmcode.js"
 
 import "./library/extra_lib.js"
 import "./library/js_interface.js"
@@ -40,13 +42,14 @@ export default {
   TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warning,
   Version: VERSION, VERSION, GitCommit,
   isNil, isUndef, isBoolean, isString, isChar, isSymbol, isPort, isPair, isList,
-    isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
+    isVector, isHashtable, isMutableHashtable, isProcedure,
     isSelfEvaluating, eq, eqv, equal, lt,
   to_write, to_display, inspect,
   write,
   write_ss: write_shared, to_write_ss: write_shared, // For backward compatibility
   Call,
   Char,
+  Closure, isClosure,
   Compiler,
   Enumeration, isEnumSet,
   Error: BiwaError, Bug, UserError,
@@ -63,6 +66,7 @@ export default {
   Symbol: BiwaSymbol, Sym, gensym,
   Syntax,
   Values,
+  VMCode,
 
   define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float,
 };

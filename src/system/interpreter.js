@@ -1,9 +1,10 @@
 import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { TopEnv, CoreEnv, nil, undef, max_trace_size } from "../header.js"
-import { isSymbol, isClosure, makeClosure } from "./_types.js"
+import { isSymbol } from "./_types.js"
 import { to_write, inspect } from "./_writer.js"
 import Call from "./call.js"
 import Class from "./class.js"
+import { Closure, isClosure } from "./closure.js"
 import Compiler from "./compiler.js"
 import { BiwaError, Bug } from "./error.js"
 import { Pair, List } from "./pair.js"
@@ -134,19 +135,13 @@ const Interpreter = Class.create({
   },
 
   // private
-  //ret: [body, stack[s-1], stack[s-2], .., stack[s-n], dotpos]
-  closure: function(body, args, n, s, dotpos){
-    var v = []; //(make-vector n+1+1)
-    v[0] = body;
-    for(var i=0; i<n; i++)
-      v[i+1] = this.index(s, i);
-    v[n+1] = dotpos;
-
-    if(dotpos == -1)
-      v.expected_args = args;
-
-    makeClosure(v);
-    return v;
+  closure: function(body, n_args, n, s, dotpos){
+    const freevars = [];
+    for(var i=0; i<n; i++) {
+      freevars[i] = this.index(s, i);
+    }
+    const expected_args = dotpos == -1 ? n_args : undefined;
+    return new Closure(body, freevars, dotpos, expected_args);
   },
 
   // private
@@ -176,12 +171,16 @@ const Interpreter = Class.create({
   },
 
   // private
+  // a: arbitary object (temporary register)
+  // x: opecode
+  // f: integer
+  // c: BiwaScheme.Closure
+  // s: integer
   _execute: function(a, x, f, c, s){
     var ret = null;
     //Console.puts("executing "+x[0]);
     
     while(true){ //x[0] != "halt"){
-
       this.run_dump_hook(a, x, f, c, s);
 
       switch(x[0]){
@@ -194,7 +193,7 @@ const Interpreter = Class.create({
         break;
       case "refer-free":
         var n=x[1], x=x[2];
-        a = c[n+1];
+        a = c.freevars[n];
         this.last_refer = "(anon)";
         break;
       case "refer-global":
@@ -249,7 +248,7 @@ const Interpreter = Class.create({
         break;
       case "assign-free":
         var n=x[1], x=x[2];
-        var box = c[n+1];
+        var box = c.freevars[n];
         box[0] = a;
         a = undef;
         break;
@@ -309,11 +308,10 @@ const Interpreter = Class.create({
         var n_args = this.index(s, 0);
         if(isClosure(func)){
           a = func;
-          x = func[0];
+          x = func.body
 
           // The position of dot in the parameter list.
-          var dotpos = func[func.length-1];
-
+          const dotpos = func.dotpos;
           if (dotpos >= 0) {
             // The dot is found
             // ----------------
@@ -348,7 +346,7 @@ const Interpreter = Class.create({
             }
           }
           f = s;
-          c = a;
+          c = func;
         }
         else if(func instanceof Function){ // Apply JavaScript function
           // load arguments from stack
@@ -477,11 +475,10 @@ const Interpreter = Class.create({
         expr = Compiler.expand(expr);
 
         // compile
-        var opc = this.compiler.run(expr);
-        //Console.p(opc);
+        const vmcode = this.compiler.run(expr);
 
         // execute
-        ret = this._execute(expr, opc, 0, [], 0);
+        ret = this._execute(expr, vmcode.il, 0, [], 0);
       }
 
       if(ret instanceof Pause){ //suspend evaluation
