@@ -340,7 +340,7 @@ const Interpreter = Class.create({
             // --------------------
             // => Verify that number of arguments = expected number of arguments
             // (if the closure knows how many it wants)
-            if(func.expected_args && n_args != func.expected_args) {
+            if(func.expected_args !== undefined && n_args != func.expected_args) {
               var errMsg = "Function call error: got " + n_args + " but wanted " + func.expected_args;
               throw new BiwaError(errMsg);
             }
