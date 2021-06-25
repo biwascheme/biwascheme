@@ -2,11 +2,14 @@ import Class from "./class.js"
 
 // A Scheme lambda
 const Closure = Class.create({
-  // il: Intermediate Language (JS array)
-  //     [body, stack[s-1], stack[s-2], .., stack[s-n], dotpos]
+  // body: Intermediate Language (JS array) 
+  // freevars: Captured free variables
+  // dotpos: The position of `.` in the parameter list. -1 if none
   // expected_args: Expected number of args or `undefined`
-  initialize: function(il, expected_args){
-    this.il = il;
+  initialize: function(body, freevars, dotpos, expected_args){
+    this.body = body;
+    this.freevars = freevars;
+    this.dotpos = dotpos;
     this.expected_args = expected_args;
   },
 

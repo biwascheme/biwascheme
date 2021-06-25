@@ -260,7 +260,7 @@ define_syntax("define-macro", function(x){
   var opc = Compiler.compile(lambda).il;
   if(opc[2] != 0)
     throw new Bug("you cannot use free variables in macro expander (or define-macro must be on toplevel)")
-  var cls = new Closure([opc[3]]);
+  var cls = new Closure(opc[3], [], -1, undefined);
 
   TopEnv[name.name] = new Syntax(name.name, function(sexp){
     var given_args = sexp.to_array();

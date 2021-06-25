@@ -135,16 +135,13 @@ const Interpreter = Class.create({
   },
 
   // private
-  //ret: [body, stack[s-1], stack[s-2], .., stack[s-n], dotpos]
-  closure: function(body, args, n, s, dotpos){
-    var v = []; //(make-vector n+1+1)
-    v[0] = body;
-    for(var i=0; i<n; i++)
-      v[i+1] = this.index(s, i);
-    v[n+1] = dotpos;
-
-    const expected_args = dotpos == -1 ? args : undefined;
-    return new Closure(v, expected_args);
+  closure: function(body, n_args, n, s, dotpos){
+    const freevars = [];
+    for(var i=0; i<n; i++) {
+      freevars[i] = this.index(s, i);
+    }
+    const expected_args = dotpos == -1 ? n_args : undefined;
+    return new Closure(body, freevars, dotpos, expected_args);
   },
 
   // private
@@ -196,7 +193,7 @@ const Interpreter = Class.create({
         break;
       case "refer-free":
         var n=x[1], x=x[2];
-        a = c.il[n+1];
+        a = c.freevars[n];
         this.last_refer = "(anon)";
         break;
       case "refer-global":
@@ -251,7 +248,7 @@ const Interpreter = Class.create({
         break;
       case "assign-free":
         var n=x[1], x=x[2];
-        var box = c.il[n+1];
+        var box = c.freevars[n];
         box[0] = a;
         a = undef;
         break;
@@ -311,12 +308,10 @@ const Interpreter = Class.create({
         var n_args = this.index(s, 0);
         if(isClosure(func)){
           a = func;
-          const op = func.il;
-          x = op[0];
+          x = func.body
 
           // The position of dot in the parameter list.
-          var dotpos = op[op.length-1];
-
+          const dotpos = func.dotpos;
           if (dotpos >= 0) {
             // The dot is found
             // ----------------
