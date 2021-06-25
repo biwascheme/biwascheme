@@ -2,12 +2,13 @@ import { TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warni
 import { VERSION, GitCommit } from "./version.js";
 
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
-         isVector, isClosure, makeClosure, isProcedure,
+         isVector, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
 import { to_write, to_display, inspect } from "./system/_writer.js"
 import { write, write_shared } from "./system/write_ss.js"
 import Call from "./system/call.js"
 import Char from "./system/char.js"
+import { Closure, isClosure } from "./system/closure.js"
 import Compiler from "./system/compiler.js"
 import { Enumeration, isEnumSet } from "./system/enumeration.js"
 import { BiwaError, Bug, UserError } from "./system/error.js"
@@ -41,13 +42,14 @@ export default {
   TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warning,
   Version: VERSION, VERSION, GitCommit,
   isNil, isUndef, isBoolean, isString, isChar, isSymbol, isPort, isPair, isList,
-    isVector, isHashtable, isMutableHashtable, isClosure, makeClosure, isProcedure,
+    isVector, isHashtable, isMutableHashtable, isProcedure,
     isSelfEvaluating, eq, eqv, equal, lt,
   to_write, to_display, inspect,
   write,
   write_ss: write_shared, to_write_ss: write_shared, // For backward compatibility
   Call,
   Char,
+  Closure, isClosure,
   Compiler,
   Enumeration, isEnumSet,
   Error: BiwaError, Bug, UserError,

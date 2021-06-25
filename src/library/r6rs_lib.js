@@ -7,7 +7,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
          parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
 import { to_write, to_display, inspect } from "../system/_writer.js"
-import { isNil, isSymbol, isVector, makeClosure, isProcedure,
+import { isNil, isSymbol, isVector, isProcedure,
          eq, eqv, equal, lt } from "../system/_types.js"
 import Call from "../system/call.js"
 import Char from "../system/char.js"

@@ -7,6 +7,7 @@ import { to_write } from "./_writer.js"
 import Char from "./char.js"
 import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
+import { isClosure } from "./closure.js"
 
 const isNil = function(obj){
   return (obj === nil);
@@ -37,18 +38,7 @@ const isPort = function(obj){
 };
 
 const isVector = function(obj){
-  return (obj instanceof Array) && (obj.closure_p !== true);
-};
-
-// Returns true if `obj` is a Scheme closure.
-const isClosure = function(obj){
-  return (obj instanceof Array) && (obj.closure_p === true);
-};
-
-// Change `ary` into a Scheme closure (destructive).
-const makeClosure = function(ary) {
-  ary.closure_p = true;
-  return ary;
+  return (obj instanceof Array);
 };
 
 // procedure: Scheme closure or JavaScript function
@@ -92,5 +82,5 @@ const lt = function(a, b) {
 };
 
 export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
-         isVector, isClosure, makeClosure, isProcedure,
+         isVector, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt };

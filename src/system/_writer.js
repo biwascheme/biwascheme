@@ -1,6 +1,5 @@
 import * as _ from "../deps/underscore-1.10.2-esm.js"
 import { nil, undef } from "../header.js"
-import { isClosure } from "./_types.js"
 import { BiwaSymbol } from "./symbol.js"
 
 //
@@ -36,8 +35,6 @@ const to_write = function(obj){
               .replace(/\f/g, "\\f")
               .replace(/\r/g, "\\r") +
            '"';
-  else if(isClosure(obj))
-    return "#<Closure>";
   else if(_.isArray(obj))
     return "#(" + _.map(obj, function(e) { return to_write(e); }).join(" ") + ")";
   else if(typeof(obj.to_write) == 'function')
