@@ -2248,7 +2248,7 @@ describe('browser functions', {
   'add-handler!' : function(){
     root.call_count = 0;
     root.record_call = function() { root.call_count += 1 };
-    scm_eval('(add-handler! ($ "#div1") "click" (lambda () (js-eval "record_call()")))');
+    scm_eval('(add-handler! ($ "#div1") "click" (lambda (e) (js-eval "record_call()")))');
     expect( root.call_count ).should_be(0);
     $("#div1").click();
     expect( root.call_count ).should_be(1);
@@ -2259,7 +2259,7 @@ describe('browser functions', {
   'remove-handler!' : function(){
     root.call_count = 0;
     root.record_call = function() { console.log("click"); root.call_count += 1 };
-    scm_eval('(remove-handler! ($ "#div1") "click" (add-handler! ($ "#div1") "click" (lambda () (js-eval "record_call()"))))');
+    scm_eval('(remove-handler! ($ "#div1") "click" (add-handler! ($ "#div1") "click" (lambda (e) (js-eval "record_call()"))))');
     expect( root.call_count ).should_be(0);
     $("#div1").click();
     expect( root.call_count ).should_be(0);
@@ -2331,7 +2331,7 @@ describe('extra library', {
   'with-output-to-port': function(){
     ev("(let1 port (open-output-string) \
           (with-output-to-port port \
-            (lambda () (write 'ok port))) \
+            (lambda (_) (write 'ok port))) \
           (get-output-string port))").should_be("ok");
   }
 });
@@ -2401,7 +2401,7 @@ describe('srfi-28 format', {
     // output to current port
     ev('(let1 port (open-output-string) \
           (with-output-to-port port \
-            (lambda () \
+            (lambda (_) \
               (format #t "<~s>" 456))) \
           (get-output-string port))').should_be("<456>");
     // output to the given port
