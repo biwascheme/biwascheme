@@ -17,6 +17,11 @@ const Parser = Class.create({
     this.i = 0;
   },
 
+  // Inject scheme program into current position
+  insert: function(txt) {
+    this.tokens.splice(this.i+1, 0, ...this.tokenize(txt));
+  },
+
   inspect: function(){
     return [
       "#<Parser:",

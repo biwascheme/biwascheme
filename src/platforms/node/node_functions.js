@@ -3,6 +3,7 @@ import { undef } from "../../header.js";
 import { define_libfunc, assert_string } from "../../library/infra.js"; 
 import { BiwaError } from "../../system/error.js"
 import { List, js_obj_to_alist } from "../../system/pair.js"
+import Pause from "../../system/pause.js"
 import { run } from "./run.js"
 //
 // Library functions only work on Node.js
@@ -73,7 +74,7 @@ define_libfunc("get-environment-variables", 0, 0, function(ar){
 //
 
 // (load scm-path)
-define_libfunc("load", 1, 1, function(ar) {
+define_libfunc("load", 1, 1, function(ar, intp) {
   var path = ar[0];
   assert_string(path);
 
@@ -83,8 +84,13 @@ define_libfunc("load", 1, 1, function(ar) {
   else
     fullpath = process.cwd() + "/" + path;
 
-  var code = require("fs").readFileSync(fullpath, "utf8");
-  return run(code);
+  return new Pause(function(pause){
+    return require("fs").readFile(fullpath, "utf8", (err, code) => {
+      if (err) throw err;
+      intp.parser.insert(code);
+      return pause.resume(undef);
+    });
+  });
 });
 
 // (js-load js-path)
