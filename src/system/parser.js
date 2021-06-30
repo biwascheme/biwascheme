@@ -19,7 +19,7 @@ const Parser = Class.create({
 
   // Inject scheme program into current position
   insert: function(txt) {
-    this.tokens.splice(this.i+1, 0, ...this.tokenize(txt));
+    this.tokens.splice(this.i, 0, ...this.tokenize(txt));
   },
 
   inspect: function(){
