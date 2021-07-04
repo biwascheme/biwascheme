@@ -57,12 +57,12 @@ const to_write = function(obj){
 //
 
 const to_display = function(obj){
-  if(obj.to_display)
-    return obj.to_display(to_display);
   if(_.isUndefined(obj))
     return 'undefined';
   else if(_.isNull(obj))
     return 'null';
+  else if(obj.to_display)
+    return obj.to_display(to_display);
   else if(typeof(obj.valueOf()) == "string")
     return obj;
   else if(obj instanceof BiwaSymbol)
