@@ -20,3 +20,13 @@ BiwaScheme.run = run;
 BiwaScheme.run_file = run_file;
 
 module.exports = BiwaScheme;
+
+// WIP ---------------------------------
+//
+//import { Environment, Library } from "./system/expander.js"
+//
+//const forms = BiwaScheme.array_to_list(BiwaScheme.Parser.parse(`
+//  (import (scheme base))
+//  (if a b c)
+//`));
+//console.log(BiwaScheme.to_write(Library.expandProgram(forms)))
