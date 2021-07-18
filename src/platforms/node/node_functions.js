@@ -84,13 +84,9 @@ define_libfunc("load", 1, 1, function(ar, intp) {
   else
     fullpath = process.cwd() + "/" + path;
 
-  return new Pause(function(pause){
-    return require("fs").readFile(fullpath, "utf8", (err, code) => {
-      if (err) throw err;
-      intp.parser.insert(code);
-      return pause.resume(undef);
-    });
-  });
+  const code = require("fs").readFileSync(fullpath, "utf8");
+  intp.parser.insert(code);
+  return undef;
 });
 
 // (js-load js-path)
