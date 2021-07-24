@@ -6,7 +6,6 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_vector,
          assert_function, assert_closure, assert_procedure, assert_date } from "./infra.js"; 
 import { to_write, to_display, inspect } from "../system/_writer.js"
-import { write } from "../system/write_ss.js"
 import { Pair, List, array_to_list, deep_array_to_list } from "../system/pair.js"
 import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
 import Call from "../system/call.js"
@@ -284,7 +283,7 @@ var macroexpand_1 = function(x){
       x = transformer.transform(x);
     }
     else
-      throw new Error("macroexpand-1: `" + write(x) + "' is not a macro");
+      throw new Error("macroexpand-1: `" + to_write(x) + "' is not a macro");
   }
   return x;
 }

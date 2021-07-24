@@ -1,7 +1,6 @@
 import * as _ from "../../deps/underscore-1.10.2-esm.js"
 import Class from "../../system/class.js"
-import { inspect, truncate } from "../../system/_writer.js"
-import { write } from "../../system/write_ss.js"
+import { to_write, inspect, truncate } from "../../system/_writer.js"
 //
 // Dumper - graphical state dumper
 //
@@ -143,7 +142,7 @@ const Dumper = Class.create({
     if(obj && typeof(obj.to_html) == 'function')
       return obj.to_html();
     else{
-      var s = write(obj);
+      var s = to_write(obj);
       if(s == "[object Object]") s = this.dump_object(obj);
       return _.escape(s);
     }

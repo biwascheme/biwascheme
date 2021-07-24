@@ -4,8 +4,7 @@ import { VERSION, GitCommit } from "./version.js";
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
          isVector, isProcedure,
          isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
-import { to_write, to_display, inspect } from "./system/_writer.js"
-import { write, write_shared } from "./system/write_ss.js"
+import { to_write, to_display, inspect, write_shared } from "./system/_writer.js"
 import Call from "./system/call.js"
 import Char from "./system/char.js"
 import { Closure, isClosure } from "./system/closure.js"
@@ -45,7 +44,6 @@ export default {
     isVector, isHashtable, isMutableHashtable, isProcedure,
     isSelfEvaluating, eq, eqv, equal, lt,
   to_write, to_display, inspect,
-  write,
   write_ss: write_shared, to_write_ss: write_shared, // For backward compatibility
   Call,
   Char,

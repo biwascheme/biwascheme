@@ -180,13 +180,7 @@ jQuery(document).ready(function($, undefined) {
             }
             var result = bscheme.evaluate(code, function(result) {
                 if (result !== undefined && result !== BiwaScheme.undef) {
-                    var str;
-                    // write_ss will work with list cycles and to_write with functions #203
-                    if (result instanceof BiwaScheme.Pair) {
-                        str = BiwaScheme.write_ss(result);
-                    } else {
-                        str = BiwaScheme.to_write(result);
-                    }
+                    var str = BiwaScheme.to_write(result);
                     term.echo('=> ' + str);
                 }
             });
