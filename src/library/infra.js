@@ -1,4 +1,4 @@
-import * as _ from "../deps/underscore-1.10.2-esm.js"
+import * as _ from "../deps/underscore-esm.js"
 import { CoreEnv, suppress_deprecation_warning } from "../header.js";
 import { isString, isFunction, isChar, isSymbol, isPort, isVector } from "../system/_types.js"
 import { to_write } from "../system/_writer.js"
