@@ -1,4 +1,4 @@
-## 2021-07-25 v0.7.3
+## 2021-07-25 v0.7.4
 
 ### Possible breaking change
 
@@ -27,7 +27,7 @@ To fix this, just give it a random name.
   - That is, now you can just use `write` instead of `write/ss`.
   - When you are sure the argument is not cyclic, `write-simple` (#238) is faster.
   - Also, `write` now uses `#0#` syntax only when needed (#234). Use `write-shared` (#238) when you want all shared structures shown by `#n#`.
-- security: Update underscore.js to 1.12.1 (#237)
+- security: Update underscore.js to 1.13.1 (#252)
 - dev: Add internal classes `VMCode` and `Closure` (#228)
 
 ## 2021-03-19 v0.7.2
