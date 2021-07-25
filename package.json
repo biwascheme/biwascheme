@@ -19,8 +19,7 @@
     "main": "./release/node_biwascheme.js",
     "browser": "./release/biwascheme.mjs",
     "dependencies": {
-        "optparse": "1.0.5",
-        "underscore": "1.12.1"
+        "optparse": "1.0.5"
     },
     "devDependencies": {
         "@rollup/plugin-replace": "^2.3.4",

@@ -1,4 +1,4 @@
-import * as _ from "../../deps/underscore-1.10.2-esm.js"
+import * as _ from "../../deps/underscore-esm.js"
 import { undef } from "../../header.js";
 import { define_libfunc, assert_string } from "../../library/infra.js"; 
 import { BiwaError } from "../../system/error.js"

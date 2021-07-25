@@ -1,4 +1,4 @@
-import * as _ from "../../deps/underscore-1.10.2-esm.js"
+import * as _ from "../../deps/underscore-esm.js"
 import { inspect } from "../../system/_writer.js"
 import Console from "../../system/console.js"
 import { Port } from "../../system/port.js"

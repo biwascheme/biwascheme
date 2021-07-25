@@ -1,4 +1,4 @@
-import * as _ from "../deps/underscore-1.10.2-esm.js"
+import * as _ from "../deps/underscore-esm.js"
 import Class from "./class.js"
 import { BiwaError } from "./error.js"
 
