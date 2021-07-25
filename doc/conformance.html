@@ -26,10 +26,10 @@
     </div>
     <div id="content">
 <h1 id="conformance">Conformance</h1>
-<h2 id="implementation-status">Implementation Status</h2>
-<p>BiwaScheme has most features of <a href="http://www.r6rs.org/">R6RS</a> Base library.
-The biggest features not implemented are errors and <code>syntax-rules</code>
-(you can use <code>define-macro</code> instead).</p>
+<h2 id="r7rs">R7RS</h2>
+<p>(see <a href="/doc/r7rs.html">doc/r7rs</a>)</p>
+<h2 id="r6rs">R6RS</h2>
+<p>Since R6RS was the latest spec when the development of BiwaScheme is started (2007), BiwaScheme has some R6RS specific features, but not all of them. Currently there is no plan to complete them because conformance to R7RS-small has higher priority.</p>
 <h3 id="r6rs-base-library">R6RS Base library</h3>
 <ul>
 <li>11.4 Expressions<ul>
@@ -73,7 +73,7 @@ The biggest features not implemented are errors and <code>syntax-rules</code>
 </ul>
 </li>
 <li>11.14 Errors and violations<ul>
-<li>not yet</li>
+<li>no</li>
 </ul>
 </li>
 <li>11.15 Control features<ul>
@@ -89,11 +89,11 @@ The biggest features not implemented are errors and <code>syntax-rules</code>
 </ul>
 </li>
 <li>11.18 Binding constructs for syntactic keywords<ul>
-<li>not yet</li>
+<li>no</li>
 </ul>
 </li>
 <li>11.19 Macro transformers<ul>
-<li>not yet</li>
+<li>no</li>
 </ul>
 </li>
 <li>11.20 Tail calls and tail contexts<ul>
@@ -104,11 +104,11 @@ The biggest features not implemented are errors and <code>syntax-rules</code>
 <h3 id="r6rs-standard-libraries">R6RS Standard Libraries</h3>
 <ul>
 <li>1 Unicode<ul>
-<li>not yet</li>
+<li>no</li>
 </ul>
 </li>
 <li>2 Bytevectors<ul>
-<li>no plan</li>
+<li>no</li>
 </ul>
 </li>
 <li>3 List utilities<ul>
@@ -128,7 +128,7 @@ The biggest features not implemented are errors and <code>syntax-rules</code>
 </ul>
 </li>
 <li>7 Exceptions and conditions<ul>
-<li>not yet</li>
+<li>no</li>
 </ul>
 </li>
 <li>8 I/O<ul>
@@ -144,11 +144,11 @@ The biggest features not implemented are errors and <code>syntax-rules</code>
 </ul>
 </li>
 <li>11 Arithmetic<ul>
-<li>not yet</li>
+<li>no</li>
 </ul>
 </li>
 <li>12 syntax-case<ul>
-<li>not yet</li>
+<li>no</li>
 </ul>
 </li>
 <li>13 Hashtables<ul>
@@ -160,7 +160,7 @@ The biggest features not implemented are errors and <code>syntax-rules</code>
 </ul>
 </li>
 <li>15 Composite library<ul>
-<li>not yet</li>
+<li>no</li>
 </ul>
 </li>
 <li>16 eval<ul>
@@ -168,20 +168,19 @@ The biggest features not implemented are errors and <code>syntax-rules</code>
 </ul>
 </li>
 <li>17 Mutable pairs<ul>
-<li>no plan</li>
+<li>no</li>
 </ul>
 </li>
 <li>18 Mutable strings<ul>
-<li>maybe? (JavaScript strings are immutable, so this will make string operations much slower)</li>
+<li>no</li>
 </ul>
 </li>
 <li>19 R5RS compatibility<ul>
-<li>no plan</li>
+<li>no</li>
 </ul>
 </li>
 </ul>
-<p>(no plan = patches are welcome)</p>
-<h3 id="srfis">SRFIs</h3>
+<h2 id="srfis">SRFIs</h2>
 <p>(Moved to <a href="/doc/features.html">doc/features</a>)</p>
     </div>
 

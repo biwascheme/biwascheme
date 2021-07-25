@@ -4,6 +4,10 @@
 1. Edit package.json
 1. Build
   - $ rollup -c
+1. Create release/biwascheme-x.y.z.js
+  - $ npm run prepare-release
+1. Rebuild website
+  - $ make website -B
 1. Make sure it is working:
   - run tests
     - npm run serve
@@ -22,10 +26,6 @@
     - `$ npm pack`
     - `$ npm install -g biwascheme-x.y.z.tgz`
     - `$ biwas -v`
-1. Create release/biwascheme-x.y.z.js
-  - $ npm run prepare-release
-1. Rebuild website
-  - $ make website -B
 1. Commit, `git tag` and push changes to github. Publish npm package
   - $ npm run release
 1. Make a release on [github](https://github.com/biwascheme/biwascheme/releases)

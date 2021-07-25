@@ -26,10 +26,9 @@
     </div>
     <div id="content">
 <h1 id="r7rs"><a href="http://www.r7rs.org/">R7RS</a></h1>
-<p>BiwaScheme supports basic feature of R7RS, but currently not all.</p>
-<p>The following list is based on r7rs.pdf (the final draft)
-on the <a href="http://trac.sacrideo.us/wg/wiki#no1">Wiki</a>.</p>
-<h2 id="41-primitiveexpressiontypes-12">4.1 Primitiveexpressiontypes................ 12</h2>
+<p>BiwaScheme supports basic feature of R7RS, but currently not all.
+Unimplemented features are marked with <code>[TODO]</code>.</p>
+<h2 id="41-primitive-expression-types-12">4.1 Primitive expression types................ 12</h2>
 <ul>
 <li>variable reference</li>
 <li><code>quote</code></li>
@@ -37,12 +36,9 @@ on the <a href="http://trac.sacrideo.us/wg/wiki#no1">Wiki</a>.</p>
 <li><code>lambda</code></li>
 <li><code>if</code></li>
 <li><code>set!</code></li>
-<li><code>include</code> <code>include-ci</code><ul>
-<li>like <code>#include</code> in C</li>
+<li>[TODO]<code>include</code> <code>include-ci</code></li>
 </ul>
-</li>
-</ul>
-<h2 id="42-derivedexpressiontypes-14">4.2 Derivedexpressiontypes................. 14</h2>
+<h2 id="42-derived-expression-types-14">4.2 Derived expression types................. 14</h2>
 <ul>
 <li><code>cond</code> <code>case</code> <code>and</code> <code>or</code> <code>when</code> <code>unless</code></li>
 <li>[TODO]<code>cond-expand</code></li>
@@ -60,7 +56,6 @@ on the <a href="http://trac.sacrideo.us/wg/wiki#no1">Wiki</a>.</p>
 <li>[TODO]<code>let-syntax</code>, <code>letrec-syntax</code>, <code>syntax-rules</code>, <code>syntax-error</code></li>
 </ul>
 <h1 id="5-programstructure-25">5 Programstructure........................ 25</h1>
-<h2 id="51-programs--25">5.1 Programs ......................... 25</h2>
 <h2 id="52-import-declarations-25">5.2 Import declarations.................... 25</h2>
 <ul>
 <li>[TODO]<code>import</code></li>
@@ -81,7 +76,6 @@ on the <a href="http://trac.sacrideo.us/wg/wiki#no1">Wiki</a>.</p>
 <ul>
 <li>[TODO]<code>define-library</code></li>
 </ul>
-<h2 id="57-therepl--29">5.7 TheREPL ........................ 29</h2>
 <h1 id="6-standardprocedures--30">6 Standardprocedures ...................... 30</h1>
 <h2 id="61-equivalencepredicates-30">6.1 Equivalencepredicates.................. 30</h2>
 <ul>
@@ -160,7 +154,7 @@ on the <a href="http://trac.sacrideo.us/wg/wiki#no1">Wiki</a>.</p>
 <code>bytevector-copy</code> <code>bytevector-copy!</code> <code>bytevector-append</code>
 <code>utf8-&gt;string</code> <code>string-&gt;utf8</code></li>
 </ul>
-<h2 id="610controlfeatures-50">6.10Controlfeatures...................... 50</h2>
+<h2 id="610-control-features-50">6.10 Control features...................... 50</h2>
 <ul>
 <li><code>procedure?</code> <code>apply</code> <code>map</code> <code>string-map</code> <code>vector-map</code></li>
 <li><code>for-each</code> <code>string-for-each</code> <code>vector-for-each</code></li>
@@ -168,20 +162,20 @@ on the <a href="http://trac.sacrideo.us/wg/wiki#no1">Wiki</a>.</p>
 <li><code>values</code> <code>call-with-values</code></li>
 <li><code>dynamic-wind</code></li>
 </ul>
-<h2 id="611exceptions--54">6.11Exceptions ........................ 54</h2>
+<h2 id="611-exceptions--54">6.11 Exceptions ........................ 54</h2>
 <ul>
 <li>[TODO] <code>with-exception-handler</code> <code>raise-continuable</code>
 <code>error</code> <code>error-object?</code> <code>error-object-message</code>
 <code>error-object-irritants</code> <code>read-error?</code> <code>file-error?</code></li>
 <li><code>raise</code></li>
 </ul>
-<h2 id="612environmentsandevaluation--55">6.12Environmentsandevaluation .............. 55</h2>
+<h2 id="612-environments-and-evaluation--55">6.12 Environments and evaluation .............. 55</h2>
 <ul>
 <li>[TODO] <code>environment</code> <code>scheme-report-environment</code>
 <code>null-environment</code> <code>interaction-environment</code></li>
 <li><code>eval</code></li>
 </ul>
-<h2 id="613inputandoutput-55">6.13Inputandoutput..................... 55</h2>
+<h2 id="613-input-and-output-55">6.13 Input and output..................... 55</h2>
 <ul>
 <li><p><code>call-with-port</code></p>
 </li>
@@ -225,7 +219,7 @@ on the <a href="http://trac.sacrideo.us/wg/wiki#no1">Wiki</a>.</p>
 <li><p>[TODO] <code>write-string</code> <code>write-u8</code> <code>write-bytevector</code> <code>flush-output-port</code></p>
 </li>
 </ul>
-<h2 id="614systeminterface--59">6.14Systeminterface ..................... 59</h2>
+<h2 id="614-system-interface--59">6.14 System interface ..................... 59</h2>
 <ul>
 <li><code>load</code></li>
 <li><code>file-exists?</code> <code>delete-file</code> <code>command-line</code> `exit</li>

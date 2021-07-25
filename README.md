@@ -66,6 +66,8 @@ src/library/webscheme_lib.js.
 
 ### Building biwascheme.js
 
+You need Node.js (tested with v16.5.0) and npm (tested with v7.20.1) to build biwascheme.js.
+
 See [doc/dev/build.md](doc/dev/build.md).
 
 ## Conformance

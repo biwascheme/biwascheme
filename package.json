@@ -1,7 +1,7 @@
 {
     "name": "biwascheme",
     "description": "A practical Scheme interpreter written in JavaScript",
-    "version": "0.7.2",
+    "version": "0.7.3",
     "author": "Yutaka HARA <yutaka.hara.gmail.com>",
     "license": "MIT",
     "homepage": "https://www.biwascheme.org/",

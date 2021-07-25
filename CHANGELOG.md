@@ -1,6 +1,34 @@
-## (TBD) v0.7.3
+## 2021-07-25 v0.7.3
 
-- fix: `element-new` raises error (#234)
+### Possible breaking change
+
+Arity check for procedures with no arguments was broken and fixed by #244. This is a bug fix but you may need to fix your program if it passes arguments to a function that takes no arguments.
+
+For example, this code will raise error because `add-handler` calls the callback with an argument (the event object.)
+
+```scheme
+; NG
+(add-handler btn "click" (lambda () (alert "hi")))
+```
+
+To fix this, just give it a random name.
+
+```scheme
+; OK
+(add-handler btn "click" (lambda (_) (alert "hi")))
+```
+
+### Other changes
+
+- fix: `element-new` raises error (#235)
+- fix: `load` on Node (#245)
+- fix: Some library functions did not show proper error message (054989b)
+- fix: `write` now stops for cyclic objects (#238)
+  - That is, now you can just use `write` instead of `write/ss`.
+  - When you are sure the argument is not cyclic, `write-simple` (#238) is faster.
+  - Also, `write` now uses `#0#` syntax only when needed (#234). Use `write-shared` (#238) when you want all shared structures shown by `#n#`.
+- security: Update underscore.js to 1.12.1 (#237)
+- dev: Add internal classes `VMCode` and `Closure` (#228)
 
 ## 2021-03-19 v0.7.2
 

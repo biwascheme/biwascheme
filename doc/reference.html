@@ -563,6 +563,14 @@ biwa.evaluate(&quot;(+ 1 2)&quot;, function(result) {
   return ar[0] + ar[1];
 });</code></pre>
 <p>See <code>src/library/*.js</code> for more examples.</p>
+<h4 id="stringify-scheme-object">Stringify scheme object</h4>
+<ul>
+<li><code>BiwaScheme.write(obj)</code><ul>
+<li>Returns a JS string whose content is the same as <code>(write obj)</code> generates.</li>
+<li>Supports cyclic list/vector</li>
+</ul>
+</li>
+</ul>
     </div>
 
     <!-- Google Analytics -->
