@@ -197,7 +197,7 @@ define_libfunc("js-obj", 0, null, function(ar){
   }
 
   var obj = {};
-  for(i=0; i<ar.length/2; i++){
+  for(let i=0; i<ar.length/2; i++){
     assert_string(ar[i*2]);
     obj[ar[i*2]] = ar[i*2+1];
   }
