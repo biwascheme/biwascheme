@@ -2169,6 +2169,11 @@ describe('js interface', {
     var tmp = scm_eval('(js-new "BiwaScheme.TestForJSNew" \'foo (lambda () 4))');
     expect(typeof(tmp.foo)).should_be('function');
   },
+  'js-obj' : function(){
+    const obj = scm_eval('(js-obj "foo" 1 "bar" 2)');
+    expect(obj.foo).should_be(1);
+    expect(obj.bar).should_be(2);
+  },
   'js-null?' : function(){
     ev('(js-null? (js-eval "null"))').should_be(true);
     ev('(js-null? 0)').should_be(false);
