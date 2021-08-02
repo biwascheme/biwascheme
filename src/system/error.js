@@ -1,33 +1,33 @@
 import * as _ from "../deps/underscore-esm.js"
 import { to_write } from "./_writer.js"
-import Class from "./class.js"
 
 //
 // Errors
 //
 
-const BiwaError = Class.create({
-  initialize: function(msg, form=null){
+class BiwaError {
+  constructor(msg, form=null){
     const info = (form === null ? "" : `: ${to_write(form)}`);
     this.message = `Error: ${msg}${info}`;
     this.form = form;
-  },
-  toString: function(){
+  }
+
+  toString(){
     return this.message;
   }
-});
+}
 
-const Bug = Class.extend(new BiwaError(), {
-  initialize: function(msg){
+class Bug extends BiwaError {
+  constructor(msg){
     this.message = "[BUG] "+msg;
   }
-});
+}
 
 // currently used by "raise"
-const UserError = Class.extend(new BiwaError(), {
-  initialize: function(msg){
+class UserError extends BiwaError {
+  constructor(msg){
     this.message = msg;
   }
-});
+}
 
 export { BiwaError, Bug, UserError };

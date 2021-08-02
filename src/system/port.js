@@ -1,4 +1,3 @@
-import Class from "./class.js"
 import Pause from "./pause.js"
 import * as _ from "../deps/underscore-esm.js"
 
@@ -9,79 +8,95 @@ import * as _ from "../deps/underscore-esm.js"
 // (eof-object)
 const eof = new Object;
 
-const Port = Class.create({
-  initialize: function(is_in, is_out){
+class Port {
+  constructor(is_in, is_out){
     this.is_open = true;
     this.is_binary = false; //??
     this.is_input = is_in;
     this.is_output = is_out;
-  },
-  close: function(){
+  }
+
+  close(){
     // close port
     this.is_open = false;
-  },
-  inspect: function(){
-    return "#<Port>";
-  },
-  to_write: function(){
+  }
+
+  inspect(){
     return "#<Port>";
   }
-});
+
+  to_write(){
+    return "#<Port>";
+  }
+}
 
 //
 // string ports (srfi-6)
 //
-Port.StringOutput = Class.extend(new Port(false, true), {
-  initialize: function(){
+Port.StringOutput = class extends Port {
+  constructor(){
+    super(false, true);
     this.buffer = [];
-  },
-  put_string: function(str){
+  }
+
+  put_string(str){
     this.buffer.push(str);
-  },
-  output_string: function(str){
+  }
+
+  output_string(str){
     return this.buffer.join("");
   }
-});
+};
 
-Port.StringInput = Class.extend(new Port(true, false), {
-  initialize: function(str){
+Port.StringInput = class extends Port {
+  constructor(str){
+    super(true, false);
     this.str = str;
-  },
-  get_string: function(after){
+  }
+
+  get_string(after){
     return after(this.str);
   }
-});
+};
 
-Port.NullInput = Class.extend(new Port(true, false), {
-  initialize: function(){
-  },
-  get_string: function(after){
+Port.NullInput = class extends Port {
+  constructor(){
+    super(true, false);
+  }
+
+  get_string(after){
     // Never give them anything!
     return after('');
   }
-});
+};
 
-Port.NullOutput = Class.extend(new Port(false, true), {
-  initialize: function(output_function){
+Port.NullOutput = class extends Port {
+  constructor(output_function){
+    super(false, true);
     this.output_function = output_function;
-  },
-  put_string: function(str){}
-});
+  }
 
-Port.CustomOutput = Class.extend(new Port(false, true), {
-  initialize: function(output_function){
+  put_string(str){}
+};
+
+Port.CustomOutput = class extends Port {
+  constructor(output_function){
+    super(false, true);
     this.output_function = output_function;
-  },
-  put_string: function(str){
+  }
+
+  put_string(str){
     this.output_function(str);
   }
-});
+};
 
-Port.CustomInput = Class.extend(new Port(true, false), {
-  initialize: function(input_function){
+Port.CustomInput = class extends Port {
+  constructor(input_function){
+    super(true, false);
     this.input_function = input_function;
-  },
-  get_string: function(after){
+  }
+
+  get_string(after){
     var input_function = this.input_function;
     return new Pause(function(pause) {
       input_function(function(input) {
@@ -89,7 +104,7 @@ Port.CustomInput = Class.extend(new Port(true, false), {
       });
     });
   }
-});
+};
 
 // User must set the current input/output
 Port.current_input  = new Port.NullInput();

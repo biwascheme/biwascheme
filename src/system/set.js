@@ -1,20 +1,19 @@
 import * as _ from "../deps/underscore-esm.js"
-import Class from "./class.js"
 import { BiwaError } from "./error.js"
 
 //
 // Set - set of string
 // contents must be string (or at least sortable)
 //
-const BiwaSet = Class.create({
-  initialize : function(/*args*/){
+class BiwaSet {
+  constructor(/*args*/){
     this.arr = [];
     var i;
     for(i=0; i<arguments.length; i++)
       this.arr[i] = arguments[i];
-  },
+  }
 
-  equals : function(other){
+  equals(other){
     if(this.arr.length != other.arr.length)
       return false;
 
@@ -26,14 +25,16 @@ const BiwaSet = Class.create({
       if(a1[i] != a2[i]) return false;
     }
     return true;
-  },
-  set_cons : function(item){
+  }
+
+  set_cons(item){
     var o = new BiwaSet(item);
     o.arr = _.clone(this.arr);
     o.arr.push(item);
     return o;
-  },
-  set_union : function(/*args*/){
+  }
+
+  set_union(/*args*/){
     var o = new BiwaSet();
     o.arr = _.clone(this.arr);
 
@@ -46,8 +47,9 @@ const BiwaSet = Class.create({
         o.add(s2.arr[i]);
     }
     return o;
-  },
-  set_intersect : function(s2){
+  }
+
+  set_intersect(s2){
     if(!(s2 instanceof BiwaSet))
       throw new BiwaError("set_intersect: arguments must be a set");
 
@@ -56,8 +58,9 @@ const BiwaSet = Class.create({
       if(s2.member(this.arr[i]))
         o.add(this.arr[i]);
     return o;
-  },
-  set_minus : function(s2){
+  }
+
+  set_minus(s2){
     if(!(s2 instanceof BiwaSet))
       throw new BiwaError("set_minus: arguments must be a set");
 
@@ -66,39 +69,46 @@ const BiwaSet = Class.create({
       if(!s2.member(this.arr[i]))
         o.add(this.arr[i]);
     return o;
-  },
-  add : function(item){
+  }
+
+  add(item){
     if(!this.member(item)){
       this.arr.push(item);
     }
-  },
-  member : function(item){
+  }
+
+  member(item){
     for(var i=0; i<this.arr.length; i++)
       if(this.arr[i] == item) return true;
 
     return false;
-  },
-  rindex : function(item){
+  }
+
+  rindex(item){
     for(var i=this.arr.length-1; i>=0 ; i--)
       if(this.arr[i] == item) return (this.arr.length-1-i);
 
     return null;
-  },
-  index : function(item){
+  }
+
+  index(item){
     for(var i=0; i<this.arr.length; i++)
       if(this.arr[i] == item) return i;
 
     return null;
-  },
-  inspect : function(){
+  }
+
+  inspect(){
     return "Set(" + this.arr.join(", ") + ")";
-  },
-  toString : function(){
+  }
+
+  toString(){
     return this.inspect();
-  },
-  size : function(){
+  }
+
+  size(){
     return this.arr.length;
   }
-});
+}
 
 export default BiwaSet;

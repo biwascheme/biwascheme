@@ -3,7 +3,6 @@ import { TopEnv, CoreEnv, nil, undef, max_trace_size } from "../header.js"
 import { isSymbol } from "./_types.js"
 import { to_write, inspect } from "./_writer.js"
 import Call from "./call.js"
-import Class from "./class.js"
 import { Closure, isClosure } from "./closure.js"
 import Compiler from "./compiler.js"
 import { BiwaError, Bug } from "./error.js"
@@ -17,12 +16,12 @@ import { Sym } from "./symbol.js"
 /// Interpreter
 ///
 
-const Interpreter = Class.create({
+class Interpreter {
   // new Interpreter()
   // new Interpreter(lastInterpreter)
   // new Interpreter(errorHandler)
   // new Interpreter(lastInterpreter, errorHandler)
-  initialize: function(){
+  constructor(){
     var last_interpreter = null;
     var on_error = null;
     if (arguments.length == 2) {
@@ -55,9 +54,9 @@ const Interpreter = Class.create({
 
     // dynamic-wind
     this.current_dynamic_winder = Interpreter.DynamicWind.ROOT;
-  },
+  }
 
-  inspect: function(){
+  inspect(){
     return [
       "#<Interpreter: stack size=>",
       this.stack.length, " ",
@@ -65,29 +64,29 @@ const Interpreter = Class.create({
       inspect(this.after_evaluate),
       ">"
     ].join("");
-  },
+  }
 
   // private
-  push: function(x, s){
+  push(x, s){
     this.stack[s] = x;
     return s+1;
-  },
+  }
 
   // private
   //s: depth of stack to save
   //ret: saved(copied) stack 
-  save_stack: function(s){
+  save_stack(s){
     var v = [];
     for(var i=0; i<s; i++){
       v[i] = this.stack[i];
     }
     return { stack: v, last_refer: this.last_refer, call_stack: _.clone(this.call_stack), tco_counter: _.clone(this.tco_counter) };
-  },
+  }
 
   // private
   //v: stack array to restore
   //ret: lenght of restored stack
-  restore_stack: function(stuff){
+  restore_stack(stuff){
     const v = stuff.stack;
     const s = v.length;
     for(var i=0; i<s; i++){
@@ -97,13 +96,13 @@ const Interpreter = Class.create({
     this.call_stack = _.clone(stuff.call_stack);
     this.tco_counter = _.clone(stuff.tco_counter);
     return s;
-  },
+  }
 
   // private
   //s: depth of stack to save
   //n: number of args(for outer lambda) to remove (= 0 unless tail position)
   //ret: closure array
-  capture_continuation: function(s, n){
+  capture_continuation(s, n){
     // note: implementation of this function for final version doesn't exist in 3imp.pdf..
     var ss = this.push(n, s);
     return this.closure(["nuate1", this.save_stack(ss), this.current_dynamic_winder],
@@ -111,41 +110,41 @@ const Interpreter = Class.create({
                         0,     //n (number of frees)
                         null,  //s (stack position to get frees)
                         -1);   // dotpos
-  },
+  }
 
   // private
   // shift stack 
   // n: number of items to skip (from stack top)
   // m: number of items to shift
   // s: stack pointer (= index of stack top + 1)
-  shift_args: function(n, m, s){
+  shift_args(n, m, s){
     for(var i = n; i >= 0; i--){
       this.index_set(s, i+m+1, this.index(s, i));
     }
     return s-m-1;
-  },
+  }
 
-  index: function(s, i){
+  index(s, i){
     return this.stack[(s-1)-i];
-  },
+  }
 
   // private
-  index_set: function(s, i, v){
+  index_set(s, i, v){
     this.stack[(s-1)-i] = v;
-  },
+  }
 
   // private
-  closure: function(body, n_args, n, s, dotpos){
+  closure(body, n_args, n, s, dotpos){
     const freevars = [];
     for(var i=0; i<n; i++) {
       freevars[i] = this.index(s, i);
     }
     const expected_args = dotpos == -1 ? n_args : undefined;
     return new Closure(body, freevars, dotpos, expected_args);
-  },
+  }
 
   // private
-  run_dump_hook: function(a, x, f, c, s) {
+  run_dump_hook(a, x, f, c, s) {
     var dumper;
     var state;
 
@@ -168,7 +167,7 @@ const Interpreter = Class.create({
                "stack":this.stack};
       dumper.dump(state);
     }
-  },
+  }
 
   // private
   // a: arbitary object (temporary register)
@@ -176,7 +175,7 @@ const Interpreter = Class.create({
   // f: integer
   // c: BiwaScheme.Closure
   // s: integer
-  _execute: function(a, x, f, c, s){
+  _execute(a, x, f, c, s){
     var ret = null;
     //Console.puts("executing "+x[0]);
     
@@ -432,10 +431,10 @@ const Interpreter = Class.create({
 //      else
 //        return ret;
     return a
-  },
+  }
 
   // Compile and evaluate Scheme program
-  evaluate: function(str, after_evaluate){
+  evaluate(str, after_evaluate){
     this.call_stack = [];
     this.parser = new Parser(str);
     this.compiler = new Compiler();
@@ -454,11 +453,11 @@ const Interpreter = Class.create({
       e.message = e.message + " [" + this.call_stack.join(", ") + "]";
       return this.on_error(e);
     }
-  },
+  }
 
   // Resume evaluation
   // (internally used from Interpreter#execute and Pause#resume)
-  resume: function(is_resume, a, x, f, c, s){
+  resume(is_resume, a, x, f, c, s){
     var ret = undef;
 
     for(;;){
@@ -489,10 +488,10 @@ const Interpreter = Class.create({
     // finished executing all forms
     this.after_evaluate(ret);
     return ret;
-  },
+  }
 
   // Invoke a scheme closure
-  invoke_closure: function(closure, args){
+  invoke_closure(closure, args){
     args || (args = []);
     var n_args  = args.length;
 
@@ -501,25 +500,25 @@ const Interpreter = Class.create({
       x = ["constant", args[i], ["argument", x]]
 
     return this._execute(closure, ["frame", x, ["halt"]], 0, closure, 0);
-  },
+  }
 
   // only compiling (for debug use only)
-  compile: function(str){
+  compile(str){
     var obj = Interpreter.read(str);
     var opc = Compiler.compile(obj);
     return opc;
-  },
+  }
 
   // before, after: Scheme closure
-  push_dynamic_winder: function(before, after) {
+  push_dynamic_winder(before, after) {
     this.current_dynamic_winder =
       new Interpreter.DynamicWind(this.current_dynamic_winder, before, after);
-  },
+  }
 
-  pop_dynamic_winder: function(before, after) {
+  pop_dynamic_winder(before, after) {
     this.current_dynamic_winder = this.current_dynamic_winder.parent;
   }
-});
+}
 
 // Take a string and returns an expression.
 Interpreter.read = function(str){
@@ -534,8 +533,8 @@ Interpreter.expand = function(){ throw "Interpreter.expand is moved to Compiler.
 // dynamic-wind
 //
 
-Interpreter.DynamicWind = Class.create({
-  initialize: function(parent, before, after) {
+Interpreter.DynamicWind = class {
+  constructor(parent, before, after) {
     // Parent `DynamicWind` obj
     this.parent = parent;
     // "before" winder (Scheme closure)
@@ -543,7 +542,7 @@ Interpreter.DynamicWind = Class.create({
     // "after" winder (Scheme closure)
     this.after = after;
   }
-});
+};
 
 // A special value indicates the root of the winders
 // (the string is just for debugging purpose.)
@@ -577,6 +576,7 @@ Interpreter.DynamicWind.listWinders = function(from, to) {
     if (fromStack[i] === common) break;
     ret.push(fromStack[i].after);
   }
+
   // List `before`s to call
   toStack.reverse();
   toStack.forEach(function(item) {

@@ -1,7 +1,6 @@
 import * as _ from "../deps/underscore-esm.js"
 import { nil } from "../header.js"
 import { to_write, inspect } from "./_writer.js"
-import Class from "./class.js"
 import BiwaSet from "./set.js"
 
 //
@@ -9,106 +8,106 @@ import BiwaSet from "./set.js"
 // cons cell
 //
 
-const Pair = Class.create({
-  initialize: function(car, cdr){
+class Pair {
+  constructor(car, cdr){
     this.car = car;
     this.cdr = cdr;
-  },
+  }
 
-  caar: function(){ return this.car.car; },
-  cadr: function(){ return this.cdr.car; },
-  cdar: function(){ return this.cdr.car; },
-  cddr: function(){ return this.cdr.cdr; },
+  caar(){ return this.car.car; }
+  cadr(){ return this.cdr.car; }
+  cdar(){ return this.cdr.car; }
+  cddr(){ return this.cdr.cdr; }
 
-  first:  function(){ return this.car; },
-  second: function(){ return this.cdr.car; },
-  third:  function(){ return this.cdr.cdr.car; },
-  fourth: function(){ return this.cdr.cdr.cdr.car; },
-  fifth:  function(){ return this.cdr.cdr.cdr.cdr.car; },
+  first(){ return this.car; }
+  second(){ return this.cdr.car; }
+  third(){ return this.cdr.cdr.car; }
+  fourth(){ return this.cdr.cdr.cdr.car; }
+  fifth(){ return this.cdr.cdr.cdr.cdr.car; }
 
   // returns array containing all the car's of list
   // '(1 2 3) => [1,2,3]
   // '(1 2 . 3) => [1,2]
-  to_array: function(){
+  to_array(){
     var ary = [];
     for(var o = this; o instanceof Pair; o=o.cdr){
       ary.push(o.car);
     }
     return ary;
-  },
+  }
 
-  to_set: function(){
+  to_set(){
     var set = new BiwaSet();
     for(var o = this; o instanceof Pair; o=o.cdr){
       set.add(o.car);
     }
     return set;
-  },
+  }
 
-  length: function(){
+  length(){
     var n = 0;
     for(var o = this; o instanceof Pair; o=o.cdr){
       n++;
     }
     return n;
-  },
+  }
 
   // Return the last cdr
-  last_cdr: function(){
+  last_cdr(){
     var o;
     for(o = this; o instanceof Pair; o = o.cdr)
       ;
     return o;
-  },
+  }
 
   // calls the given func passing each car of list
   // returns cdr of last Pair
-  forEach: function(func){
+  forEach(func){
     for(var o = this; o instanceof Pair; o=o.cdr){
       func(o.car);
     }
     return o;
-  },
+  }
 
   // Alias of `forEach` (for backward compatibility)
-  foreach: function(func){
+  foreach(func){
     for(var o = this; o instanceof Pair; o=o.cdr){
       func(o.car);
     }
     return o;
-  },
+  }
 
   // Returns an array which contains the resuls of calling func
   // with the car's as an argument.
   // If the receiver is not a proper list, the last cdr is ignored.
   // The receiver must not be a cyclic list.
-  map: function(func){
+  map(func){
     var ary = [];
     for(var o = this; isPair(o); o = o.cdr){
       ary.push(func(o.car));
     }
     return ary;
-  },
+  }
 
   // Returns a new list made by applying `func` to each element
-  mapList: function(func) {
+  mapList(func) {
     return array_to_list(this.map(func));
-  },
+  }
 
   // Destructively concat the given list to the receiver.
   // The receiver must be a proper list.
   // Returns the receiver.
-  concat: function(list){
+  concat(list){
     var o = this;
     while(o instanceof Pair && o.cdr != nil){
       o = o.cdr;
     }
     o.cdr = list;
     return this;
-  },
+  }
 
   // returns human-redable string of pair
-  inspect: function(conv){
+  inspect(conv){
     conv || (conv = inspect);
     var a = [];
     var last = this.foreach(function(o){
@@ -119,19 +118,20 @@ const Pair = Class.create({
       a.push(conv(last));
     }
     return "(" + a.join(" ") + ")";
-  },
-  toString : function(){
+  }
+
+  toString (){
     return this.inspect();
-  },
+  }
 
-  to_display: function(to_display) {
+  to_display(to_display) {
     return this.inspect(to_display);
-  },
+  }
 
-  to_write: function(){
+  to_write(){
     return this.inspect(to_write);
   }
-});
+};
 
 // Note: '() is not a pair in scheme
 const isPair = function(obj){
@@ -232,7 +232,6 @@ const alist_to_js_obj = function(alist) {
   });
   return obj;
 };
-
 
 export { Pair, List, isPair, isList, array_to_list, deep_array_to_list, Cons,
          js_obj_to_alist, alist_to_js_obj };

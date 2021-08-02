@@ -61,10 +61,12 @@ const isSelfEvaluating = function(obj) {
 const eq = function(a, b){
   return a === b;
 };
+
 // TODO: Records (etc.)
 const eqv = function(a, b){
   return a == b && (typeof(a) == typeof(b));
 };
+
 const equal = function(a, b){
   //TODO: must terminate for cyclic objects
   return to_write(a) == to_write(b);
