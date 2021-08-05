@@ -1,12 +1,13 @@
 import { TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warning } from "./header.js";
 import { VERSION, GitCommit } from "./version.js";
 
-import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
+import { eq, eqv, equal } from "./system/_equality.js"
+import { isNil, isUndef, isBoolean, isString, isFunction, isSymbol, isPort,
          isVector, isProcedure,
-         isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
+         lt } from "./system/_types.js"
 import { to_write, to_display, inspect, write_shared } from "./system/_writer.js"
 import Call from "./system/call.js"
-import Char from "./system/char.js"
+import { Char, isChar } from "./system/char.js"
 import { Closure, isClosure } from "./system/closure.js"
 import Compiler from "./system/compiler.js"
 import { Enumeration, isEnumSet } from "./system/enumeration.js"
@@ -40,13 +41,14 @@ nil.to_set = function(){ return new BiwaSet(); };
 export default {
   TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warning,
   Version: VERSION, VERSION, GitCommit,
-  isNil, isUndef, isBoolean, isString, isChar, isSymbol, isPort, isPair, isList,
+  eq, eqv, equal,
+  isNil, isUndef, isBoolean, isString, isSymbol, isPort, isPair, isList,
     isVector, isHashtable, isMutableHashtable, isProcedure,
-    isSelfEvaluating, eq, eqv, equal, lt,
+    lt,
   to_write, to_display, inspect,
   write_ss: write_shared, to_write_ss: write_shared, // For backward compatibility
   Call,
-  Char,
+  Char, isChar,
   Closure, isClosure,
   Compiler,
   Enumeration, isEnumSet,

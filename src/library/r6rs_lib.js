@@ -6,11 +6,11 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_vector, assert_hashtable, assert_mutable_hashtable, assert_promise,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
          parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
+import { eq, eqv, equal } from "../system/_equality.js"
 import { to_write, to_display, inspect, write_shared, write_simple } from "../system/_writer.js"
-import { isNil, isSymbol, isVector, isProcedure,
-         eq, eqv, equal, lt } from "../system/_types.js"
+import { isNil, isSymbol, isVector, isProcedure, lt } from "../system/_types.js"
 import Call from "../system/call.js"
-import Char from "../system/char.js"
+import { Char } from "../system/char.js"
 import { Bug, BiwaError, UserError } from "../system/error.js"
 import { Enumeration, assert_enum_set } from "../system/enumeration.js"
 import { Hashtable } from "../system/hashtable.js"
