@@ -1,18 +1,14 @@
 import * as _ from "../deps/underscore-esm.js"
 import { nil } from "../header.js";
 import { inspect } from "./_writer.js"
-import Class from "./class.js"
 import Char from "./char.js"
 import { Bug } from "./error.js"
 import { Pair } from "./pair.js"
-///
-/// Call
-///
 
 // The class Call is used to invoke scheme closure from 
 // library functions.
 //
-// Call#initialize takes three arguments: proc, args and after.
+// Call#constructor takes three arguments: proc, args and after.
 //   * proc is the scheme closure to invoke.
 //   * args is an Array (not list!) of arguments for the invocation.
 //   * after is a javascript function which is invoked when 
@@ -29,92 +25,96 @@ import { Pair } from "./pair.js"
 // example:
 //   return new Call(proc, [x, y], function(ar){ ar[0] });
 //
-const Call = Class.create({
-  initialize: function(proc, args, after){
+class Call {
+  constructor(proc, args, after){
     this.proc = proc;
     this.args = args;
     this.after = after || function(ar){
       // just return result which closure returned
       return ar[0];
     };
-  },
+  }
 
-  inspect: function(){
+  inspect(){
     return "#<Call args=" + this.args.inspect() + ">";
-  },
+  }
 
-  toString: function(){
-    return "#<Call>";
-  },
-
-  to_write: function(){
+  toString(){
     return "#<Call>";
   }
-})
+
+  to_write(){
+    return "#<Call>";
+  }
+}
 
 //
 // Iterator - external iterator for Call.foreach
 //
 const Iterator = {
-  ForArray: Class.create({
-    initialize: function(arr){
+  ForArray: class {
+    constructor(arr){
       this.arr = arr;
       this.i = 0;
-    },
-    has_next: function(){
+    }
+    has_next(){
       return this.i < this.arr.length;
-    },
-    next: function(){
+    }
+    next(){
       return this.arr[this.i++];
     }
-  }),
-  ForString: Class.create({
-    initialize: function(str){
+  },
+
+  ForString: class {
+    constructor(str){
       this.str = str;
       this.i = 0;
-    },
-    has_next: function(){
+    }
+    has_next(){
       return this.i < this.str.length;
-    },
-    next: function(){
+    }
+    next(){
       return Char.get(this.str.charAt(this.i++));
     }
-  }),
-  ForList: Class.create({
-    initialize: function(ls){
+  },
+
+  ForList: class {
+    constructor(ls){
       this.ls = ls;
-    },
-    has_next: function(){
+    }
+    has_next(){
       return (this.ls instanceof Pair) &&
              this.ls != nil;
-    },
-    next: function(){
+    }
+    next(){
       var pair = this.ls;
       this.ls = this.ls.cdr;
       return pair;
     }
-  }),
-  ForMulti: Class.create({
-    initialize: function(objs){
+  },
+
+  ForMulti: class {
+    constructor(objs){
       this.objs = objs;
       this.size = objs.length;
       this.iterators = _.map(objs, function(x){
         return Iterator.of(x);
       })
-    },
-    has_next: function(){
+    }
+    has_next(){
       for(var i=0; i<this.size; i++)
         if(!this.iterators[i].has_next())
           return false;
       
       return true;
-    },
-    next: function(){
+    }
+    next(){
       return _.map(this.iterators, function(ite){
         return ite.next();
       })
     }
-  }),
+  },
+
   of: function(obj){
     switch(true){
       case (obj instanceof Array):

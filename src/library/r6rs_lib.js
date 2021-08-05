@@ -3213,7 +3213,7 @@ define_libfunc("enum-set-indexer", 1, 1, function(ar){
 //(enum-set-constructor enum-set) -> (lambda (syms)) -> enum-set(same type as the argument)
 define_libfunc("enum-set-constructor", 1, 1, function(ar){
   assert_enum_set(ar[0]);
-  return ar[0].enum_type.constructor();
+  return ar[0].enum_type.constructor_();
 });
 
 //(enum-set->list enum-set) -> symbol-list

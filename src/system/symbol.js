@@ -1,31 +1,30 @@
-import Class from "./class.js"
 import * as _ from "../deps/underscore-esm.js"
 
 //
-// Symbol
+// Scheme symbols
 //
 
 const Symbols = {};
 
-const BiwaSymbol = Class.create({
-  initialize: function(str){
+class BiwaSymbol {
+  constructor(str){
     this.name = str;
     Symbols[ str ] = this;
-  },
+  }
 
-  inspect: function(){
+  inspect(){
     return "'"+this.name;
     //return "#<Symbol '"+this.name+"'>";
-  },
+  }
 
-  toString: function(){
+  toString(){
     return "'"+this.name;
-  },
+  }
 
-  to_write: function(){
+  to_write(){
     return this.name;
   }
-});
+}
 
 const Sym = function(name,leaveCase){
   if( Symbols[name] === undefined ){

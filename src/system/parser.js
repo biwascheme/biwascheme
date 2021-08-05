@@ -2,7 +2,6 @@ import * as _ from "../deps/underscore-esm.js"
 import { nil } from "../header.js"
 import { inspect } from "./_writer.js"
 import Char from "./char.js"
-import Class from "./class.js"
 import { BiwaError } from "./error.js"
 import { Pair } from "./pair.js"
 import { Sym } from "./symbol.js"
@@ -11,27 +10,28 @@ import { Sym } from "./symbol.js"
 // Parser 
 // copied from jsScheme - should be rewrriten (support #0=, etc)
 //
-const Parser = Class.create({
-  initialize: function(txt){
+class Parser {
+  constructor(txt){
     this.tokens = this.tokenize(txt);
     this.i = 0;
-  },
+    this.sexpCommentMarker = new Object();
+  }
 
   // Inject scheme program into current position
-  insert: function(txt) {
+  insert(txt) {
     this.tokens.splice(this.i, 0, ...this.tokenize(txt));
-  },
+  }
 
-  inspect: function(){
+  inspect(){
     return [
       "#<Parser:",
       this.i, "/", this.tokens.length, " ",
       inspect(this.tokens),
       ">"
     ].join("");
-  },
+  }
 
-  tokenize: function(txt) {
+  tokenize(txt) {
     var tokens = new Array(), oldTxt=null;
     var in_srfi_30_comment = 0;
 
@@ -65,10 +65,9 @@ const Parser = Class.create({
       } );
     }
     return tokens;
-  },
+  }
 
-  sexpCommentMarker: new Object,
-  getObject: function() {
+  getObject() {
     var r = this.getObject0();
 
     if (r != this.sexpCommentMarker)
@@ -80,9 +79,9 @@ const Parser = Class.create({
 
     r = this.getObject();
     return r;
-  },
+  }
   
-  getList: function( close ) {
+  getList( close ) {
     var list = nil, prev = list;
     while( this.i < this.tokens.length ) {
 
@@ -106,9 +105,9 @@ const Parser = Class.create({
       }
     }
     return list;
-  },
+  }
 
-  getVector: function( close ) {
+  getVector( close ) {
     var arr = new Array();
     while( this.i < this.tokens.length ) {
       
@@ -120,17 +119,17 @@ const Parser = Class.create({
       arr[ arr.length ] = this.getObject();
     }
     return arr;
-  },
+  }
 
-  eatObjectsInSexpComment: function(err_msg) {
+  eatObjectsInSexpComment(err_msg) {
     while( this.tokens[ this.i ] == '#;' ) {
       this.i++;
       if ((this.getObject() == Parser.EOS) || (this.i >= this.tokens.length))
         throw new BiwaError(err_msg);  
     }
-  }, 
+  } 
 
-  getObject0: function() {
+  getObject0() {
     if( this.i >= this.tokens.length )
       return Parser.EOS;
 
@@ -164,7 +163,7 @@ const Parser = Class.create({
         n = new Number( t.substring(2,t.length) );
       } 
       else{
-        n = new Number(t);  // use constrictor as parser
+        n = new Number(t);  // use constructor as parser
       }
 
       if( ! isNaN(n) ) {
@@ -202,7 +201,8 @@ const Parser = Class.create({
       } else return Sym(t);  // 2Do: validate !!
     }
   }
-});
+}
+
 // indicates end of source file
 Parser.EOS = new Object();
 

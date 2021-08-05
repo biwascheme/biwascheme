@@ -411,9 +411,8 @@ define_libfunc("set-handler!", 3, 3, function(ar, intp){
 });
 define_libfunc("add-handler!", 3, 3, function(ar, intp){
   var selector = ar[0], evtype = ar[1], proc = ar[2];
-  var intp2 = new Interpreter(intp);
   var handler = function(event){
-    return _.clone(intp2).invoke_closure(proc, [event]);
+    return new Interpreter(intp).invoke_closure(proc, [event]);
   };
   $(selector).on(evtype, handler);
   return handler;

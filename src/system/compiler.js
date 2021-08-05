@@ -1,7 +1,6 @@
 import * as _ from "../deps/underscore-esm.js"
 import { TopEnv, CoreEnv, nil, undef } from "../header.js"
 import { isSymbol } from "./_types.js"
-import Class from "./class.js"
 import { BiwaError, Bug } from "./error.js"
 import { Pair, List, isPair, array_to_list } from "./pair.js"
 import BiwaSet from "./set.js"
@@ -14,20 +13,20 @@ import VMCode from "./vmcode.js"
 ///
 /// Note: macro expansion is done by Intepreter#expand
 
-const Compiler = Class.create({
-  initialize: function(){
-  },
+class Compiler {
+  constructor(){
+  }
 
-  is_tail: function(x){
+  is_tail(x){
     return (x[0] == "return");
-  },
+  }
 
   //free: set
   //e: env(= [locals, frees])
   //next: opc
   //ret: opc["refer_*", n, ["argument", 
   //          ["refer_*", n, ... ["argument", next]
-  collect_free: function(free, e, next){
+  collect_free(free, e, next){
     var vars = free;
     var opc = next;
     var arr = vars.arr;
@@ -36,19 +35,19 @@ const Compiler = Class.create({
     }
     //Console.puts("collect_free "+free.inspect()+" / "+e.inspect()+" => "+opc.inspect());
     return opc;
-  },
+  }
 
   //x: Symbol
   //e: env [set of locals, set of frees]
   //ret: opc
-  compile_refer: function(x, e, next){
+  compile_refer(x, e, next){
     return this.compile_lookup(x, e,
              function(n){ return ["refer-local", n, next] },
              function(n){ return ["refer-free",  n, next] },
              function(sym){ return ["refer-global", sym, next] });
-  },
+  }
 
-  compile_lookup: function(x, e, return_local, return_free, return_global){
+  compile_lookup(x, e, return_local, return_free, return_global){
     var locals = e[0], free = e[1];
     var n;
     if((n = locals.index(x)) != null){
@@ -64,7 +63,7 @@ const Compiler = Class.create({
       return return_global(sym);
     }
     //throw new BiwaError("undefined symbol `" + sym + "'");
-  },
+  }
 
   //generate boxing code (intersection of sets & vars)
   //if no need of boxing, just returns next
@@ -72,7 +71,7 @@ const Compiler = Class.create({
   //  vars(List): used variables
   //  next(opc):
   //  ret(opc):
-  make_boxes: function(sets, vars, next){
+  make_boxes(sets, vars, next){
     var vars = vars;
     var n = 0;
     var a = [];
@@ -86,13 +85,13 @@ const Compiler = Class.create({
     for(var i=a.length-1; i>=0; i--)
       opc = ["box", a[i], opc];
     return opc;
-  },
+  }
 
   // Enumerate variables which (could be assigned && included in v)
   // x: exp
   // v: set(vars)
   // ret: set
-  find_sets: function(x, v){
+  find_sets(x, v){
     //Console.puts("find_sets: " + to_write(x) + " " + to_write(v))
     var ret=null;
     if(x instanceof BiwaSymbol){
@@ -152,7 +151,7 @@ const Compiler = Class.create({
       throw new Bug("find_sets() exited in unusual way");
     else
       return ret;
-  },
+  }
 
   // find_free(): find free variables in x
   //              these variables are collected by collect_free().
@@ -161,7 +160,7 @@ const Compiler = Class.create({
   // f: set of free var candidates 
   //    (local vars of outer lambdas)
   // ret: set of free vars
-  find_free: function(x, b, f){
+  find_free(x, b, f){
     var ret=null;
     if(x instanceof BiwaSymbol){
       if(f.member(x))
@@ -225,13 +224,13 @@ const Compiler = Class.create({
       throw new Bug("find_free() exited in unusual way");
     else
       return ret;
-  },
+  }
 
   // Returns the position of the dot pair.
   // Returns -1 if x is a proper list.
   //
   // eg. (a b . c) -> 2
-  find_dot_pos: function(x){
+  find_dot_pos(x){
     var idx = 0;
     for (; x instanceof Pair; x = x.cdr, ++idx)
       ;
@@ -240,20 +239,20 @@ const Compiler = Class.create({
     } else {
       return -1;
     }
-  },
+  }
 
-  last_pair: function(x){
+  last_pair(x){
     if (x instanceof Pair){
       for (; x.cdr instanceof Pair; x = x.cdr)
         ;
     }
     return x;
-  },
+  }
 
   // Takes an dotted list and returns proper list.
   //
   // eg. (x y . z) -> (x y z)
-  dotted2proper: function(ls){
+  dotted2proper(ls){
     if (ls === nil) return nil;
 
     var nreverse = function(ls){
@@ -286,14 +285,14 @@ const Compiler = Class.create({
     } else {
       return new Pair(ls, nil);
     }
-  },
+  }
 
   // x: exp(list of symbol or integer or..)
   // e: env (= [locals, frees])
   // s: vars might be set!
   // next: opc
   // ret: opc
-  compile: function(x, e, s, f, next){
+  compile(x, e, s, f, next){
     //Console.p(x);
     var ret = null;
 
@@ -406,7 +405,7 @@ const Compiler = Class.create({
 //        throw new Bug("compile() exited in unusual way");
 //      else
 //        return ret;
-  },
+  }
 
   // Compile define.
   //
@@ -420,7 +419,7 @@ const Compiler = Class.create({
   // Note: define may appear in lambda, let, let*, let-values,
   // let*-values, letrec, letrec*. These definitions are local to the
   // <body> of these forms.
-  _compile_define: function(x, next){
+  _compile_define(x, next){
     if(x.length() == 1) { // 0. (define)
       throw new BiwaError("Invalid `define': "+x.to_write());
     }
@@ -461,14 +460,14 @@ const Compiler = Class.create({
     }
 
     return [x, next];
-  },
+  }
 
   // Compiles various forms of "lambda".
   //
   // * (lambda (x y) ...)
   // * (lambda (x y . rest) ...)
   // * (lambda args ...)
-  _compile_lambda: function(x, e, s, f, next){
+  _compile_lambda(x, e, s, f, next){
     if(x.length() < 3)
       throw new BiwaError("Invalid lambda: "+x.to_write());
 
@@ -507,13 +506,13 @@ const Compiler = Class.create({
                      next,
                      dotpos];
     return this.collect_free(free, e, do_close);
-  },
+  }
 
-  run: function(expr){
+  run(expr){
     const opc = this.compile(expr, [new BiwaSet(), new BiwaSet()], new BiwaSet(), new BiwaSet(), ["halt"]);
     return new VMCode(opc);
   }
-});
+};
 
 // Compile an expression with new compiler
 Compiler.compile = function(expr, next){

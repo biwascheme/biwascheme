@@ -1,6 +1,5 @@
 import * as _ from "../deps/underscore-esm.js"
 import { inspect } from "./_writer.js"
-import Class from "./class.js"
 import { Bug } from "./error.js"
 
 //
@@ -9,25 +8,28 @@ import { Bug } from "./error.js"
 
 const Chars = {};
 
-const Char = Class.create({
-  initialize: function(c){
+class Char {
+  constructor(c){
     Chars[ this.value = c ] = this;
-  },
-  to_write: function(){
+  }
+
+  to_write(){
     switch(this.value){
       case '\n': return "#\\newline";
       case ' ':  return "#\\space";
       case '\t': return "#\\tab";
       default:   return "#\\"+this.value;
     }
-  },
-  to_display: function(){
+  }
+
+  to_display(){
     return this.value;
-  },
-  inspect: function(){
+  }
+
+  inspect(){
     return this.to_write();
   }
-});
+};
 
 Char.get = function(c) {
   if(typeof(c) != "string") {

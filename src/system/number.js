@@ -1,5 +1,4 @@
 import * as _ from "../deps/underscore-esm.js"
-import Class from "./class.js"
 
 //
 // number.js
@@ -8,27 +7,33 @@ import Class from "./class.js"
 //
 // Complex
 //
-const Complex = Class.create({
-  initialize: function(real, imag){
+class Complex {
+  constructor(real, imag){
     this.real = real;
     this.imag = imag;
-  },
-  magnitude: function(){
+  }
+
+  magnitude(){
     return Math.sqrt(this.real * this.real + this.imag * this.imag);
-  },
-  angle: function(){
+  }
+
+  angle(){
     return Math.atan2(this.imag, this.real);
-  },
-  isReal: function(){
+  }
+
+  isReal(){
     return this.imag == 0;
-  },
-  isRational: function() {
+  }
+
+  isRational() {
     return this.imag == 0 && isRational(this.real);
-  },
-  isInteger: function(){
+  }
+
+  isInteger(){
     return this.imag == 0 && isInteger(this.real);
-  },
-  toString: function(radix){
+  }
+
+  toString(radix){
     if (this.real === 0 && this.imag === 0)
       return "0";
     var img = "";
@@ -51,12 +56,14 @@ const Complex = Class.create({
     }
     return real+img;
   }
-})
+}
+
 Complex.from_polar = function(r, theta){
   var real = r * Math.cos(theta);
   var imag = r * Math.sin(theta);
   return new Complex(real, imag);
 }
+
 Complex.assure = function(num){
   if(num instanceof Complex)
     return num
@@ -67,16 +74,16 @@ Complex.assure = function(num){
 //
 // Rational (unfinished)
 //
-const Rational = Class.create({
-  initialize: function(numerator, denominator){
+class Rational {
+  constructor(numerator, denominator){
     this.numerator = numerator;
     this.denominator = denominator;
-  },
+  }
 
-  isInteger: function() {
+  isInteger() {
      // FIXME
   }
-})
+}
 
 //
 // Predicates
@@ -87,6 +94,7 @@ const isNumber = function(x) {
          (typeof(x) == 'number');
 };
 const isComplex = isNumber;
+
 const isReal = function(x) {
   if (x instanceof Complex || x instanceof Rational) {
     return x.isReal()
@@ -95,6 +103,7 @@ const isReal = function(x) {
     return (typeof(x) == 'number');
   }
 };
+
 const isRational = function(x) {
   if (x instanceof Complex) {
     return x.isRational();
@@ -106,6 +115,7 @@ const isRational = function(x) {
     return (typeof(x) == 'number');
   }
 };
+
 const isInteger = function(x) {
   if (x instanceof Complex || x instanceof Rational) {
     return x.isInteger();

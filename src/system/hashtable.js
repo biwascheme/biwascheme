@@ -1,7 +1,6 @@
 import * as _ from "../deps/underscore-esm.js"
 import { to_write } from "./_writer.js"
 import { eq, eqv } from "./_types.js"
-import Class from "./class.js"
 import { Bug } from "./error.js"
 import { BiwaSymbol } from "./symbol.js"
 
@@ -15,8 +14,8 @@ import { BiwaSymbol } from "./symbol.js"
 //  * R6RS hashtable needs its own hash function
 // so some hacks are needed.
 
-const Hashtable = Class.create({
-  initialize: function(_hash_proc, _equiv_proc, mutable){
+class Hashtable {
+  constructor(_hash_proc, _equiv_proc, mutable){
     this.mutable = (mutable === undefined) ? true :
                    mutable ? true : false;
 
@@ -25,17 +24,17 @@ const Hashtable = Class.create({
 
     // Hash (hashed) => (array of (key and value))
     this.pairs_of = {};
-  },
+  }
 
-  clear: function(){
+  clear(){
     this.pairs_of = {};
-  },
+  }
 
-  candidate_pairs: function(hashed){
+  candidate_pairs(hashed){
     return this.pairs_of[hashed];
-  },
+  }
 
-  add_pair: function(hashed, key, value){
+  add_pair(hashed, key, value){
     var pairs = this.pairs_of[hashed];
 
     if (pairs) {
@@ -44,9 +43,9 @@ const Hashtable = Class.create({
     else {
       this.pairs_of[hashed] = [[key, value]];
     }
-  },
+  }
 
-  remove_pair: function(hashed, pair){
+  remove_pair(hashed, pair){
     var pairs = this.pairs_of[hashed];
     var i = pairs.indexOf(pair);
     if (i == -1){
@@ -55,9 +54,9 @@ const Hashtable = Class.create({
     else {
       pairs.splice(i, 1); //remove 1 element from i-th index
     }
-  },
+  }
 
-  create_copy: function(mutable){
+  create_copy(mutable){
     var copy = new Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
@@ -70,29 +69,29 @@ const Hashtable = Class.create({
     }, this));
 
     return copy;
-  },
+  }
 
-  size: function(){
+  size(){
     var n = 0;
     this._apply_pair(function(pair){
       n++;
     });
     return n;
-  },
+  }
 
-  keys: function(){
+  keys(){
     return this._apply_pair(function(pair){
       return pair[0];
     });
-  },
+  }
 
-  values: function(){
+  values(){
     return this._apply_pair(function(pair){
       return pair[1];
     });
-  },
+  }
 
-  _apply_pair: function(func){
+  _apply_pair(func){
     var a = [];
     _.each(_.values(this.pairs_of), function(pairs){
       _.each(pairs, function(pair){
@@ -100,12 +99,12 @@ const Hashtable = Class.create({
       });
     });
     return a;
-  },
+  }
 
-  to_write: function(){
+  to_write(){
     return "#<Hashtable size=" + this.size() + ">";
   }
-});
+}
 
 const isHashtable = function(obj){
   return (obj instanceof Hashtable);
