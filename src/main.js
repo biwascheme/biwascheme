@@ -1,9 +1,10 @@
 import { TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warning } from "./header.js";
 import { VERSION, GitCommit } from "./version.js";
 
+import { eq, eqv, equal } from "./system/_equality.js"
 import { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
          isVector, isProcedure,
-         isSelfEvaluating, eq, eqv, equal, lt } from "./system/_types.js"
+         isSelfEvaluating, lt } from "./system/_types.js"
 import { to_write, to_display, inspect, write_shared } from "./system/_writer.js"
 import Call from "./system/call.js"
 import Char from "./system/char.js"

@@ -1,6 +1,6 @@
 import * as _ from "../deps/underscore-esm.js"
+import { eq, eqv } from "./_equality.js"
 import { to_write } from "./_writer.js"
-import { eq, eqv } from "./_types.js"
 import { Bug } from "./error.js"
 import { BiwaSymbol } from "./symbol.js"
 

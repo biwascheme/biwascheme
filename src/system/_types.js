@@ -3,7 +3,6 @@
 //
 import * as _ from "../deps/underscore-esm.js"
 import { nil, undef } from "../header.js"
-import { to_write } from "./_writer.js"
 import Char from "./char.js"
 import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
@@ -56,23 +55,6 @@ const isSelfEvaluating = function(obj) {
 };
 
 //
-// equality
-//
-const eq = function(a, b){
-  return a === b;
-};
-
-// TODO: Records (etc.)
-const eqv = function(a, b){
-  return a == b && (typeof(a) == typeof(b));
-};
-
-const equal = function(a, b){
-  //TODO: must terminate for cyclic objects
-  return to_write(a) == to_write(b);
-};
-
-//
 // comaprator
 //
 // Return true when a < b
@@ -85,4 +67,4 @@ const lt = function(a, b) {
 
 export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
          isVector, isProcedure,
-         isSelfEvaluating, eq, eqv, equal, lt };
+         isSelfEvaluating, lt };
