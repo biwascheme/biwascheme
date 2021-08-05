@@ -41,4 +41,8 @@ Char.get = function(c) {
     return Chars[c];
 };
 
-export default Char;
+const isChar = function(obj){
+  return (obj instanceof Char);
+};
+
+export { Char, isChar };

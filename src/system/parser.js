@@ -1,7 +1,7 @@
 import * as _ from "../deps/underscore-esm.js"
 import { nil } from "../header.js"
 import { inspect } from "./_writer.js"
-import Char from "./char.js"
+import { Char } from "./char.js"
 import { BiwaError } from "./error.js"
 import { Pair } from "./pair.js"
 import { Sym } from "./symbol.js"

@@ -3,7 +3,6 @@
 //
 import * as _ from "../deps/underscore-esm.js"
 import { nil, undef } from "../header.js"
-import Char from "./char.js"
 import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
 import { isClosure } from "./closure.js"
@@ -24,10 +23,6 @@ const isString = _.isString;
 
 const isFunction = _.isFunction;
 
-const isChar = function(obj){
-  return (obj instanceof Char);
-};
-
 const isSymbol = function(obj){
   return (obj instanceof BiwaSymbol);
 };
@@ -46,14 +41,6 @@ const isProcedure = function(obj){
   return isClosure(obj) || _.isFunction(obj);
 };
 
-// Return true if obj is a scheme value which evaluates to itself
-const isSelfEvaluating = function(obj) {
-  return isBoolean(obj) ||
-         isNumber(obj) ||
-         isString(obj) ||
-         isChar(obj);
-};
-
 //
 // comaprator
 //
@@ -65,6 +52,6 @@ const lt = function(a, b) {
   return a < b;
 };
 
-export { isNil, isUndef, isBoolean, isString, isFunction, isChar, isSymbol, isPort,
+export { isNil, isUndef, isBoolean, isString, isFunction, isSymbol, isPort,
          isVector, isProcedure,
-         isSelfEvaluating, lt };
+         lt };

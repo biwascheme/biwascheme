@@ -1,8 +1,9 @@
 import * as _ from "../deps/underscore-esm.js"
 import { CoreEnv, suppress_deprecation_warning } from "../header.js";
-import { isString, isFunction, isChar, isSymbol, isPort, isVector } from "../system/_types.js"
+import { isString, isFunction, isSymbol, isPort, isVector } from "../system/_types.js"
 import { to_write } from "../system/_writer.js"
 import { make_assert, make_simple_assert } from "../system/assert.js"
+import { isChar } from "../system/char.js"
 import { isClosure } from "../system/closure.js"
 import { BiwaError } from "../system/error.js"
 import { isHashtable, isMutableHashtable } from "../system/hashtable.js"
