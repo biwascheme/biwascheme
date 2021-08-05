@@ -1,7 +1,6 @@
 import * as _ from "../deps/underscore-esm.js"
 import { inspect } from "./_writer.js"
 import { make_simple_assert } from "./assert.js"
-import Class from "./class.js"
 import { array_to_list } from "./pair.js"
 import { assert_symbol, assert_list } from "../library/infra.js"
 
@@ -31,25 +30,25 @@ const Enumeration = {};
 //
 // members - Array of symbols (no duplicate)
 //
-Enumeration.EnumType = Class.create({
+Enumeration.EnumType = class {
   // Creates a new enum_type.
   //
   // members - Array of symbols.
   //           Symbols may be duplicate (I think you shouldn't, though :-p).
-  initialize: function(members){
+  constructor(members){
     this.members = _.uniq(members);
-  },
+  }
 
   // Returns an EnumSet.
-  universe: function(){
+  universe(){
     return new Enumeration.EnumSet(this, this.members);
-  }, 
+  }
 
   // Returns a function which map a symbol to an integer (or #f, if 
   // the symbol is out of the universe).
   // 
   // Implementation note: don't forget this.members may have duplicates.
-  indexer: function(){
+  indexer(){
     // ar[0] - a symbol
     // Returns an integer or #f.
     return _.bind(function(ar){
@@ -57,11 +56,11 @@ Enumeration.EnumType = Class.create({
       var idx = _.indexOf(this.members, ar[0]);
       return (idx === -1) ? false : idx;
     }, this);
-  },
+  }
 
   // Retuns a function which creates an enum_set from a list of
   // symbols (Symbols may be duplicate.)
-  constructor: function(){
+  constructor_(){
     // ar[0] - a list of symbol
     // Returns a enum_set.
     return _.bind(function(ar){
@@ -74,9 +73,7 @@ Enumeration.EnumType = Class.create({
       return new Enumeration.EnumSet(this, symbols);
     }, this);
   }
-});
-Class.memoize(Enumeration.EnumType,
-  ["universe", "indexer", "constructor"]); 
+}
 
 // Represents an enum_set of an enum_type.
 //
@@ -85,7 +82,7 @@ Class.memoize(Enumeration.EnumType,
 // enum_type - The enum_type.
 // symbols   - Array of symbols (no duplicate, properly ordered)
 //
-Enumeration.EnumSet = Class.create({
+Enumeration.EnumSet = class {
   // Creates a new enum_set.
   //
   // enum_type - An EnumType
@@ -94,30 +91,30 @@ Enumeration.EnumSet = Class.create({
   // initialize normalizes symbols.
   //   - remove duplicates
   //   - order by universe
-  initialize: function(enum_type, symbols){
+  constructor(enum_type, symbols){
     this.enum_type = enum_type;
     this.symbols = _.filter(enum_type.members, function(sym){
       return _.include(symbols, sym);
     });
-  },
+  }
 
   // Returns a list of symbols.
-  symbol_list: function(){
+  symbol_list(){
     return array_to_list(this.symbols); 
-  },
+  }
   
   // Returns true if the enum_set includes the symbol.
   // 'symbol' is allowed to be a symbol which is not included in the universe.
-  is_member: function(symbol){
+  is_member(symbol){
     return _.include(this.symbols, symbol);
-  },
+  }
   
   // Returns true if:
   // - the enum_set is a subset of the enum_set 'other', and
   // - the universe of the enum_set is a subset of 
   //   the universe of 'other'.
   // The enum_set and 'other' may belong to different enum_type.
-  is_subset: function(other){
+  is_subset(other){
     // Check elements
     if(_.any(this.symbols, function(sym){
          return !_.include(other.symbols, sym);
@@ -134,7 +131,7 @@ Enumeration.EnumSet = Class.create({
                return _.include(other.enum_type.members, sym);
              });
     }
-  },
+  }
 
   // Returns true if:
   //   - the enum_set contains the same set of symbols as 'other', and
@@ -142,71 +139,90 @@ Enumeration.EnumSet = Class.create({
   //     as the universe of 'other'.
   //
   // The enum_set and 'other' may belong to different enum_type.
-  equal_to: function(other){
+  equal_to(other){
     return this.is_subset(other) && other.is_subset(this);
-  },
+  }
 
   // Returns a enum_set which has:
   // - all the symbols included in the enum_set or the enum_set 'other'.
   // The enum_set and 'other' *must* belong to the same enum_type.
-  union: function(other){
+  union(other){
     var syms = _.filter(this.enum_type.members, _.bind(function(sym){
                  return _.include(this.symbols, sym) ||
                         _.include(other.symbols, sym);
                }, this));
     return new Enumeration.EnumSet(this.enum_type, syms);
-  },
+  }
 
   // Returns a enum_set which has:
   // - the symbols included both in the enum_set or the enum_set 'other'.
   // The enum_set and 'other' *must* belong to the same enum_type.
-  intersection: function(other){
+  intersection(other){
     var syms = _.filter(this.symbols, function(sym){
                  return _.include(other.symbols, sym);
                });
     return new Enumeration.EnumSet(this.enum_type, syms);
-  },
+  }
 
   // Returns a enum_set which has:
   // - the symbols included in the enum_set and not in the enum_set 'other'.
   // The enum_set and 'other' *must* belong to the same enum_type.
-  difference: function(other){
+  difference(other){
     var syms = _.filter(this.symbols, function(sym){
                  return !_.include(other.symbols, sym);
                });
     return new Enumeration.EnumSet(this.enum_type, syms);
-  },
+  }
 
   // Returns a enum_set which has:
   // - the symbols included in the universe but not in the enum_set.
-  complement: function(){
+  complement(){
     var syms = _.filter(this.enum_type.members, _.bind(function(sym){
                  return !_.include(this.symbols, sym);
                }, this));
     return new Enumeration.EnumSet(this.enum_type, syms);
-  },
+  }
 
   // Returns a enum_set which has:
   // - the symbols included in the enum_set and the universe of the enum_set 'other'.
   // The enum_set and 'other' may belong to different enum_type.
-  projection: function(other){
+  projection(other){
     var syms = _.filter(this.symbols, function(sym){
                  return _.include(other.enum_type.members, sym);
                });
     return new Enumeration.EnumSet(other.enum_type, syms);
-  },
+  }
 
   // Returns a string which represents the enum_set.
-  toString: function(){
+  toString(){
     return "#<EnumSet "+inspect(this.symbols)+">";
   }
-});
-Class.memoize(Enumeration.EnumSet, "symbol_list");
+}
 
 const isEnumSet = function(obj){
   return (obj instanceof Enumeration.EnumSet);
 };
 
 const assert_enum_set = make_simple_assert("enum_set", isEnumSet);
+
+//
+// Memoize
+//
+const memoize = function(klass, names){
+  const proto = klass.prototype;
+  names.forEach(name => {
+    // Copy original function foo as 'compute_foo'
+    proto["compute_"+name] = proto[name];
+    // Define memoized version
+    proto[name] = function(/*arguments*/){
+      if(!this.hasOwnProperty("cached_"+name)){
+        this["cached_"+name] = this["compute_"+name].apply(this, _.toArray(arguments));
+      }
+      return this["cached_"+name];
+    }
+  });
+};
+memoize(Enumeration.EnumSet, ["symbol_list"]);
+memoize(Enumeration.EnumType, ["universe", "indexer", "constructor_"]); 
 
 export { Enumeration, isEnumSet, assert_enum_set };
