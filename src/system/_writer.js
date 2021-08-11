@@ -2,6 +2,7 @@ import * as _ from "../deps/underscore-esm.js"
 import { isVector } from "./_types.js"
 import { nil, undef } from "../header.js"
 import { BiwaSymbol } from "./symbol.js"
+import { isPair } from "./pair.js"
 
 //
 // _writer.js: Functions to convert objects to strings
@@ -154,7 +155,7 @@ function _gather_information(obj, state) {
   }
   // Found a new object
   state.objs.add(obj);
-  if (BiwaScheme.isPair(obj)) { // Call via `BiwaScheme` to avoid circular dependency warning (#211)
+  if (isPair(obj)) {
     state.parents.add(obj);
     _gather_information(obj.car, state);
     _gather_information(obj.cdr, state);
