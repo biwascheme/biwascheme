@@ -1,26 +1,30 @@
 import { nil } from "../../header.js";
-import { isSymbol, isPair, isList, isVector } from "../_types.js"
+import { isSymbol, isVector } from "../_types.js"
 import { to_write } from "../_writer.js"
 import { BiwaError } from "../error.js"
-import { List, array_to_list, Cons } from "../pair.js"
+import { List, array_to_list, Cons, isPair, isList } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { Environment } from "./environment.js"
-import { isExpander } from "./expander.js"
+import { isMacro } from "./macro.js"
 
+// A R7RS library.
 class Library {
-  // Maps library spec to Library
+  // Maps (stringified) library spec to Library
   static _libraryTable = new Map();
   // Holds spec (not Library)
   static currentLibrary = null;
   static featureList = [];
 
   static _assocLibrary(spec) {
-    return Library._libraryTable[spec];
+    return Library._libraryTable[spec.to_write()];
   }
 
+  // Evaluate `thunk` with the library specified with `spec` as the current
+  // library
   static withLibrary(spec, thunk) {
     const origLib = this.currentLibrary;
     this.currentLibrary = spec;
+    // TODO: original impl uses `parameterize`
     const ret = Environment.withToplevelEnvironment(this._libraryEnvironment(spec), thunk);
     this.currentLibrary = origLib;
     return ret;
@@ -31,21 +35,24 @@ class Library {
     const env = Environment.makeToplevelEnvironment(sym => {
       return Sym(`${prefix}:${sym.name}`)
     }, prefix);
-    this._libraryTable[spec] = new Library(env);
+    this._libraryTable[spec.to_write()] = new Library(env);
   }
 
+  // Find the library corresponds to `spec` and return its `Environment`.
   static _libraryEnvironment(spec) {
     const libObj = this._assocLibrary(spec);
     if (!libObj) throw new BiwaError("_libraryEnvironment: library not found", spec);
     return libObj.environment;
   }
 
+  // Find the library corresponds to `spec` and return its `Exports`.
   static _libraryExports(spec) {
     const libObj = this._assocLibrary(spec);
     if (!libObj) throw new BiwaError("_libraryExports: library not found", spec);
     return libObj.exports;
   }
 
+  // Returns whether there is a library specified with `spec`
   static libraryExists(spec) {
     const libObj = this._assocLibrary(spec);
     return !!libObj;
@@ -57,7 +64,7 @@ class Library {
     return this.withLibrary(spec, () => {
       const decls = form.cdr.cdr;
       const forms = decls.map(x => this._interpretLibraryDeclaration(x).to_array()).flat();
-      return this.expandToplevel(forms);
+      return this._expandToplevel(forms);
     });
   }
 
@@ -82,6 +89,7 @@ class Library {
     }
   }
 
+  // Import the library specified with `spec` into the current environment.
   static libraryImport(spec) {
     const nameMap = this._makeNameMap(spec);
     const env = Environment.currentToplevelEnvironment;
@@ -106,6 +114,8 @@ class Library {
     }
   }
 
+  // Register an export item of the current library
+  // `spec` is either a symbol or `(id nickname)`
   static libraryExport(spec) {
     let id, nickname;
     if (isSymbol(spec)) {
@@ -136,13 +146,14 @@ class Library {
           _forms = _forms.cdr;
         }
         else {
-          return this.expandToplevel(_forms);
+          return this._expandToplevel(_forms);
         }
       }
     });
   }
 
-  static expandToplevel(forms) {
+  // Expand toplevel forms (eg. user program, library body, etc.)
+  static _expandToplevel(forms) {
     const expanded = forms.mapList(x => Environment.expand(x));
     const flattened = this._flattenBegin(Cons(Sym("begin"), expanded));
     const postProcessed = flattened.mapList(x => this._postExpand(x, true));
@@ -171,7 +182,7 @@ class Library {
         return form;
       case isVector(form):
         return List(Sym("quote"), form);
-      case isExpander(form):
+      case isMacro(form):
         throw new BiwaError("_postExpand: invalid use of keyword", form);
       case !isList(form):
         return form;
@@ -204,6 +215,7 @@ class Library {
     this.exports = new Map();
   }
 
+  // Register `id` as exported item of this library
   addExport(nickname, id) {
     this.exports.set(nickname, id);
   }

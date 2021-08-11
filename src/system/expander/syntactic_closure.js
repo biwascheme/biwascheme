@@ -1,9 +1,8 @@
 class SyntacticClosure {
-  // freeNamesはArrayか？
   constructor(env, freeNames, form) {
-    this.environment = env;
-    this.freeNames = freeNames;
-    this.form = form;
+    this.environment = env; // `Environment`
+    this.freeNames = freeNames; // TODO: what is this for?
+    this.form = form; // A scheme expression
   }
 
   to_write() {
