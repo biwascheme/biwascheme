@@ -5,10 +5,11 @@ import { to_write } from "./_writer.js"
 // Errors
 //
 
-class BiwaError {
+class BiwaError extends Error {
   constructor(msg, form=null){
     const info = (form === null ? "" : `: ${to_write(form)}`);
-    this.message = `Error: ${msg}${info}`;
+    const message = `${msg}${info}`;
+    super(message);
     this.form = form;
   }
 

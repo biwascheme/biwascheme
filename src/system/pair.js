@@ -94,6 +94,14 @@ class Pair {
     return array_to_list(this.map(func));
   }
 
+  async mapAsync(func) {
+    const ary = [];
+    for(var o = this; isPair(o); o = o.cdr){
+      ary.push(await func(o.car));
+    }
+    return array_to_list(ary);
+  }
+
   // Destructively concat the given list to the receiver.
   // The receiver must be a proper list.
   // Returns the receiver.

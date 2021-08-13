@@ -3,86 +3,14 @@ import { isSymbol, isVector } from "../_types.js"
 import { to_write } from "../_writer.js"
 import { BiwaError, Bug } from "../error.js"
 import { Cons, isPair, isList } from "../pair.js"
+import { Sym } from "../symbol.js"
 import { SyntacticClosure, isSyntacticClosure } from "./syntactic_closure.js"
 import { isMacro } from "./macro.js"
 
 class Environment {
-  static currentToplevelEnvironment = null;
-  static currentMetaEnvironment = null;
-
-  static withToplevelEnvironment(topEnv, thunk) {
-    // TODO: original impl uses `parameterize`
-    const origEnv = this.currentToplevelEnvironment;
-    this.currentToplevelEnvironment = topEnv;
-    const ret = thunk(); // TODO: is thunk a scheme proc?
-    this.currentToplevelEnvironment = origEnv;
-    return ret;
-  }
-
-  static withMetaEnvironment(metaEnv, thunk) {
-    // TODO: original impl uses `parameterize`
-    const origEnv = this.currentMetaEnvironment;
-    this.currentMetaEnvironment = metaEnv;
-    const ret = thunk();
-    this.currentMetaEnvironment = origEnv;
-    return ret;
-  }
-
-  static makeToplevelEnvironment(renamer, name="") {
+  // Create a toplevel binding
+  static makeToplevelEnvironment(name, renamer) {
     return new Environment(name, null, new Map(), renamer);
-  }
-
-  static expand(form, env=this.currentToplevelEnvironment) {
-    let ret;
-    if (isIdentifier(form)) {
-      ret = this._expandIdentifier(form, env);
-    }
-    else if (isSyntacticClosure(form)) {
-      ret = this._expandSyntacticClosure(form, env);
-    }
-    else if (isPair(form) && isList(form)) {
-      if (isIdentifier(form.car)) {
-        const e = this.expand(form.car);
-        if (isMacro(e)) {
-          ret = this._expandMacro(e, form, env);
-        }
-        else {
-          const mapped = form.cdr.mapList(x => this.expand(x));
-          ret = Cons(e, mapped);
-        }
-      }
-      else {
-        ret = form.mapList(x => this.expand(x));
-      }
-    }
-    else if (!isPair(form)) {
-      ret = form;
-    }
-    else {
-      throw new BiwaError("expand: invalid expression", form);
-    }
-    console.log(to_write(form), "=>", to_write(ret));
-    return ret;
-  }
-
-  static _expandIdentifier(id, env) {
-    const found = env.assq(id);
-    if (found) return found;
-    return this._expandIdentifier(id.form, id.env);
-  }
-
-  static _expandSyntacticClosure(sc, env) {
-    const frame = new Map();
-    sc.freeNames.forEach(id => frame[id] = env.expand(id));
-    const newEnv = new Environment("", sc.environment, frame);
-    return newEnv.expand(sc.form);
-  }
-
-  static _expandMacro(macro, form, env) {
-    return this.withMetaEnvironment(macro.environment, () =>
-      // TODO: We cannot evaluate Scheme expr with this style (CPS needed)
-      macro.transform(form, env)
-    );
   }
 
   constructor(dbgName, base, frame=new Map(), renamer=null) {
@@ -122,7 +50,7 @@ class Environment {
     if (found) return found;
     if (this.isToplevel()) {
       if (isSymbol(id)) {
-        const newName = this.renamer(id);
+        const newName = this.renamer(id); // Q: What if renamer is null
         this.set(id, newName);
         return this.assq(id); // Q: Why not just return [id, newName] ?
       }
@@ -196,9 +124,29 @@ class Environment {
     this.update(keyword, expander);
   }
 
-  // Expands `form` under this enviroment
-  expand(form) {
-    return Environment.expand(form, this);
+  importLibrary(lib) {
+    this._installNameMap(lib.nameMap());
+  }
+
+  _installNameMap(nameMap) {
+    nameMap.forEach(([nickname, id]) => this.installToplevelBinding(nickname, id)); // r7expander says "TODO redefinition of macros"
+  }
+
+  // Import the library specified with `spec` into the current environment.
+  findAndImportLibrary(spec, engine) {
+    this._installNameMap(this._makeNameMap(spec, engine));
+  }
+
+  _makeNameMap(spec, engine) {
+    switch (spec.car) {
+      case Sym("prefix"):
+      case Sym("only"):
+      case Sym("except"):
+      case Sym("rename"):
+        TODO
+      default:
+        return engine.getLibrary(spec).nameMap();
+    }
   }
 }
 
@@ -217,13 +165,6 @@ const unwrapSyntax = obj => {
     return obj;
   }
 }
-
-// Returns whether `obj` is an identifier
-const isIdentifier = obj => {
-  if (isSymbol(obj)) return true;
-  if (isSyntacticClosure(obj) && isIdentifier(obj.form)) return true;
-  return false;
-};
 
 // Returns whether `id1` in `env1` and `id2` in `id2` is the same identifier
 const identifierEquals = (id1, env1, id2, env2) => {
