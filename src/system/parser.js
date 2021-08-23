@@ -162,6 +162,12 @@ class Parser {
       else if( /^#d[0-9\.]+$/i.test(t) ) {  // #d... Decimal
         n = new Number( t.substring(2,t.length) );
       } 
+      else if( /^#o[0-9\.]+$/i.test(t) ) {  // #o... Octal
+        n = new Number(parseInt('0'+t.substring(2,t.length),8));
+      }
+      else if( /^#b[0-9\.]+$/i.test(t) ) {  // #b... Binary
+        n = new Number(parseInt(t.substring(2,t.length),2));
+      }
       else{
         n = new Number(t);  // use constructor as parser
       }
