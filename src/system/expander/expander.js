@@ -4,7 +4,7 @@ import { to_write } from "../_writer.js"
 import { BiwaError, Bug } from "../error.js"
 import { Cons, List, isPair, isList, array_to_list } from "../pair.js"
 import { Sym } from "../symbol.js"
-import { SyntacticClosure, isSyntacticClosure } from "./syntactic_closure.js"
+import { isSyntacticClosure, isIdentifier } from "./syntactic_closure.js"
 import { isMacro } from "./macro.js"
 
 class Expander {
@@ -76,7 +76,7 @@ class Expander {
       ret = this._expandIdentifier(form, env);
     }
     else if (isSyntacticClosure(form)) {
-      ret = this._expandSyntacticClosure(form, env);
+      ret = await this._expandSyntacticClosure(form, env);
     }
     else if (isPair(form) && isList(form)) {
       if (isIdentifier(form.car)) {
@@ -106,26 +106,19 @@ class Expander {
   _expandIdentifier(id, env) {
     const found = env.assq(id);
     if (found) return found;
-    return this._expandIdentifier(id.form, id.env);
+    return this._expandIdentifier(id.form, id.environment);
   }
 
   async _expandSyntacticClosure(sc, env) {
     const frame = new Map();
     sc.freeNames.forEach(async id => frame[id] = await this.expand(id, env));
     const newEnv = new Environment("", sc.environment, frame);
-    return await this.expand(sc.form, newEnv);
+    return this.expand(sc.form, newEnv);
   }
 
   async _expandMacro(macro, form, env) {
     return await macro.transform(form, env, macro.environment, this);
   }
 }
-
-// Returns whether `obj` is an identifier
-const isIdentifier = obj => {
-  if (isSymbol(obj)) return true;
-  if (isSyntacticClosure(obj) && isIdentifier(obj.form)) return true;
-  return false;
-};
 
 export { Expander };

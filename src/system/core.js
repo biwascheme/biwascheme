@@ -1,5 +1,5 @@
 // Acknowledgement: https://github.com/nyuichi/r7expander
-import { nil } from "../header.js";
+import { nil, CoreEnv } from "../header.js";
 import { isSymbol, isVector } from "./_types.js"
 import { to_write } from "./_writer.js"
 import { BiwaError, Bug } from "./error.js"
@@ -9,9 +9,19 @@ import { Environment } from "./expander/environment.js"
 import { SyntacticClosure, isSyntacticClosure } from "./expander/syntactic_closure.js"
 import { Library, isLibrary } from "./expander/library.js"
 import { Macro } from "./expander/macro.js"
+import { makeErMacroTransformer } from "./expander/macro_transformer.js"
 
 const _BsCore = List(Sym('biwascheme'), Sym('core'));
 const libBsCore = Library.create(_BsCore);
+
+libBsCore.environment.installToplevelBinding(Sym("cons"), CoreEnv["cons"]);
+libBsCore.export(Sym("cons"));
+
+const letExpander = new Macro("let", libBsCore.environment, async ([form, xp]) => {
+  return form;
+});
+libBsCore.environment.installExpander(Sym("let"), letExpander);
+libBsCore.export(Sym("let"));
 
 const ifExpander = new Macro("if", libBsCore.environment, async ([form, xp]) => {
   const l = form.to_array();
@@ -27,10 +37,20 @@ const ifExpander = new Macro("if", libBsCore.environment, async ([form, xp]) => 
 libBsCore.environment.installExpander(Sym("if"), ifExpander);
 libBsCore.export(Sym("if"));
 
+const myOrExpander = new Macro("my-or", libBsCore.environment, makeErMacroTransformer(([form, rename, compare]) => {
+  const [_, x, y] = form.to_array();
+  // TODO: impl. `let`
+  //return List(rename([Sym("let")]), List(List(rename([Sym("tmp")]), x)),
+  //  List(rename([Sym("if")]), rename([Sym("tmp")]), rename([Sym("tmp")]), y));
+}));
+libBsCore.environment.installExpander(Sym("my-or"), myOrExpander);
+libBsCore.export(Sym("my-or"));
+
 const _SchemeBase = List(Sym('scheme'), Sym('base'));
 const libSchemeBase = Library.create(_SchemeBase);
 libSchemeBase.import(libBsCore);
 libSchemeBase.export(Sym("if"));
+libSchemeBase.export(Sym("my-or"));
 
 const mangle = (spec) => spec.to_write;
 class Libraries {

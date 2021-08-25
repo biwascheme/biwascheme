@@ -18,10 +18,13 @@ class Engine {
     this.vm = {};
   }
 
+  // Get the library specified with `spec`
+  // Error if not loaded to this engine
   getLibrary(spec) {
     return this.libraries.get(spec);
   }
 
+  // Compile a Scheme program and execute it
   async run(scmTxt) {
     const parser = new Parser(scmTxt);
     let result, expr;
@@ -32,12 +35,17 @@ class Engine {
   }
 
   async executeScm(scmExpr) {
-    if (isFunction(scmExpr)) {
-      const result = scmExpr
-    }
     const expanded = scmExpr; //TODO: expand
     const vmcode = this.compiler.compile(expanded);
     return this.vm.execute(vmcode);
+  }
+
+  async invoke(proc, args) {
+    if (isFunction(proc)) {
+      return proc(args, this);
+    } else {
+      TODO
+    }
   }
 
   async expandToplevelProgram(forms) {

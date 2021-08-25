@@ -14,14 +14,9 @@ const engine = new Engine();
 const forms = array_to_list(Parser.parse(`
   (import (scheme base))
   (if a b c)
-  (print 1)
+  ;;(my-or tmp 1)
 `));
 
-//let x = Library.expandProgram(forms);
-//while (x instanceof Call) {
-//  x = x.after([x.proc(x.args)]);
-//}
-//console.log(to_write(x))
 engine.expandToplevelProgram(forms)
   .then(x => console.log(to_write(x)))
   .catch(console.log)

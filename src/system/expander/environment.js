@@ -1,34 +1,70 @@
 import { undef } from "../../header.js"
-import { isSymbol, isVector } from "../_types.js"
-import { to_write } from "../_writer.js"
+import { isString, isSymbol, isVector } from "../_types.js"
+import { to_write, inspect } from "../_writer.js"
 import { BiwaError, Bug } from "../error.js"
 import { Cons, isPair, isList } from "../pair.js"
-import { Sym } from "../symbol.js"
-import { SyntacticClosure, isSyntacticClosure } from "./syntactic_closure.js"
+import { Sym, BiwaSymbol } from "../symbol.js"
+import { SyntacticClosure, isSyntacticClosure, isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
 import { isMacro } from "./macro.js"
 
+/** @typedef {BiwaSymbol | SyntacticClosure} Identifier */
+
+/**
+ * Create unique string from an identifier
+ * @param {Identifier} x
+ */
+function to_key(x) {
+  if (isSymbol(x)) {
+    return x.name;
+  } else if (isIdentifier(x)) {
+    const form = unwrapSyntax(x);
+    const envId = x.environment.id;
+    console.log(`-- ${to_write(form)} ${envId}`); // Is this really unique?
+    return `${to_write(form)} ${envId}`; // Is this really unique?
+  } else {
+    throw new Bug(`not an identifier: ${inspect(x)}`);
+  }
+}
+
+/** @type {number} */
+let lastId = 0;
+
 class Environment {
-  // Create a toplevel binding
+  /**
+   * Create a toplevel binding
+   * @param {string} name
+   * @param {(BiwaSymbol) => BiwaSymbol} renamer
+   */
   static makeToplevelEnvironment(name, renamer) {
     return new Environment(name, null, new Map(), renamer);
   }
 
-  constructor(dbgName, base, frame=new Map(), renamer=null) {
-    this.dbgName = dbgName; // String (optional; may be `""`)
+  /**
+   * @param {string} name
+   * @param {?Environment} base
+   * @param {?(BiwaSymbol) => BiwaSymbol} renamer
+   */
+  constructor(name, base, frame=new Map(), renamer=null) {
+    this.id = (++lastId); 
+    this.name = name; // String (optional; may be `""`)
     this.base = base; // Enclosing `Environment`. `null` if this is toplevel
     this.frame = frame; // Key-value pair (A js `Map`)
     // `null` or js function `(BiwaSymbol) => BiwaSymbol`
     this.renamer = renamer;
   }
 
+  has(key) {
+    return this.frame.has(to_key(key));
+  }
+
   // Get the value bound to `key`
   get(key) {
-    return this.frame.get(key);
+    return this.frame.get(to_key(key));
   }
 
   // Set the value bound to `key`
   set(key, value) {
-    this.frame.set(key, value);
+    this.frame.set(to_key(key), value);
   }
 
   // Returns the enclosing environment. `null` if this is toplevel
@@ -43,23 +79,23 @@ class Environment {
 
   // Get the value bound to `id`
   // Lookup outer environment if not found
-  // Returns `#<undef>` if not found in toplevel environment
+  // Returns `#f` if not found in toplevel environment
   // original: assq-environment
   assq(id) {
-    const found = this.get(id);
-    if (found) return found;
-    if (this.isToplevel()) {
+    if (this.has(id)) {
+      return this.get(id);
+    }
+    else if (!this.isToplevel()) {
+      return this.enclosingEnvironment().assq(id);
+    } else {
       if (isSymbol(id)) {
         const newName = this.renamer(id); // Q: What if renamer is null
         this.set(id, newName);
-        return this.assq(id); // Q: Why not just return [id, newName] ?
+        return newName; // Q: Original impl returns this.assq(id)
       }
       else {
-        return undef;
+        return false;
       }
-    }
-    else {
-      return this.enclosingEnvironment().assq(id);
     }
   }
 
@@ -95,7 +131,7 @@ class Environment {
 
   // Create an identifier in this environment
   makeIdentifier(id) {
-    return closeSyntax(id);
+    return this.closeSyntax(id);
   }
 
   // Destructively add `id` to this environment
@@ -120,6 +156,7 @@ class Environment {
   // Bind `expander` to a `keyword`.
   // Error if `keyword` is already bound
   installExpander(keyword, expander) {
+    if (!isSymbol(keyword)) throw new Bug(`expected String but got ${inspect(keyword)}`)
     this.extend(keyword);
     this.update(keyword, expander);
   }
@@ -147,22 +184,6 @@ class Environment {
       default:
         return engine.getLibrary(spec).nameMap();
     }
-  }
-}
-
-// Strip syntax closures from `obj`
-const unwrapSyntax = obj => {
-  if (isSyntacticClosure(obj)) {
-    return unwrapSyntax(obj.form);
-  }
-  else if (isPair(obj)) {
-    return Cons(unwrapSyntax(obj.car), unwrapSyntax(obj.cdr));
-  }
-  else if (isVector(obj)) {
-    return obj.map(unwrapSyntax);
-  }
-  else {
-    return obj;
   }
 }
 

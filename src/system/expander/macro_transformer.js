@@ -1,25 +1,8 @@
-import Call from "../call.js"
 import { Environment, identifierEquals } from "./environment.js"
 
-// TODO: impl. `capture-syntactic-environment` in r7expander/syntactic-closure.sld
-function makeScMacroTransformer(proc) {
-  return function(form, env, metaEnv) {
-    return new Call(proc, [form, env], result => {
-      return metaEnv.expand(result);
-    });
-  };
-}
-
-function makeRscMacroTransformer(proc) {
-  return function(form, env, metaEnv) {
-    return new Call(proc, [form, metaEnv], result => {
-      return env.expand(result);
-    });
-  };
-}
-
+// Explicit-renaming macro
 function makeErMacroTransformer(proc) {
-  return async function(form, env, metaEnv) {
+  return async function([form, xp, env, metaEnv]) {
     const table = new Map();
     const rename = ([x]) => {
       if (table.has(x)) {
@@ -31,10 +14,9 @@ function makeErMacroTransformer(proc) {
       }
     };
     const compare = ([x, y]) => identifierEquals(x, env, y, env);
-    return new Call(proc, [form, rename, compare], result => {
-      return env.expand(result);
-    });
+    const result = await xp.engine.invoke(proc, [form, rename, compare]);
+    return xp.expand(result);
   };
 }
 
-export { makeScMacroTransformer, makeRscMacroTransformer, makeErMacroTransformer };
+export { makeErMacroTransformer };

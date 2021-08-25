@@ -20,7 +20,7 @@ class BiwaError extends Error {
 
 class Bug extends BiwaError {
   constructor(msg){
-    this.message = "[BUG] "+msg;
+    super("[BUG] " + msg)
   }
 }
 

@@ -28,40 +28,6 @@ class Library {
     return new Library(env);
   }
 
-  // ---
-
-  // Evaluate `thunk` with the library specified with `spec` as the current
-  // library
-  static withLibrary(spec, thunk) {
-    const origLib = this.currentLibrary;
-    this.currentLibrary = spec;
-    // TODO: original impl uses `parameterize`
-    const ret = Environment.withToplevelEnvironment(this._libraryEnvironment(spec), thunk);
-    this.currentLibrary = origLib;
-    return ret;
-  }
-
-  static makeLibrary(spec) {
-    const prefix = spec.map(x => to_write(x)).join(".");
-    const env = Environment.makeToplevelEnvironment(sym => {
-      return Sym(`${prefix}:${sym.name}`)
-    }, prefix);
-    this._libraryTable[spec.to_write()] = new Library(env);
-  }
-
-//  // Find the library corresponds to `spec` and return its `Environment`.
-//  static _libraryEnvironment(spec) {
-//    const libObj = this._assocLibrary(spec);
-//    if (!libObj) throw new BiwaError("_libraryEnvironment: library not found", spec);
-//    return libObj.environment;
-//  }
-
-//  // Returns whether there is a library specified with `spec`
-//  static libraryExists(spec) {
-//    const libObj = this._assocLibrary(spec);
-//    return !!libObj;
-//  }
-
   // Called when loading a library from file (or something)
   static expandLibrary(form) {
     const spec = form.cdr.car;
