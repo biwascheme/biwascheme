@@ -66,7 +66,7 @@ Enumeration.EnumType = class {
     return _.bind(function(ar){
       assert_list(ar[0], "(enum-set constructor)");
       var symbols = ar[0].to_array();
-      _.each(symbols, function(arg){
+      symbols.forEach(function(arg){
         assert_symbol(arg, "(enum-set constructor)");
       });
 

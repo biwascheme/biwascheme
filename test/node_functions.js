@@ -90,9 +90,9 @@ var tests = {
   }
 };
 
-_.each(tests, function(func, name){
-  puts("- "+name);
-  func();
+Object.keys(tests).forEach(function(key){
+  puts("- "+key);
+  tests[key]();
 });
 
 puts("test ok");
