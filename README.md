@@ -70,6 +70,27 @@ You need Node.js (tested with v16.5.0) and npm (tested with v7.20.1) to build bi
 
 See [doc/dev/build.md](doc/dev/build.md).
 
+## Development
+
+### How to run tests
+
+Prerequisites: Node.js, npm
+
+1. `$ npm install`
+1. `$ npm run serve`
+1. Open http://localhost:7001/test/spec.html
+
+### Some more tests
+
+- Test release/biwascheme.js
+  - http://localhost:7001/test/spec.html#release
+- Test release/biwascheme-min.js
+  - http://localhost:7001/test/spec.html#min
+- Test browser specific functions
+  - `$ cd test/browser_functions && node server.js && open http://localhost:7002/`
+- Test node specific functions
+  - $ npm run node-test
+
 ## Conformance
 
 BiwaScheme [implements](https://www.biwascheme.org/doc/features.html) most of the features of [R7RS small](https://small.r7rs.org/), including first-class continuation and tail call optimization.
