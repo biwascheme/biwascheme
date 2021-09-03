@@ -376,7 +376,7 @@ define_libfunc("vector-append", 2, null, function(ar){
 // (vector-copy vector)
 define_libfunc("vector-copy", 1, 1, function(ar){
   assert_vector(ar[0]);
-  return _.clone(ar[0]);
+  return [...ar[0]];
 });
 
 //

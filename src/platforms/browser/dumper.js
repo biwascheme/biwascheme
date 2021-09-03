@@ -130,7 +130,7 @@ class Dumper {
       this.closures.push(cls);
     }
 
-    var c = _.clone(cls);
+    var c = [...cls];
     var body = c.shift && c.shift();
     return [
       "c", cls_num, " <span class='dump_closure'>free vars :</span> ",

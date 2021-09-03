@@ -63,7 +63,7 @@ class Hashtable {
     Object.keys(this.pairs_of).forEach(_.bind(function(hashed){
       var pairs = this.pairs_of[hashed];
       var cloned = pairs.map(function(pair){
-        return _.clone(pair);
+        return [...pair];
       });
       copy.pairs_of[hashed] = cloned;
     }, this));

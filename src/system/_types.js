@@ -15,7 +15,7 @@ const isUndef = function(obj){
   return (obj === undef);
 };
 
-const isBoolean = _.isBoolean; // Return true if arg is either true or false
+const isBoolean = (s) => typeof s === "boolean"; // Return true if arg is either true or false
 
 //isNumber is defined in number.js (Return true if arg is scheme number)
 

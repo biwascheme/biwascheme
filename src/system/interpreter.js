@@ -44,7 +44,7 @@ class Interpreter {
     // Name of the last variable read by refer-xx
     this.last_refer = last_interpreter ? last_interpreter.last_refer : null;
     // Call stack (array of last_refer)
-    this.call_stack = last_interpreter ? _.clone(last_interpreter.call_stack) : [];
+    this.call_stack = last_interpreter ? [...last_interpreter.call_stack] : [];
     // Counts number of tail calls (= how many times should we pop call_stack
     // in op_return)
     this.tco_counter = [];
@@ -80,7 +80,7 @@ class Interpreter {
     for(var i=0; i<s; i++){
       v[i] = this.stack[i];
     }
-    return { stack: v, last_refer: this.last_refer, call_stack: _.clone(this.call_stack), tco_counter: _.clone(this.tco_counter) };
+    return { stack: v, last_refer: this.last_refer, call_stack: [...this.call_stack], tco_counter: [...this.tco_counter] };
   }
 
   // private
@@ -93,8 +93,8 @@ class Interpreter {
       this.stack[i] = v[i];
     }
     this.last_refer = stuff.last_refer;
-    this.call_stack = _.clone(stuff.call_stack);
-    this.tco_counter = _.clone(stuff.tco_counter);
+    this.call_stack = [...stuff.call_stack];
+    this.tco_counter = [...stuff.tco_counter];
     return s;
   }
 

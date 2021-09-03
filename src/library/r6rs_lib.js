@@ -1831,13 +1831,13 @@ define_libfunc("cons*", 1, null, function(ar){
     if(ar[1]){
       assert_procedure(ar[0]);
       assert_vector(ar[1]);
-      return mergeSort(_.clone(ar[1]), ar[0], function(ret){
+      return mergeSort([... ar[1]], ar[0], function(ret){
         return ret;
       });
     }
     else {
       assert_vector(ar[0]);
-      return _.clone(ar[0]).sort(compareFn);
+      return [...ar[0]].sort(compareFn);
     }
   });
 
