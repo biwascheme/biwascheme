@@ -75,7 +75,7 @@ Record.RTD = class {
     this.sealed = !!sealed;
     this.opaque = parent_rtd.opaque || (!!opaque);
 
-    this.fields = _.map(fields, function(field){
+    this.fields = fields.map(function(field){
       return {name: field[0], mutable: !!field[1]};
     });
   }
@@ -93,7 +93,7 @@ Record.RTD = class {
   }
 
   _field_names(){
-    return _.map(this.fields, function(spec){
+    return this.fields.map(function(spec){
         return spec.name;
       });
   }

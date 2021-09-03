@@ -673,7 +673,7 @@ Compiler.transform_internal_define = function(x){
     return x;
   
   // 3. Return (letrec* <bindings> <expressions>)
-  var bindings = List.apply(null, _.map(defs, define_to_lambda_bind));
+  var bindings = List.apply(null, defs.map(define_to_lambda_bind));
   return new Pair(Sym("letrec*"),
            new Pair(bindings, exprs));
 };

@@ -39,7 +39,7 @@ const write_simple = function(obj){
               .replace(/\r/g, "\\r") +
            '"';
   else if(_.isArray(obj))
-    return "#(" + _.map(obj, function(e) { return write_simple(e); }).join(" ") + ")";
+    return "#(" + obj.map(function(e) { return write_simple(e); }).join(" ") + ")";
   else if(typeof(obj.to_write) == 'function')
     return obj.to_write();
   else if(isNaN(obj) && typeof(obj) == 'number')
@@ -71,7 +71,7 @@ const to_display = function(obj){
   else if(obj instanceof BiwaSymbol)
     return obj.name;
   else if(obj instanceof Array)
-    return '#(' + _.map(obj, to_display).join(' ') + ')';
+    return '#(' + obj.map(to_display).join(' ') + ')';
   else
     return write_simple(obj);
 }
@@ -91,7 +91,7 @@ const inspect = function(object, opts) {
       return '"' + object.replace(/"/g, '\\"') + '"';
     }
     if (_.isArray(object)) {
-      return '[' + _.map(object, inspect).join(', ') + ']';
+      return '[' + object.map(inspect).join(', ') + ']';
     }
 
     if (opts && opts["fallback"]){

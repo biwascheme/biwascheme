@@ -143,7 +143,7 @@ define_syntax("case", function(x){
         //  -> (if (or (eqv? key (quote d1)) ...) (begin expr ...) ret)
         ret = List(
           Sym("if"),
-          new Pair(Sym("or"), array_to_list(_.map(clause.car.to_array(), function(d){
+          new Pair(Sym("or"), array_to_list(clause.car.to_array().map(function(d){
               return List(Sym("eqv?"),
                           tmp_sym,
                           List(Sym("quote"), d));
@@ -980,7 +980,7 @@ define_libfunc("map", 2, null, function(ar){
     // input: the element (or the elements, if more than one list is given)
     // output: a Call request of proc and args
     call: function(xs){
-      return new Call(proc, _.map(xs, function(x){ return x.car }));
+      return new Call(proc, xs.map(function(x){ return x.car }));
     },
 
     // Called when each Call request is finished
@@ -1002,7 +1002,7 @@ define_libfunc("for-each", 2, null, function(ar){
 
   return Call.multi_foreach(lists, {
     call: function(xs){
-      return new Call(proc, _.map(xs, function(x){ return x.car }));
+      return new Call(proc, xs.map(function(x){ return x.car }));
     },
     finish: function(){ return undef; }
   })
@@ -1088,7 +1088,7 @@ define_libfunc("string", 0, null, function(ar){
   if(ar.length == 0) return "";
   for(var i=0; i<ar.length; i++)
     assert_char(ar[i]);
-  return _.map(ar, function(c){ return c.value }).join("");
+  return ar.map(function(c){ return c.value }).join("");
 })
 define_libfunc("string-length", 1, 1, function(ar){
   assert_string(ar[0]);
@@ -1162,11 +1162,11 @@ define_libfunc("string-append", 0, null, function(ar){
 })
 define_libfunc("string->list", 1, 1, function(ar){
   assert_string(ar[0]);
-  return array_to_list(_.map(ar[0].split(""), function(s){ return Char.get(s[0]); }));
+  return array_to_list(ar[0].split("").map(function(s){ return Char.get(s[0]); }));
 })
 define_libfunc("list->string", 1, 1, function(ar){
   assert_list(ar[0]);
-  return _.map(ar[0].to_array(), function(c){ return c.value; }).join("");
+  return ar[0].to_array().map(function(c){ return c.value; }).join("");
 })
 define_libfunc("string-for-each", 2, null, function(ar){
   var proc = ar.shift(), strs = ar;
@@ -1525,7 +1525,7 @@ define_libfunc("for-all", 2, null, function(ar){
   var last = true; //holds last result which proc returns
   return Call.multi_foreach(lists, {
     call: function(pairs){
-      return new Call(proc, _.map(pairs, function(x){ return x.car }));
+      return new Call(proc, pairs.map(function(x){ return x.car }));
     },
     result: function(res, pairs){
       if(res === false) return false;
@@ -1541,7 +1541,7 @@ define_libfunc("exists", 2, null, function(ar){
 
   return Call.multi_foreach(lists, {
     call: function(pairs){
-      return new Call(proc, _.map(pairs, function(x){ return x.car }));
+      return new Call(proc, pairs.map(function(x){ return x.car }));
     },
     result: function(res, pairs){
       if(res !== false) return res;
@@ -1592,7 +1592,7 @@ define_libfunc("fold-left", 3, null, function(ar){
 
   return Call.multi_foreach(lists, {
     call: function(pairs){
-      var args = _.map(pairs, function(x){ return x.car });
+      var args = pairs.map(function(x){ return x.car });
       args.unshift(accum);
       return new Call(proc, args);
     },
@@ -1602,7 +1602,7 @@ define_libfunc("fold-left", 3, null, function(ar){
 })
 define_libfunc("fold-right", 3, null, function(ar){
   var proc = ar.shift(), accum = ar.shift();
-  var lists = _.map(ar, function(ls){
+  var lists = ar.map(function(ls){
     // reverse each list
     assert_list(ls);
     return array_to_list(ls.to_array().reverse());
@@ -1610,7 +1610,7 @@ define_libfunc("fold-right", 3, null, function(ar){
 
   return Call.multi_foreach(lists, {
     call: function(pairs){
-      var args = _.map(pairs, function(x){ return x.car });
+      var args = pairs.map(function(x){ return x.car });
       args.push(accum);
       return new Call(proc, args);
     },
@@ -2030,7 +2030,7 @@ define_syntax("define-record-type", function(x){
     switch(clause.car){
       // - (fields <field spec>*)
       case Sym("fields"):
-        fields = _.map(clause.cdr.to_array(), function(field_spec, idx){
+        fields = clause.cdr.to_array().map(function(field_spec, idx){
           if(isSymbol(field_spec)){
             // - <field name>
             return {name: field_spec, idx: idx, mutable: false,
@@ -2121,7 +2121,7 @@ define_syntax("define-record-type", function(x){
   var cd  = [Sym("record-constructor-descriptor"), record_name];
 
   // registration
-  var rtd_fields = _.map(fields, function(field){
+  var rtd_fields = fields.map(function(field){
     return List(Sym(field.mutable ? "mutable" : "immutable"), field.name);
   });
   rtd_fields.is_vector = true; //tell List not to convert
@@ -2137,7 +2137,7 @@ define_syntax("define-record-type", function(x){
         [Sym("quote"), record_name], Sym("__rtd"), Sym("__cd")]];
 
   // accessors and mutators
-  var accessor_defs = _.map(fields, function(field){
+  var accessor_defs = fields.map(function(field){
     var name = field.accessor_name ||
                  Sym(record_name.name+"-"+field.name.name);
 
@@ -2147,7 +2147,7 @@ define_syntax("define-record-type", function(x){
   var mutator_defs = _.filter(fields, function(field){
     return field.mutable;
   });
-  mutator_defs = _.map(mutator_defs, function(field){
+  mutator_defs = mutator_defs.map(function(field){
     var name = field.mutator_name ||
                  Sym(record_name.name+"-"+field.name.name+"-set!");
 
@@ -2403,7 +2403,7 @@ define_libfunc("record-type-opaque?", 1, 1, function(ar){
 //(record-type-field-names rtd)    procedure
 define_libfunc("record-type-field-names", 1, 1, function(ar){
   assert_record_td(ar[0]);
-  return _.map(ar[0].fields, function(field){ return field.name; });
+  return ar[0].fields.map(function(field){ return field.name; });
 });
 
 //(record-field-mutable? rtd k)    procedure

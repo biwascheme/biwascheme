@@ -97,7 +97,7 @@ const Iterator = {
     constructor(objs){
       this.objs = objs;
       this.size = objs.length;
-      this.iterators = _.map(objs, function(x){
+      this.iterators = objs.map(function(x){
         return Iterator.of(x);
       })
     }
@@ -109,7 +109,7 @@ const Iterator = {
       return true;
     }
     next(){
-      return _.map(this.iterators, function(ite){
+      return this.iterators.map(function(ite){
         return ite.next();
       })
     }

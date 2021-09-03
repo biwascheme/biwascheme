@@ -99,7 +99,7 @@ define_libfunc("js-invocation", 2, null, function(ar, intp){
         var method = args.shift().name;
 
         // Convert arguments
-        args = _.map(args, function(arg){
+        args = args.map(function(arg){
             if(isClosure(arg)){
               // closure -> JavaScript funciton
               return js_closure(arg, intp);
@@ -316,7 +316,7 @@ var define_console_func = function(name){
   define_libfunc("console-"+name, 1, null, function(ar){
     var con = window.console;
     if(con){
-      var vals = _.map(ar, function(item){
+      var vals = ar.map(function(item){
         return inspect(item, {fallback: item});
       });
 
