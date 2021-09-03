@@ -42,11 +42,11 @@ define_libfunc("inspect!", 1, null, function(ar){
 //
 const json2sexp = function(json){
   switch(true){
-  case _.isNumber(json) ||
-       _.isString(json) ||
+  case typeof json === "number" ||
+       typeof json === "string" ||
        json === true || json === false:
     return json;
-  case _.isArray(json):
+  case Array.isArray(json):
     return array_to_list(json.map(json2sexp));
   case typeof(json) == "object":
     var ls = nil;
@@ -385,7 +385,7 @@ define_libfunc("regexp->string", 1, 1, function(ar){
 
 define_libfunc("regexp-exec", 2, 2, function(ar){
   var rexp = ar[0];
-  if(_.isString(ar[0])){
+  if(typeof ar[0] === "string"){
     rexp = new RegExp(ar[0]);
   }
   assert_regexp(rexp, "regexp-exec");
@@ -414,7 +414,7 @@ define_libfunc("regexp-exec", 2, 2, function(ar){
 // regexp-replace-all regexp string substitution 
 define_libfunc("regexp-replace-all", 3, 3, function(ar){
   var pat = ar[0];
-  if(_.isString(pat)){
+  if(typeof pat === "string"){
     var rexp = new RegExp(pat, "g")
   }
   else{

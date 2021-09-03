@@ -129,7 +129,7 @@ Hashtable.string_hash = function(ar){
 };
 
 Hashtable.string_ci_hash = function(ar){
-  return _.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
+  return typeof ar[0] === "string" ? ar[0].toLowerCase() : ar[0];
 };
 
 Hashtable.symbol_hash = function(ar){

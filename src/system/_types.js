@@ -19,9 +19,9 @@ const isBoolean = _.isBoolean; // Return true if arg is either true or false
 
 //isNumber is defined in number.js (Return true if arg is scheme number)
 
-const isString = _.isString;
+const isString = (s) => typeof s === "string";
 
-const isFunction = _.isFunction;
+const isFunction = (s) => typeof s === "function";
 
 const isSymbol = function(obj){
   return (obj instanceof BiwaSymbol);
@@ -38,7 +38,7 @@ const isVector = function(obj){
 // procedure: Scheme closure or JavaScript function
 // valid argument for anywhere function is expected
 const isProcedure = function(obj){
-  return isClosure(obj) || _.isFunction(obj);
+  return isClosure(obj) || typeof obj === "function";
 };
 
 //

@@ -319,7 +319,7 @@ define_libfunc("random-real", 0, 0, function(ar){
 //   ~%: newline
 //   ~~: tilde
 define_libfunc("format", 1, null, function(ar){
-  if (_.isString(ar[0])) {
+  if (typeof ar[0] === "string") {
     var port = null, format_str = ar.shift();
   }
   else if (ar[0] === false) {

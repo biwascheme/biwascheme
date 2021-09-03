@@ -181,7 +181,7 @@ const array_to_list_ = function(ary, deep) {
   var list = nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
-    if(deep && _.isArray(obj) && !obj.is_vector){
+    if(deep && Array.isArray(obj) && !obj.is_vector){
       obj = array_to_list_(obj, deep);
     }
     list = new Pair(obj, list);

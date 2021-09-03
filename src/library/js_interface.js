@@ -25,7 +25,7 @@ define_libfunc("js-eval", 1, 1, function(ar){
   return eval2(ar[0]);
 });
 define_libfunc("js-ref", 2, 2, function(ar){
-  if(_.isString(ar[1])){
+  if(typeof ar[1] === "string"){
     return ar[0][ar[1]];
   }
   else{
@@ -51,7 +51,7 @@ define_libfunc("js-call", 1, null, function(ar){
 define_libfunc("js-invoke", 2, null, function(ar){
   var js_obj = ar.shift();
   var func_name = ar.shift();
-  if(!_.isString(func_name)){
+  if(!typeof func_name === "string"){
     assert_symbol(func_name);
     func_name = func_name.name;
   }
@@ -118,7 +118,7 @@ define_libfunc("js-invocation", 2, null, function(ar, intp){
           });
 
         // Call the method
-        if(!_.isFunction(v[method])){
+        if(!typeof v[method] === "function"){
           throw new BiwaError("js-invocation: the method `"+method+"' not found");
         }
         v = v[method].apply(v, args);
@@ -167,7 +167,7 @@ define_libfunc("js-new", 1, null, function(ar, intp){
   };
 
   var ctor = ar.shift();
-  if (_.isString(ctor)) ctor = eval2(ctor);
+  if (typeof ctor === "string") ctor = eval2(ctor);
 
   if(ar.length == 0){
     return new ctor();
@@ -229,7 +229,7 @@ define_libfunc("js-undefined?", 1, 1, function(ar){
 });
 
 define_libfunc("js-function?", 1, 1, function(ar){
-  return _.isFunction(ar[0]);
+  return typeof ar[0] === "function";
 });
 
 define_libfunc("js-array-to-list", 1, 1, function(ar){
