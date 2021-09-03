@@ -191,7 +191,7 @@ const array_to_list_ = function(ary, deep) {
 
 // Shallow: List(1, 2, [3]) == (list 1 2 (vector 3 4))
 const List = function() {
-  var ary = _.toArray(arguments);
+  var ary = Array.from(arguments);
   return array_to_list_(ary, false);
 };
 

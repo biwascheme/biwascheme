@@ -12,7 +12,7 @@ const make_assert = function(check){
     //              ? arguments.callee.caller.fname
     //              : "";
     const fname = "";
-    check.apply(this, [fname].concat(_.toArray(arguments)));
+    check.apply(this, [fname].concat(Array.from(arguments)));
   }
 }
 

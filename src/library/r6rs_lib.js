@@ -2144,7 +2144,7 @@ define_syntax("define-record-type", function(x){
     return [Sym("define"), name, [Sym("record-accessor"), rtd, field.idx]];
   });
 
-  var mutator_defs = _.filter(fields, function(field){
+  var mutator_defs = fields.filter(function(field){
     return field.mutable;
   });
   mutator_defs = mutator_defs.map(function(field){
@@ -2837,17 +2837,17 @@ define_libfunc("bitwise-not", 1, 1, function(ar){
 
 //(bitwise-and ei1 ...)    procedure
 define_libfunc("bitwise-and", 1, null, function(ar){
-  return _.reduce(ar, function(ret, item){ return ret & item; });
+  return ar.reduce(function(ret, item){ return ret & item; });
 });
 
 //(bitwise-ior ei1 ...)    procedure
 define_libfunc("bitwise-ior", 1, null, function(ar){
-  return _.reduce(ar, function(ret, item){ return ret | item; });
+  return ar.reduce(function(ret, item){ return ret | item; });
 });
 
 //(bitwise-xor ei1 ...)    procedure
 define_libfunc("bitwise-xor", 1, null, function(ar){
-  return _.reduce(ar, function(ret, item){ return ret ^ item; });
+  return ar.reduce(function(ret, item){ return ret ^ item; });
 });
 
 //(bitwise-if ei1 ei2 ei3)    procedure

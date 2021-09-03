@@ -207,7 +207,7 @@ define_libfunc("js-obj", 0, null, function(ar){
 const js_closure = function(proc, intp){
   var intp2 = new Interpreter(intp);
   return function(/*args*/){
-    return intp2.invoke_closure(proc, _.toArray(arguments));
+    return intp2.invoke_closure(proc, Array.from(arguments));
   };
 };
 // (js-closure (lambda (event) ..))
