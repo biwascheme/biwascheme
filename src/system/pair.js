@@ -215,8 +215,8 @@ const js_obj_to_alist = function(obj) {
     return nil;
   }
   var arr = [];
-  _.each(obj, function(val, key) {
-    arr.push(new Pair(key, val));
+  Object.keys(obj).forEach(function(key) {
+    arr.push(new Pair(key, obj[key]));
   });
   var alist = array_to_list(arr);
   return alist;

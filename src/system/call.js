@@ -164,7 +164,7 @@ Call.default_callbacks = {
 }
 Call.foreach = function(obj, callbacks, is_multi){
   is_multi || (is_multi = false);
-  _.each(["call", "result", "finish"], function(key){
+  ["call", "result", "finish"].forEach(function(key){
     if(!callbacks[key])
       callbacks[key] = Call.default_callbacks[key];
   })

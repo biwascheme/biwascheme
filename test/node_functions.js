@@ -90,7 +90,7 @@ var tests = {
   }
 };
 
-_.each(tests, function(func, name){
+tests.forEach(function(func, name){
   puts("- "+name);
   func();
 });

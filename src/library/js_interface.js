@@ -86,7 +86,7 @@ define_libfunc("js-invocation", 2, null, function(ar, intp){
   var v = receiver;
 
   // Process each method call
-  _.each(ar, function(callspec){
+  ar.forEach(function(callspec){
       if(isSymbol(callspec)){
         // Property access
         v = v[callspec.name];

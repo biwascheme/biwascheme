@@ -137,7 +137,7 @@ define_libfunc("intersperse", 2, 2, function(ar){
   assert_list(ls);
 
   var ret = [];
-  _.each(ls.to_array().reverse(),function(x){
+  ls.to_array().reverse().forEach(function(x){
     ret.push(x);
     ret.push(item);
   });
@@ -147,7 +147,7 @@ define_libfunc("intersperse", 2, 2, function(ar){
 
 define_libfunc("map-with-index", 2, null, function(ar){
   var proc = ar.shift(), lists = ar;
-  _.each(lists, assert_list);
+  lists.forEach(assert_list);
 
   var results = [], i = 0;
   return Call.multi_foreach(lists, {

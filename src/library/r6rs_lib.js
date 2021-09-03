@@ -49,7 +49,7 @@ define_syntax("cond", function(x){
   // TODO: assert that clauses is a proper list
 
   var ret = null;
-  _.each(clauses.to_array().reverse(), function(clause){
+  clauses.to_array().reverse().forEach(function(clause){
     if(!(clause instanceof Pair)){
       throw new BiwaError("bad clause in cond: " + write_ss(clause));
     }
@@ -126,7 +126,7 @@ define_syntax("case", function(x){
     var clauses = x.cdr.cdr;
 
     var ret = undefined;
-    _.each(clauses.to_array().reverse(), function(clause){
+    clauses.to_array().reverse().forEach(function(clause){
       if(clause.car === Sym("else")){
         // pattern 0: (else expr ...)
         //  -> (begin expr ...)
@@ -245,7 +245,7 @@ define_syntax("let*", function(x){
     throw new BiwaError("let*: need a pair for bindings: got "+to_write(binds));
 
   var ret = null;
-  _.each(binds.to_array().reverse(), function(bind){
+  binds.to_array().reverse().forEach(function(bind){
     ret = new Pair(Sym("let"),
              new Pair(new Pair(bind, nil),
                ret == null ? body : new Pair(ret, nil)));
@@ -260,12 +260,12 @@ var expand_letrec_star = function(x){
     throw new BiwaError("letrec*: need a pair for bindings: got "+to_write(binds));
 
   var ret = body;
-  _.each(binds.to_array().reverse(), function(bind){
+  binds.to_array().reverse().forEach(function(bind){
     ret = new Pair(new Pair(Sym("set!"), bind),
             ret);
   })
   var letbody = nil;
-  _.each(binds.to_array().reverse(), function(bind){
+  binds.to_array().reverse().forEach(function(bind){
     letbody = new Pair(new Pair(bind.car,
                          new Pair(undef, nil)),
                 letbody);
@@ -293,7 +293,7 @@ define_syntax("let-values", function(x) {
 
     var let_bindings = nil;
     var let_star_values_bindings = nil;
-    _.each(mv_bindings.to_array().reverse(), function (item) {
+    mv_bindings.to_array().reverse().forEach(function (item) {
   var init = item.cdr.car;
   var tmpsym = gensym()
   var binding = new Pair(tmpsym,
@@ -335,7 +335,7 @@ define_syntax("let*-values", function(x){
 
   var ret = null;
 
-  _.each(mv_bindings.to_array().reverse(), function(item){
+  mv_bindings.to_array().reverse().forEach(function(item){
     var formals = item.car, init = item.cdr.car;
     ret = new Pair(Sym("call-with-values"),
             new Pair(new Pair(Sym("lambda"),
@@ -862,7 +862,7 @@ define_libfunc("set-cdr!", 2, 2, function(ar){
   // To traverse into pair and raise error
   var get = function(funcname, spec, obj){
     var ret = obj;
-    _.each(spec, function(is_cdr){
+    spec.forEach(function(is_cdr){
       if(ret instanceof Pair){
         ret = (is_cdr ? ret.cdr : ret.car);
       }
@@ -927,7 +927,7 @@ define_libfunc("append", 1, null, function(ar){
   var k = ar.length;
   var ret = ar[--k];
   while(k--){
-    _.each(ar[k].to_array().reverse(), function(item){
+    ar[k].to_array().reverse().forEach(function(item){
       ret = new Pair(item, ret);
     });
   }
@@ -972,7 +972,7 @@ define_libfunc("list-ref", 2, 2, function(ar){
 });
 define_libfunc("map", 2, null, function(ar){
   var proc = ar.shift(), lists = ar;
-  _.each(lists, assert_list);
+  lists.forEach(assert_list);
 
   var a = [];
   return Call.multi_foreach(lists, {
@@ -998,7 +998,7 @@ define_libfunc("map", 2, null, function(ar){
 })
 define_libfunc("for-each", 2, null, function(ar){
   var proc = ar.shift(), lists = ar;
-  _.each(lists, assert_list);
+  lists.forEach(assert_list);
 
   return Call.multi_foreach(lists, {
     call: function(xs){
@@ -1170,7 +1170,7 @@ define_libfunc("list->string", 1, 1, function(ar){
 })
 define_libfunc("string-for-each", 2, null, function(ar){
   var proc = ar.shift(), strs = ar;
-  _.each(strs, assert_string);
+  strs.forEach(assert_string);
 
   return Call.multi_foreach(strs, {
     call: function(chars){ return new Call(proc, chars); },
@@ -1239,7 +1239,7 @@ define_libfunc("vector-fill!", 2, 2, function(ar){
 })
 define_libfunc("vector-map", 2, null, function(ar){
   var proc = ar.shift(), vecs = ar;
-  _.each(vecs, assert_vector);
+  vecs.forEach(assert_vector);
 
   var a = [];
   return Call.multi_foreach(vecs, {
@@ -1250,7 +1250,7 @@ define_libfunc("vector-map", 2, null, function(ar){
 })
 define_libfunc("vector-for-each", 2, null, function(ar){
   var proc = ar.shift(), vecs = ar;
-  _.each(vecs, assert_vector);
+  vecs.forEach(assert_vector);
 
   return Call.multi_foreach(vecs, {
     call: function(objs){ return new Call(proc, objs); },
@@ -1520,7 +1520,7 @@ define_libfunc("find", 2, 2, function(ar){
 define_libfunc("for-all", 2, null, function(ar){
   var proc = ar.shift();
   var lists = ar;
-  _.each(lists, assert_list);
+  lists.forEach(assert_list);
 
   var last = true; //holds last result which proc returns
   return Call.multi_foreach(lists, {
@@ -1537,7 +1537,7 @@ define_libfunc("for-all", 2, null, function(ar){
 define_libfunc("exists", 2, null, function(ar){
   var proc = ar.shift();
   var lists = ar;
-  _.each(lists, assert_list);
+  lists.forEach(assert_list);
 
   return Call.multi_foreach(lists, {
     call: function(pairs){
@@ -1588,7 +1588,7 @@ define_libfunc("partition", 2, 2, function(ar){
 })
 define_libfunc("fold-left", 3, null, function(ar){
   var proc = ar.shift(), accum = ar.shift(), lists = ar;
-  _.each(lists, assert_list);
+  lists.forEach(assert_list);
 
   return Call.multi_foreach(lists, {
     call: function(pairs){
@@ -1722,7 +1722,7 @@ define_libfunc("cons*", 1, null, function(ar){
     return ar[0];
   else{
     var ret = null;
-    _.each(ar.reverse(), function(x){
+    ar.reverse().forEach(function(x){
       if(ret){
         ret = new Pair(x, ret);
       }
@@ -2026,7 +2026,7 @@ define_syntax("define-record-type", function(x){
   var fields = [];
 
   // <record clause>:
-  _.each(record_clauses.to_array(), function(clause){
+  record_clauses.to_array().forEach(function(clause){
     switch(clause.car){
       // - (fields <field spec>*)
       case Sym("fields"):
@@ -3331,7 +3331,7 @@ define_syntax("define-enumeration", function(x){
     var symbols = x.cdr.to_array();
 
     // Check each argument is included in the universe
-    _.each(symbols, function(arg){
+    symbols.forEach(function(arg){
       assert_symbol(arg, constructor_name);
       assert(_.include(enum_type.members, arg),
         arg.name+" is not included in the universe: "+
