@@ -36,8 +36,8 @@ class Dumper {
     var pad1="", pad2="";
     var level = level || 0;
     var nested = nested || false;
-    _.times(level, _.bind(function(){ pad1 += DUMP_PAD; }, this));
-    _.times((level+1), _.bind(function(){ pad2 += DUMP_PAD; }, this));
+    _.times(level, (function(){ pad1 += DUMP_PAD; }).bind(this));
+    _.times((level+1), (function(){ pad2 += DUMP_PAD; }).bind(this));
 
     s += pad1 + '[<span class="dump_opecode">' + obj[0] + '</span>';
     var i = 1;
@@ -160,7 +160,7 @@ class Dumper {
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
-      Object.keys(obj).forEach(_.bind(function(key){
+      Object.keys(obj).forEach((function(key){
         var value = obj[key];
         if(key!="x" && key != "stack"){
           value = (key=="c" ? this.dump_closure(value)
@@ -168,7 +168,7 @@ class Dumper {
           s += "<tr><td>" + key + ": </td>" +
                "<td colspan='3'>" + value + "</td></tr>";
         }
-      }, this));
+      }).bind(this));
       s += "<tr><td>x:</td><td>" +
            (this.is_opc(obj["x"]) ? this.dump_opc(obj["x"])
                                   : this.dump_obj(obj["x"])) +
@@ -186,12 +186,12 @@ class Dumper {
     var dumpitem = $("<div/>", { class: ("dump" + this.n_dumps) });
     dumpitem.html(s);
     $(this.dumparea).append(dumpitem);
-    (_.bind(function(n){
-        $(".header", this.dump_el(this.n_dumps)).click(_.bind(function(){
+    (function(n){
+        $(".header", this.dump_el(this.n_dumps)).click((function(){
         this.dump_move_to(n);
         this.dump_fold();
-      }, this));
-    }, this))(this.n_dumps);
+      }).bind(this));
+    }).bind(this)(this.n_dumps);
     dumpitem.hide();
     this.n_dumps++;
   }
