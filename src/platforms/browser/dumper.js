@@ -160,7 +160,7 @@ class Dumper {
            "#"+this.n_dumps+"</a></td></tr>";
 
       // registers
-      _.keys(obj).forEach(_.bind(function(key){
+      Object.keys(obj).forEach(_.bind(function(key){
         var value = obj[key];
         if(key!="x" && key != "stack"){
           value = (key=="c" ? this.dump_closure(value)
