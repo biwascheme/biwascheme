@@ -290,7 +290,7 @@ const tree_all = function(tree, pred){
 };
 define_libfunc("element-new", 1, 1, function(ar){
   var string_or_symbol = function(item){
-    return _.isString(item) ||
+    return typeof item === "string" ||
            (item instanceof BiwaSymbol) ||
            (item instanceof Pair);
   };

@@ -22,7 +22,7 @@ define_libfunc("html-escape", 1, 1, function(ar){
   return _.escape(ar[0]);
 });
 const inspect_objs = function(objs){
-  return _.map(objs, inspect).join(", ");
+  return objs.map(inspect).join(", ");
 };
 define_libfunc("inspect", 1, null, function(ar){
   return inspect_objs(ar);
@@ -42,12 +42,12 @@ define_libfunc("inspect!", 1, null, function(ar){
 //
 const json2sexp = function(json){
   switch(true){
-  case _.isNumber(json) ||
-       _.isString(json) ||
+  case typeof json === "number" ||
+       typeof json === "string" ||
        json === true || json === false:
     return json;
-  case _.isArray(json):
-    return array_to_list(_.map(json, json2sexp));
+  case Array.isArray(json):
+    return array_to_list(json.map(json2sexp));
   case typeof(json) == "object":
     var ls = nil;
     for(key in json){
@@ -137,7 +137,7 @@ define_libfunc("intersperse", 2, 2, function(ar){
   assert_list(ls);
 
   var ret = [];
-  _.each(ls.to_array().reverse(),function(x){
+  ls.to_array().reverse().forEach(function(x){
     ret.push(x);
     ret.push(item);
   });
@@ -147,12 +147,12 @@ define_libfunc("intersperse", 2, 2, function(ar){
 
 define_libfunc("map-with-index", 2, null, function(ar){
   var proc = ar.shift(), lists = ar;
-  _.each(lists, assert_list);
+  lists.forEach(assert_list);
 
   var results = [], i = 0;
   return Call.multi_foreach(lists, {
     call: function(xs){ 
-      var args = _.map(xs, function(x){ return x.car });
+      var args = xs.map(function(x){ return x.car });
       args.unshift(i);
       i++;
       return new Call(proc, args);
@@ -310,7 +310,7 @@ define_libfunc("gensym", 0, 0, function(ar){
 // i/o
 
 define_libfunc("print", 1, null, function(ar){
-  _.map(ar, function(item){
+  ar.map(function(item){
     Console.puts(to_display(item), true);
   })
   Console.puts(""); //newline
@@ -385,7 +385,7 @@ define_libfunc("regexp->string", 1, 1, function(ar){
 
 define_libfunc("regexp-exec", 2, 2, function(ar){
   var rexp = ar[0];
-  if(_.isString(ar[0])){
+  if(typeof ar[0] === "string"){
     rexp = new RegExp(ar[0]);
   }
   assert_regexp(rexp, "regexp-exec");
@@ -414,7 +414,7 @@ define_libfunc("regexp-exec", 2, 2, function(ar){
 // regexp-replace-all regexp string substitution 
 define_libfunc("regexp-replace-all", 3, 3, function(ar){
   var pat = ar[0];
-  if(_.isString(pat)){
+  if(typeof pat === "string"){
     var rexp = new RegExp(pat, "g")
   }
   else{

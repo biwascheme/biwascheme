@@ -23,11 +23,11 @@ const write_simple = function(obj){
     return "undefined";
   else if(obj === null)
     return "null";
-  else if(_.isFunction(obj))
+  else if(typeof obj === "function")
     return "#<Function "+(obj.fname ? obj.fname :
                           obj.toSource ? truncate(obj.toSource(), 40) :
                           "")+">";
-  else if(_.isString(obj))
+  else if(typeof obj === "string")
     return '"' +
            obj.replace(/\\|\"/g,function($0){return'\\'+$0;})
               .replace(/\x07/g, "\\a")
@@ -38,8 +38,8 @@ const write_simple = function(obj){
               .replace(/\f/g, "\\f")
               .replace(/\r/g, "\\r") +
            '"';
-  else if(_.isArray(obj))
-    return "#(" + _.map(obj, function(e) { return write_simple(e); }).join(" ") + ")";
+  else if(Array.isArray(obj))
+    return "#(" + obj.map(function(e) { return write_simple(e); }).join(" ") + ")";
   else if(typeof(obj.to_write) == 'function')
     return obj.to_write();
   else if(isNaN(obj) && typeof(obj) == 'number')
@@ -60,9 +60,9 @@ const write_simple = function(obj){
 //
 
 const to_display = function(obj){
-  if(_.isUndefined(obj))
+  if(typeof obj === "undefined")
     return 'undefined';
-  else if(_.isNull(obj))
+  else if(obj === null)
     return 'null';
   else if(obj.to_display)
     return obj.to_display(to_display);
@@ -71,7 +71,7 @@ const to_display = function(obj){
   else if(obj instanceof BiwaSymbol)
     return obj.name;
   else if(obj instanceof Array)
-    return '#(' + _.map(obj, to_display).join(' ') + ')';
+    return '#(' + obj.map(to_display).join(' ') + ')';
   else
     return write_simple(obj);
 }
@@ -82,16 +82,16 @@ const to_display = function(obj){
 
 const inspect = function(object, opts) {
   try {
-    if (_.isUndefined(object)) return 'undefined';
+    if (typeof object === "undefined") return 'undefined';
     if (object === null) return 'null';
     if (object === true) return '#t';
     if (object === false) return '#f';
     if (object.inspect) return object.inspect();
-    if (_.isString(object)) {
+    if (typeof object === "string") {
       return '"' + object.replace(/"/g, '\\"') + '"';
     }
-    if (_.isArray(object)) {
-      return '[' + _.map(object, inspect).join(', ') + ']';
+    if (Array.isArray(object)) {
+      return '[' + object.map(inspect).join(', ') + ']';
     }
 
     if (opts && opts["fallback"]){

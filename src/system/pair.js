@@ -181,7 +181,7 @@ const array_to_list_ = function(ary, deep) {
   var list = nil;
   for(var i=ary.length-1; i>=0; i--){
     var obj = ary[i];
-    if(deep && _.isArray(obj) && !obj.is_vector){
+    if(deep && Array.isArray(obj) && !obj.is_vector){
       obj = array_to_list_(obj, deep);
     }
     list = new Pair(obj, list);
@@ -191,7 +191,7 @@ const array_to_list_ = function(ary, deep) {
 
 // Shallow: List(1, 2, [3]) == (list 1 2 (vector 3 4))
 const List = function() {
-  var ary = _.toArray(arguments);
+  var ary = Array.from(arguments);
   return array_to_list_(ary, false);
 };
 
@@ -215,8 +215,8 @@ const js_obj_to_alist = function(obj) {
     return nil;
   }
   var arr = [];
-  _.each(obj, function(val, key) {
-    arr.push(new Pair(key, val));
+  Object.keys(obj).forEach(function(key) {
+    arr.push(new Pair(key, obj[key]));
   });
   var alist = array_to_list(arr);
   return alist;

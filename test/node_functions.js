@@ -44,7 +44,7 @@ var tests = {
     var list = ev('(command-line)');
     assert.ok(BiwaScheme.isList(list));
     list.foreach(function(item){
-      assert.ok(_.isString(item));
+      assert.ok(typeof item === "string");
     });
   },
 
@@ -77,7 +77,7 @@ var tests = {
   // SRFI 98
   "get-environment-variable": function(){
     var path = ev('(get-environment-variable "PATH")');
-    assert.ok(_.isString(path));
+    assert.ok(typeof path === "string");
     assert.equal(ew('(get-environment-variable "NON EXIST")'),
                  "#f");
   },
@@ -85,12 +85,12 @@ var tests = {
   "get-environment-variables": function(){
     var first_env = ev('(car (get-environment-variables))');
     assert.ok(BiwaScheme.isPair(first_env));
-    assert.ok(_.isString(first_env.car));
-    assert.ok(_.isString(first_env.cdr));
+    assert.ok(typeof first_env.car === "string");
+    assert.ok(typeof first_env.cdr === "string");
   }
 };
 
-_.each(tests, function(func, name){
+tests.forEach(function(func, name){
   puts("- "+name);
   func();
 });

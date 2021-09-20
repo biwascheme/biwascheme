@@ -46,7 +46,7 @@ define_libfunc("command-line", 0, 0, function(ar){
 //(exit obj)    procedure
 define_libfunc("exit", 0, 1, function(ar){
   var obj = ar[0];
-  var code = _.isUndefined(obj) ? 0 :
+  var code = typeof obj === "undefined" ? 0 :
              (obj === false)    ? 1 :
              Number(obj);
 
@@ -61,7 +61,7 @@ define_libfunc("exit", 0, 1, function(ar){
 define_libfunc("get-environment-variable", 1, 1, function(ar){
   assert_string(ar[0]);
   var val = node.process.env[ar[0]];
-  return _.isUndefined(val) ? false : val;
+  return typeof val === "undefined" ? false : val;
 });
 
 // (get-environment-variables) -> alist of string (("key" . "value"))

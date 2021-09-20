@@ -60,10 +60,10 @@ class Hashtable {
     var copy = new Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
-    _.each(_.keys(this.pairs_of), _.bind(function(hashed){
+    Object.keys(this.pairs_of).forEach(_.bind(function(hashed){
       var pairs = this.pairs_of[hashed];
-      var cloned = _.map(pairs, function(pair){
-        return _.clone(pair);
+      var cloned = pairs.map(function(pair){
+        return [...pair];
       });
       copy.pairs_of[hashed] = cloned;
     }, this));
@@ -93,8 +93,8 @@ class Hashtable {
 
   _apply_pair(func){
     var a = [];
-    _.each(_.values(this.pairs_of), function(pairs){
-      _.each(pairs, function(pair){
+    _.values(this.pairs_of).forEach(function(pairs){
+      pairs.forEach(function(pair){
         a.push(func(pair));
       });
     });
@@ -129,7 +129,7 @@ Hashtable.string_hash = function(ar){
 };
 
 Hashtable.string_ci_hash = function(ar){
-  return _.isString(ar[0]) ? ar[0].toLowerCase() : ar[0];
+  return typeof ar[0] === "string" ? ar[0].toLowerCase() : ar[0];
 };
 
 Hashtable.symbol_hash = function(ar){

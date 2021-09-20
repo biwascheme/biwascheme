@@ -44,9 +44,9 @@ const define_libfunc = function(fname, min, max, func){
 
 const alias_libfunc = function(fname, aliases) {
   if (CoreEnv[fname]) {
-    if (_.isArray(aliases)) {
-      _.map(aliases, function(a) { alias_libfunc(fname, a); });
-    } else if (_.isString(aliases)) {
+    if (Array.isArray(aliases)) {
+      aliases.map(function(a) { alias_libfunc(fname, a); });
+    } else if (typeof aliases === "string") {
       CoreEnv[aliases] = CoreEnv[fname];
     } else {
       console.error("[BUG] bad alias for library function " +

@@ -25,7 +25,7 @@ define_libfunc("js-eval", 1, 1, function(ar){
   return eval2(ar[0]);
 });
 define_libfunc("js-ref", 2, 2, function(ar){
-  if(_.isString(ar[1])){
+  if(typeof ar[1] === "string"){
     return ar[0][ar[1]];
   }
   else{
@@ -51,7 +51,7 @@ define_libfunc("js-call", 1, null, function(ar){
 define_libfunc("js-invoke", 2, null, function(ar){
   var js_obj = ar.shift();
   var func_name = ar.shift();
-  if(!_.isString(func_name)){
+  if(!typeof func_name === "string"){
     assert_symbol(func_name);
     func_name = func_name.name;
   }
@@ -86,7 +86,7 @@ define_libfunc("js-invocation", 2, null, function(ar, intp){
   var v = receiver;
 
   // Process each method call
-  _.each(ar, function(callspec){
+  ar.forEach(function(callspec){
       if(isSymbol(callspec)){
         // Property access
         v = v[callspec.name];
@@ -99,7 +99,7 @@ define_libfunc("js-invocation", 2, null, function(ar, intp){
         var method = args.shift().name;
 
         // Convert arguments
-        args = _.map(args, function(arg){
+        args = args.map(function(arg){
             if(isClosure(arg)){
               // closure -> JavaScript funciton
               return js_closure(arg, intp);
@@ -118,7 +118,7 @@ define_libfunc("js-invocation", 2, null, function(ar, intp){
           });
 
         // Call the method
-        if(!_.isFunction(v[method])){
+        if(!typeof v[method] === "function"){
           throw new BiwaError("js-invocation: the method `"+method+"' not found");
         }
         v = v[method].apply(v, args);
@@ -167,7 +167,7 @@ define_libfunc("js-new", 1, null, function(ar, intp){
   };
 
   var ctor = ar.shift();
-  if (_.isString(ctor)) ctor = eval2(ctor);
+  if (typeof ctor === "string") ctor = eval2(ctor);
 
   if(ar.length == 0){
     return new ctor();
@@ -207,7 +207,7 @@ define_libfunc("js-obj", 0, null, function(ar){
 const js_closure = function(proc, intp){
   var intp2 = new Interpreter(intp);
   return function(/*args*/){
-    return intp2.invoke_closure(proc, _.toArray(arguments));
+    return intp2.invoke_closure(proc, Array.from(arguments));
   };
 };
 // (js-closure (lambda (event) ..))
@@ -229,7 +229,7 @@ define_libfunc("js-undefined?", 1, 1, function(ar){
 });
 
 define_libfunc("js-function?", 1, 1, function(ar){
-  return _.isFunction(ar[0]);
+  return typeof ar[0] === "function";
 });
 
 define_libfunc("js-array-to-list", 1, 1, function(ar){
@@ -316,7 +316,7 @@ var define_console_func = function(name){
   define_libfunc("console-"+name, 1, null, function(ar){
     var con = window.console;
     if(con){
-      var vals = _.map(ar, function(item){
+      var vals = ar.map(function(item){
         return inspect(item, {fallback: item});
       });
 

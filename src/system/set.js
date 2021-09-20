@@ -17,8 +17,8 @@ class BiwaSet {
     if(this.arr.length != other.arr.length)
       return false;
 
-    var a1 = _.clone(this.arr);
-    var a2 = _.clone(other.arr);
+    var a1 = [...this.arr];
+    var a2 = [...other.arr];
     a1.sort();
     a2.sort();
     for(var i=0; i<this.arr.length; i++){
@@ -29,14 +29,14 @@ class BiwaSet {
 
   set_cons(item){
     var o = new BiwaSet(item);
-    o.arr = _.clone(this.arr);
+    o.arr = [...this.arr];
     o.arr.push(item);
     return o;
   }
 
   set_union(/*args*/){
     var o = new BiwaSet();
-    o.arr = _.clone(this.arr);
+    o.arr = [...this.arr];
 
     for(var k=0; k<arguments.length; k++){
       var s2 = arguments[k];

@@ -11,7 +11,7 @@ class Values {
 
   to_write(){
     return "#<Values " +
-             _.map(this.content, to_write).join(" ") +
+             this.content.map(to_write).join(" ") +
            ">";
   }
 }

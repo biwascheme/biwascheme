@@ -9,7 +9,7 @@ Console.puts = function(str, no_newline) {
 
 Console.p = function (/*ARGS*/){
   Port.current_output.put_string(
-    "p> "+_.map(_.toArray(arguments), inspect).join(" ")
+    "p> "+ Array.arrayFrom(arguments).map(inspect).join(" ")
   );
 };
 
