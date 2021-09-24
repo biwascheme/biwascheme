@@ -303,8 +303,13 @@ define_libfunc("macroexpand-1", 1, 1, function(ar){
   return macroexpand_1(ar[0]);
 });
 
-define_libfunc("gensym", 0, 0, function(ar){
-  return gensym();
+define_libfunc("gensym", 0, 1, function(ar){
+  if (ar[0] == undefined) {
+     return gensym();
+   } else {
+     assert_string(ar[0]);
+     return gensym(ar[0]);
+   }
 });
 
 // i/o
