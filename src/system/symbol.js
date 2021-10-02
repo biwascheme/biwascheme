@@ -38,8 +38,8 @@ const Sym = function(name,leaveCase){
   }
 }
 
-const gensym = function(){
-  return Sym(_.uniqueId("__gensym"));
+const gensym = function(prefix="__gensym" ){
+  return Sym(_.uniqueId(prefix));
 };
 
 export {BiwaSymbol, Symbols, Sym, gensym};
