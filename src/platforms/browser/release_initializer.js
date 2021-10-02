@@ -5,7 +5,7 @@ import Dumper from "./dumper.js"
 //
 
 const execute_user_program = function() {
-  const dumper = null;
+  let dumper = null;
   const debug_area = document.querySelector("#biwascheme-debugger");
   if (debug_area) {
     dumper = new Dumper(debug_area);
