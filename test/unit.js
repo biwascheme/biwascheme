@@ -279,6 +279,12 @@ describe('literal', {
   'string' : function() {
     ev("\"\"").should_be("");
     ev("\"a\"").should_be("a");
+    ev("\"a  b\"").should_be("a  b");
+    //TODO ev("\"a\\tb\"").should_be("a\tb");
+  },
+  'symbol' : function() {
+    ev("'a").should_be(BiwaScheme.Sym("a"));
+    ev("'|a  b|").should_be(BiwaScheme.Sym("a  b"));
   },
   'bool' : function() {
     ev("#t").should_be(true);
