@@ -22,6 +22,7 @@ class Parser {
     this.tokens.splice(this.i, 0, ...this.tokenize(txt));
   }
 
+  // Returns string representation of `this` for debugging
   inspect(){
     return [
       "#<Parser:",
@@ -31,13 +32,14 @@ class Parser {
     ].join("");
   }
 
+  // Split a string into array of tokens
   tokenize(txt) {
     var tokens = new Array(), oldTxt=null;
     var in_srfi_30_comment = 0;
 
     while( txt != "" && oldTxt != txt ) {
       oldTxt = txt;
-      txt = txt.replace( /^\s*(;[^\r\n]*(\r|\n|$)|#;|#\||#\\[^\w]|#?(\(|\[|{)|\)|\]|}|\'|`|,@|,|\+inf\.0|-inf\.0|\+nan\.0|\"(\\(.|$)|[^\"\\])*(\"|$)|[^\s()\[\]{}]+)/,
+      txt = txt.replace( /^\s*(;[^\r\n]*(\r|\n|$)|#;|#\||#\\[^\w]|#?(\(|\[|{)|\)|\]|}|\'|`|,@|,|\+inf\.0|-inf\.0|\+nan\.0|\"(\\(.|$)|[^\"\\])*(\"|$)|\|(\\(.|$)|[^\|\\])*(\||$)|[^\s()\[\]{}]+)/,
       function($0,$1) {
         var t = $1;
 
@@ -67,6 +69,7 @@ class Parser {
     return tokens;
   }
 
+  // Read a Scheme object. Skip sexp comment if any
   getObject() {
     var r = this.getObject0();
 
@@ -81,6 +84,7 @@ class Parser {
     return r;
   }
   
+  // Read a Scheme list
   getList( close ) {
     var list = nil, prev = list;
     while( this.i < this.tokens.length ) {
@@ -107,6 +111,7 @@ class Parser {
     return list;
   }
 
+  // Read a Scheme vector
   getVector( close ) {
     var arr = new Array();
     while( this.i < this.tokens.length ) {
@@ -121,6 +126,7 @@ class Parser {
     return arr;
   }
 
+  // Skip contents of sexp comment
   eatObjectsInSexpComment(err_msg) {
     while( this.tokens[ this.i ] == '#;' ) {
       this.i++;
@@ -129,6 +135,8 @@ class Parser {
     }
   } 
 
+  // Read a Scheme object
+  // Returns `sexpCommentMarker` if `#;` is found
   getObject0() {
     if( this.i >= this.tokens.length )
       return Parser.EOS;
@@ -201,10 +209,18 @@ class Parser {
           return Char.get(String.fromCharCode(scalar));
         }
       } else if( /^\"(\\(.|$)|[^\"\\])*\"?$/.test(t) ) {
+        // String literal
         return t.replace(/(\r?\n|\\n)/g, "\n").replace( /^\"|\\(.|$)|\"$/g, function($0,$1) {
           return $1 ? $1 : '';
         } );
-      } else return Sym(t);  // 2Do: validate !!
+      } else if( /^\|[^\|]*\|/.test(t) ) {
+        // Symbol literal with vertical bars (eg. `|a b|`)
+        const s = t.replace( /^\|/, "" )
+                   .replace( /\|$/, "" );
+        return Sym(s);
+      } else {
+        return Sym(t);
+      }
     }
   }
 }
