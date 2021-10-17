@@ -125,7 +125,7 @@ BiwaScheme logo by [@jcubic](https://github.com/jcubic): [Creative Commons Attri
   * http://www.cs.indiana.edu/~dyb/pubs/3imp.pdf
 
 * jsScheme
-  * http://alex.ability.ru/scheme.html (inavailable)
+  * http://alex.ability.ru/scheme.html (inavailable/[web.archive.org](https://web.archive.org/web/20070311211246/http://alex.ability.ru/scheme.html))
 
 * ExplorerCanvas (demo/excanvas.js)
   * http://excanvas.sourceforge.net/
