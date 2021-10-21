@@ -116,7 +116,12 @@ define_libfunc("element-read-attribute", 2, 2, function(ar){
 
 var element_write_attribute = function(ar) {
   assert_string(ar[1]);
-  return $(ar[0]).prop(ar[1], ar[2]);
+  if (ar[1].startsWith("data-")) {
+    // For backward compatibility. #271
+    return $(ar[0]).attr(ar[1], ar[2]);
+  } else {
+    return $(ar[0]).prop(ar[1], ar[2]);
+  }
 };
 define_libfunc("element-write-attribute", 3, 3, function(ar){
   deprecate("element-write-attribute", "1.0",
