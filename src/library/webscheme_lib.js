@@ -106,7 +106,12 @@ define_libfunc("element-identify", 1, 1, function(ar){
 });
 define_libfunc("element-read-attribute", 2, 2, function(ar){
   assert_string(ar[1]);
-  return $(ar[0]).prop(ar[1]);
+  if (ar[1].startsWith("data-")) {
+    // For backward compatibility. #271
+    return $(ar[0]).attr(ar[1]);
+  } else {
+    return $(ar[0]).prop(ar[1]);
+  }
 });
 
 var element_write_attribute = function(ar) {
