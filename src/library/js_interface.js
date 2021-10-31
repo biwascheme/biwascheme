@@ -25,7 +25,7 @@ define_libfunc("js-eval", 1, 1, function(ar){
   return eval2(ar[0]);
 });
 define_libfunc("js-ref", 2, 2, function(ar){
-  if(typeof ar[1] === "string" || Number.isInteger(ar[1)){
+  if(typeof ar[1] === "string" || Number.isInteger(ar[1])){
     return ar[0][ar[1]];
   }
   else{
