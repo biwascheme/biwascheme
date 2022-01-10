@@ -46,33 +46,4 @@ const myOrExpander = new Macro("my-or", libBsCore.environment, makeErMacroTransf
 libBsCore.environment.installExpander(Sym("my-or"), myOrExpander);
 libBsCore.export(Sym("my-or"));
 
-const _SchemeBase = List(Sym('scheme'), Sym('base'));
-const libSchemeBase = Library.create(_SchemeBase);
-libSchemeBase.import(libBsCore);
-libSchemeBase.export(Sym("if"));
-libSchemeBase.export(Sym("my-or"));
-
-const mangle = (spec) => spec.to_write;
-class Libraries {
-  constructor() {
-    this.libraries = new Map();
-  }
-  
-  get(spec) {
-    const key = mangle(spec)
-    if (this.libraries.has(key)) {
-      return this.libraries.get(key);
-    } else {
-      throw new BiwaError("unknown library", spec);
-    }
-  }
-
-  set(spec, lib) {
-    this.libraries.set(mangle(spec), lib);
-  }
-}
-
-const coreLibraries = new Libraries();
-coreLibraries.set(_SchemeBase, libSchemeBase); 
-
-export { coreLibraries };
+export { libBsCore };

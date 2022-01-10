@@ -5,11 +5,11 @@ import { Sym } from "./symbol.js"
 import Compiler from "./compiler.js"
 import { Environment } from "./expander/environment.js"
 import { Expander } from "./expander/expander.js"
-import { coreLibraries } from "./core.js"
+import { stdLibraries } from "./libraries.js"
 
 class Engine {
   constructor() {
-    this.libraries = coreLibraries;
+    this.libraries = stdLibraries;
     this.currentLibrary = null;
     this.currentToplevelEnvironment = null;
     this.currentMetaEnvironment = null;
