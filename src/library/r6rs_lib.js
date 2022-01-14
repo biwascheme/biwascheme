@@ -601,7 +601,7 @@ var mod0 = function(n, m){
   return (n > 0) ? n - Math.floor(n / m) * m
                  : n - Math.ceil(n / m) * m;
 }
-define_libfunc("div0-and-mod0", 2, 2, function(ar){
+define_libfunc("div-and-mod", 2, 2, function(ar){
   assert_number(ar[0]);
   assert_number(ar[1]);
   return new Values([div(ar[0], ar[1]), mod(ar[0], ar[1])]);
@@ -631,6 +631,35 @@ define_libfunc("mod0", 2, 2, function(ar){
   assert_number(ar[1]);
   return mod0(ar[0], ar[1]);
 })
+
+// R7RS
+alias_libfunc("div-and-mod"       , "floor/"            );
+alias_libfunc("div"               , "floor-quotient"    );
+alias_libfunc("mod"               , "floor-remainder"   );
+var truncate_q = function(n, m){
+  return Math.trunc(n / m);
+}
+var truncate_r = function(n, m){
+  return n - Math.trunc(n / m) * m;
+}
+define_libfunc("truncate/", 2, 2, function(ar){
+  assert_number(ar[0]);
+  assert_number(ar[1]);
+  return new Values([truncate_q(ar[0], ar[1]), truncate_r(ar[0], ar[1])]);
+})
+define_libfunc("truncate-quotient", 2, 2, function(ar){
+  assert_number(ar[0]);
+  assert_number(ar[1]);
+  return truncate_q(ar[0], ar[1]);
+})
+define_libfunc("truncate-remainder", 2, 2, function(ar){
+  assert_number(ar[0]);
+  assert_number(ar[1]);
+  return truncate_r(ar[0], ar[1]);
+})
+alias_libfunc("truncate-quotient" , "quotient"          );
+alias_libfunc("truncate-remainder", "remainder"         );
+alias_libfunc("floor-remainder"   , "modulo"            );
 
 //(gcd n1 ...)    procedure
 //(lcm n1 ...)    procedure
@@ -3380,10 +3409,6 @@ define_libfunc("eval", 1, 1, function(ar, intp){
 //
 //(exact->inexact z)    procedure
 //(inexact->exact z)    procedure
-//
-//(quotient n1 n2)    procedure
-//(remainder n1 n2)    procedure
-//(modulo n1 n2)    procedure
 //
 //(null-environment n)    procedure
 //(scheme-report-environment n)    procedure

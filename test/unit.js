@@ -919,7 +919,30 @@ describe('11.7 Arithmetic', {
     ev('(string->number "1.23r")').should_be(false);
     ev('(string->number "1.23R")').should_be(false);
     ev('(string->number "--1.234")').should_be(false);
-  }
+  },
+  // R7RS
+  'remainder' : function() {
+    ew('(call-with-values (lambda () (floor/ 5 2)) list)').should_be("(2 1)");
+    ew('(call-with-values (lambda () (floor/ -5 2)) list)').should_be("(-3 1)");
+    ew('(call-with-values (lambda () (floor/ 5 -2)) list)').should_be("(-3 -1)");
+    ew('(call-with-values (lambda () (floor/ -5 -2)) list)').should_be("(2 -1)");
+    ew('(call-with-values (lambda () (truncate/ 5 2)) list)').should_be("(2 1)");
+    ew('(call-with-values (lambda () (truncate/ -5 2)) list)').should_be("(-2 -1)");
+    ew('(call-with-values (lambda () (truncate/ 5 -2)) list)').should_be("(-2 1)");
+    ew('(call-with-values (lambda () (truncate/ -5 -2)) list)').should_be("(2 -1)");
+    ev('(quotient 5 2)').should_be(2); // == truncate-quotient
+    ev('(quotient -5 2)').should_be(-2);
+    ev('(quotient 5 -2)').should_be(-2);
+    ev('(quotient -5 -2)').should_be(2);
+    ev('(remainder 5 2)').should_be(1); // == truncate-remainder
+    ev('(remainder -5 2)').should_be(-1);
+    ev('(remainder 5 -2)').should_be(1);
+    ev('(remainder -5 -2)').should_be(-1);
+    ev('(modulo 5 2)').should_be(1); // == floor-remainder
+    ev('(modulo -5 2)').should_be(1);
+    ev('(modulo 5 -2)').should_be(-1);
+    ev('(modulo -5 -2)').should_be(-1);
+  },
 })
 
 describe('11.8 Booleans', {

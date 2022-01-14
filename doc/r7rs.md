@@ -67,9 +67,9 @@ Unimplemented features are marked with `[TODO]`.
 * `finite?` `infinite?` `nan?` `=` `<` `>` `<=` `>=`
 * `zero?` `positive?` `negative?` `odd?` `even?`
 * `max` `min` `+` `*` `-` `/` `abs`
-* [TODO] `floor/` `floor-quotient` `floor-remainder`
-* [TODO] `truncate/` `truncate-quotient` `truncate-remainder`
-* [TODO] `quotient` `remainder` `modulo`
+* `floor/` `floor-quotient` `floor-remainder`
+* `truncate/` `truncate-quotient` `truncate-remainder`
+* `quotient` `remainder` `modulo`
 * [TODO] `gcd` `lcm` `numerator` `denominator`
 * `floor` `ceiling` `truncate` `round`
 * [TODO] `rationalize`
