@@ -25,7 +25,7 @@
         "@rollup/plugin-replace": "^2.3.4",
         "body-parser": "^1.19.0",
         "express": "^4.17.1",
-        "marked": "^0.7.0",
+        "marked": "^4.0.10",
         "prettier": "^2.0.5",
         "rollup": "^2.8.2",
         "rollup-plugin-prettier": "^2.0.0",
