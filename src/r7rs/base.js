@@ -1,12 +1,14 @@
 import { Library, isLibrary } from "../system/expander/library.js"
 import { List, Cons, isPair, isList } from "../system/pair.js"
 import { Sym } from "../system/symbol.js"
-import { libBsCore } from "../system/core.js"
+import { installCore } from "../system/expander/core.js"
+import { installBoolean } from "./boolean.js"
+import { installControlFeatures } from "./control_features.js"
 
 const libSchemeBase = Library.create(List(Sym('scheme'), Sym('base')));
-libSchemeBase.import(libBsCore);
-libSchemeBase.export(Sym("if"));
-libSchemeBase.export(Sym("my-or"));
+installCore(libSchemeBase);
+installBoolean(libSchemeBase);
+installControlFeatures(libSchemeBase);
 
 export { libSchemeBase };
 

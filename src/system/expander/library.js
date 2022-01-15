@@ -5,7 +5,7 @@ import { BiwaError } from "../error.js"
 import { List, array_to_list, Cons, isPair, isList } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { Environment } from "./environment.js"
-import { isMacro } from "./macro.js"
+import { isMacro, Macro } from "./macro.js"
 
 // A R7RS library.
 class Library {
@@ -72,6 +72,12 @@ class Library {
     return ret;
   }
 
+  exportMacro(sym, transformer) {
+    const expander = new Macro(sym.name, this.environment, transformer);
+    this.environment.installExpander(sym, expander);
+    this.export(sym);
+  }
+
   // Register an export item of the current library
   // `spec` is either a symbol or `(id nickname)`
   export(spec) {
@@ -81,16 +87,11 @@ class Library {
     } else {
       id = spec.cdr.car; nickname = spec.cdr.cdr.car;
     }
-    this.addExport(nickname, id);
+    this.exports.set(nickname, id);
   }
 
   static _interpretCondExpand(clauses) {
     TODO
-  }
-
-  // Register `id` as exported item of this library
-  addExport(nickname, id) {
-    this.exports.set(nickname, id);
   }
 
   to_write() {

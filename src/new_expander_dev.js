@@ -1,3 +1,5 @@
+// Acknowledgement: https://github.com/nyuichi/r7expander
+//
 // How to run
 //   $ node ./src/new_expander_dev.js
 // See https://github.com/biwascheme/biwascheme/pull/192#issuecomment-673534970
