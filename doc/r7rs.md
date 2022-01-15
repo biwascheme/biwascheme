@@ -62,7 +62,7 @@ Unimplemented features are marked with `[TODO]`.
 
 * (number/complex/real/rational/integer)
 * [TODO] `exact?` `inexact?` `exact-integer?` `exact` `inexact`
-* [TODO] `#b`, `#o`, `#e`, `#i`
+* [TODO] `#e`, `#i`
 * `number?` `complex?` `real?` `rational?` `integer?`
 * `finite?` `infinite?` `nan?` `=` `<` `>` `<=` `>=`
 * `zero?` `positive?` `negative?` `odd?` `even?`

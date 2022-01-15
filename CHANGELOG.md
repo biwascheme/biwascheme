@@ -1,3 +1,15 @@
+## HEAD
+
+- feat: parse symbols like `|a b|` (#270)
+- feat: parse `#o`, `#b` (#258)
+- feat: R7RS divisions such as `modulo` or `remainder` (#277)
+- feat: `gensym` accepts string prefix (#266)
+- feat: `js-ref` can take integers eg. `(js-ref ary 1)` (#273)
+- fix: regression of `element-read-attribute`, `element-write-attribute!` (#271)
+- fix: `js-obj` gives error "i is not defined' when called (#255)
+- internal: replaced `BiwaScheme.Class` with es6 class (#240)
+- internal/experimental: add prototype of new macro expander (#259)
+
 ## 2021-07-25 v0.7.4
 
 ### Possible breaking change
