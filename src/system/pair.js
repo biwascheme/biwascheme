@@ -14,10 +14,23 @@ class Pair {
     this.cdr = cdr;
   }
 
-  caar(){ return this.car.car; }
-  cadr(){ return this.cdr.car; }
-  cdar(){ return this.cdr.car; }
-  cddr(){ return this.cdr.cdr; }
+  // Returns `this.car.car`. If `err` is given and `this.car` is not a pair,
+  // throws `err`.
+  caar(err){ return this._get(["car", "car"], err) }
+  cadr(err){ return this._get(["cdr", "car"], err) }
+  cdar(err){ return this._get(["cdr", "car"], err) }
+  cddr(err){ return this._get(["cdr", "cdr"], err) }
+  _get(props, err) {
+    let x = this;
+    props.forEach(p => {
+      if (x.hasOwnProperty(p)) {
+        return x[p];
+      } else if (err) {
+        throw err;
+      }
+    });
+    return x;
+  }
 
   first(){ return this.car; }
   second(){ return this.cdr.car; }
