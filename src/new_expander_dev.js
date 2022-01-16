@@ -1,3 +1,5 @@
+// Acknowledgement: https://github.com/nyuichi/r7expander
+//
 // How to run
 //   $ node ./src/new_expander_dev.js
 // See https://github.com/biwascheme/biwascheme/pull/192#issuecomment-673534970
@@ -13,8 +15,8 @@ const engine = new Engine();
 
 const forms = array_to_list(Parser.parse(`
   (import (scheme base))
+  ;(let ((a 1)) (+ a 1))
   (if a b c)
-  ;;(my-or tmp 1)
 `));
 
 engine.expandToplevelProgram(forms)
