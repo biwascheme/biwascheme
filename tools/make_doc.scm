@@ -1,5 +1,5 @@
 ;; Load npm markdown package
-(define marked (node-require "marked"))
+(define marked (.. (node-require "marked") 'marked))
 (define fs (node-require "fs"))
 
 ;; Return list of entries in the directory `path`
