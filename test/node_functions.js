@@ -3,7 +3,6 @@
 //
 // $ npm run node-test
 var BiwaScheme = require('..'),
-    _ = require('underscore'),
     assert = require('assert'),
     fs = require('fs'),
     path = require('path'),
@@ -90,9 +89,9 @@ var tests = {
   }
 };
 
-tests.forEach(function(func, name){
+for (const name in tests) {
   puts("- "+name);
-  func();
-});
+  tests[name]();
+}
 
 puts("test ok");
