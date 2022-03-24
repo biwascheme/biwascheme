@@ -1,4 +1,4 @@
-## HEAD
+## 2022-03-24 v0.7.5
 
 - feat: parse symbols like `|a b|` (#270)
 - feat: parse `#o`, `#b` (#258)
@@ -7,6 +7,7 @@
 - feat: `js-ref` can take integers eg. `(js-ref ary 1)` (#273)
 - fix: regression of `element-read-attribute`, `element-write-attribute!` (#271)
 - fix: `js-obj` gives error "i is not defined' when called (#255)
+- fix: regression of `js-eval` on Node.js (#282)
 - internal: replaced `BiwaScheme.Class` with es6 class (#240)
 - internal/experimental: add prototype of new macro expander (#259)
 
