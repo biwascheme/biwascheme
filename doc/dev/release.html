@@ -29,19 +29,27 @@
 <ol>
 <li>Edit CHANGELOG.md</li>
 <li>Edit package.json</li>
-<li>Build<ul>
+<li>Build</li>
+</ol>
+<ul>
 <li>$ rollup -c</li>
 </ul>
-</li>
-<li>Create release/biwascheme-x.y.z.js<ul>
+<ol>
+<li>Create release/biwascheme-x.y.z.js</li>
+</ol>
+<ul>
 <li>$ npm run prepare-release</li>
 </ul>
-</li>
-<li>Rebuild website<ul>
+<ol>
+<li>Rebuild website</li>
+</ol>
+<ul>
 <li>$ make website -B</li>
 </ul>
-</li>
-<li>Make sure it is working:<ul>
+<ol>
+<li>Make sure it is working:</li>
+</ol>
+<ul>
 <li>run tests<ul>
 <li>npm run serve</li>
 <li>open <a href="http://localhost:7001/test/spec.html">http://localhost:7001/test/spec.html</a></li>
@@ -68,11 +76,13 @@
 </ul>
 </li>
 </ul>
-</li>
-<li>Commit, <code>git tag</code> and push changes to github. Publish npm package<ul>
+<ol>
+<li>Commit, <code>git tag</code> and push changes to github. Publish npm package</li>
+</ol>
+<ul>
 <li>$ npm run release</li>
 </ul>
-</li>
+<ol>
 <li>Make a release on <a href="https://github.com/biwascheme/biwascheme/releases">github</a></li>
 <li>Post release mail to the mailing list</li>
 </ol>

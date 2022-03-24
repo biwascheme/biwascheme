@@ -160,7 +160,8 @@
     #t
     (print (format &quot;test failed: ~a&quot; (quote ,expr)))))
 
-(test (= 1 2)) ;=&gt; test failed: (= 1 2)</code></pre>
+(test (= 1 2)) ;=&gt; test failed: (= 1 2)
+</code></pre>
 <p>Other macro-related functions:</p>
 <ul>
 <li><code>macroexpand</code> <code>macroexpand-1</code> <code>%macroexpand</code> <code>%macroexpand-1</code> <code>gensym</code></li>
@@ -346,7 +347,7 @@ for full list of <code>~?</code></li>
 <li><code>(clear-timer! timer-id)</code> = clearInterval</li>
 <li><code>(sleep sec)</code><ul>
 <li>Blocking sleep. <code>(sleep 3)</code> will wait 3 seconds and then 
-BiwaScheme resumes running the rest of the code. </li>
+BiwaScheme resumes running the rest of the code.</li>
 </ul>
 </li>
 </ul>
@@ -410,7 +411,9 @@ BiwaScheme resumes running the rest of the code. </li>
   (element-new &#39;(&quot;div#main&quot; &quot;foo&quot;)) =&gt; &lt;div id=&#39;main&#39;&gt;foo&lt;/div&gt;
   (element-new &#39;(&quot;div.red&quot; &quot;foo&quot;))  =&gt; &lt;div class=&#39;red&#39;&gt;foo&lt;/div&gt;
   (element-new &#39;(div align &quot;right&quot; &quot;foo&quot;))  =&gt; &lt;div align=&#39;right&#39;&gt;foo&lt;/div&gt;
-  (element-new &#39;(div (span &quot;foo&quot;))  =&gt; &lt;div&gt;&lt;span&gt;foo&lt;/span&gt;&lt;/div&gt;</code></pre><ul>
+  (element-new &#39;(div (span &quot;foo&quot;))  =&gt; &lt;div&gt;&lt;span&gt;foo&lt;/span&gt;&lt;/div&gt;
+</code></pre>
+<ul>
 <li><p><code>(getelem selector)</code> = <code>($ selector)</code></p>
 <ul>
 <li>Same as <code>jQuery(selector)</code> except returns <code>#f</code> when no element is found</li>
@@ -536,7 +539,8 @@ BiwaScheme waits until <code>window.Foo</code> is defined.</li>
 (define path &quot;.&quot;)
 (print (js-invoke fs &#39;readdirSync path))
 ; Alternatively you can use `..` macro syntax:
-; (print (.. fs `(readdirSync ,path)))</code></pre>
+; (print (.. fs `(readdirSync ,path)))
+</code></pre>
 <h3 id="biwascheme-javascript-api">BiwaScheme JavaScript API</h3>
 <a name="js-api" />
 
@@ -548,7 +552,8 @@ var biwa = new BiwaScheme.Interpreter(onError)
 biwa.evaluate(&quot;(+ 1 2)&quot;, function(result) {
   alert(result);  //=&gt; 3
 });
-&lt;/script&gt;</code></pre>
+&lt;/script&gt;
+</code></pre>
 <h4 id="define-library-function">Define library function</h4>
 <p>You can write JavaScript library function with <code>BiwaScheme.define_libfunc</code>.</p>
 <ul>
@@ -561,7 +566,8 @@ biwa.evaluate(&quot;(+ 1 2)&quot;, function(result) {
   BiwaScheme.assert_integer(ar[0]);
   BiwaScheme.assert_integer(ar[1]);
   return ar[0] + ar[1];
-});</code></pre>
+});
+</code></pre>
 <p>See <code>src/library/*.js</code> for more examples.</p>
 <h4 id="stringify-scheme-object">Stringify scheme object</h4>
 <ul>

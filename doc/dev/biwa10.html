@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>BiwaScheme</title>
+    <link href="/website/css/screen.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css" rel="stylesheet"/>
+    <link href="/website/css/prism-coy.css" rel="stylesheet" type="text/css"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+  <body>
+    <a href="https://github.com/biwascheme/biwascheme"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+    <div id="menu">
+      <a href="/index.html">
+        <img src="/website/images/biwascheme_logo.png" alt="logo"
+             title="BiwaScheme logo by @jcubic">
+      </a>
+      <ul>
+        <li><a href='/doc/features.html'>Features</a></li>
+        <li><a href='/doc/getting_started.html'>Getting Started</a></li>
+        <li><a href='/doc/reference.html'>Reference</a></li>
+        <li><a href='/doc/faq.html'>FAQ</a></li>
+        <li><a href='/doc/index.html'>Other docs</a></li>
+      </ul>
+    </div>
+    <div id="content">
+<h1 id="biwascheme-10">BiwaScheme 1.0</h1>
+<p>Ideas for BiwaScheme 1.0</p>
+<h2 id="new-features">New features</h2>
+<ul>
+<li>r7rs library system</li>
+<li>hygenic macro<ul>
+<li>er-macro-transformer at least</li>
+<li>syntax-rules maybe</li>
+</ul>
+</li>
+</ul>
+<p>This does not mean BiwaScheme 1.0 will be 100% r7rs compatible. Aside library system and syntax-rules, largest missing feature will be exception system. </p>
+<p>Nevertheless I&#39;d like to give it 1.0 rather than 0.x because the above two are largest jump from 0.x and there will be some backward incompatibilities.</p>
+<h2 id="js-promise">JS Promise</h2>
+<p>BiwaScheme 1.0 will return the result by JS Promise. For example:</p>
+<pre><code class="language-js">const biwa = new BiwaScheme.Engine();
+biwa.run(&quot;(+ 1 2)&quot;)
+  .then(function(result) {
+    console.log(result)
+  })
+  .catch(function(error) {
+    console.error(error)
+  })
+</code></pre>
+<h2 id="biwaschemeengine">BiwaScheme.Engine</h2>
+<p>In BiwaScheme 0.x, scheme values are stored in <code>BiwaScheme.TopEnv</code>. It means all values are shared among instances of <code>BiwaScheme.Interpreter</code>.</p>
+<p>For example, suppose embedding scheme code in a blog post. In BiwaScheme 0.x you need to be careful one program does not affect others. In BiwaScheme 1.0, toplevel values are stored in <code>BiwaScheme.Engine</code> and not shared with other engines.</p>
+<h2 id="r7rs-library-system">R7RS library system</h2>
+<p>BiwaScheme 0.x loads all the libraries in src/library/ by default. You will need explicit <code>(import ...)</code> in 1.0.</p>
+<p>For convenience, there should be a way to import all the libraries available in 0.x (like <code>(import (biwa compat))</code> or something.)</p>
+<h2 id="development-details">Development details</h2>
+<h3 id="asyncawait-based-expander">async/await based expander</h3>
+<p>The new macro expander uses JS async/await. It is possible to write it
+without async/await, but in that case all functions must convey continuation
+(Continuation Passing Style.)</p>
+<h3 id="define-library-with-javascript-tentative">Define library with JavaScript (tentative)</h3>
+<pre><code class="language-js">const _BiwaExtra = List(Sym(&#39;biwa&#39;), Sym(&#39;extra&#39;));
+const libBiwaExtra = Library.create(_BiwaExtra);
+// case 1: normal function which returns normal value (= Basic API)
+libBiwaExtra.environment.set(Sym(&#39;func1&#39;), ([proc, engine]) =&gt; {
+  return 123;
+});
+// case 2: async function which returns normal value
+// (= Synchronous but non-blocking API. In BiwaScheme 0.x these are
+// implemented with BiwaScheme.Pause)
+libBiwaExtra.environment.set(Sym(&#39;func2&#39;), async ([proc, engine]) =&gt; {
+  await new Promise(resolve =&gt; setTimeout(resolve, 3000))
+  return 123;
+});
+// case 3: normal function which returns js Promise (= Asynchronous API)
+libBiwaExtra.environment.set(Sym(&#39;func3&#39;), ([proc, engine]) =&gt; {
+  return fetch(url);
+});
+// case 4: async function which returns js Promise
+// (This is not recommended; Just `return someAsyncFunc()` is fine)
+libBiwaExtra.environment.set(Sym(&#39;func4&#39;), async ([proc, engine]) =&gt; {
+  return await someAsyncFunc();
+});
+</code></pre>
+<p>The difference between case 2 and 3 are important. In Scheme level,
+<code>func2</code> returns a Scheme value while <code>func3</code> returns a JS Object (Promise).</p>
+<h3 id="todos">TODOs</h3>
+<ul>
+<li>Implement basic constructs such as <code>lambda</code>, <code>define</code></li>
+<li>Integrate <code>Compiler</code> and <code>Interpreter</code> with <code>Engine</code></li>
+<li>Design how <code>import</code> and <code>include</code> works in browser and on Node.js</li>
+<li>Provide existing libraries as r7rs lib</li>
+</ul>
+<h3 id="how-to-try-the-new-expander">How to try the new expander</h3>
+<p>Edit those two files and <code>node src/new_expander_dev.js</code></p>
+<pre><code class="language-diff">--- a/package.json
++++ b/package.json
+@@ -1,4 +1,5 @@
+ {
++    &quot;type&quot;: &quot;module&quot;,
+     &quot;name&quot;: &quot;biwascheme&quot;,
+     &quot;description&quot;: &quot;A practical Scheme interpreter written in JavaScript&quot;,
+--- a/src/platforms/node/node_functions.js
++++ b/src/platforms/node/node_functions.js
+@@ -11,8 +11,8 @@ import { run } from &quot;./run.js&quot;
+ //
+
+ const node = {
+-  fs: require(&#39;fs&#39;),
+-  path: require(&#39;path&#39;),
++//  fs: require(&#39;fs&#39;),
++//  path: require(&#39;path&#39;),
+   process: process
+ };
+</code></pre>
+    </div>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2023947-5', 'auto');
+      ga('send', 'pageview');
+    </script>
+    <script src="/release/biwascheme-@VERSION@-min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-scheme.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/prism.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-polyfills/keyboard.js"></script>
+    <script src="/website/js/biwascheme_terminal.js" type="text/javascript"></script>
+  </body>
+</html>

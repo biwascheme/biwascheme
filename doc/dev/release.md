@@ -26,7 +26,6 @@
     - `$ npm pack`
     - `$ npm install -g biwascheme-x.y.z.tgz`
     - `$ biwas -v`
-1. Commit, `git tag` and push changes to github. Publish npm package
-  - $ npm run release
+1. `git add` changed files and `npm run release`
 1. Make a release on [github](https://github.com/biwascheme/biwascheme/releases)
 1. Post release mail to the mailing list
