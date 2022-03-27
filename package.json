@@ -27,6 +27,7 @@
         "express": "^4.17.1",
         "marked": "^4.0.10",
         "prettier": "^2.0.5",
+        "puppeteer": "^13.5.1",
         "rollup": "^2.8.2",
         "rollup-plugin-prettier": "^2.0.0",
         "rollup-plugin-terser": "^7.0.0",
