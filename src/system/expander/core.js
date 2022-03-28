@@ -1,9 +1,11 @@
+//
 // Expanders for core syntaxes
+//
 import { List, Cons, isPair, isList } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { isIdentifier } from "./syntactic_closure.js"
 
-const lambdaExpander = async ([form, xp]) => {
+const expandLambda = async ([form, xp]) => {
   const err = new BiwaError("malformed lambda", form);
   const l = form.to_array();
   if (l.length < 3) throw err;
@@ -19,24 +21,40 @@ const lambdaExpander = async ([form, xp]) => {
            Cons(newFormals, newBody));
 };
 
-const installCore = (lib) => {
-  lib.exportMacro(Sym("if"), async ([form, xp]) => {
-    const l = form.to_array();
-    switch (l.length) {
-      case 3:
-        return List(Sym("if"), await xp.expand(l[1]), await xp.expand(l[2]));
-      case 4:
-        return List(Sym("if"), await xp.expand(l[1]), await xp.expand(l[2]), await xp.expand(l[3]));
-      default:
-        throw new BiwaError("malformed if", form);
-    }
-  });
-
-  lib.exportMacro(Sym("lambda"), lambdaExpander);
-
-  //TODO
-  //lib.environment.installToplevelBinding(Sym("cons"), CoreEnv["cons"]);
-  //lib.export(Sym("cons"));
+const expandIf = async ([form, xp]) => {
+  const l = form.to_array();
+  switch (l.length) {
+    case 3:
+      return List(Sym("if"), await xp.expand(l[1]), await xp.expand(l[2]));
+    case 4:
+      return List(Sym("if"), await xp.expand(l[1]), await xp.expand(l[2]), await xp.expand(l[3]));
+    default:
+      throw new BiwaError("malformed if", form);
+  }
 };
 
+// TODO
+// const expandDefine
+// const expandBegin
+// const expandQuote
+// const expandSet
+// const expandCallCc
+
+// TODO
+// const expandDefineRecordType
+// const expandParameterize
+// const expandDefineSyntax
+// const expandLetSyntax
+// const expandLetrecSyntax
+// const expandSyntaxError
+// const expandInclude
+// const expandIncludeCi
+// const expandIfExpand
+// const expandCaseLambda
+
+// Install core expanders into `lib`
+const installCore = (lib) => {
+  lib.exportMacro(Sym("if"), expandIf);
+  lib.exportMacro(Sym("lambda"), expandLambda);
+};
 export { installCore };

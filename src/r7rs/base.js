@@ -13,7 +13,4 @@ installControlFeatures(libSchemeBase);
 export { libSchemeBase };
 
 // TODO
-//define-record-type 
 //equal?  eq?  eqv? 
-//include-ci 
-//include
