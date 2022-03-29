@@ -3,7 +3,7 @@
 //
 import { List, Cons, isPair, isList } from "../pair.js"
 import { Sym } from "../symbol.js"
-import { isIdentifier } from "./syntactic_closure.js"
+import { isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
 
 const expandLambda = async ([form, xp]) => {
   const err = new BiwaError("malformed lambda", form);
@@ -33,10 +33,19 @@ const expandIf = async ([form, xp]) => {
   }
 };
 
+const expandQuote = async ([form, xp]) => {
+  const l = form.to_array();
+  switch (l.length) {
+    case 2:
+      return List(Sym("quote"), unwrapSyntax(l[1]));
+    default:
+      throw new BiwaError("malformed quote", form);
+  }
+};
+
 // TODO
 // const expandDefine
 // const expandBegin
-// const expandQuote
 // const expandSet
 // const expandCallCc
 
@@ -54,7 +63,8 @@ const expandIf = async ([form, xp]) => {
 
 // Install core expanders into `lib`
 const installCore = (lib) => {
-  lib.exportMacro(Sym("if"), expandIf);
   lib.exportMacro(Sym("lambda"), expandLambda);
+  lib.exportMacro(Sym("if"), expandIf);
+  lib.exportMacro(Sym("quote"), expandQuote);
 };
 export { installCore };
