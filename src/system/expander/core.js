@@ -53,10 +53,19 @@ const expandSet = async ([form, xp]) => {
   }
 };
 
+const expandCallCc = async ([form, xp]) => {
+  const l = form.to_array();
+  switch (l.length) {
+    case 2:
+      return List(Sym("call/cc"), await xp.expand(l[1]));
+    default:
+      throw new BiwaError("malformed call/cc", form);
+  }
+};
+
 // TODO
 // const expandDefine
 // const expandBegin
-// const expandCallCc
 
 // TODO
 // const expandDefineRecordType
@@ -76,5 +85,6 @@ const installCore = (lib) => {
   lib.exportMacro(Sym("if"), expandIf);
   lib.exportMacro(Sym("quote"), expandQuote);
   lib.exportMacro(Sym("set!"), expandSet);
+  lib.exportMacro(Sym("call/cc"), expandCallCc);
 };
 export { installCore };
