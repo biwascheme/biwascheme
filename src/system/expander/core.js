@@ -43,10 +43,19 @@ const expandQuote = async ([form, xp]) => {
   }
 };
 
+const expandSet = async ([form, xp]) => {
+  const l = form.to_array();
+  switch (l.length) {
+    case 3:
+      return List(Sym("set!"), await xp.expand(l[1]), await xp.expand(l[2]));
+    default:
+      throw new BiwaError("malformed set!", form);
+  }
+};
+
 // TODO
 // const expandDefine
 // const expandBegin
-// const expandSet
 // const expandCallCc
 
 // TODO
@@ -66,5 +75,6 @@ const installCore = (lib) => {
   lib.exportMacro(Sym("lambda"), expandLambda);
   lib.exportMacro(Sym("if"), expandIf);
   lib.exportMacro(Sym("quote"), expandQuote);
+  lib.exportMacro(Sym("set!"), expandSet);
 };
 export { installCore };

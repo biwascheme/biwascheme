@@ -96,8 +96,8 @@ The difference between case 2 and 3 are important. In Scheme level,
     - lambda
     - define
     - begin
-    - quote
-    - set!
+    + quote
+    + set!
     - call/cc
   - lower priority
     - define-record-type
