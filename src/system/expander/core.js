@@ -63,9 +63,13 @@ const expandCallCc = async ([form, xp]) => {
   }
 };
 
+const expandBegin = async ([form, xp]) => {
+  const body = await form.cdr.mapAsync(item => xp.expand(item));
+  return Cons(Sym("begin"), body);
+};
+
 // TODO
 // const expandDefine
-// const expandBegin
 
 // TODO
 // const expandDefineRecordType
@@ -86,5 +90,6 @@ const installCore = (lib) => {
   lib.exportMacro(Sym("quote"), expandQuote);
   lib.exportMacro(Sym("set!"), expandSet);
   lib.exportMacro(Sym("call/cc"), expandCallCc);
+  lib.exportMacro(Sym("begin"), expandBegin);
 };
 export { installCore };
