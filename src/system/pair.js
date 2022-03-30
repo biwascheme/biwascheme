@@ -194,6 +194,26 @@ const isList = function(obj){
   }
 };
 
+// Takes a JS Array of lists and destructively concatenates them.
+// Returns a concatenated list.
+const concatLists = (lists) => {
+  if (lists.length == 0) return nil;
+  let dst = nil;
+  let tail;
+  for (const list of lists) { 
+    if (dst === nil) {
+      dst = list;
+    } else {
+      tail.cdr = list;
+    }
+    tail = list;
+    while(tail instanceof Pair && tail.cdr != nil){
+      tail = tail.cdr;
+    }
+  }
+  return dst;
+}
+
 // Creates a list out of the arguments, optionally converting any nested arrays into nested lists if the deep argument is true.
 // Example:
 //   BiwaScheme.List(1, 2, [3, 4]) ;=> (list 1 2 (vector 3 4))
@@ -254,5 +274,5 @@ const alist_to_js_obj = function(alist) {
   return obj;
 };
 
-export { Pair, List, isPair, isList, array_to_list, deep_array_to_list, Cons,
+export { Pair, List, isPair, isList, concatLists, array_to_list, deep_array_to_list, Cons,
          js_obj_to_alist, alist_to_js_obj };
