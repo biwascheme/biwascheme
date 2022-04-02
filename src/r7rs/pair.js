@@ -6,3 +6,6 @@
 // set-cdr!  length list-copy list-set!  list?  make-list map
 // pair?  null? list->string 
 
+  //TODO
+  //lib.environment.installToplevelBinding(Sym("cons"), CoreEnv["cons"]);
+  //lib.export(Sym("cons"));

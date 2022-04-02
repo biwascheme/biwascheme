@@ -78,9 +78,32 @@ libBiwaExtra.environment.set(Sym('func4'), async ([proc, engine]) => {
 The difference between case 2 and 3 are important. In Scheme level,
 `func2` returns a Scheme value while `func3` returns a JS Object (Promise).
 
+### Key files
+
+- src/
+  - new_expander_dev.js : Temporary entry point
+  - r7rs/ : Will contain R7RS small functions
+  - system/
+    - engine.js
+    - expander/
+      - core.js : Expanders for core syntaxes
+
 ### TODOs
 
-- Implement basic constructs such as `lambda`, `define`
+- Implement basic constructs 
+  - high priority
+    + if
+    - lambda
+    - define
+    - begin
+    + quote
+    + set!
+    - call/cc
+  - lower priority
+    - define-record-type
+    - parameterize
+    - define-syntax, let-syntax, letrec-syntax, syntax-error
+    - include, include-ci, if-expand, case-lambda
 - Integrate `Compiler` and `Interpreter` with `Engine`
 - Design how `import` and `include` works in browser and on Node.js
 - Provide existing libraries as r7rs lib

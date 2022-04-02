@@ -6,10 +6,8 @@ import { makeErMacroTransformer } from "../system/expander/macro_transformer.js"
 // TODO
 // procedure?
 // apply
-// set!
 // unless
 // when 
-// quote
 // quasiquote
 // unquote
 // unquote-splicing 
@@ -22,11 +20,7 @@ import { makeErMacroTransformer } from "../system/expander/macro_transformer.js"
 // cond-expand 
 // case
 // case-lambda
-// begin
-// define 
 // make-parameter 
-// parameterize
-// lambda
 // features
 
 const installControlFeatures = (lib) => { 

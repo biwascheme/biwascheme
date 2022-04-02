@@ -1,3 +1,2 @@
-call/cc
-call-with-current-continuation
-dynamic-wind
+//call-with-current-continuation
+//dynamic-wind
