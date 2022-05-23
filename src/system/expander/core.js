@@ -68,18 +68,18 @@ const expandBegin = async ([form, xp]) => {
   return Cons(Sym("begin"), body);
 };
 
-const expandDefine = async ([form, xp]) => {
+// Destructively modifies `env`
+const expandDefine = async ([form, xp, env]) => {
   const l = form.to_array();
   switch (l.length) {
     case 3:
-      const env = xp.engine.currentToplevelEnvironment; // really?
       const [_, formal, expr] = l;
       if (!isIdentifier(formal)) {
         throw new BiwaError("malformed define", form);
       }
       env.extend(formal);
       const id = await xp.expand(formal);
-      const body = env.isToplevel() ? (await xp.xpand(expr))
+      const body = env.isToplevel() ? (await xp.expand(expr))
                                     : expr; // Expand later on
       return List(Sym("define"), id, body);
     default:
@@ -107,5 +107,6 @@ const installCore = (lib) => {
   lib.exportMacro(Sym("set!"), expandSet);
   lib.exportMacro(Sym("call/cc"), expandCallCc);
   lib.exportMacro(Sym("begin"), expandBegin);
+  lib.exportMacro(Sym("define"), expandDefine);
 };
 export { installCore };
