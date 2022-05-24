@@ -4,6 +4,19 @@
 import { List, Cons, isPair, isList } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
+import { identifierEquals } from "./environment.js"
+import { makeErMacroTransformer } from "./macro_transformer.js"
+
+// Creates macro transformer written in syntax-rules.
+function interpretTransformerSpec(spec, env, metaEnv)
+{
+  if (isIdentifier(spec.car)) {
+    if (identifierEquals(spec.car, env, Sym("syntax-rules"), metaEnv)) {
+      return TODO;
+    }
+  }
+  throw new BiwaError("unknown macro transformer spec", spec);
+}
 
 // `begin`
 const expandBegin = async ([form, xp]) => {
@@ -39,6 +52,23 @@ const expandDefine = async ([form, xp, env]) => {
       return List(Sym("define"), id, body);
     default:
       throw new BiwaError("malformed define", form);
+  }
+};
+
+// `define-syntax`
+const expandDefineSyntax = async ([form, xp, env, metaEnv]) => {
+  const l = form.to_array();
+  switch (l.length) {
+    case 3:
+      const [_, keyword, transformerSpec] = l;
+      if (!isIdentifier(keyword)) {
+        throw new BiwaError("malformed define-syntax", form);
+      }
+      const expander = interpretTransformerSpec(transformerSpec, env, metaEnv);
+      env.installExpander(keyword, expander);
+      return List(Sym("begin"));
+    default:
+      throw new BiwaError("malformed define-syntax", form);
   }
 };
 
@@ -97,7 +127,6 @@ const expandSet = async ([form, xp]) => {
 // TODO
 // const expandDefineRecordType
 // const expandParameterize
-// const expandDefineSyntax
 // const expandLetSyntax
 // const expandLetrecSyntax
 // const expandSyntaxError
@@ -111,6 +140,7 @@ const installCore = (lib) => {
   lib.exportMacro(Sym("begin"), expandBegin);
   lib.exportMacro(Sym("call/cc"), expandCallCc);
   lib.exportMacro(Sym("define"), expandDefine);
+  lib.exportMacro(Sym("define-syntax"), expandDefineSyntax);
   lib.exportMacro(Sym("if"), expandIf);
   lib.exportMacro(Sym("lambda"), expandLambda);
   lib.exportMacro(Sym("quote"), expandQuote);
