@@ -3,6 +3,7 @@ import { isFunction } from "../_types.js"
 
 // A macro expander (pair of transformer and environment)
 class Macro {
+  // original: make-expander
   constructor(dbgName, environment, transformer) {
     this.environment = environment; // An `Environment`
     this.dbgName = dbgName; // String (for debugging use; may be empty)

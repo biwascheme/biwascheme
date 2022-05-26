@@ -8,11 +8,12 @@ import { identifierEquals } from "./environment.js"
 import { makeErMacroTransformer } from "./macro_transformer.js"
 
 // Creates macro transformer written in syntax-rules.
+// @return { Macro } A macro transformer bound with `env`
 function interpretTransformerSpec(spec, env, metaEnv)
 {
   if (isIdentifier(spec.car)) {
     if (identifierEquals(spec.car, env, Sym("syntax-rules"), metaEnv)) {
-      return TODO;
+      return new Macro("(syntax-rules)", env, interpretSyntaxRules(spec));
     }
   }
   throw new BiwaError("unknown macro transformer spec", spec);
@@ -102,6 +103,44 @@ const expandLambda = async ([form, xp]) => {
            Cons(newFormals, newBody));
 };
 
+// `let-syntax`
+const expandLetSyntax = async ([form, xp, env, metaEnv]) => {
+  const err = new BiwaError("malformed let-syntax", form);
+  const l = form.to_array();
+  if (l.length < 3) throw err;
+  const bindings = form.cdr.car;
+  const body = form.cdr.cdr;
+
+  const newEnv = env.clone();
+  bindings.forEach(pair => {
+    const [keyword, transformerSpec] = pair;
+    const expander = interpretTransformerSpec(transformerSpec, env, metaEnv);
+    newEnv.installExpander(keyword, expander);
+  });
+
+  const _lambda = metaEnv.makeIdentifier(Sym('lambda'));
+  return xp.expand(List(Cons(_lambda, Cons(List(), body)), newEnv));
+};
+
+// `letrec-syntax`
+const expandLetRecSyntax = async ([form, xp, env, metaEnv]) => {
+  const err = new BiwaError("malformed letrec-syntax", form);
+  const l = form.to_array();
+  if (l.length < 3) throw err;
+  const bindings = form.cdr.car;
+  const body = form.cdr.cdr;
+
+  const newEnv = env.clone();
+  bindings.forEach(pair => {
+    const [keyword, transformerSpec] = pair;
+    const expander = interpretTransformerSpec(transformerSpec, newEnv, metaEnv);
+    newEnv.installExpander(keyword, expander);
+  });
+
+  const _lambda = metaEnv.makeIdentifier(Sym('lambda'));
+  return xp.expand(List(Cons(_lambda, Cons(List(), body)), newEnv));
+};
+
 // `quote`
 const expandQuote = async ([form, xp]) => {
   const l = form.to_array();
@@ -127,8 +166,6 @@ const expandSet = async ([form, xp]) => {
 // TODO
 // const expandDefineRecordType
 // const expandParameterize
-// const expandLetSyntax
-// const expandLetrecSyntax
 // const expandSyntaxError
 // const expandInclude
 // const expandIncludeCi
@@ -143,6 +180,8 @@ const installCore = (lib) => {
   lib.exportMacro(Sym("define-syntax"), expandDefineSyntax);
   lib.exportMacro(Sym("if"), expandIf);
   lib.exportMacro(Sym("lambda"), expandLambda);
+  lib.exportMacro(Sym("let-syntax"), expandLetSyntax);
+  lib.exportMacro(Sym("letrec-syntax"), expandLetRecSyntax);
   lib.exportMacro(Sym("quote"), expandQuote);
   lib.exportMacro(Sym("set!"), expandSet);
 };

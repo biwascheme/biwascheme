@@ -98,8 +98,8 @@ The difference between case 2 and 3 are important. In Scheme level,
     + begin
     + quote
     + set!
-    - define-syntax, let-syntax, letrec-syntax (to check current impl is ok)
-    - call/cc
+    + define-syntax, let-syntax, letrec-syntax
+    + call/cc
   - lower priority
     - define-record-type
     - parameterize
