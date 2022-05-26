@@ -153,6 +153,10 @@ class Environment {
     return newEnv;
   }
 
+  clone() {
+    return this.extended([]);
+  }
+
   // Bind `expander` to a `keyword`.
   // Error if `keyword` is already bound
   installExpander(keyword, expander) {

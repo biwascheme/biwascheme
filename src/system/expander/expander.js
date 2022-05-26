@@ -2,7 +2,7 @@ import { undef, nil } from "../../header.js"
 import { isSymbol, isVector } from "../_types.js"
 import { to_write } from "../_writer.js"
 import { BiwaError, Bug } from "../error.js"
-import { Cons, List, isPair, isList, concatLists, array_to_list } from "../pair.js"
+import { Cons, List, isPair, isList, array_to_list } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { isSyntacticClosure, isIdentifier } from "./syntactic_closure.js"
 import { isMacro } from "./macro.js"
@@ -12,9 +12,14 @@ class Expander {
     this.engine = engine;
   }
 
-  // Expand toplevel forms (eg. user program, library body, etc.)
+  /** 
+   * Expand toplevel forms (eg. user program, library body, etc.)
+   * @param {List<Form>} forms
+   */
   async expandToplevel(forms) {
+    console.log("- expandToplevel", to_write(forms));
     const expandedForms = await forms.mapAsync(x => this.expand(x));
+    // Merge nested `begin`
     const mergedForms = this._flattenBegin(Cons(Sym("begin"), expandedForms));
     const postProcessed = mergedForms.map(x => this._postExpand(x, true));
     if (postProcessed.length === 1) {
@@ -23,20 +28,21 @@ class Expander {
     }
     else {
       // Wrap with `begin`
-      return Cons(Sym("begin"), concatLists(postProcessed));
+      return Cons(Sym("begin"), array_to_list(postProcessed));
     }
   }
 
-  // Merge nested `begin`
-  // original: let loop `flatten` in `expand-toplevel`
+  /**
+   * Merge nested `begin` i.e. `(begin (begin ...`
+   * @param {Form} form
+   * @return {Array<Form>}
+   */
   _flattenBegin(form) {
     if (isPair(form) && form.car === Sym("begin")) {
-      return array_to_list(
-        form.cdr.to_array().flatMap(x => this._flattenBegin(x))
-      );
+      return form.cdr.to_array().flatMap(x => this._flattenBegin(x));
     }
     else {
-      return List(form);
+      return [form];
     }
   }
 

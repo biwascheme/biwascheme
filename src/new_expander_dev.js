@@ -16,7 +16,8 @@ const engine = new Engine();
 const forms = array_to_list(Parser.parse(`
   (import (scheme base))
   ;(let ((a 1)) (+ a 1))
-  (if a b c)
+  (define x 1)
+  (if x (begin 1 2) y)
 `));
 
 engine.expandToplevelProgram(forms)
