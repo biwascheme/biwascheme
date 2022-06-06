@@ -1,4 +1,3 @@
-import * as _ from "../deps/underscore-esm.js"
 import { isVector } from "./_types.js"
 import { nil, undef } from "../header.js"
 import { BiwaSymbol } from "./symbol.js"

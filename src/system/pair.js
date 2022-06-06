@@ -1,4 +1,3 @@
-import * as _ from "../deps/underscore-esm.js"
 import { nil } from "../header.js"
 import { to_write, inspect } from "./_writer.js"
 import BiwaSet from "./set.js"

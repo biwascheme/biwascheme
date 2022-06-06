@@ -1,5 +1,4 @@
 import Pause from "./pause.js"
-import * as _ from "../deps/underscore-esm.js"
 
 //
 // Port

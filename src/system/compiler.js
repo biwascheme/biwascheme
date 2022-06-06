@@ -1,4 +1,3 @@
-import * as _ from "../deps/underscore-esm.js"
 import { TopEnv, CoreEnv, nil, undef } from "../header.js"
 import { isSymbol } from "./_types.js"
 import { BiwaError, Bug } from "./error.js"

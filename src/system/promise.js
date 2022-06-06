@@ -1,4 +1,3 @@
-import * as _ from "../deps/underscore-esm.js"
 import { Bug } from "./error.js"
 
 //

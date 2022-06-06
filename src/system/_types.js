@@ -1,7 +1,6 @@
 //
 // types.js - type predicators, equality, compare
 //
-import * as _ from "../deps/underscore-esm.js"
 import { nil, undef } from "../header.js"
 import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
