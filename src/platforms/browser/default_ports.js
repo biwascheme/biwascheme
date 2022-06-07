@@ -1,4 +1,4 @@
-import { escape } from "../../deps/underscore-esm.js"
+import { escape } from "../../utils.js"
 import { Port } from "../../system/port.js"
 
 const current_input = new Port.CustomInput(

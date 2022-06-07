@@ -1,4 +1,4 @@
-import { uniqueId } from "../deps/underscore-esm.js"
+import { uniqueId } from "../utils.js"
 import { to_write } from "./_writer.js"
 import { make_simple_assert } from "./assert.js"
 import Call from "./call.js"

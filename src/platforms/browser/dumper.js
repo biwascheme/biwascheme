@@ -1,4 +1,4 @@
-import { escape } from "../../deps/underscore-esm.js"
+import { escape } from "../../utils.js"
 import { to_write, inspect, truncate } from "../../system/_writer.js"
 
 //

@@ -1,4 +1,4 @@
-import { uniqueId } from "../deps/underscore-esm.js"
+import { uniqueId } from "../utils.js"
 
 //
 // Scheme symbols

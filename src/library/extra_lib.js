@@ -1,4 +1,4 @@
-import { escape } from "../deps/underscore-esm.js"
+import { escape } from "../utils.js"
 import { TopEnv, nil, undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
