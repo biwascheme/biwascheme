@@ -1,4 +1,3 @@
-import { any, all, bind, include, indexOf, uniq } from "../deps/underscore-esm.js"
 import { inspect } from "./_writer.js"
 import { make_simple_assert } from "./assert.js"
 import { array_to_list } from "./pair.js"
@@ -36,7 +35,7 @@ Enumeration.EnumType = class {
   // members - Array of symbols.
   //           Symbols may be duplicate (I think you shouldn't, though :-p).
   constructor(members){
-    this.members = uniq(members);
+    this.members = [...new Set(members)];
   }
 
   // Returns an EnumSet.
@@ -51,11 +50,11 @@ Enumeration.EnumType = class {
   indexer(){
     // ar[0] - a symbol
     // Returns an integer or #f.
-    return bind(function(ar){
+    return (ar) => {
       assert_symbol(ar[0], "(enum-set indexer)");
-      var idx = indexOf(this.members, ar[0]);
+      var idx = this.members.indexOf(ar[0]);
       return (idx === -1) ? false : idx;
-    }, this);
+    };
   }
 
   // Retuns a function which creates an enum_set from a list of
@@ -63,7 +62,7 @@ Enumeration.EnumType = class {
   constructor_(){
     // ar[0] - a list of symbol
     // Returns a enum_set.
-    return bind(function(ar){
+    return (ar) => {
       assert_list(ar[0], "(enum-set constructor)");
       var symbols = ar[0].to_array();
       symbols.forEach(function(arg){
@@ -71,7 +70,7 @@ Enumeration.EnumType = class {
       });
 
       return new Enumeration.EnumSet(this, symbols);
-    }, this);
+    };
   }
 }
 
@@ -93,9 +92,7 @@ Enumeration.EnumSet = class {
   //   - order by universe
   constructor(enum_type, symbols){
     this.enum_type = enum_type;
-    this.symbols = enum_type.members.filter(function(sym){
-      return include(symbols, sym);
-    });
+    this.symbols = enum_type.members.filter((sym) => symbols.includes(sym));
   }
 
   // Returns a list of symbols.
@@ -106,7 +103,7 @@ Enumeration.EnumSet = class {
   // Returns true if the enum_set includes the symbol.
   // 'symbol' is allowed to be a symbol which is not included in the universe.
   is_member(symbol){
-    return include(this.symbols, symbol);
+    return this.symbols.includes(symbol);
   }
   
   // Returns true if:
@@ -116,9 +113,7 @@ Enumeration.EnumSet = class {
   // The enum_set and 'other' may belong to different enum_type.
   is_subset(other){
     // Check elements
-    if(any(this.symbols, function(sym){
-         return !include(other.symbols, sym);
-       })){
+    if(this.symbols.some((sym) => !other.symbols.includes(sym))){
       return false;
     }
 
@@ -127,9 +122,9 @@ Enumeration.EnumSet = class {
       return true;
     }
     else{
-      return all(this.enum_type.members, function(sym){
-               return include(other.enum_type.members, sym);
-             });
+      return this.enum_type.members.every((sym) =>
+        other.enum_type.members.includes(sym)
+      );
     }
   }
 
@@ -147,10 +142,9 @@ Enumeration.EnumSet = class {
   // - all the symbols included in the enum_set or the enum_set 'other'.
   // The enum_set and 'other' *must* belong to the same enum_type.
   union(other){
-    var syms = this.enum_type.members.filter(bind(function(sym){
-                 return include(this.symbols, sym) ||
-                        include(other.symbols, sym);
-               }, this));
+    var syms = this.enum_type.members.filter((sym) =>
+      this.symbols.includes(sym) || other.symbols.includes(sym)
+    );
     return new Enumeration.EnumSet(this.enum_type, syms);
   }
 
@@ -158,9 +152,7 @@ Enumeration.EnumSet = class {
   // - the symbols included both in the enum_set or the enum_set 'other'.
   // The enum_set and 'other' *must* belong to the same enum_type.
   intersection(other){
-    var syms = this.symbols.filter(function(sym){
-                 return include(other.symbols, sym);
-               });
+    var syms = this.symbols.filter((sym) => other.symbols.includes(sym));
     return new Enumeration.EnumSet(this.enum_type, syms);
   }
 
@@ -168,18 +160,16 @@ Enumeration.EnumSet = class {
   // - the symbols included in the enum_set and not in the enum_set 'other'.
   // The enum_set and 'other' *must* belong to the same enum_type.
   difference(other){
-    var syms = this.symbols.filter(function(sym){
-                 return !include(other.symbols, sym);
-               });
+    var syms = this.symbols.filter((sym) => !other.symbols.includes(sym));
     return new Enumeration.EnumSet(this.enum_type, syms);
   }
 
   // Returns a enum_set which has:
   // - the symbols included in the universe but not in the enum_set.
   complement(){
-    var syms = this.enum_type.members.filter(bind(function(sym){
-                 return !include(this.symbols, sym);
-               }, this));
+    var syms = this.enum_type.members.filter((sym) =>
+      !this.symbols.includes(sym)
+    );
     return new Enumeration.EnumSet(this.enum_type, syms);
   }
 
@@ -187,9 +177,9 @@ Enumeration.EnumSet = class {
   // - the symbols included in the enum_set and the universe of the enum_set 'other'.
   // The enum_set and 'other' may belong to different enum_type.
   projection(other){
-    var syms = this.symbols.filter(function(sym){
-                 return include(other.enum_type.members, sym);
-               });
+    var syms = this.symbols.filter((sym) =>
+      other.enum_type.members.includes(sym)
+    );
     return new Enumeration.EnumSet(other.enum_type, syms);
   }
 

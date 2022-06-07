@@ -1,4 +1,4 @@
-import { escape, times } from "../../deps/underscore-esm.js"
+import { escape } from "../../deps/underscore-esm.js"
 import { to_write, inspect, truncate } from "../../system/_writer.js"
 
 //
@@ -36,8 +36,8 @@ class Dumper {
     var pad1="", pad2="";
     var level = level || 0;
     var nested = nested || false;
-    times(level, (function(){ pad1 += DUMP_PAD; }).bind(this));
-    times((level+1), (function(){ pad2 += DUMP_PAD; }).bind(this));
+    Array(level).fill().map(() => { pad1 += DUMP_PAD; });
+    Array(level+1).fill().map(() => { pad2 += DUMP_PAD; });
 
     s += pad1 + '[<span class="dump_opecode">' + obj[0] + '</span>';
     var i = 1;

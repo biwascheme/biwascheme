@@ -1,4 +1,4 @@
-import { escape, clone } from "../deps/underscore-esm.js"
+import { escape } from "../deps/underscore-esm.js"
 import { TopEnv, nil, undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
@@ -210,7 +210,7 @@ define_libfunc("vector-sort/comp", 1, 2, function(ar, intp){
   assert_procedure(ar[0]);
   assert_vector(ar[1]);
 
-  return sort_with_comp(clone(ar[1]), ar[0], intp);
+  return sort_with_comp([...ar[1]], ar[0], intp);
 });
 define_libfunc("vector-sort/comp!", 1, 2, function(ar, intp){
   assert_procedure(ar[0]);

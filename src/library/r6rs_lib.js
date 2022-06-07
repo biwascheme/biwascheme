@@ -1,4 +1,3 @@
-import { include, last, times } from "../deps/underscore-esm.js"
 import { TopEnv, CoreEnv, nil, undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
@@ -1110,7 +1109,7 @@ define_libfunc("make-string", 1, 2, function(ar){
     c = ar[1].value;
   }
   var out = "";
-  times(ar[0], function() { out += c; });
+  Array(ar[0]).fill().map(() => { out += c; });
   return out;
 })
 define_libfunc("string", 0, null, function(ar){
@@ -1401,12 +1400,12 @@ var expand_qq = function(f, lv){
                             List(Sym("quote"), Sym("unquote-splicing")),
                             expand_qq(f[i].car.cdr.car, lv-1)),
                        expand_qq(f[i].cdr, lv));
-          last(vecs).push(item);
+          vecs[vecs.length-1].push(item);
         }
       }
       else {
         // Expand other things as the same as if they are in a list quasiquote
-        last(vecs).push(expand_qq(f[i], lv));
+        vecs[vecs.length-1].push(expand_qq(f[i], lv));
       }
     }
 
@@ -3345,7 +3344,7 @@ define_syntax("define-enumeration", function(x){
     assert_symbol(arg, type_name);
 
     // Check arg is included in the universe
-    assert(include(enum_type.members, arg),
+    assert(enum_type.members.includes(arg),
       arg.name+" is not included in the universe: "+
         to_write(enum_type.members),
       type_name);
@@ -3362,7 +3361,7 @@ define_syntax("define-enumeration", function(x){
     // Check each argument is included in the universe
     symbols.forEach(function(arg){
       assert_symbol(arg, constructor_name);
-      assert(include(enum_type.members, arg),
+      assert(enum_type.members.includes(arg),
         arg.name+" is not included in the universe: "+
           to_write(enum_type.members),
         constructor_name);
