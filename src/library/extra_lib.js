@@ -1,4 +1,4 @@
-import * as _ from "../deps/underscore-esm.js"
+import { escape, clone } from "../deps/underscore-esm.js"
 import { TopEnv, nil, undef } from "../header.js";
 import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_number, assert_integer, assert_real, assert_between, assert_string,
@@ -19,7 +19,7 @@ import Syntax from "../system/syntax.js"
 
 define_libfunc("html-escape", 1, 1, function(ar){
   assert_string(ar[0]);
-  return _.escape(ar[0]);
+  return escape(ar[0]);
 });
 const inspect_objs = function(objs){
   return objs.map(inspect).join(", ");
@@ -210,7 +210,7 @@ define_libfunc("vector-sort/comp", 1, 2, function(ar, intp){
   assert_procedure(ar[0]);
   assert_vector(ar[1]);
 
-  return sort_with_comp(_.clone(ar[1]), ar[0], intp);
+  return sort_with_comp(clone(ar[1]), ar[0], intp);
 });
 define_libfunc("vector-sort/comp!", 1, 2, function(ar, intp){
   assert_procedure(ar[0]);

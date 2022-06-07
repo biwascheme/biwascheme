@@ -1,4 +1,4 @@
-import * as _ from "../deps/underscore-esm.js"
+import { uniqueId } from "../deps/underscore-esm.js"
 
 //
 // Scheme symbols
@@ -39,7 +39,7 @@ const Sym = function(name,leaveCase){
 }
 
 const gensym = function(prefix="__gensym" ){
-  return Sym(_.uniqueId(prefix));
+  return Sym(uniqueId(prefix));
 };
 
 export {BiwaSymbol, Symbols, Sym, gensym};

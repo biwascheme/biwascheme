@@ -1,4 +1,4 @@
-import * as _ from "../deps/underscore-esm.js"
+import { inject, rest } from "../deps/underscore-esm.js"
 import { TopEnv, CoreEnv, nil, undef, max_trace_size } from "../header.js"
 import { isSymbol } from "./_types.js"
 import { to_write, inspect } from "./_writer.js"
@@ -287,7 +287,7 @@ class Interpreter {
         break;
       case "tco_hinted_apply": // just like a regular apply, except we need to trace the # of TCO calls so we can generate a stacktrace
         this.tco_counter[this.tco_counter.length - 1]++;
-        x = ["apply"].concat(_.rest(x));
+        x = ["apply"].concat(rest(x));
         break;
       case "apply": //extended: n_args as second argument
         var func = a; //, n_args = x[1];
@@ -385,7 +385,7 @@ class Interpreter {
                             ["argument",
                             ["constant", result.proc, 
                             ["apply", result.args.length]]]];
-            var push_args = _.inject(result.args, function(opc, arg){
+            var push_args = inject(result.args, function(opc, arg){
               // (foo 1 2) => first push 2, then 1
               //   [constant 2 ... [constant 1 ... ]
               return ["constant", arg, 
