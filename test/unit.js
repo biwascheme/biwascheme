@@ -2303,6 +2303,15 @@ describe('browser functions', {
 describe(';; src/library/extra_lib.js', {});
 
 describe('extra library', {
+  'html-escape': function(){
+    ev(`(html-escape "&")`).should_be("&amp;");
+    ev(`(html-escape "<")`).should_be("&lt;");
+    ev(`(html-escape ">")`).should_be("&gt;");
+    ev(`(html-escape "\\"")`).should_be("&quot;");
+    ev(`(html-escape "\'")`).should_be("&#x27;");
+    ev(`(html-escape "\`")`).should_be("&#x60;");
+    ev(`(html-escape "<&><&>")`).should_be("&lt;&amp;&gt;&lt;&amp;&gt;");
+  },
   'let1' : function(){
     ev("(let1 a (+ 1 2) (* a 3))").should_be(9);
   },

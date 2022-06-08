@@ -1,4 +1,3 @@
-import * as _ from "../deps/underscore-esm.js"
 import { eq, eqv } from "./_equality.js"
 import { to_write } from "./_writer.js"
 import { Bug } from "./error.js"
@@ -60,13 +59,11 @@ class Hashtable {
     var copy = new Hashtable(this.hash_proc, this.equiv_proc,
                                         mutable);
     // clone the pairs to copy
-    Object.keys(this.pairs_of).forEach(_.bind(function(hashed){
-      var pairs = this.pairs_of[hashed];
-      var cloned = pairs.map(function(pair){
-        return [...pair];
-      });
+    Object.keys(this.pairs_of).forEach((hashed) => {
+      let pairs = this.pairs_of[hashed];
+      let cloned = pairs.map((pair) => [...pair]);
       copy.pairs_of[hashed] = cloned;
-    }, this));
+    });
 
     return copy;
   }
@@ -93,7 +90,7 @@ class Hashtable {
 
   _apply_pair(func){
     var a = [];
-    _.values(this.pairs_of).forEach(function(pairs){
+    Object.values(this.pairs_of).forEach(function(pairs){
       pairs.forEach(function(pair){
         a.push(func(pair));
       });

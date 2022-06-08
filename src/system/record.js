@@ -1,4 +1,4 @@
-import * as _ from "../deps/underscore-esm.js"
+import { uniqueId } from "../utils.js"
 import { to_write } from "./_writer.js"
 import { make_simple_assert } from "./assert.js"
 import Call from "./call.js"
@@ -99,7 +99,7 @@ Record.RTD = class {
   }
 
   _generate_new_uid(){
-    return Sym(_.uniqueId("__record_td_uid"));
+    return Sym(uniqueId("__record_td_uid"));
   }
 
   toString(){
@@ -199,7 +199,7 @@ Record.CD = class {
   record_constructor(){
     var arg_for_protocol = (this.parent_cd ? this._make_n([], this.rtd)
                                            : this._make_p());
-    arg_for_protocol = _.bind(arg_for_protocol, this);
+    arg_for_protocol = arg_for_protocol.bind(this);
 
     return new Call(this.protocol, [arg_for_protocol], function(ar){
       var ctor = ar[0];

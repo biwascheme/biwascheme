@@ -1,4 +1,3 @@
-import * as _ from "../../deps/underscore-esm.js"
 import { inspect } from "../../system/_writer.js"
 import Console from "../../system/console.js"
 import { Port } from "../../system/port.js"

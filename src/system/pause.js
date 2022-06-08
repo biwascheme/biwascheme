@@ -1,5 +1,3 @@
-import * as _ from "../deps/underscore-esm.js"
-
 //
 // pause object (facility to stop/resume interpreting)
 //

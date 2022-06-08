@@ -1,4 +1,4 @@
-import * as _ from "../../deps/underscore-esm.js"
+import { escape } from "../../utils.js"
 import { Port } from "../../system/port.js"
 
 const current_input = new Port.CustomInput(
@@ -21,7 +21,7 @@ const current_output = new Port.CustomOutput(
     const out = document.querySelector("#bs-console");
     if (!out) return;
     const span = document.createElement("span");
-    span.innerHTML = _.escape(str)
+    span.innerHTML = escape(str)
       .replace(/\n/g,"<br>")
       .replace(/ /g,"&nbsp;");
     out.appendChild(span);
