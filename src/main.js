@@ -35,6 +35,12 @@ import "./library/srfi.js"
 // For unit testing
 import { define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float } from "./library/infra.js"
 
+// Assertions
+import { assert_number, assert_integer, assert_real, assert_between, assert_string,
+         assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+         assert_vector, assert_hashtable, assert_mutable_hashtable, assert_promise,
+         assert_function, assert_closure, assert_procedure, assert_date, assert } from "./library/infra.js"
+
 // Avoid circular dependency
 nil.to_set = function(){ return new BiwaSet(); };
 
@@ -69,4 +75,9 @@ export default {
   VMCode,
 
   define_libfunc, define_scmfunc, parse_fraction, is_valid_integer_notation, parse_integer, is_valid_float_notation, parse_float,
+
+  assert_number, assert_integer, assert_real, assert_between, assert_string,
+  assert_char, assert_symbol, assert_port, assert_pair, assert_list,
+  assert_vector, assert_hashtable, assert_mutable_hashtable, assert_promise,
+  assert_function, assert_closure, assert_procedure, assert_date, assert 
 };
