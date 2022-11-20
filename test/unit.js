@@ -1659,7 +1659,8 @@ describe('6 Records', {
           (fields c)) \
         (list \
           (point2d-x (make-point3d 1 2 3)) \
-          (point3d-c (make-point3d 1 2 3))").should_be("(1 3)");
+          (point3d-c (make-point3d 1 2 3)) \
+          (point2d?  (make-point3d 1 2 3)))").should_be("(1 3 #t)");
   },
   'define-record-type (protocol)': function(){
     ev("(define-record-type rect (fields w h)) \
