@@ -2319,8 +2319,16 @@ define_libfunc("record-predicate", 1, 1, function(ar){
   return function(args){
     var obj = args[0];
 
-    return (obj instanceof Record) &&
-           (obj.rtd === rtd);
+    if (!(obj instanceof Record)) {
+      return false;
+    } else if (obj.rtd === rtd) { // Fast path
+      return true;
+    } else {
+      for(let _rtd = obj.rtd; _rtd; _rtd = _rtd.parent_rtd){
+        if(_rtd == rtd) return true;
+      }
+      return false;
+    }
   };
 });
 
