@@ -4,7 +4,7 @@
     "version": "0.0.1",
     "dependencies": {
         "biwascheme": "../../",
-        "express": "4.17.1",
+        "express": "4.18.2",
         "socket.io": "2.5.0"
     }
 }
