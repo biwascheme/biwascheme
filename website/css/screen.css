@@ -112,9 +112,13 @@ td {
   padding-top: 0.5em;
 }
 
+/* the terminal */
+
 #term {
   width: 500px;
+  --font: Menlo, monospace; /* Issue #299 */
 }
+
 /* Mobile View */
 @media (max-width: 800px) {
   #menu img {
