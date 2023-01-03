@@ -12,6 +12,7 @@ import { Library } from "./system/expander/library.js"
 import { Engine } from "./system/engine.js";
 
 const engine = new Engine();
+engine.run("(display 123)")
 
 const forms = array_to_list(Parser.parse(`
   (import (scheme base))

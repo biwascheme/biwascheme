@@ -1,8 +1,10 @@
 import { isFunction } from "./_types.js"
 import { BiwaError } from "./error.js"
-import { isPair } from "./pair.js"
+import { isPair, array_to_list } from "./pair.js"
 import { Sym } from "./symbol.js"
 import Compiler from "./compiler.js"
+import Interpreter from "./interpreter.js"
+import Parser from "./parser.js";
 import { Environment } from "./expander/environment.js"
 import { Expander } from "./expander/expander.js"
 import { stdLibraries } from "./libraries.js"
@@ -24,20 +26,28 @@ class Engine {
     return this.libraries.get(spec);
   }
 
-  // Compile a Scheme program and execute it
+  /** Compile a Scheme program and execute it
+   * @param {String} scmTxt
+   */
   async run(scmTxt) {
     const parser = new Parser(scmTxt);
-    let result, expr;
-    while (expr = parser.getObject()) {
-      result = await executeScm(expr);
+    const exprs = [];
+    let expr;
+    while ((expr = parser.getObject()) != Parser.EOS) {
+      exprs.push(expr);
     }
-    return result; 
+    return this.executeScm(array_to_list(exprs)); 
   }
 
-  async executeScm(scmExpr) {
-    const expanded = scmExpr; //TODO: expand
-    const vmcode = this.compiler.compile(expanded);
-    return this.vm.execute(vmcode);
+  /** Compile a Scheme program and execute it
+   * @param {List<Form>} forms
+   */
+  async executeScm(forms) {
+    const expanded = await this.expandToplevelProgram(forms);
+    const vmcode = this.compiler.run(expanded);
+    const intp = new Interpreter();
+    intp.on_error = (e) => { throw e };
+    return intp.evaluate_vmcode(vmcode);
   }
 
   async invoke(proc, args) {

@@ -105,6 +105,11 @@ The difference between case 2 and 3 are important. In Scheme level,
     - parameterize
     - include, include-ci, if-expand, case-lambda
     - syntax-error
+- Implement R7RS base (src/r7rs/*.js)
+  - high priority
+    - boolean char continuation control_features number pair port string symbol syntax values vector
+  - lower priority
+    - bytevector error syntax
 - Integrate `Compiler` and `Interpreter` with `Engine`
 - Design how `import` and `include` works in browser and on Node.js
 - Provide existing libraries as r7rs lib
@@ -121,16 +126,10 @@ Edit those two files and `node src/new_expander_dev.js`
 +    "type": "module",
      "name": "biwascheme",
      "description": "A practical Scheme interpreter written in JavaScript",
---- a/src/platforms/node/node_functions.js
-+++ b/src/platforms/node/node_functions.js
-@@ -11,8 +11,8 @@ import { run } from "./run.js"
- //
+```
 
- const node = {
--  fs: require('fs'),
--  path: require('path'),
-+//  fs: require('fs'),
-+//  path: require('path'),
-   process: process
- };
+and then
+
+```
+$ node src/new_expander_dev.js
 ```
