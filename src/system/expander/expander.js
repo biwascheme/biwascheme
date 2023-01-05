@@ -116,6 +116,9 @@ class Expander {
   _expandIdentifier(id, env) {
     const found = env.assq(id);
     if (found) return found;
+    if (!isSyntacticClosure(id)) {
+      throw new BiwaError("_expandIdentifier: id not in env", id);
+    }
     return this._expandIdentifier(id.form, id.environment);
   }
 
