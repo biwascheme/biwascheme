@@ -1,7 +1,7 @@
 import { nil } from "../../header.js";
 import { isSymbol, isVector } from "../_types.js"
 import { to_write } from "../_writer.js"
-import { BiwaError } from "../error.js"
+import { Bug, BiwaError } from "../error.js"
 import { List, array_to_list, Cons, isPair, isList } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { Environment } from "./environment.js"
@@ -75,6 +75,15 @@ class Library {
   exportMacro(sym, transformer) {
     const expander = new Macro(sym.name, this.environment, transformer);
     this.environment.installExpander(sym, expander);
+    this.export(sym);
+  }
+
+  // Add a exported item (eg. library function)
+  addExport(sym, value) {
+    if (value === undefined) {
+      throw new Bug(`addExport: tried to insert \`undefined\` as ${sym} (use \`undef\` if intentional)`)
+    }
+    this.environment.set(sym, value);
     this.export(sym);
   }
 

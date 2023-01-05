@@ -19,7 +19,7 @@ function to_key(x) {
   } else if (isIdentifier(x)) {
     const form = unwrapSyntax(x);
     const envId = x.environment.id;
-    console.log(`-- ${to_write(form)} ${envId}`); // Is this really unique?
+    //console.log(`-- ${to_write(form)} ${envId}`);
     return `${to_write(form)} ${envId}`; // Is this really unique?
   } else {
     throw new Bug(`not an identifier: ${inspect(x)}`);
@@ -53,6 +53,10 @@ class Environment {
     this.renamer = renamer;
   }
 
+  toString() {
+    return `#<Environment ${this.name}>`
+  }
+
   has(key) {
     return this.frame.has(to_key(key));
   }
@@ -82,21 +86,23 @@ class Environment {
   // Returns `#f` if not found in toplevel environment
   // original: assq-environment
   assq(id) {
+    let ret;
     if (this.has(id)) {
-      return this.get(id);
-    }
-    else if (!this.isToplevel()) {
-      return this.enclosingEnvironment().assq(id);
+      ret = this.get(id);
+    } else if (!this.isToplevel()) {
+      ret = this.enclosingEnvironment().assq(id);
     } else {
       if (isSymbol(id)) {
         const newName = this.renamer(id); // Q: What if renamer is null
         this.set(id, newName);
-        return newName; // Q: Original impl returns this.assq(id)
+        ret = newName; // Q: Original impl returns this.assq(id)
       }
       else {
-        return false;
+        ret = false;
       }
     }
+    //console.log(`- assq ${id} in ${this} => ${to_write(ret)}`)
+    return ret;
   }
 
   // assq-environment + set-cdr!

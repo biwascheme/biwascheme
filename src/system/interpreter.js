@@ -489,6 +489,25 @@ class Interpreter {
     return ret;
   }
 
+  // Execute compiled vmcode
+  evaluate_vmcode(vmcode) {
+    this.call_stack = [];
+    this.is_top = true;
+    this.file_stack = [];
+    try{
+      const ret = this._execute(undef, vmcode.il, 0, [], 0);
+      if(!(ret instanceof Pause)){
+        this.after_evaluate(ret);
+      }
+      return ret;
+    }
+    catch(e){
+      e.message = e.message + " [" + this.call_stack.join(", ") + "]";
+      return this.on_error(e);
+    }
+  }
+
+
   // Invoke a scheme closure
   invoke_closure(closure, args){
     args || (args = []);

@@ -1,3 +1,4 @@
+import { Sym } from "../system/symbol.js"
 // TODO
 // * + - /
 // < <= = => > >=
@@ -9,3 +10,9 @@
 // truncate truncate-remainder zero?
 // number->string for-each 
 // set-car! truncate-quotient truncate/
+
+const installNumber = (lib) => { 
+  lib.addExport(Sym("+"), Sym("+"))
+};
+
+export { installNumber };
