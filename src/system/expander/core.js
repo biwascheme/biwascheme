@@ -108,7 +108,6 @@ const expandLambda = async ([form, xp, env]) => {
   const formals = form.cadr(err);
   if (!isList(formals)) throw err;
   const newIds = collectCarAndCdr(formals);
-  console.log("[newIds]", newIds);
   const newEnv = env.extended(newIds);
   
   const newFormals = formals === nil
@@ -144,7 +143,6 @@ function _expandDefinitionBodyInLambda(body) {
 
 // Splice internal defines enclosed with `begin`
 function _spliceDefinitionInLambda(body) {
-  console.log("[body]", to_write(body));
   const definitions = [];
   const rest = [];
   for (const form of body.to_array()) {

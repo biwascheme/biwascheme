@@ -2,7 +2,7 @@ import { undef, nil } from "../../header.js"
 import { isSymbol, isVector } from "../_types.js"
 import { to_write } from "../_writer.js"
 import { BiwaError, Bug } from "../error.js"
-import { Cons, List, isPair, isList, array_to_list } from "../pair.js"
+import { Cons, List, isPair, isList, array_to_list, mapAsync } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { isSyntacticClosure, isIdentifier } from "./syntactic_closure.js"
 import { isMacro } from "./macro.js"
@@ -93,9 +93,8 @@ class Expander {
         const e = await this.expand(form.car);
         if (isMacro(e)) {
           ret = await this._expandMacro(e, form, env);
-        }
-        else {
-          const mapped = await form.cdr.mapAsync(x => this.expand(x));
+        } else {
+          const mapped = await mapAsync(form.cdr, x => this.expand(x));
           ret = Cons(e, mapped);
         }
       }
@@ -132,6 +131,21 @@ class Expander {
   async _expandMacro(macro, form, env) {
     return await macro.transform(form, env, macro.environment, this);
   }
+
+  /** Called when loading a library from file (or something)
+   * @param {form} Original program
+   * @param {lib} Library
+   * @return [string] The expanded Scheme program and a Library
+   */
+  async expandLibrary(form, lib) {
+    const spec = form.cdr.car;
+    return this.engine.withToplevelEnvironment(lib.environment, () => {
+      const decls = form.cdr.cdr;
+      const forms = decls.map(x => lib.interpretLibraryDeclaration(x, this.engine).to_array()).flat();
+      return this.expandToplevel(array_to_list(forms));
+    });
+  }
+
 }
 
 export { Expander };
