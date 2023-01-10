@@ -17,17 +17,17 @@ class Pair {
   // throws `err`.
   caar(err){ return this._get(["car", "car"], err) }
   cadr(err){ return this._get(["cdr", "car"], err) }
-  cdar(err){ return this._get(["cdr", "car"], err) }
+  cdar(err){ return this._get(["car", "cdr"], err) }
   cddr(err){ return this._get(["cdr", "cdr"], err) }
-  _get(props, err) {
+  _get(props, err="unexpected") {
     let x = this;
-    props.forEach(p => {
+    for (const p of props) {
       if (x.hasOwnProperty(p)) {
-        return x[p];
-      } else if (err) {
+        x = x[p];
+      } else {
         throw err;
       }
-    });
+    }
     return x;
   }
 
