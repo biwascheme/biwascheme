@@ -273,5 +273,34 @@ const alist_to_js_obj = function(alist) {
   return obj;
 };
 
+// Returns a new list made by applying `f` to each `car` and the last `cdr`
+const mapCarAndCdr = function(ls, f) {
+  if (ls === nil) {
+    return f(nil);
+  } else {
+    return Cons(f(ls.car), mapCarAndCdr(ls.cdr, f));
+  }
+};
+
+// Returns an array of each `car` and the last `cdr`, if it is not nil.
+const collectCarAndCdr = function(ls, f) {
+  if (ls === nil) {
+    return [];
+  } else {
+    return [ls.car].concat(collectCarAndCdr(ls.cdr));
+  }
+};
+
+/** Apply async function to each item of the list one by one.
+ * Returns a list of the results.
+ */
+async function mapAsync(ls, func) {
+  const ary = [];
+  for (var o = ls; isPair(o); o = o.cdr) {
+    ary.push(await func(o.car));
+  }
+  return array_to_list(ary);
+}
+
 export { Pair, List, isPair, isList, concatLists, array_to_list, deep_array_to_list, Cons,
-         js_obj_to_alist, alist_to_js_obj };
+         js_obj_to_alist, alist_to_js_obj, mapCarAndCdr, collectCarAndCdr, mapAsync };
