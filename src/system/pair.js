@@ -48,14 +48,6 @@ class Pair {
     return ary;
   }
 
-  to_set(){
-    var set = new BiwaSet();
-    for(var o = this; o instanceof Pair; o=o.cdr){
-      set.add(o.car);
-    }
-    return set;
-  }
-
   length(){
     var n = 0;
     for(var o = this; o instanceof Pair; o=o.cdr){

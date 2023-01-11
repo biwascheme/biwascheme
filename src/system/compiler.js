@@ -110,7 +110,7 @@ class Compiler {
       case Sym("lambda"):
         var vars=x.second(), body=x.cdr.cdr;
         if (vars instanceof Pair){ // (lambda (...) ...)
-          ret = this.find_sets(body, v.set_minus(vars.to_set()));
+          ret = this.find_sets(body, v.set_minus(to_set(vars)));
         }
         else { // (lambda args ...)
           ret = this.find_sets(body, v.set_minus(new BiwaSet(vars)));
@@ -182,7 +182,7 @@ class Compiler {
       case Sym("lambda"):
         var vars=x.second(), body=x.cdr.cdr;
         if (vars instanceof Pair){ // (lambda (...) ...)
-          ret = this.find_free(body, b.set_union(vars.to_set()), f);
+          ret = this.find_free(body, b.set_union(to_set(vars)), f);
         }
         else { // (lambda args ...)
           ret = this.find_free(body, b.set_cons(vars), f);
@@ -490,13 +490,13 @@ class Compiler {
 
     var dotpos = this.find_dot_pos(vars);
     var proper = this.dotted2proper(vars);
-    var free = this.find_free(cbody, proper.to_set(), f); //free variables
-    var sets = this.find_sets(cbody, proper.to_set());    //local variables
+    var free = this.find_free(cbody, to_set(proper), f); //free variables
+    var sets = this.find_sets(cbody, to_set(proper));    //local variables
 
     var do_body = this.compile(cbody,
-                    [proper.to_set(), free],
+                    [to_set(proper), free],
                     sets.set_union(s.set_intersect(free)),
-                    f.set_union(proper.to_set()),
+                    f.set_union(to_set(proper)),
                     ["return"]);
     var do_close = ["close",
                      vars instanceof Pair ? vars.length() : 0,
@@ -676,5 +676,18 @@ Compiler.transform_internal_define = function(x){
   return new Pair(Sym("letrec*"),
            new Pair(bindings, exprs));
 };
+
+// Convert a list to BiwaSet
+function to_set(ls) {
+  if (ls === nil) {
+    return new BiwaSet();
+  } else {
+    var set = new BiwaSet();
+    for(var o = ls; o instanceof Pair; o=o.cdr){
+      set.add(o.car);
+    }
+    return set;
+  }
+}
 
 export default Compiler;
