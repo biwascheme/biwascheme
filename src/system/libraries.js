@@ -6,7 +6,7 @@ import { libSchemeBase } from "../r7rs/base.js"
 const mangle = (spec) => spec.to_write;
 class Libraries {
   constructor() {
-    this.libraries = new Map();
+    this.libraries = new Map(); // spec => BiwaScheme.Library
   }
   
   get(spec) {

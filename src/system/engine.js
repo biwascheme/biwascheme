@@ -7,10 +7,12 @@ import Interpreter from "./interpreter.js"
 import Parser from "./parser.js";
 import { Environment } from "./expander/environment.js"
 import { Expander } from "./expander/expander.js"
+import { Library } from "./expander/library.js"
 import { stdLibraries } from "./libraries.js"
 
 class Engine {
   constructor() {
+    /** @type {Libraries} */
     this.libraries = stdLibraries;
     this.currentLibrary = null;
     this.currentToplevelEnvironment = null;
@@ -44,7 +46,11 @@ class Engine {
    */
   async executeScm(forms) {
     const expanded = await this.expandToplevelProgram(forms);
-    const vmcode = this.compiler.run(expanded);
+    return this.evalExpandedForms(expanded);
+  }
+
+  async evalExpandedForms(forms) {
+    const vmcode = this.compiler.run(forms);
     const intp = new Interpreter();
     intp.on_error = (e) => { throw e };
     return intp.evaluate_vmcode(vmcode);
@@ -59,10 +65,7 @@ class Engine {
   }
 
   async expandToplevelProgram(forms) {
-    const topEnv = Environment.makeToplevelEnvironment(
-      "user",
-      sym => Sym(`user:${sym.name}`),
-    );
+    const topEnv = Environment.makeToplevelEnvironment("user", "user:");
     return this.withToplevelEnvironment(topEnv, async () => {
       let _forms = forms;
       while (true) {
@@ -71,8 +74,7 @@ class Engine {
            topEnv.assq(Sym("import")) === Sym("user:import")) { // r7expander/library.sld says 'FIXME'
           _forms.car.cdr.forEach(x => topEnv.findAndImportLibrary(x, this));
           _forms = _forms.cdr;
-        }
-        else {
+        } else {
           return this.expander.expandToplevel(_forms);
         }
       }
@@ -85,6 +87,19 @@ class Engine {
     const result = await jsThunk();
     this.currentToplevelEnvironment = origEnv;
     return result;
+  }
+
+  /** Compile a Scheme program and register it as library
+   * @param {Form} spec Library spec
+   * @param {String} scmTxt Scheme program (must start with `(define-library ...`)
+   */
+  async defineLibrary(spec, scmTxt) {
+    const lib = Library.create(spec);
+    const parser = new Parser(scmTxt);
+    const form = parser.getObject();
+    const expandedForm = await this.expander.expandLibrary(form, lib)
+    this.libraries.set(spec, lib);
+    await this.evalExpandedForms(expandedForm);
   }
 }
 

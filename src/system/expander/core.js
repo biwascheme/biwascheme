@@ -1,8 +1,11 @@
 //
 // Expanders for core syntaxes
 //
-import { List, Cons, isPair, isList } from "../pair.js"
+import { nil } from "../../header.js"
+import { List, Cons, isPair, isList, array_to_list, mapCarAndCdr, collectCarAndCdr } from "../pair.js"
 import { Sym } from "../symbol.js"
+import { to_write } from "../_writer.js"
+import { Bug, BiwaError } from "../error.js"
 import { isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
 import { identifierEquals } from "./environment.js"
 import { makeErMacroTransformer } from "./macro_transformer.js"
@@ -42,18 +45,25 @@ const expandDefine = async ([form, xp, env]) => {
   const l = form.to_array();
   switch (l.length) {
     case 3:
-      const [_, formal, expr] = l;
-      if (!isIdentifier(formal)) {
-        throw new BiwaError("malformed define", form);
+      const [_, formal, ...exprs] = l;
+      if (isIdentifier(formal) && exprs.length == 1) {
+        // (define var expr)
+        env.extend(formal);
+        const id = await xp.expand(formal);
+        const body = env.isToplevel() ? (await xp.expand(exprs[0]))
+                                      : exprs[0]; // Expand later on
+        return List(Sym("define"), id, body);
+      } else if (isPair(formal)) {
+        const id = formal.car;
+        if (isIdentifier(id)) {
+          const args = formal.cdr;
+          const form = List(Sym("define"), id,
+            Cons(Sym("lambda"), Cons(args, array_to_list(exprs))));
+          return expandDefine([form, xp, env]);
+        }
       }
-      env.extend(formal);
-      const id = await xp.expand(formal);
-      const body = env.isToplevel() ? (await xp.expand(expr))
-                                    : expr; // Expand later on
-      return List(Sym("define"), id, body);
-    default:
-      throw new BiwaError("malformed define", form);
   }
+  throw new BiwaError("malformed define", form);
 };
 
 // `define-syntax`
@@ -87,21 +97,87 @@ const expandIf = async ([form, xp]) => {
 };
 
 // `lambda`
-const expandLambda = async ([form, xp]) => {
+// - (lambda (x y) ...)
+// - (lambda (x y . rest) ...)
+// - (lambda args ...)
+const expandLambda = async ([form, xp, env]) => {
   const err = new BiwaError("malformed lambda", form);
   const l = form.to_array();
   if (l.length < 3) throw err;
+
   const formals = form.cadr(err);
-  if (!isPair(formals)) throw err;
+  if (!isList(formals)) throw err;
+  const newIds = collectCarAndCdr(formals);
+  const newEnv = env.extended(newIds);
+  
+  const newFormals = formals === nil
+    ? nil
+    : mapCarAndCdr(formals, async (x) => { return await xp.expand(x) });
+
   const body = form.cddr(err);
+  let newBody = await body.mapAsync(async form => { return await xp.expand(form, newEnv) });
+  newBody = _expandDefinitionBodyInLambda(newBody);
+  newBody = _spliceDefinitionInLambda(newBody);
 
-  const newEnv = env.extend(formal-list);
+  return Cons(Sym("lambda"), Cons(newFormals, newBody));
+}
 
-  // TODO
+/** Process bodies of internal define
+ * @return Form
+ */
+function _expandDefinitionBodyInLambda(body) {
+  const err = new BiwaError("malformed define in lambda", body);
+  return body.mapList(form => {
+    if (!isPair(form)) return form;
+    const car = form.car;
+    if (car === Sym("quote") || car == Sym("lambda")) return form;
+    if (car === Sym("define")) {
+      const k = form.cadr(err);
+      const v = form.caddr(err);
+      return List(Sym("define"), k, _expandDefinitionBodyInLambda(v));
+    } else {
+      return _expandDefinitionBodyInLambda(form);
+    }
+  });
+}
 
-  return Cons(Sym("lambda"),
-           Cons(newFormals, newBody));
-};
+// Splice internal defines enclosed with `begin`
+function _spliceDefinitionInLambda(body) {
+  const definitions = [];
+  const rest = [];
+  for (const form of body.to_array()) {
+    if (rest.length > 0 || !_isDefinition(form)) {
+      rest.push(form);
+    } else {
+      definitions = definitions.concat(_spliceDefinition(form));
+    }
+  }
+  return array_to_list(definitions.concat(rest))
+}
+
+function _isDefinition(form) {
+  if (!isPair(form)) return false;
+  if (form.car === Sym("define") ||
+      form.car === Sym("define-record-type")) {
+    return true;
+  } else if (form.car === Sym("begin") && 
+             form.cdr.to_array().all(_isDefinition)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// Removes `begin`. Returns an array of define/define-record-type
+function _spliceDefinition(def) {
+  if (form.car === Sym("define") ||
+      form.car === Sym("define-record-type")) {
+    return [form];
+  } else {
+    if (form.car !== Sym("begin")) throw new Bug("unexpected");
+    return form.cdr.to_array().map(_spliceDefinition);
+  }
+}
 
 // `let-syntax`
 const expandLetSyntax = async ([form, xp, env, metaEnv]) => {

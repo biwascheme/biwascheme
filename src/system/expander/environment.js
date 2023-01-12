@@ -32,10 +32,14 @@ let lastId = 0;
 class Environment {
   /**
    * Create a toplevel binding
-   * @param {string} name
-   * @param {(BiwaSymbol) => BiwaSymbol} renamer
+   * @param {?string} name
+   * @param {?string} prefix (pass `null` when specifying renamer)
+   * @param {?(BiwaSymbol) => BiwaSymbol} renamer
    */
-  static makeToplevelEnvironment(name, renamer) {
+  static makeToplevelEnvironment(name, prefix = null, renamer = null) {
+    if (prefix !== null) {
+      renamer = sym => Sym(`${prefix}${sym.name}`);
+    }
     return new Environment(name, null, new Map(), renamer);
   }
 
@@ -151,8 +155,11 @@ class Environment {
     this.set(id, generateName(id));
   }
 
-  // Create an enviroment by adding `ids` to this enviroment
-  // original: `extend-enviroment`
+  /* Create an enviroment by adding `ids` to this enviroment
+   * original: `extend-enviroment`
+   * @param {ids} [Identifier]
+   * @return Environment
+   */
   extended(ids) {
     const newEnv = new Environment("", this);
     ids.forEach(id => newEnv.extend(id));

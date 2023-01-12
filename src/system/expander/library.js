@@ -9,8 +9,6 @@ import { isMacro, Macro } from "./macro.js"
 
 // A R7RS library.
 class Library {
-  // Maps (stringified) library spec to Library
-  static _libraryTable = new Map();
   // Holds spec (not Library)
   static currentLibrary = null;
   static featureList = [];
@@ -21,33 +19,24 @@ class Library {
   }
 
   static create(spec) {
-    const prefix = spec.map(x => to_write(x)).join(".");
-    const env = Environment.makeToplevelEnvironment(prefix, sym => {
-      return Sym(`${prefix}:${sym.name}`)
-    });
+    const name = spec.map(x => to_write(x)).join(".");
+    const env = Environment.makeToplevelEnvironment(name, `${name}:`);
     return new Library(env);
   }
 
-  // Called when loading a library from file (or something)
-  static expandLibrary(form) {
-    const spec = form.cdr.car;
-    this.makeLibrary(spec);
-    return this.withLibrary(spec, () => {
-      const decls = form.cdr.cdr;
-      const forms = decls.map(x => this._interpretLibraryDeclaration(x).to_array()).flat();
-      return this._expandToplevel(forms);
-    });
-  }
-
-  static _interpretLibraryDeclaration(decl) {
+  /** Interprets imports, exports, etc. of this library
+   * (original: interpret-library-declaration)
+   * @return Form
+   */
+  interpretLibraryDeclaration(decl, engine) {
     switch (decl.car) {
       case Sym("begin"):
         return decl.cdr;
       case Sym("import"):
-        decl.cdr.forEach(x => this.libraryImport(x));
+        decl.cdr.forEach(x => this.environment.findAndImportLibrary(x, engine));
         return nil
       case Sym("export"):
-        decl.cdr.forEach(x => this.libraryExport(x));
+        decl.cdr.forEach(x => this.export(x));
         return nil
       case Sym("cond-expand"):
         return this._interpretCondExpand(decl.cdr);
@@ -56,13 +45,16 @@ class Library {
       case Sym("include-library-declarations"):
         TODO
       default:
-        throw new BiwaError("_interpretLibraryDeclaration: unknown decl.car", decl);
+        throw new BiwaError("interpretLibraryDeclaration: unknown decl.car", decl);
     }
   }
 
-  import(lib) {
-    this.environment.importLibrary(lib);
-  }
+//  /** Import a library into this library
+//   * @param {lib} Library
+//   */
+//  import(lib) {
+//    this.environment.importLibrary(lib);
+//  }
 
   nameMap() {
     const ret = [];

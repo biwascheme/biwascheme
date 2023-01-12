@@ -41,9 +41,6 @@ import { assert_number, assert_integer, assert_real, assert_between, assert_stri
          assert_vector, assert_hashtable, assert_mutable_hashtable, assert_promise,
          assert_function, assert_closure, assert_procedure, assert_date, assert } from "./library/infra.js"
 
-// Avoid circular dependency
-nil.to_set = function(){ return new BiwaSet(); };
-
 export default {
   TopEnv, CoreEnv, nil, undef, max_trace_size, suppress_deprecation_warning,
   Version: VERSION, VERSION, GitCommit,

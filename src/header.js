@@ -13,8 +13,6 @@ const nil = {
   to_write: function() { return "()"; },
   to_array: function() { return []; },
   length: function() { return 0; },
-  // Moved to main.js to avoid circular dependency
-  //to_set: function() { return new BiwaSet(); },
 };
 
 //

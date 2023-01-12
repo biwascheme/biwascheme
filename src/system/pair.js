@@ -17,17 +17,17 @@ class Pair {
   // throws `err`.
   caar(err){ return this._get(["car", "car"], err) }
   cadr(err){ return this._get(["cdr", "car"], err) }
-  cdar(err){ return this._get(["cdr", "car"], err) }
+  cdar(err){ return this._get(["car", "cdr"], err) }
   cddr(err){ return this._get(["cdr", "cdr"], err) }
-  _get(props, err) {
+  _get(props, err="unexpected") {
     let x = this;
-    props.forEach(p => {
+    for (const p of props) {
       if (x.hasOwnProperty(p)) {
-        return x[p];
-      } else if (err) {
+        x = x[p];
+      } else {
         throw err;
       }
-    });
+    }
     return x;
   }
 
@@ -46,14 +46,6 @@ class Pair {
       ary.push(o.car);
     }
     return ary;
-  }
-
-  to_set(){
-    var set = new BiwaSet();
-    for(var o = this; o instanceof Pair; o=o.cdr){
-      set.add(o.car);
-    }
-    return set;
   }
 
   length(){
@@ -273,5 +265,34 @@ const alist_to_js_obj = function(alist) {
   return obj;
 };
 
+// Returns a new list made by applying `f` to each `car` and the last `cdr`
+const mapCarAndCdr = function(ls, f) {
+  if (ls === nil) {
+    return f(nil);
+  } else {
+    return Cons(f(ls.car), mapCarAndCdr(ls.cdr, f));
+  }
+};
+
+// Returns an array of each `car` and the last `cdr`, if it is not nil.
+const collectCarAndCdr = function(ls, f) {
+  if (ls === nil) {
+    return [];
+  } else {
+    return [ls.car].concat(collectCarAndCdr(ls.cdr));
+  }
+};
+
+/** Apply async function to each item of the list one by one.
+ * Returns a list of the results.
+ */
+async function mapAsync(ls, func) {
+  const ary = [];
+  for (var o = ls; isPair(o); o = o.cdr) {
+    ary.push(await func(o.car));
+  }
+  return array_to_list(ary);
+}
+
 export { Pair, List, isPair, isList, concatLists, array_to_list, deep_array_to_list, Cons,
-         js_obj_to_alist, alist_to_js_obj };
+         js_obj_to_alist, alist_to_js_obj, mapCarAndCdr, collectCarAndCdr, mapAsync };
