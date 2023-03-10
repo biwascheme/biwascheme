@@ -210,7 +210,7 @@ class Parser {
       } else if( /^\"(\\(.|$)|[^\"\\])*\"?$/.test(t) ) {
         // String literal
         
-        return t.replace(/(\r|\n|(?:^|[^\\+])\\(\\\\)*n)/g, function(match){
+        return t.replace(/(\r|\n|(?:^|[^\\])\\(\\\\)*n)/g, function(match){
           return match.replace(/(\r?\n|\\n)/g, "\n");
         }).replace( /^\"|\\(.|$)|\"$/g, function($0,$1) {
           return $1 ? $1 : '';
