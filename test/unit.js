@@ -277,18 +277,33 @@ describe('literal', {
     ev("1").should_be(1);
   },
   'string' : function() {
-    ev("\"\"").should_be("");
-    ev("\"a\"").should_be("a");
-    ev("\"a  b\"").should_be("a  b");
-    //TODO ev("\"a\\tb\"").should_be("a\tb");
+    ev('"a"').should_be("a");
+    ev('""').should_be("");
+    ev('"a b"').should_be("a b");
+    ev('"\\"\\""').should_be('""');
+    ev('"\\t\\n"').should_be("\t\n");
+    ev('"\\\\"').should_be("\\");
+    ev('"\\x09;"').should_be("\t");
+    ev('"a\\  \n  b"').should_be("ab");
   },
   'symbol' : function() {
     ev("'a").should_be(BiwaScheme.Sym("a"));
-    ev("'|a  b|").should_be(BiwaScheme.Sym("a  b"));
+    ev("'||").should_be(BiwaScheme.Sym(""));
+    ev("'|a b|").should_be(BiwaScheme.Sym("a b"));
+    ev("'|\\|\\||").should_be(BiwaScheme.Sym("||"));
+    ev("'|\\t\\n|").should_be(BiwaScheme.Sym("\t\n"));
+    ev("'|\\\\|").should_be(BiwaScheme.Sym("\\"));
+    ev("'|\\x09;|").should_be(BiwaScheme.Sym("\t"));
+    ev("'|a\\  \n  b|").should_be(BiwaScheme.Sym("a  \n  b"));
+  },
+  'datum label': function() {
+    ev("#(#0=123 #0#)").should_be([123, 123]);
   },
   'bool' : function() {
     ev("#t").should_be(true);
+    ev("#true").should_be(true);
     ev("#f").should_be(false);
+    ev("#false").should_be(false);
   }
 });
 
@@ -1091,27 +1106,21 @@ describe('11.11  Characters', {
     ev('(char? #\\A)').should_be(true);
     ev('(char? #\\()').should_be(true);
     ev('(char? #\\ )').should_be(true);
-//    ev('(char? #\\nul)').should_be(true);
-//    ev('(char? #\\alarm)').should_be(true);
-//    ev('(char? #\\backspace)').should_be(true);
-//    ev('(char? #\\tab)').should_be(true);
-//    ev('(char? #\\linefeed)').should_be(true);
-//    ev('(char? #\\newline)').should_be(true);
-//    ev('(char? #\\vtab)').should_be(true);
-//    ev('(char? #\\page)').should_be(true);
-//    ev('(char? #\\return)').should_be(true);
-//    ev('(char? #\\esc)').should_be(true);
-//    ev('(char? #\\space)').should_be(true);
-//    ev('(char? #\\delete)').should_be(true);
+    ev('(char? #\\alarm)').should_be(true);
+    ev('(char? #\\backspace)').should_be(true);
+    ev('(char? #\\delete)').should_be(true);
+    ev('(char? #\\escape)').should_be(true);
+    ev('(char? #\\newline)').should_be(true);
+    ev('(char? #\\null)').should_be(true);
+    ev('(char? #\\return)').should_be(true);
+    ev('(char? #\\space)').should_be(true);
+    ev('(char? #\\tab)').should_be(true);
     ev('(char? #\\xFF)').should_be(true);
     ev('(char? #\\x03BB)').should_be(true);
-//    ev('(char? #\\00006587)').should_be(true);
-//    ev('(char? #\\λ)').should_be(true);
+    ev('(char? #\\λ)').should_be(true);
     ev('(char? #\\xA)').should_be(true);
     ev('(char? #\\xFF)').should_be(true);
     ev('(char? #\\xff)').should_be(true);
-//    ev('(char? #\\000000001)').should_be(true);
-//    ev('(char? #\\space)').should_be(true);
   },
   'char->integer' : function(){
     ev("(char->integer #\\space)").should_be(32);

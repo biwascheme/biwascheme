@@ -99,7 +99,7 @@ Unimplemented features are marked with `[TODO]`.
 
 ## 6.6 Characters......................... 44
 
-* [TODO] `#\alarm`, etc
+* `#\alarm`, etc
 * `char?` `char=?` `char<?` `char>?` `char<=?` `char>=?`
 * `char-ci=?` `char-ci<?` `char-ci>?` `char-ci<=?` `char-ci>=?`
 * [TODO] `char-alphabetic?` etc.
