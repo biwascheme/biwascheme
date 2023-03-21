@@ -7,6 +7,10 @@ import { Sym } from "./symbol.js"
 import { isSymbol, isString } from "./_types.js"
 import { Complex } from "./number.js"
 
+// Raised when input is not terminated
+class Unterminated extends BiwaError {
+}
+
 // Allowed digits in each base
 const DIGITS = {
   2: /^[01]+/,
@@ -123,9 +127,9 @@ class Parser {
     return ret;
   }
 
-  _getObjectOrThrow(msg) {
+  _getObjectOrThrowUnterminated(msg) {
     const v = this.getObject();
-    if (v === Parser.EOS) throw msg;
+    if (v === Parser.EOS) throw new Unterminated(msg);
     return v;
   }
 
@@ -168,7 +172,7 @@ class Parser {
             this.i += "#;".length;
             this._skipAtmosphere();
             // Drop the value after the `#;` and continue
-            this._getObjectOrThrow("missing argument for `#;`");
+            this._getObjectOrThrowUnterminated("missing argument for `#;`");
           } else if (this.txt[this.i+1] == "|") {
             this.i += "#|".length;
             this._skipBlockComment();
@@ -213,13 +217,13 @@ class Parser {
         }
       }
     }
-    throw new BiwaError("unterminated block comment (`|#` not found)", this.rest());
+    throw new Unterminated("unterminated block comment (`|#` not found)", this.rest());
   }
 
   // Parse quote, backquote, unquote, unquote-splicing
   _parseQuote(name) {
     this._skipAtmosphere();
-    const v = this._getObjectOrThrow(`unterminated ${name}`);
+    const v = this._getObjectOrThrowUnterminated(`unterminated ${name}`);
     return List(Sym(name), v);
   }
 
@@ -283,7 +287,7 @@ class Parser {
       return Char.get(String.fromCharCode(parseInt(m[1], 16)));
     }
     if (this.done()) {
-      throw new BiwaError("got EOS on char literal", this.rest(-2));
+      throw new Unterminated("got EOS on char literal", this.rest(-2));
     } else {
       const c = this.txt[this.i];
       this.i++;
@@ -433,7 +437,7 @@ class Parser {
       this.i += m[0].length;
       const id = parseInt(m[1]);
       if (m[2] == "=") {
-        const v = this._getObjectOrThrow("got EOS for labelled datum");
+        const v = this._getObjectOrThrowUnterminated("got EOS for labelled datum");
         this.labelledData[id] = v;
         return v;
       } else {
@@ -471,14 +475,14 @@ class Parser {
         this.i++;
         const v = this.getObject();
         if (v === Parser.EOS) {
-          throw new BiwaError("found EOS after `.` in list", this.from(begin));
+          throw new Unterminated("found EOS after `.` in list", this.from(begin));
         }
         prev.cdr = v;
       } else {
         const vv = this.getObject();
         if (vv === Parser.EOS) {
           this.i = begin;
-          throw new BiwaError("found EOS in list", this.rest());
+          throw new Unterminated("found EOS in list", this.rest());
         }
         const cur = new Pair(vv, nil);
         if (list === nil) list = cur;
@@ -498,7 +502,7 @@ class Parser {
       const s = m[1].replaceAll(/\\\s*\n\s*/g, "");
       return this._replaceEscapedChars(s);
     } else {
-      throw new BiwaError("invalid string literal", this.rest())
+      throw new Unterminated("invalid string literal", this.rest())
     }
   }
 
@@ -509,7 +513,7 @@ class Parser {
       this.i += m[0].length;
       return Sym(this._replaceEscapedChars(m[1]));
     } else {
-      throw new BiwaError("invalid symbol literal", this.rest())
+      throw new Unterminated("invalid symbol literal", this.rest())
     }
   }
 
@@ -580,5 +584,7 @@ Parser.parse = txt => {
   }
   return ret;
 };
+
+Parser.Unterminated = Unterminated;
   
 export default Parser;
