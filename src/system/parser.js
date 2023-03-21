@@ -461,7 +461,7 @@ class Parser {
       const c = this.txt[this.i];
       if (c == closeParen) {
         this.i++;
-        break;
+        return list;
       } else if (c == ")" || c == "]" || c == "}") {
         throw new BiwaError("extra close paren", this.rest());
       } else if (c == "." && this.match(/^\.[\s]/)) {
@@ -486,7 +486,8 @@ class Parser {
         prev = cur;
       }
     }
-    return list;
+    this.i = begin;
+    throw new Unterminated("found EOS in list", this.rest());
   }
 
   // Parse a string literal (`"..."`)

@@ -158,7 +158,7 @@ describe('Interpreter', {
                     (if (= n 0) \
                         result \
                         (iter (- n 1) (* result n)))))");
-    ev("(scmfunc-test 3").should_be(6);
+    ev("(scmfunc-test 3)").should_be(6);
   }
 });
 
@@ -518,7 +518,7 @@ describe('11.2 Definitions', {
     ew("(define a 1) \
         (define (x) (define (y) (define (z) (define a 2) a) (z)) (y)) \
         (let1 result (x) \
-          (list result a)").should_be("(2 1)");
+          (list result a))").should_be("(2 1)");
   }
 })
 
@@ -633,7 +633,7 @@ describe('11.4 Expressions', {
       ew("(let ((a 'a) (b 'b) (x 'x) (y 'y)) "+
 	 "   (let*-values (((a b) (values x y))"+
 	 "                 ((x y) (values a b)))"+
-	 "      (list a b x y))").should_be("(x y x y)");
+	 "      (list a b x y)))").should_be("(x y x y)");
   }
 //  //(begin)
 //(define x 0)
@@ -732,10 +732,10 @@ describe('11.7 Arithmetic', {
   '= < > <= >=' : function(){
     ev("(= 1 1 1)").should_be(true);
     ev("(= 1 2)").should_be(false);
-    ev("(= 1 (make-rectangular 1 0)").should_be(true);
-    ev("(= 22 (make-rectangular 1 0)").should_be(false);
-    ev("(= (make-rectangular 1 2) (make-rectangular 1 2)").should_be(true);
-    ev("(= (make-rectangular 1 2) (make-rectangular 1 20)").should_be(false);
+    ev("(= 1 (make-rectangular 1 0))").should_be(true);
+    ev("(= 22 (make-rectangular 1 0))").should_be(false);
+    ev("(= (make-rectangular 1 2) (make-rectangular 1 2))").should_be(true);
+    ev("(= (make-rectangular 1 2) (make-rectangular 1 20))").should_be(false);
     ev("(< 1 2 3)").should_be(true);
     ev("(< 1 4 3)").should_be(false);
     ev("(> 3 2 1)").should_be(true);
@@ -771,7 +771,7 @@ describe('11.7 Arithmetic', {
     ev("(even? 2.5)").should_be(false);
   },
   'finite?, infinite?' : function(){
-    ev("(finite? +inf.0").should_be(false);
+    ev("(finite? +inf.0)").should_be(false);
     ev("(finite? 5)").should_be(true);
     ev("(finite? 5.0)").should_be(true);
     ev("(finite? +nan.0)").should_be(false);
@@ -1011,9 +1011,9 @@ describe('11.9 Pairs and lists', {
   'cadr' : function(){ ev("(cadr '((1 . 2) 3 . 4))").should_be(3); },
   'cdar' : function(){ ev("(cdar '((1 . 2) 3 . 4))").should_be(2); },
   'cddr' : function(){ ev("(cddr '((1 . 2) 3 . 4))").should_be(4); },
-  'cadar' : function(){ ev("(cadar '((1 2) (3 4))").should_be(2); },
-  'caadr' : function(){ ev("(caadr '((1 2) (3 4))").should_be(3); },
-  'cadadr' : function(){ ev("(cadadr '((1 2) (3 4))").should_be(4); },
+  'cadar' : function(){ ev("(cadar '((1 2) (3 4)))").should_be(2); },
+  'caadr' : function(){ ev("(caadr '((1 2) (3 4)))").should_be(3); },
+  'cadadr' : function(){ ev("(cadadr '((1 2) (3 4)))").should_be(4); },
   'null?' : function(){
     ev("(null? '())").should_be(true);
     ev("(null? #f)").should_be(false);
@@ -1091,7 +1091,7 @@ describe('11.10  Symbols', {
   'symbol=?' : function(){
     ev("(symbol=? 'foo 'foo)").should_be(true);
     ev("(symbol=? 'foo 'bar)").should_be(false);
-    ev('(symbol=? \'foo (string->symbol "foo")').should_be(true);
+    ev('(symbol=? \'foo (string->symbol "foo"))').should_be(true);
   },
   'string->symbol' : function(){
     ev("(eq? 'bitBlt (string->symbol \"bitBlt\"))").should_be(true);
@@ -1196,8 +1196,8 @@ describe('11.12  Strings', {
 
 describe('11.13  Vectors', {
   'vector?' : function(){
-    ev("(vector? #(1 2 3)").should_be(true);
-    ev("(vector? '(1 2 3)").should_be(false);
+    ev("(vector? #(1 2 3))").should_be(true);
+    ev("(vector? '(1 2 3))").should_be(false);
     ev("(vector? (lambda (x) (+ 1 x)))").should_be(false);
   },
   'make-vector' : function(){
@@ -1648,7 +1648,7 @@ describe('6 Records', {
           (point? p) \
           (point-x p) \
           (point-y p) \
-          (point-c p)").should_be("(#t 1 3 red)");
+          (point-c p))").should_be("(#t 1 3 red)");
   },
   'define-record-type (customize names)': function(){
     ew("(define-record-type (point new-point is-point) \
@@ -2066,7 +2066,7 @@ describe('14 Enumerators', {
         (map enum-set->list \
           (list (enum-set-complement (es)) \
                 (enum-set-complement (es a b)) \
-                (enum-set-complement (es a b c))"
+                (enum-set-complement (es a b c))))"
       ).should_be("((a b c) (c) ())");
   },
   'enum-set-projection': function(){
@@ -2230,7 +2230,7 @@ describe('js interface', {
     ev('(js-function? {})').should_be(false);
   },
   'list->js-array' : function(){
-    ev('(list->js-array \'()').should_be([]);
+    ev('(list->js-array \'())').should_be([]);
     ev('(list->js-array \'(1 2))').should_be([1, 2]);
   },
   'js-array->list' : function(){
@@ -2238,7 +2238,7 @@ describe('js interface', {
     ev('(equal? \'(1 2) (js-array->list (js-eval "[1,2]")))').should_be(true);
   },
   'alist->js-obj' : function(){
-    ev('(alist->js-obj \'()').should_be({});
+    ev('(alist->js-obj \'())').should_be({});
     ev('(alist->js-obj \'(("a" . 1) ("b" . 2)))').should_be({a: 1, b: 2});
   },
   'js-obj->alist' : function(){
