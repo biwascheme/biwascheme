@@ -75,7 +75,10 @@ class Parser {
     return `#<Parser (${this.i}/${this.txt.length})>`;
   }
 
-  // Read a Scheme value and returns it. Returns `Parser.EOS` if there is no more.
+  // Read a Scheme value and returns it.
+  // Returns `Parser.EOS` if there is no more.
+  // Throws `Parser.Unterminated` if the source text ends with an unterminated
+  // list, etc.
   getObject() {
     this._skipAtmosphere();
     let ret;
