@@ -462,6 +462,7 @@ class Parser {
     const openParen = this.txt[this.i];
     this.i++;
     const closeParen = PAREN[openParen];
+    let dotSeen = false;
     let list = nil, prev = list;
     while (this.i < this.txt.length) {
       this._skipAtmosphere();
@@ -475,12 +476,15 @@ class Parser {
         if (list === nil) {
           throw new BiwaError("no list element before `.`", this.from(begin));
         }
+        dotSeen = true;
         this.i++;
         const v = this.getObject();
         if (v === Parser.EOS) {
           throw new Unterminated("found EOS after `.` in list", this.from(begin));
         }
         prev.cdr = v;
+      } else if (dotSeen) {
+          throw new BiwaError("more than one element after `.`", this.from(begin));
       } else {
         const vv = this.getObject();
         if (vv === Parser.EOS) {
