@@ -1374,6 +1374,9 @@ describe('11.17  Quasiquotation', {
   'vector (nested)' : function(){
     ew("(let1 ls '(4) `#(1 `#(2 ,#(3 ,@ls))))")
       .should_be("#(1 (quasiquote #(2 (unquote #(3 4)))))");
+  },
+  'not a list' : function() {
+    ew("`(,1 ,@2)").should_be("(1 . 2)");
   }
 })
 

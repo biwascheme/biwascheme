@@ -1356,10 +1356,15 @@ var expand_qq = function(f, lv){
   else if(f instanceof Pair){
     var car = f.car;
     if(car instanceof Pair && car.car === Sym("unquote-splicing")){
-      if(lv == 1)
-        return List(Sym("append"),
-                    f.car.cdr.car,
-                    expand_qq(f.cdr, lv));
+      if(lv == 1) {
+        if (f.cdr === nil) {
+          return f.car.cdr.car;
+        } else {
+          return List(Sym("append"),
+                      f.car.cdr.car,
+                      expand_qq(f.cdr, lv));
+        }
+      }
       else
         return List(Sym("cons"),
                     List(Sym("list"),
