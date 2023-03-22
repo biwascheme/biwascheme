@@ -1,17 +1,14 @@
 function unbalanced_parentheses(text_code) {
-    var tokens = (new BiwaScheme.Parser(text_code)).tokens;
-    var parentheses = 0;
-    var brakets = 0;
-    for(var i=0; i<tokens.length; ++i) {
-        switch(tokens[i]) {
-            case "[": ++brakets; break;
-            case "]": --brakets; break;
-            case "(": ++parentheses; break;
-            case "#(": ++parentheses; break;
-            case ")": --parentheses; break;
+    try {
+        (new BiwaScheme.Parser(text_code)).getObject(text_code);
+    } catch(e) {
+        if (e instanceof BiwaScheme.Parser.Unterminated) {
+            return true;
+        } else {
+            return false;
         }
     }
-    return parentheses != 0 || brakets != 0;
+    return false;
 }
 // -----------------------------------------------------------------------------
 // S-Expression Tokenizer taken from LIPS interpreter
