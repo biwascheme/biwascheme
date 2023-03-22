@@ -41,22 +41,6 @@ function Options(argv){
   opts.parser = parser;
 }
 
-function unbalanced_parentheses(text_code) {
-    var tokens = (new BiwaScheme.Parser(text_code)).tokens;
-    var parentheses = 0;
-    var brakets = 0;
-    for(var i=0; i<tokens.length; ++i) {
-        switch(tokens[i]) {
-            case "[": ++brakets; break;
-            case "]": --brakets; break;
-            case "#(": ++parentheses; break;
-            case "(": ++parentheses; break;
-            case ")": --parentheses; break;
-        }
-    }
-    return parentheses != 0 || brakets != 0;
-}
-
 function repl(){
   var rl = require('readline').createInterface(
     process.stdin,
@@ -74,10 +58,14 @@ function repl(){
   rl.on('line', function(line) {
     code_to_evaluate += ' ' + line;
 
-    if (!unbalanced_parentheses(code_to_evaluate)) {
       try{
-        var result = BiwaScheme.run(code_to_evaluate);
+        var result = BiwaScheme.run(code_to_evaluate, {no_print: true});
       } catch (e) {
+        if (e instanceof BiwaScheme.Parser.Unterminated) {
+          rl.setPrompt(prompts.cont);
+          rl.prompt();
+          return;
+        }
         console.error(e);
         var result = erred;
       }
@@ -88,10 +76,6 @@ function repl(){
 
       code_to_evaluate = '';
       rl.setPrompt(prompts.base);
-    }
-    else {
-      rl.setPrompt(prompts.cont);
-    }
 
     if (!(result instanceof BiwaScheme.Pause)) {
       rl.prompt();
