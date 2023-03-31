@@ -3,7 +3,7 @@
 1. Edit CHANGELOG.md
 1. Edit package.json
 1. Build
-  - $ rollup -c
+  - $ npm run build
 1. Create release/biwascheme-x.y.z.js
   - $ npm run prepare-release
 1. Rebuild website
@@ -28,4 +28,3 @@
     - `$ biwas -v`
 1. `git add` changed files and `npm run release`
 1. Make a release on [github](https://github.com/biwascheme/biwascheme/releases)
-1. Post release mail to the mailing list

@@ -86,9 +86,60 @@ libBiwaExtra.environment.set(Sym(&#39;func4&#39;), async ([proc, engine]) =&gt; 
 </code></pre>
 <p>The difference between case 2 and 3 are important. In Scheme level,
 <code>func2</code> returns a Scheme value while <code>func3</code> returns a JS Object (Promise).</p>
+<h3 id="key-files">Key files</h3>
+<ul>
+<li>src/<ul>
+<li>new_expander_dev.js : Temporary entry point</li>
+<li>r7rs/ : Will contain R7RS-small functions</li>
+<li>system/<ul>
+<li>engine.js</li>
+<li>expander/<ul>
+<li>core.js : Expanders for core syntaxes such as <code>if</code>, <code>lambda</code>, etc.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <h3 id="todos">TODOs</h3>
 <ul>
-<li>Implement basic constructs such as <code>lambda</code>, <code>define</code></li>
+<li>Implement basic constructs (src/system/expander/core.js &lt;- r7expander/init.scm)<ul>
+<li>high priority<ul>
+<li>if</li>
+</ul>
+<ul>
+<li>lambda</li>
+</ul>
+<ul>
+<li>define</li>
+<li>begin</li>
+<li>quote</li>
+<li>set!</li>
+<li>define-syntax, let-syntax, letrec-syntax</li>
+<li>call/cc</li>
+</ul>
+</li>
+<li>lower priority<ul>
+<li>define-record-type</li>
+<li>parameterize</li>
+<li>include, include-ci, if-expand, case-lambda</li>
+<li>syntax-error</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Implement R7RS base (src/r7rs/*.js)<ul>
+<li>high priority<ul>
+<li>boolean char continuation control_features number pair port string symbol syntax values vector</li>
+</ul>
+</li>
+<li>lower priority<ul>
+<li>bytevector error syntax</li>
+</ul>
+</li>
+</ul>
+</li>
 <li>Integrate <code>Compiler</code> and <code>Interpreter</code> with <code>Engine</code></li>
 <li>Design how <code>import</code> and <code>include</code> works in browser and on Node.js</li>
 <li>Provide existing libraries as r7rs lib</li>
@@ -102,18 +153,9 @@ libBiwaExtra.environment.set(Sym(&#39;func4&#39;), async ([proc, engine]) =&gt; 
 +    &quot;type&quot;: &quot;module&quot;,
      &quot;name&quot;: &quot;biwascheme&quot;,
      &quot;description&quot;: &quot;A practical Scheme interpreter written in JavaScript&quot;,
---- a/src/platforms/node/node_functions.js
-+++ b/src/platforms/node/node_functions.js
-@@ -11,8 +11,8 @@ import { run } from &quot;./run.js&quot;
- //
-
- const node = {
--  fs: require(&#39;fs&#39;),
--  path: require(&#39;path&#39;),
-+//  fs: require(&#39;fs&#39;),
-+//  path: require(&#39;path&#39;),
-   process: process
- };
+</code></pre>
+<p>and then</p>
+<pre><code>$ node src/new_expander_dev.js
 </code></pre>
     </div>
 

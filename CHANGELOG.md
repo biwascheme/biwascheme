@@ -1,3 +1,23 @@
+## 2023-03-31 v0.8.0
+
+## Important notice
+
+A GPL violation was found in BiwaScheme prior to version 0.8.0. When I began
+this project  in 2007, I created `BiwaScheme.Parser` by largely copying the
+parser of jsScheme (another lisp-in-js project; see README.md for the link).
+However, I was not aware that it was released under the GPL.
+
+Apart from this, we added many features to `BiwaScheme.Parser` in 15 years,
+making it increasingly difficult to fix bugs or adding new features.
+BiwaScheme v0.8.0 has a new parser implementation written from scratch
+that is more R7RS compliant and fixes several known bugs.
+
+## Other changes
+
+- feat: Parser is replaced with a new implementation. (#309 #310 #311 #312)
+- fix: Calling `sleep` causes an error (#292)
+- internal: biwascheme.js does not include underscore.js anymore (#288)
+
 ## 2022-03-24 v0.7.5
 
 - feat: parse symbols like `|a b|` (#270)

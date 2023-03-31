@@ -1,5 +1,5 @@
 import child_process from "child_process";
-import package_json from "../package.json"
+import package_json from "../package.json" assert { type: "json" };
 const version = package_json["version"]
 child_process.execSync(`git ci -m v${version}`)
 child_process.execSync(`git tag v${version}`)
