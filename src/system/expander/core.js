@@ -246,6 +246,7 @@ const expandSet = async ([form, xp]) => {
 // const expandInclude
 // const expandIncludeCi
 // const expandIfExpand
+//   memo: if-expand is not defined in R7RS. Maybe used to implement cond-expand in r7expander?
 // const expandCaseLambda
 
 // Install core expanders into `lib`
