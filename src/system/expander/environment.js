@@ -204,11 +204,6 @@ class Environment {
   }
 }
 
-// Returns whether `id1` in `env1` and `id2` in `id2` is the same identifier
-const identifierEquals = (id1, env1, id2, env2) => {
-  return env1.expand(id1) === env2.expand(id2);
-};
-
 // Returns a newly created unique symbol
 let generateNameN = 0;
 const generateName = id => {
@@ -217,4 +212,4 @@ const generateName = id => {
   return Sym(`%${unwrapSyntax(id)}.${n}`);
 }
 
-export { Environment, identifierEquals };
+export { Environment };

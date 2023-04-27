@@ -146,6 +146,12 @@ class Expander {
     });
   }
 
+  // Returns whether `id1` in `env1` and `id2` in `id2` is the same identifier
+  async identifierEquals(id1, env1, id2, env2) {
+    const l = await this.expand(id1, env1);
+    const r = await this.expand(id2, env2);
+    return l === r;
+  }
 }
 
 export { Expander };

@@ -1,4 +1,4 @@
-import { Environment, identifierEquals } from "./environment.js"
+import { Environment } from "./environment.js"
 
 // Explicit-renaming macro
 function makeErMacroTransformer(proc) {
@@ -13,7 +13,7 @@ function makeErMacroTransformer(proc) {
         return id
       }
     };
-    const compare = (x, y) => identifierEquals(x, env, y, env);
+    const compare = (x, y) => xp.identifierEquals(x, env, y, env);
     const result = await xp.engine.invoke(proc, [form, rename, compare]);
     return xp.expand(result);
   };
