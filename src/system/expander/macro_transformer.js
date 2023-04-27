@@ -4,7 +4,7 @@ import { Environment, identifierEquals } from "./environment.js"
 function makeErMacroTransformer(proc) {
   return async function([form, xp, env, metaEnv]) {
     const table = new Map();
-    const rename = ([x]) => {
+    const rename = (x) => {
       if (table.has(x)) {
         return table.get(x)
       } else {
@@ -13,7 +13,7 @@ function makeErMacroTransformer(proc) {
         return id
       }
     };
-    const compare = ([x, y]) => identifierEquals(x, env, y, env);
+    const compare = (x, y) => identifierEquals(x, env, y, env);
     const result = await xp.engine.invoke(proc, [form, rename, compare]);
     return xp.expand(result);
   };

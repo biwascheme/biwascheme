@@ -1,7 +1,9 @@
 // Library (scheme base)
 import { nil, undef } from "../header.js";
 import { Library, isLibrary } from "../system/expander/library.js"
-import { List, Cons, isPair, isList } from "../system/pair.js"
+import { isSymbol } from "../system/_types.js"
+import { BiwaError } from "../system/error.js"
+import { List, Cons, Pair, isPair, isList } from "../system/pair.js"
 import { Sym } from "../system/symbol.js"
 import { makeErMacroTransformer } from "../system/expander/macro_transformer.js"
 import { installCore } from "../system/expander/core.js"
@@ -112,7 +114,7 @@ libSchemeBase.exportMacro(Sym("and"), makeErMacroTransformer(([x, rename, compar
   var i = objs.length-1;
   var t = objs[i];
   for(i=i-1; i>=0; i--)
-    t = List(rename([Sym("if")]), objs[i], t, false);
+    t = List(rename(Sym("if")), objs[i], t, false);
 
   return t;
 }));
@@ -124,7 +126,7 @@ libSchemeBase.exportMacro(Sym("or"), makeErMacroTransformer(([x, rename, compare
   var objs = x.cdr.to_array()
   var f = false;
   for(let i=objs.length-1; i>=0; i--)
-    f = List(rename([Sym("if")]), objs[i], objs[i], f);
+    f = List(rename(Sym("if")), objs[i], objs[i], f);
 
   return f;
 }));
@@ -134,9 +136,9 @@ libSchemeBase.exportMacro(Sym("when"), makeErMacroTransformer(([x, rename, compa
   //=> (if test (begin body ...) #<undef>)
   const test = x.cdr.car, body = x.cdr.cdr;
 
-  return new Pair(rename([Sym("if")]),
+  return new Pair(rename(Sym("if")),
            new Pair(test,
-             new Pair(new Pair(rename([Sym("begin")]), body),
+             new Pair(new Pair(rename(Sym("begin")), body),
                new Pair(undef, nil))));
 }));
 
@@ -145,9 +147,9 @@ libSchemeBase.exportMacro(Sym("unless"), makeErMacroTransformer(([x, rename, com
   //=> (if (not test) (begin body ...) #<undef>)
   const test = x.cdr.car, body = x.cdr.cdr;
 
-  return new Pair(rename([Sym("if")]),
-           new Pair(new Pair(rename([Sym("not")]), new Pair(test, nil)),
-             new Pair(new Pair(rename([Sym("begin")]), body),
+  return new Pair(rename(Sym("if")),
+           new Pair(new Pair(rename(Sym("not")), new Pair(test, nil)),
+             new Pair(new Pair(rename(Sym("begin")), body),
                new Pair(undef, nil))));
 }));
 
@@ -206,14 +208,14 @@ libSchemeBase.exportMacro(Sym("let*"), makeErMacroTransformer(([x, rename, compa
   const binds = x.cdr.car, body = x.cdr.cdr;
 
   if(binds === nil)
-    return new Pair(rename([Sym("let")]), new Pair(nil, body));
+    return new Pair(rename(Sym("let")), new Pair(nil, body));
 
   if(!(binds instanceof Pair))
     throw new BiwaError("let*: need a pair for bindings: got "+to_write(binds));
 
   var ret = null;
   binds.to_array().reverse().forEach(function(bind){
-    ret = new Pair(rename([Sym("let")]),
+    ret = new Pair(rename(Sym("let")),
              new Pair(new Pair(bind, nil),
                ret == null ? body : new Pair(ret, nil)));
   })
@@ -228,7 +230,7 @@ const letRecStarTransfomer = makeErMacroTransformer(([x, rename, compare]) => {
 
   var ret = body;
   binds.to_array().reverse().forEach(function(bind){
-    ret = new Pair(new Pair(rename([Sym("set!")]), bind),
+    ret = new Pair(new Pair(rename(Sym("set!")), bind),
             ret);
   })
   var letbody = nil;
@@ -237,7 +239,7 @@ const letRecStarTransfomer = makeErMacroTransformer(([x, rename, compare]) => {
                          new Pair(undef, nil)),
                 letbody);
   })
-  return new Pair(rename([Sym("let")]),
+  return new Pair(rename(Sym("let")),
            new Pair(letbody,
              ret));
 });
@@ -265,7 +267,7 @@ libSchemeBase.exportMacro(Sym("let-values"), makeErMacroTransformer(([x, rename,
   var tmpsym = gensym()
   var binding = new Pair(tmpsym,
        new Pair(
-          new Pair(rename([Sym("lambda")]), new Pair(nil,
+          new Pair(rename(Sym("lambda")), new Pair(nil,
                    new Pair(init, nil))),
           nil));
   let_bindings = new Pair(binding, let_bindings);
@@ -275,10 +277,10 @@ libSchemeBase.exportMacro(Sym("let-values"), makeErMacroTransformer(([x, rename,
               let_star_values_bindings);
     });
 
-    var let_star_values = new Pair(rename([Sym("let*-values")]),
+    var let_star_values = new Pair(rename(Sym("let*-values")),
            new Pair(let_star_values_bindings,
               body));
-    ret = new Pair(rename([Sym("let")]),
+    ret = new Pair(rename(Sym("let")),
        new Pair(let_bindings,
           new Pair (let_star_values, nil)));
     return ret;
@@ -303,11 +305,11 @@ libSchemeBase.exportMacro(Sym("let*-values"), makeErMacroTransformer(([x, rename
 
   mv_bindings.to_array().reverse().forEach(function(item){
     var formals = item.car, init = item.cdr.car;
-    ret = new Pair(rename([Sym("call-with-values")]),
-            new Pair(new Pair(rename([Sym("lambda")]),
+    ret = new Pair(rename(Sym("call-with-values")),
+            new Pair(new Pair(rename(Sym("lambda")),
                        new Pair(nil,
                          new Pair(init, nil))),
-              new Pair(new Pair(rename([Sym("lambda")]),
+              new Pair(new Pair(rename(Sym("lambda")),
                          new Pair(formals,
                            (ret == null ? body
                                         : new Pair(ret, nil)))), nil)));
@@ -346,19 +348,19 @@ libSchemeBase.exportMacro(Sym("do"), makeErMacroTransformer(([x, rename, compare
   }));
 
   var test = resultc.car;
-  var result_exprs = new Pair(rename([Sym("begin")]), resultc.cdr);
+  var result_exprs = new Pair(rename(Sym("begin")), resultc.cdr);
 
   var next_loop = new Pair(loop, array_to_list(varsc.map(function(var_def){
     var a = var_def.to_array();
     return a[2] || a[0];
   })));
-  var body_exprs = new Pair(rename([Sym("begin")]), bodyc).concat(List(next_loop));
+  var body_exprs = new Pair(rename(Sym("begin")), bodyc).concat(List(next_loop));
 
   // combine subforms
-  return List(rename([Sym("let")]),
+  return List(rename(Sym("let")),
               loop,
               init_vars,
-              List(rename([Sym("if")]),
+              List(rename(Sym("if")),
                    test,
                    result_exprs,
                    body_exprs));
@@ -368,59 +370,59 @@ libSchemeBase.exportMacro(Sym("do"), makeErMacroTransformer(([x, rename, compare
 
 libSchemeBase.exportMacro(Sym("quasiquote"), makeErMacroTransformer(([x, rename, compare]) => {
   const expand_qq = function(f, lv){
-    if(f instanceof BiwaSymbol || f === nil){
-      return List(rename([Sym("quote")]), f);
+    if(isSymbol(f) || f === nil){
+      return List(rename(Sym("quote")), f);
     }
     else if(f instanceof Pair){
       var car = f.car;
-      if(car instanceof Pair && compare([car.car, Sym("unquote-splicing")])){
+      if(car instanceof Pair && compare(car.car, Sym("unquote-splicing"))){
         if(lv == 1) {
           if (f.cdr === nil) {
             return f.car.cdr.car;
           } else {
-            return List(rename([Sym("append")]),
+            return List(rename(Sym("append")),
                         f.car.cdr.car,
                         expand_qq(f.cdr, lv));
           }
         }
         else
-          return List(rename([Sym("cons")]),
-                      List(rename([Sym("list")]),
-                          List(rename([Sym("quote")]), rename([Sym("unquote-splicing")])),
+          return List(rename(Sym("cons")),
+                      List(rename(Sym("list")),
+                          List(rename(Sym("quote")), rename(Sym("unquote-splicing"))),
                           expand_qq(f.car.cdr.car, lv-1)),
                       expand_qq(f.cdr, lv));
       }
-      else if(compare([car, Sym("unquote")])){
+      else if(compare(car, Sym("unquote"))){
         if(lv == 1)
           return f.cdr.car;
         else
-          return List(rename([Sym("list")]),
-                      List(rename([Sym("quote")]), rename([Sym("unquote")])),
+          return List(rename(Sym("list")),
+                      List(rename(Sym("quote")), rename(Sym("unquote"))),
                       expand_qq(f.cdr.car, lv-1));
       }
       else if(compare(car, Sym("quasiquote")))
-        return List(rename([Sym("list")]),
-                    List(rename([Sym("quote")]), rename([Sym("quasiquote")])),
+        return List(rename(Sym("list")),
+                    List(rename(Sym("quote")), rename(Sym("quasiquote"))),
                     expand_qq(f.cdr.car, lv+1));
       else
-        return List(rename([Sym("cons")]),
+        return List(rename(Sym("cons")),
                     expand_qq(f.car, lv),
                     expand_qq(f.cdr, lv));
     }
     else if(f instanceof Array){
       var vecs = [[]];
       for(var i=0; i<f.length; i++){
-        if(f[i] instanceof Pair && compare([f[i].car, Sym("unquote-splicing")])) {
+        if(f[i] instanceof Pair && compare(f[i].car, Sym("unquote-splicing"))) {
           if (lv == 1) {
-            var item = List(rename([Sym("list->vector")]), f[i].cdr.car);
+            var item = List(rename(Sym("list->vector")), f[i].cdr.car);
             item["splicing"] = true;
             vecs.push(item);
             vecs.push([]);
           }
           else {
-            var item = List(rename([Sym("cons")]),
-                        List(rename([Sym("list")]),
-                              List(rename([Sym("quote")]), rename([Sym("unquote-splicing")])),
+            var item = List(rename(Sym("cons")),
+                        List(rename(Sym("list")),
+                              List(rename(Sym("quote")), rename(Sym("unquote-splicing"))),
                               expand_qq(f[i].car.cdr.car, lv-1)),
                         expand_qq(f[i].cdr, lv));
             vecs[vecs.length-1].push(item);
@@ -437,16 +439,16 @@ libSchemeBase.exportMacro(Sym("quasiquote"), makeErMacroTransformer(([x, rename,
           return vec;
         }
         else {
-          return Cons(rename([Sym("vector")]),
+          return Cons(rename(Sym("vector")),
                       array_to_list(vec));
         }
       });
       if (vectors.length == 1) {
-        return Cons(rename([Sym("vector")]),
+        return Cons(rename(Sym("vector")),
                     array_to_list(vecs[0]));
       }
       else {
-        return Cons(rename([Sym("vector-append")]),
+        return Cons(rename(Sym("vector-append")),
                     array_to_list(vectors));
       }
     }
