@@ -2,6 +2,7 @@
 import { nil, undef } from "../header.js";
 import { Library, isLibrary } from "../system/expander/library.js"
 import { isSymbol } from "../system/_types.js"
+import { inspect } from "../system/_writer.js"
 import { BiwaError } from "../system/error.js"
 import { List, Cons, Pair, isPair, isList } from "../system/pair.js"
 import { Sym } from "../system/symbol.js"
@@ -368,51 +369,51 @@ libSchemeBase.exportMacro(Sym("do"), makeErMacroTransformer(([x, rename, compare
 
 // TODO guard
 
-libSchemeBase.exportMacro(Sym("quasiquote"), makeErMacroTransformer(([x, rename, compare]) => {
-  const expand_qq = function(f, lv){
+libSchemeBase.exportMacro(Sym("quasiquote"), makeErMacroTransformer(async ([x, rename, compare]) => {
+  const expand_qq = async function(f, lv){
     if(isSymbol(f) || f === nil){
       return List(rename(Sym("quote")), f);
     }
     else if(f instanceof Pair){
       var car = f.car;
-      if(car instanceof Pair && compare(car.car, Sym("unquote-splicing"))){
+      if(car instanceof Pair && await compare(car.car, Sym("unquote-splicing"))){
         if(lv == 1) {
           if (f.cdr === nil) {
             return f.car.cdr.car;
           } else {
             return List(rename(Sym("append")),
                         f.car.cdr.car,
-                        expand_qq(f.cdr, lv));
+                        await expand_qq(f.cdr, lv));
           }
         }
         else
           return List(rename(Sym("cons")),
                       List(rename(Sym("list")),
                           List(rename(Sym("quote")), rename(Sym("unquote-splicing"))),
-                          expand_qq(f.car.cdr.car, lv-1)),
-                      expand_qq(f.cdr, lv));
+                          await expand_qq(f.car.cdr.car, lv-1)),
+                      await expand_qq(f.cdr, lv));
       }
-      else if(compare(car, Sym("unquote"))){
+      else if(await compare(car, Sym("unquote"))){
         if(lv == 1)
           return f.cdr.car;
         else
           return List(rename(Sym("list")),
                       List(rename(Sym("quote")), rename(Sym("unquote"))),
-                      expand_qq(f.cdr.car, lv-1));
+                      await expand_qq(f.cdr.car, lv-1));
       }
-      else if(compare(car, Sym("quasiquote")))
+      else if(await compare(car, Sym("quasiquote")))
         return List(rename(Sym("list")),
                     List(rename(Sym("quote")), rename(Sym("quasiquote"))),
-                    expand_qq(f.cdr.car, lv+1));
+                    await expand_qq(f.cdr.car, lv+1));
       else
         return List(rename(Sym("cons")),
-                    expand_qq(f.car, lv),
-                    expand_qq(f.cdr, lv));
+                    await expand_qq(f.car, lv),
+                    await expand_qq(f.cdr, lv));
     }
     else if(f instanceof Array){
       var vecs = [[]];
       for(var i=0; i<f.length; i++){
-        if(f[i] instanceof Pair && compare(f[i].car, Sym("unquote-splicing"))) {
+        if(f[i] instanceof Pair && await compare(f[i].car, Sym("unquote-splicing"))) {
           if (lv == 1) {
             var item = List(rename(Sym("list->vector")), f[i].cdr.car);
             item["splicing"] = true;
@@ -423,14 +424,14 @@ libSchemeBase.exportMacro(Sym("quasiquote"), makeErMacroTransformer(([x, rename,
             var item = List(rename(Sym("cons")),
                         List(rename(Sym("list")),
                               List(rename(Sym("quote")), rename(Sym("unquote-splicing"))),
-                              expand_qq(f[i].car.cdr.car, lv-1)),
-                        expand_qq(f[i].cdr, lv));
+                              await expand_qq(f[i].car.cdr.car, lv-1)),
+                        await expand_qq(f[i].cdr, lv));
             vecs[vecs.length-1].push(item);
           }
         }
         else {
           // Expand other things as the same as if they are in a list quasiquote
-          vecs[vecs.length-1].push(expand_qq(f[i], lv));
+          vecs[vecs.length-1].push(await expand_qq(f[i], lv));
         }
       }
 

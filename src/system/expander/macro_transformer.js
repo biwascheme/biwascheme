@@ -13,7 +13,7 @@ function makeErMacroTransformer(proc) {
         return id
       }
     };
-    const compare = (x, y) => xp.identifierEquals(x, env, y, env);
+    const compare = async (x, y) => xp.identifierEquals(x, env, y, env);
     const result = await xp.engine.invoke(proc, [form, rename, compare]);
     return xp.expand(result);
   };
