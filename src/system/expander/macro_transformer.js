@@ -1,10 +1,10 @@
-import { Environment, identifierEquals } from "./environment.js"
+import { Environment } from "./environment.js"
 
 // Explicit-renaming macro
 function makeErMacroTransformer(proc) {
   return async function([form, xp, env, metaEnv]) {
     const table = new Map();
-    const rename = ([x]) => {
+    const rename = (x) => {
       if (table.has(x)) {
         return table.get(x)
       } else {
@@ -13,7 +13,7 @@ function makeErMacroTransformer(proc) {
         return id
       }
     };
-    const compare = ([x, y]) => identifierEquals(x, env, y, env);
+    const compare = async (x, y) => xp.identifierEquals(x, env, y, env);
     const result = await xp.engine.invoke(proc, [form, rename, compare]);
     return xp.expand(result);
   };

@@ -7,15 +7,14 @@ import { Sym } from "../symbol.js"
 import { to_write } from "../_writer.js"
 import { Bug, BiwaError } from "../error.js"
 import { isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
-import { identifierEquals } from "./environment.js"
 import { makeErMacroTransformer } from "./macro_transformer.js"
 
 // Creates macro transformer written in syntax-rules.
 // @return { Macro } A macro transformer bound with `env`
-function interpretTransformerSpec(spec, env, metaEnv)
+async function interpretTransformerSpec(xp, spec, env, metaEnv)
 {
   if (isIdentifier(spec.car)) {
-    if (identifierEquals(spec.car, env, Sym("syntax-rules"), metaEnv)) {
+    if (await xp.identifierEquals(spec.car, env, Sym("syntax-rules"), metaEnv)) {
       return new Macro("(syntax-rules)", env, interpretSyntaxRules(spec));
     }
   }
@@ -75,7 +74,7 @@ const expandDefineSyntax = async ([form, xp, env, metaEnv]) => {
       if (!isIdentifier(keyword)) {
         throw new BiwaError("malformed define-syntax", form);
       }
-      const expander = interpretTransformerSpec(transformerSpec, env, metaEnv);
+      const expander = await xp.interpretTransformerSpec(transformerSpec, env, metaEnv);
       env.installExpander(keyword, expander);
       return List(Sym("begin"));
     default:
@@ -188,11 +187,11 @@ const expandLetSyntax = async ([form, xp, env, metaEnv]) => {
   const body = form.cdr.cdr;
 
   const newEnv = env.clone();
-  bindings.forEach(pair => {
+  for (let pair of bindings) {
     const [keyword, transformerSpec] = pair;
-    const expander = interpretTransformerSpec(transformerSpec, env, metaEnv);
+    const expander = await interpretTransformerSpec(transformerSpec, env, metaEnv);
     newEnv.installExpander(keyword, expander);
-  });
+  }
 
   const _lambda = metaEnv.makeIdentifier(Sym('lambda'));
   return xp.expand(List(Cons(_lambda, Cons(List(), body)), newEnv));
@@ -207,11 +206,11 @@ const expandLetRecSyntax = async ([form, xp, env, metaEnv]) => {
   const body = form.cdr.cdr;
 
   const newEnv = env.clone();
-  bindings.forEach(pair => {
+  for (let pair of bindings) {
     const [keyword, transformerSpec] = pair;
-    const expander = interpretTransformerSpec(transformerSpec, newEnv, metaEnv);
+    const expander = await interpretTransformerSpec(transformerSpec, newEnv, metaEnv);
     newEnv.installExpander(keyword, expander);
-  });
+  }
 
   const _lambda = metaEnv.makeIdentifier(Sym('lambda'));
   return xp.expand(List(Cons(_lambda, Cons(List(), body)), newEnv));
