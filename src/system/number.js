@@ -79,7 +79,7 @@ class Rational {
   }
 
   isInteger() {
-     // FIXME
+     return this.numerator % this.denominator == 0;
   }
 }
 
