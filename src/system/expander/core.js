@@ -2,7 +2,7 @@
 // Expanders for core syntaxes
 //
 import { nil } from "../../header.js"
-import { List, Cons, isPair, isList, array_to_list, mapCarAndCdr, collectCarAndCdr } from "../pair.js"
+import { List, Cons, isPair, isList, array_to_list, mapCarAndCdrAsync, collectCarAndCdr } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { to_write } from "../_writer.js"
 import { Bug, BiwaError } from "../error.js"
@@ -111,7 +111,7 @@ const expandLambda = async ([form, xp, env]) => {
   
   const newFormals = formals === nil
     ? nil
-    : mapCarAndCdr(formals, async (x) => { return await xp.expand(x) });
+    : await mapCarAndCdrAsync(formals, async (x) => { return await xp.expand(x) });
 
   const body = form.cddr(err);
   let newBody = await body.mapAsync(async form => { return await xp.expand(form, newEnv) });
