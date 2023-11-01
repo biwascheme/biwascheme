@@ -274,6 +274,15 @@ const mapCarAndCdr = function(ls, f) {
   }
 };
 
+// Returns a new list made by applying `f` to each `car` and the last `cdr`
+const mapCarAndCdrAsync = async function(ls, f) {
+  if (ls === nil) {
+    return await f(nil);
+  } else {
+    return Cons(await f(ls.car), await mapCarAndCdrAsync(ls.cdr, f));
+  }
+};
+
 // Returns an array of each `car` and the last `cdr`, if it is not nil.
 const collectCarAndCdr = function(ls, f) {
   if (ls === nil) {
@@ -295,4 +304,4 @@ async function mapAsync(ls, func) {
 }
 
 export { Pair, List, isPair, isList, concatLists, array_to_list, deep_array_to_list, Cons,
-         js_obj_to_alist, alist_to_js_obj, mapCarAndCdr, collectCarAndCdr, mapAsync };
+         js_obj_to_alist, alist_to_js_obj, mapCarAndCdr, mapCarAndCdrAsync, collectCarAndCdr, mapAsync };

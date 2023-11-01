@@ -1,6 +1,6 @@
 import { nil } from "../../header.js";
 import { isSymbol, isVector } from "../_types.js"
-import { to_write } from "../_writer.js"
+import { to_write, inspect } from "../_writer.js"
 import { Bug, BiwaError } from "../error.js"
 import { List, array_to_list, Cons, isPair, isList } from "../pair.js"
 import { Sym } from "../symbol.js"
@@ -13,15 +13,20 @@ class Library {
   static currentLibrary = null;
   static featureList = [];
 
-  constructor(environment) {
+  constructor(environment, name) {
     this.environment = environment;
+    this.name = name;  // For debugging purpose
     this.exports = new Map();
+  }
+
+  toString() {
+    return `#<Library ${this.name}(${this.exports.size})>`;
   }
 
   static create(spec) {
     const name = spec.map(x => to_write(x)).join(".");
     const env = Environment.makeToplevelEnvironment(name, `${name}:`);
-    return new Library(env);
+    return new Library(env, name);
   }
 
   /** Interprets imports, exports, etc. of this library

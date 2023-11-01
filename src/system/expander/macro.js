@@ -22,7 +22,7 @@ class Macro {
     }
   }
 
-  to_write() {
+  toString() {
     return `#<Macro ${this.dbgName}>`
   }
 }

@@ -2,9 +2,9 @@
 // Expanders for core syntaxes
 //
 import { nil } from "../../header.js"
-import { List, Cons, isPair, isList, array_to_list, mapCarAndCdr, collectCarAndCdr } from "../pair.js"
+import { List, Cons, isPair, isList, array_to_list, mapCarAndCdrAsync, collectCarAndCdr } from "../pair.js"
 import { Sym } from "../symbol.js"
-import { to_write } from "../_writer.js"
+import { inspect, to_write } from "../_writer.js"
 import { Bug, BiwaError } from "../error.js"
 import { isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
 import { makeErMacroTransformer } from "./macro_transformer.js"
@@ -42,27 +42,27 @@ const expandCallCc = async ([form, xp]) => {
 // Destructively modifies `env`
 const expandDefine = async ([form, xp, env]) => {
   const l = form.to_array();
-  switch (l.length) {
-    case 3:
-      const [_, formal, ...exprs] = l;
-      if (isIdentifier(formal) && exprs.length == 1) {
-        // (define var expr)
-        env.extend(formal);
-        const id = await xp.expand(formal);
-        const body = env.isToplevel() ? (await xp.expand(exprs[0]))
-                                      : exprs[0]; // Expand later on
-        return List(Sym("define"), id, body);
-      } else if (isPair(formal)) {
-        const id = formal.car;
-        if (isIdentifier(id)) {
-          const args = formal.cdr;
-          const form = List(Sym("define"), id,
-            Cons(Sym("lambda"), Cons(args, array_to_list(exprs))));
-          return expandDefine([form, xp, env]);
-        }
-      }
+  const [_, formal, ...exprs] = l;
+  if (l.length < 3) {
+    throw new BiwaError("malformed define", form);
+  } else if (isIdentifier(formal) && exprs.length == 1) {
+    // (define var expr)
+    env.extend(formal);
+    const id = await xp.expand(formal, env);
+    const body = env.isToplevel() ? (await xp.expand(exprs[0]))
+                                  : exprs[0]; // Expand later on
+    return List(Sym("define"), id, body);
+  } else if (isPair(formal) && isIdentifier(formal.car)) {
+    // (define (f x) a b c...)
+    // => (define f (lambda (x) a b c...))
+    const id = formal.car;
+    const args = formal.cdr;
+    const form = List(Sym("define"), id,
+      Cons(Sym("lambda"), Cons(args, array_to_list(exprs))));
+    return expandDefine([form, xp, env]);
+  } else {
+    throw new BiwaError("malformed define", form);
   }
-  throw new BiwaError("malformed define", form);
 };
 
 // `define-syntax`
@@ -111,7 +111,7 @@ const expandLambda = async ([form, xp, env]) => {
   
   const newFormals = formals === nil
     ? nil
-    : mapCarAndCdr(formals, async (x) => { return await xp.expand(x) });
+    : await mapCarAndCdrAsync(formals, async (x) => { return await xp.expand(x) });
 
   const body = form.cddr(err);
   let newBody = await body.mapAsync(async form => { return await xp.expand(form, newEnv) });

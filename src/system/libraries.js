@@ -1,9 +1,10 @@
 import { List } from "./pair.js"
 import { Sym } from "./symbol.js"
 import { BiwaError, Bug } from "./error.js"
+import { to_write } from "./_writer.js"
 import { libSchemeBase } from "../r7rs/base.js"
 
-const mangle = (spec) => spec.to_write;
+const mangle = (spec) => to_write(spec);
 class Libraries {
   constructor() {
     this.libraries = new Map(); // spec => BiwaScheme.Library

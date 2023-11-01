@@ -92,6 +92,13 @@ const inspect = function(object, opts) {
     if (Array.isArray(object)) {
       return '[' + object.map(inspect).join(', ') + ']';
     }
+    if (object instanceof Map) {
+      var s = "#<Map";
+      for (const [k, v] of object) {
+        s += ` ${inspect(k, opts)}: ${inspect(v, opts)}`;
+      }
+      return s + ">";
+    }
 
     if (opts && opts["fallback"]){
       return opts["fallback"];
