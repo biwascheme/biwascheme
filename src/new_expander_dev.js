@@ -4,7 +4,7 @@
 //   $ node ./src/new_expander_dev.js
 // See https://github.com/biwascheme/biwascheme/pull/192#issuecomment-673534970
 // if it doesn't work
-import { to_write } from "./system/_writer.js";
+import { inspect } from "./system/_writer.js";
 import Call from "./system/call.js";
 import Parser from "./system/parser.js";
 import { List, array_to_list } from "./system/pair.js";
@@ -33,20 +33,39 @@ import "./library/r6rs_lib.js"
 //(+ 1 2 3)
 //`))
 
-// Example 3
+
+// Example 3: defining a library
+// const engine = new Engine();
+// await engine.defineLibrary(List(Sym("counter")), `
+// (define-library (counter)
+//   (import (scheme base))
+//   (export get-count inc-count)
+//   (begin
+//     (define ct 0)
+//     (define (get-count) ct)
+//     (define (inc-count) (set! ct (+ ct 1)))))
+//   `);
+// console.log("")
+// console.log("=>", await engine.run(`
+// (import (scheme base) (counter))
+// (inc-count)
+// (get-count)
+// `))
+
+// Example 4: library-local name
 const engine = new Engine();
-await engine.defineLibrary(List(Sym("counter")), `
-(define-library (counter)
+await engine.defineLibrary(List(Sym("utils")), `
+(define-library (utils)
   (import (scheme base))
-  (export get-count inc-count)
+  (export log)
   (begin
-    (define ct 0)
-    (define (get-count) ct)
-    (define (inc-count) (set! ct (+ ct 1)))))
+    (define msgs '())
+    (define (log msg) (set! msgs (cons msg msgs)))))
   `);
 console.log("")
 console.log("=>", await engine.run(`
-(import (scheme base) (counter))
-(inc-count)
-(get-count)
+(import (utils) (scheme base))
+(define msgs "ok")
+(log "hello")  ; Does not overwrite the our msgs
+msgs
 `))
