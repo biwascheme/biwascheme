@@ -13,20 +13,20 @@ class Library {
   static currentLibrary = null;
   static featureList = [];
 
-  constructor(environment, name) {
+  constructor(environment, spec) {
     this.environment = environment;
-    this.name = name;  // For debugging purpose
+    this.spec = spec;
     this.exports = new Map();
   }
 
   toString() {
-    return `#<Library ${this.name}(${this.exports.size})>`;
+    return `#<Library ${inspect(this.spec)}(${this.exports.size})>`;
   }
 
   static create(spec) {
     const name = spec.map(x => to_write(x)).join(".");
     const env = Environment.makeToplevelEnvironment(name, `${name}:`);
-    return new Library(env, name);
+    return new Library(env, spec);
   }
 
   /** Interprets imports, exports, etc. of this library
