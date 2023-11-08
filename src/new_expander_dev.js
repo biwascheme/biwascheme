@@ -11,8 +11,15 @@ import { List, array_to_list } from "./system/pair.js";
 import { Sym } from "./system/symbol.js";
 import { Library } from "./system/expander/library.js"
 import { Engine } from "./system/engine.js";
+import { Port } from "./system/port.js";
 
 import "./library/r6rs_lib.js"
+
+// copied from main-node.js
+import { current_input, current_output, current_error } from "./platforms/node/default_ports.js"
+Port.current_input = current_input;
+Port.current_output = current_output;
+Port.current_error = current_error;
 
 // Example 1
 //const forms = array_to_list(Parser.parse(`
