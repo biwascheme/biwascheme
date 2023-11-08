@@ -1,4 +1,7 @@
 import Call from "../call.js"
+import { inspect } from "../_writer.js";
+import { List } from "../pair.js"
+import { Sym } from "../symbol.js"
 import { isFunction } from "../_types.js"
 
 // A macro expander (pair of transformer and environment)
@@ -9,16 +12,21 @@ class Macro {
     this.dbgName = dbgName; // String (for debugging use; may be empty)
     // Either of
     // - Js function `([form, expander, env, metaEnv]) => newForm`
-    // - Scheme proc
+    // - Scheme proc `(lambda (form rename compare)) ... newForm)`
     this.transformer = transformer;
   }
 
   async transform(form, env, metaEnv, expander) {
-    const args = [form, expander, env, metaEnv];
     if (isFunction(this.transformer)) {
+      const args = [form, expander, env, metaEnv];
       return this.transformer(args);
     } else {
-      return expander.engine.invoke(this.transformer, args);
+      const rename = "TODO: rename"
+      const compare = "TODO: compare"
+      const args = List(List(Sym("quote"), form), rename, compare);
+      const expanded = await expander.engine.invoke(this.transformer, args);
+      console.log(inspect(form), "~>", inspect(expanded));
+      return expanded;
     }
   }
 

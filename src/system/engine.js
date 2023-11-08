@@ -1,6 +1,8 @@
+import { undef } from "../header.js";
+import { inspect } from "./_writer.js";
 import { isFunction } from "./_types.js"
 import { BiwaError } from "./error.js"
-import { isPair, array_to_list } from "./pair.js"
+import { Cons, Pair, isPair, array_to_list } from "./pair.js"
 import { Sym } from "./symbol.js"
 import Compiler from "./compiler.js"
 import Interpreter from "./interpreter.js"
@@ -49,18 +51,32 @@ class Engine {
     return this.evalExpandedForms(expanded);
   }
 
+   /** @param {List<Form>} forms
+   */
   async evalExpandedForms(forms) {
-    const vmcode = this.compiler.run(forms);
-    const intp = new Interpreter();
-    intp.on_error = (e) => { throw e };
-    return intp.evaluate_vmcode(vmcode);
+    let ret = undef;
+    for(let o = forms; o instanceof Pair; o=o.cdr){
+      ret = await this.evalExpandedForm(o.car);
+    }
+    forms.eachAsync(async form => this.evalExpandedForm)
   }
 
+  async evalExpandedForm(form)
+  {
+    const vmcode = this.compiler.run(form);
+    const intp = new Interpreter();
+    intp.on_error = (e) => { throw e };
+    return intp.evaluate_vmcode(vmcode); //TODO: this should return Promise
+  }
+
+  // Invoke a procedure
+  // If proc is a JS function, args must be an array of Scheme values
+  // If proc is a Scheme function, args must be a list of Scheme values
   async invoke(proc, args) {
     if (isFunction(proc)) {
       return proc(args, this);
     } else {
-      TODO
+      return this.evalExpandedForm(Cons(proc, args))
     }
   }
 
@@ -98,7 +114,7 @@ class Engine {
     const parser = new Parser(scmTxt);
     const form = parser.getObject();
     const expandedForm = await this.expander.expandLibrary(form, lib)
-    this.libraries.set(spec, lib);
+    this.libraries.add(lib);
     await this.evalExpandedForms(expandedForm);
   }
 }

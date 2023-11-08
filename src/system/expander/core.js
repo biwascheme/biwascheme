@@ -8,6 +8,9 @@ import { inspect, to_write } from "../_writer.js"
 import { Bug, BiwaError } from "../error.js"
 import { isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
 import { makeErMacroTransformer } from "./macro_transformer.js"
+import { libBiwaschemeErMacro } from "../../lib/biwascheme/er-macro.js"
+import { Macro } from "./macro.js"
+import { Engine } from "../engine.js"
 
 // Creates macro transformer written in syntax-rules.
 // @return { Macro } A macro transformer bound with `env`
@@ -16,6 +19,10 @@ async function interpretTransformerSpec(xp, spec, env, metaEnv)
   if (isIdentifier(spec.car)) {
     if (await xp.identifierEquals(spec.car, env, Sym("syntax-rules"), metaEnv)) {
       return new Macro("(syntax-rules)", env, interpretSyntaxRules(spec));
+    } else if (await xp.identifierEquals(spec.car, env, Sym("er-macro-transformer"), libBiwaschemeErMacro.environment)) {
+      const expanded = xp.expand(spec.cadr())
+      const proc = await xp.engine.evalExpandedForm(expanded);
+      return new Macro("(er-macro-transformer)", env, proc);
     }
   }
   throw new BiwaError("unknown macro transformer spec", spec);
@@ -74,7 +81,7 @@ const expandDefineSyntax = async ([form, xp, env, metaEnv]) => {
       if (!isIdentifier(keyword)) {
         throw new BiwaError("malformed define-syntax", form);
       }
-      const expander = await xp.interpretTransformerSpec(transformerSpec, env, metaEnv);
+      const expander = await interpretTransformerSpec(xp, transformerSpec, env, metaEnv);
       env.installExpander(keyword, expander);
       return List(Sym("begin"));
     default:
