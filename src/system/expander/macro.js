@@ -7,13 +7,15 @@ import { isFunction } from "../_types.js"
 // A macro expander (pair of transformer and environment)
 class Macro {
   // original: make-expander
-  constructor(dbgName, environment, transformer) {
+  constructor(dbgName, environment, transformer, isCoreSyntax) {
     this.environment = environment; // An `Environment`
     this.dbgName = dbgName; // String (for debugging use; may be empty)
     // Either of
     // - Js function `([form, expander, env, metaEnv]) => newForm`
     // - Scheme proc `(lambda (form rename compare)) ... newForm)`
     this.transformer = transformer;
+    // True if this is a core syntax like `if`, `begin`, etc.
+    this.isCoreSyntax = isCoreSyntax;
   }
 
   async transform(form, env, metaEnv, expander) {

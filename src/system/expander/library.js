@@ -69,10 +69,14 @@ class Library {
     return ret;
   }
 
-  exportMacro(sym, transformer) {
-    const expander = new Macro(sym.name, this.environment, transformer);
+  exportMacro(sym, transformer, isCoreSyntax=false) {
+    const expander = new Macro(sym.name, this.environment, transformer, isCoreSyntax);
     this.environment.installExpander(sym, expander);
     this.export(sym);
+  }
+
+  exportCoreSyntax(sym, transformer) {
+    this.exportMacro(sym, transformer, true)
   }
 
   // Add a exported item (eg. library function)

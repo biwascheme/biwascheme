@@ -257,15 +257,15 @@ const expandSet = async ([form, xp]) => {
 
 // Install core expanders into `lib`
 const installCore = (lib) => {
-  lib.exportMacro(Sym("begin"), expandBegin);
-  lib.exportMacro(Sym("call/cc"), expandCallCc);
-  lib.exportMacro(Sym("define"), expandDefine);
-  lib.exportMacro(Sym("define-syntax"), expandDefineSyntax);
-  lib.exportMacro(Sym("if"), expandIf);
-  lib.exportMacro(Sym("lambda"), expandLambda);
-  lib.exportMacro(Sym("let-syntax"), expandLetSyntax);
-  lib.exportMacro(Sym("letrec-syntax"), expandLetRecSyntax);
-  lib.exportMacro(Sym("quote"), expandQuote);
-  lib.exportMacro(Sym("set!"), expandSet);
+  lib.exportCoreSyntax(Sym("begin"), expandBegin);
+  lib.exportCoreSyntax(Sym("call/cc"), expandCallCc);
+  lib.exportCoreSyntax(Sym("define"), expandDefine);
+  lib.exportCoreSyntax(Sym("define-syntax"), expandDefineSyntax);
+  lib.exportCoreSyntax(Sym("if"), expandIf);
+  lib.exportCoreSyntax(Sym("lambda"), expandLambda);
+  lib.exportCoreSyntax(Sym("let-syntax"), expandLetSyntax);
+  lib.exportCoreSyntax(Sym("letrec-syntax"), expandLetRecSyntax);
+  lib.exportCoreSyntax(Sym("quote"), expandQuote);
+  lib.exportCoreSyntax(Sym("set!"), expandSet);
 };
 export { installCore };
