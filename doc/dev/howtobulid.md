@@ -2,8 +2,10 @@
 
 ### Prerequisites
 
-- Node.js
+- Node.js (>= 15.0.0 which supports String.prototype.replaceAll)
 - npm
+
+Currently Windows is not supported (because of symlink issue). WSL2 is OK.
 
 ### Command
 
