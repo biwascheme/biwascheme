@@ -15,6 +15,6 @@
 
 ## Development docs
 
-* [How to build biwascheme.js](/doc/dev/howbuild.html)
+* [How to build biwascheme.js](/doc/dev/howtobuild.html)
 * [How to update or preview the website](/doc/dev/website.html)
 * [How to release a new version](/doc/dev/release.html)
