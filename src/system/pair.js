@@ -81,6 +81,15 @@ class Pair {
     return o;
   }
 
+  // calls the given async func passing each car of list
+  // returns cdr of last Pair
+  async eachAsync(func){
+    for(var o = this; o instanceof Pair; o=o.cdr){
+      await func(o.car);
+    }
+    return o;
+  }
+
   // Returns an array which contains the resuls of calling func
   // with the car's as an argument.
   // If the receiver is not a proper list, the last cdr is ignored.

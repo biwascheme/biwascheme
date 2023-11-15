@@ -173,7 +173,7 @@ class Environment {
   // Bind `expander` to a `keyword`.
   // Error if `keyword` is already bound
   installExpander(keyword, expander) {
-    if (!isSymbol(keyword)) throw new Bug(`expected String but got ${inspect(keyword)}`)
+    if (!isSymbol(keyword)) throw new Bug(`expected a symbol but got ${inspect(keyword)}`)
     this.extend(keyword);
     this.update(keyword, expander);
   }

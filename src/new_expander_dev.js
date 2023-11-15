@@ -11,8 +11,15 @@ import { List, array_to_list } from "./system/pair.js";
 import { Sym } from "./system/symbol.js";
 import { Library } from "./system/expander/library.js"
 import { Engine } from "./system/engine.js";
+import { Port } from "./system/port.js";
 
 import "./library/r6rs_lib.js"
+
+// copied from main-node.js
+import { current_input, current_output, current_error } from "./platforms/node/default_ports.js"
+Port.current_input = current_input;
+Port.current_output = current_output;
+Port.current_error = current_error;
 
 // Example 1
 //const forms = array_to_list(Parser.parse(`
@@ -53,19 +60,32 @@ import "./library/r6rs_lib.js"
 // `))
 
 // Example 4: library-local name
+//const engine = new Engine();
+//await engine.defineLibrary(List(Sym("utils")), `
+//(define-library (utils)
+//  (import (scheme base))
+//  (export log)
+//  (begin
+//    (define msgs '())
+//    (define (log msg) (set! msgs (cons msg msgs)))))
+//  `);
+//console.log("")
+//console.log("=>", await engine.run(`
+//(import (utils) (scheme base))
+//(define msgs "ok")
+//(log "hello")  ; Does not overwrite the our msgs
+//msgs
+//`))
+
+// Example 5: ER macro
 const engine = new Engine();
-await engine.defineLibrary(List(Sym("utils")), `
-(define-library (utils)
-  (import (scheme base))
-  (export log)
-  (begin
-    (define msgs '())
-    (define (log msg) (set! msgs (cons msg msgs)))))
-  `);
-console.log("")
 console.log("=>", await engine.run(`
-(import (utils) (scheme base))
-(define msgs "ok")
-(log "hello")  ; Does not overwrite the our msgs
-msgs
+(import (scheme base) (scheme cxr) (scheme write) (biwascheme er-macro))
+(define-syntax assert-equal
+  (er-macro-transformer
+    (lambda (form rename compare)
+      \`(unless (equal? ,(cadr form) ,(caddr form))
+        (display "failed: ")
+        (write ',(cdr form))))))
+(assert-equal (+ 1 2) 4)
 `))

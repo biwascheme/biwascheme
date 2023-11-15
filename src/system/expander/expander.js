@@ -1,6 +1,6 @@
 import { undef, nil } from "../../header.js"
 import { isSymbol, isVector } from "../_types.js"
-import { to_write } from "../_writer.js"
+import { to_write, inspect } from "../_writer.js"
 import { BiwaError, Bug } from "../error.js"
 import { Cons, List, isPair, isList, array_to_list, mapAsync } from "../pair.js"
 import { Sym } from "../symbol.js"
@@ -90,12 +90,21 @@ class Expander {
     }
     else if (isPair(form) && isList(form)) {
       if (isIdentifier(form.car)) {
-        const e = await this.expand(form.car);
-        if (isMacro(e)) {
-          ret = await this._expandMacro(e, form, env);
-        } else {
-          const mapped = await mapAsync(form.cdr, x => this.expand(x));
-          ret = Cons(e, mapped);
+        while (true) {
+          const e = await this.expand(form.car);
+          if (isMacro(e)) {
+            ret = await this._expandMacro(e, form, env);
+          } else {
+            const mapped = await mapAsync(form.cdr, x => this.expand(x));
+            ret = Cons(e, mapped);
+          }
+          if (await this.isMoreMacroUse(ret, env)) {
+            // It was a macro-expanding-macro. Expand the result more
+            console.log("moremacro!", ret)
+            form = ret;
+          } else {
+            break;
+          }
         }
       }
       else {
@@ -110,6 +119,16 @@ class Expander {
     }
     console.log(to_write(form), "=>", to_write(ret));
     return ret;
+  }
+
+  async isMoreMacroUse(form, env) {
+    if (!isPair(form)) return false;
+    if (!isList(form)) return false;
+    if (!isIdentifier(form.car)) return false;
+    const e = await this.expand(form.car);
+    if (!isMacro(e)) return false;
+    if (e.isCoreSyntax) return false;
+    return true;
   }
 
   _expandIdentifier(id, env) {
