@@ -78,14 +78,34 @@ Port.current_error = current_error;
 //`))
 
 // Example 5: ER macro
+//const engine = new Engine();
+//console.log("=>", await engine.run(`
+//(import (scheme base) (scheme cxr) (scheme write) (biwascheme er-macro))
+//(define-syntax assert-equal
+//  (er-macro-transformer
+//    (lambda (form rename compare)
+//      \`(unless (equal? ,(cadr form) ,(caddr form))
+//        (display "failed: ")
+//        (write ',(cdr form))))))
+//(assert-equal (+ 1 2) 4)
+//`))
+
+// Example 6: Exporting a macro
 const engine = new Engine();
+await engine.defineLibrary(List(Sym("assert")), `
+ (define-library (assert)
+   (import (scheme base) (biwascheme er-macro)  (scheme cxr) (scheme write))
+   (export assert-equal)
+   (begin
+     (define-syntax assert-equal
+       (er-macro-transformer
+         (lambda (form rename compare)
+           \`(unless (equal? ,(cadr form) ,(caddr form))
+             (,(rename display) "failed: ")
+             (,(rename write) ',(cdr form))))))))
+   `);
+console.log("")
 console.log("=>", await engine.run(`
-(import (scheme base) (scheme cxr) (scheme write) (biwascheme er-macro))
-(define-syntax assert-equal
-  (er-macro-transformer
-    (lambda (form rename compare)
-      \`(unless (equal? ,(cadr form) ,(caddr form))
-        (display "failed: ")
-        (write ',(cdr form))))))
+(import (scheme base)(assert))
 (assert-equal (+ 1 2) 4)
 `))
