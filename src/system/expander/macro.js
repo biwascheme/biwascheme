@@ -4,6 +4,21 @@ import { List } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { isFunction } from "../_types.js"
 
+function makeCompareAndRename(xp, env, metaEnv) {
+  const compare = async (x, y) => xp.identifierEquals(x, env, y, env);
+  const table = new Map();
+  const rename = (x) => {
+    if (table.has(x)) {
+      return table.get(x)
+    } else {
+      const id = metaEnv.makeIdentifier(x);
+      table.set(x, id);
+      return id
+    }
+  };
+  return [compare, rename]
+}
+
 // A macro expander (pair of transformer and environment)
 class Macro {
   // original: make-expander
@@ -20,11 +35,14 @@ class Macro {
 
   async transform(form, env, metaEnv, expander) {
     if (isFunction(this.transformer)) {
+      // transformer is a JS function
       const args = [form, expander, env, metaEnv];
       return this.transformer(args);
     } else {
-      const rename = "TODO: rename"
-      const compare = "TODO: compare"
+      // transformer is a Scheme proc
+      const [compare_, rename_] = makeCompareAndRename(expander, env, metaEnv)
+      const compare = async ([x, y]) => await compare_(x, y)
+      const rename = ([x]) => rename_(x)
       const args = List(List(Sym("quote"), form), rename, compare);
       const expanded = await expander.engine.invoke(this.transformer, args);
       console.log(inspect(form), "~>", inspect(expanded));
@@ -39,4 +57,4 @@ class Macro {
 
 const isMacro = obj => obj instanceof Macro;
 
-export { Macro, isMacro };
+export { Macro, isMacro, makeCompareAndRename };
