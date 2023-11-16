@@ -6,6 +6,7 @@ import { Cons, List, isPair, isList, array_to_list, mapAsync } from "../pair.js"
 import { Sym } from "../symbol.js"
 import { isSyntacticClosure, isIdentifier } from "./syntactic_closure.js"
 import { isMacro } from "./macro.js"
+import { Environment } from "./environment.js"
 
 class Expander {
   constructor(engine) {
