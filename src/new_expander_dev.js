@@ -4,6 +4,10 @@
 //   $ node ./src/new_expander_dev.js
 // See https://github.com/biwascheme/biwascheme/pull/192#issuecomment-673534970
 // if it doesn't work
+//
+// Tests
+//   $ npm test
+// will run test/new_expander_test.js
 import { inspect } from "./system/_writer.js";
 import Call from "./system/call.js";
 import Parser from "./system/parser.js";
