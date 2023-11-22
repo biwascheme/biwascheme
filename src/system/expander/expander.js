@@ -18,7 +18,6 @@ class Expander {
    * @param {List<Form>} forms
    */
   async expandToplevel(forms) {
-    console.log("- expandToplevel", to_write(forms));
     const expandedForms = await forms.mapAsync(x => this.expand(x));
     // Merge nested `begin`
     const mergedForms = this._flattenBegin(Cons(Sym("begin"), expandedForms));
@@ -101,7 +100,6 @@ class Expander {
           }
           if (await this.isMoreMacroUse(ret, env)) {
             // It was a macro-expanding-macro. Expand the result more
-            console.log("moremacro!", ret)
             form = ret;
           } else {
             break;
@@ -118,7 +116,7 @@ class Expander {
     else {
       throw new BiwaError("expand: invalid expression", form);
     }
-    console.log(to_write(form), "=>", to_write(ret));
+    //console.log("---", to_write(form), "\n ->", to_write(ret));
     return ret;
   }
 
