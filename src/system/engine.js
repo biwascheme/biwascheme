@@ -48,7 +48,7 @@ class Engine {
    */
   async executeScm(forms) {
     const expanded = await this.expandToplevelProgram(forms);
-    return this.evalExpandedForms(expanded);
+    return this.evalExpandedForm(expanded);
   }
 
    /** @param {List<Form>} forms
@@ -58,7 +58,7 @@ class Engine {
     for(let o = forms; o instanceof Pair; o=o.cdr){
       ret = await this.evalExpandedForm(o.car);
     }
-    forms.eachAsync(async form => this.evalExpandedForm)
+    return ret;
   }
 
   async evalExpandedForm(form)

@@ -45,7 +45,7 @@ class Macro {
       const rename = ([x]) => rename_(x)
       const args = List(List(Sym("quote"), form), rename, compare);
       const expanded = await expander.engine.invoke(this.transformer, args);
-      console.log(inspect(form), "~>", inspect(expanded));
+      //console.log(inspect(form), "~>", inspect(expanded));
       return expanded;
     }
   }
