@@ -1,4 +1,5 @@
 /node_modules/
+/coverage
 /demo/chat_with_socketio_and_node/node_modules
 /release/biwascheme.js
 /release/biwascheme.mjs
