@@ -8,8 +8,9 @@ import { isSymbol, isString } from "./_types.js"
 import { Complex } from "./number.js"
 
 // Raised when input is not terminated
-class Unterminated extends BiwaError {
-}
+class Unterminated extends BiwaError {}
+// Raised when input contains extraneous `)`, etc.
+class Unbalanced extends BiwaError {}
 
 // Allowed digits in each base
 const DIGITS = {
@@ -100,6 +101,12 @@ class Parser {
           break;
         case "|":
           ret = this._parseEnclosedSymbol();
+          break;
+        
+        case ")":
+        case "]":
+        case "}":
+          throw new Unbalanced(`found extraneous '${this.txt[this.i]}'`);
           break;
 
         // Aliases
