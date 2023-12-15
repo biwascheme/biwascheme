@@ -2,11 +2,11 @@
 import { nil, undef } from "../header.js";
 import { Library, isLibrary } from "../system/expander/library.js"
 import { isSymbol } from "../system/_types.js"
-import { inspect } from "../system/_writer.js"
+import { inspect, to_write } from "../system/_writer.js"
 import { BiwaError } from "../system/error.js"
 import { List, Cons, Pair, isPair, isList } from "../system/pair.js"
 import { Sym } from "../system/symbol.js"
-import { makeErMacroTransformer } from "../system/expander/macro_transformer.js"
+import { JsErMacroTransformer } from "../system/expander/macro_transformer.js"
 import { installCore } from "../system/expander/core.js"
 
 const libSchemeBase = Library.create(List(Sym('scheme'), Sym('base')));
@@ -106,7 +106,7 @@ for (const name of exports) {
 // 4.2 Derived expression types
 // TODO cond(else, =>) case and 
 
-libSchemeBase.exportMacro(Sym("and"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("and"), new JsErMacroTransformer(async (x, rename, compare) => {
   // (and a b c) => (if a (if b c #f) #f)
   //todo: check improper list
   if (x.cdr === nil) return true;
@@ -120,7 +120,7 @@ libSchemeBase.exportMacro(Sym("and"), makeErMacroTransformer(([x, rename, compar
   return t;
 }));
 
-libSchemeBase.exportMacro(Sym("or"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("or"), new JsErMacroTransformer(async (x, rename, compare) => {
   // (or a b c) => (if a a (if b b (if c c #f)))
   //todo: check improper list
 
@@ -132,7 +132,7 @@ libSchemeBase.exportMacro(Sym("or"), makeErMacroTransformer(([x, rename, compare
   return f;
 }));
 
-libSchemeBase.exportMacro(Sym("when"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("when"), new JsErMacroTransformer(async (x, rename, compare) => {
   //(when test body ...)
   //=> (if test (begin body ...) #<undef>)
   const test = x.cdr.car, body = x.cdr.cdr;
@@ -143,7 +143,7 @@ libSchemeBase.exportMacro(Sym("when"), makeErMacroTransformer(([x, rename, compa
                new Pair(undef, nil))));
 }));
 
-libSchemeBase.exportMacro(Sym("unless"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("unless"), new JsErMacroTransformer(async (x, rename, compare) => {
   //(unless test body ...)
   //=> (if (not test) (begin body ...) #<undef>)
   const test = x.cdr.car, body = x.cdr.cdr;
@@ -156,7 +156,7 @@ libSchemeBase.exportMacro(Sym("unless"), makeErMacroTransformer(([x, rename, com
 
 // TODO cond-expand
 
-libSchemeBase.exportMacro(Sym("let"), makeErMacroTransformer(([form, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("let"), new JsErMacroTransformer(async (form, rename, compare) => {
   //(let ((a 1) (b 2)) (print a) (+ a b))
   //=> ((lambda (a b) (print a) (+ a b)) 1 2)
   let x = form;
@@ -202,7 +202,7 @@ libSchemeBase.exportMacro(Sym("let"), makeErMacroTransformer(([form, rename, com
   return lambda;
 }));
 
-libSchemeBase.exportMacro(Sym("let*"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("let*"), new JsErMacroTransformer(async (x, rename, compare) => {
   //(let* ((a 1) (b a)) (print a) (+ a b))
   //-> (let ((a 1))
   //     (let ((b a)) (print a) (+ a b)))
@@ -223,7 +223,7 @@ libSchemeBase.exportMacro(Sym("let*"), makeErMacroTransformer(([x, rename, compa
   return ret;
 }));
 
-const letRecStarTransfomer = makeErMacroTransformer(([x, rename, compare]) => {
+const letRecStarTransfomer = new JsErMacroTransformer(async (x, rename, compare) => {
   const binds = x.cdr.car, body = x.cdr.cdr;
 
   if(!(binds instanceof Pair))
@@ -247,7 +247,7 @@ const letRecStarTransfomer = makeErMacroTransformer(([x, rename, compare]) => {
 libSchemeBase.exportMacro(Sym("letrec"), letRecStarTransfomer); 
 libSchemeBase.exportMacro(Sym("letrec*"), letRecStarTransfomer); 
 
-libSchemeBase.exportMacro(Sym("let-values"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("let-values"), new JsErMacroTransformer(async (x, rename, compare) => {
   // (let-values (((a b) (values 1 2))
   //               ((c d . e) (values 3 4 a)))
   //              (print a b c d e))
@@ -288,7 +288,7 @@ libSchemeBase.exportMacro(Sym("let-values"), makeErMacroTransformer(([x, rename,
 
 }));
 
-libSchemeBase.exportMacro(Sym("let*-values"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("let*-values"), new JsErMacroTransformer(async (x, rename, compare) => {
   // (let*-values (((a b) (values 1 2))
   //               ((c d . e) (values 3 4 a)))
   //   (print a b c d e))
@@ -318,7 +318,7 @@ libSchemeBase.exportMacro(Sym("let*-values"), makeErMacroTransformer(([x, rename
   return ret;
 }));
 
-libSchemeBase.exportMacro(Sym("do"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("do"), new JsErMacroTransformer(async (x, rename, compare) => {
   //(do ((var1 init1 step1)
   //     (var2 init2 step2) ...)
   //    (test expr1 expr2 ...)
@@ -369,7 +369,7 @@ libSchemeBase.exportMacro(Sym("do"), makeErMacroTransformer(([x, rename, compare
 
 // TODO guard
 
-libSchemeBase.exportMacro(Sym("quasiquote"), makeErMacroTransformer(async ([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("quasiquote"), new JsErMacroTransformer(async (x, rename, compare) => {
   const expand_qq = async function(f, lv){
     if(isSymbol(f) || f === nil){
       return List(rename(Sym("quote")), f);
@@ -458,10 +458,10 @@ libSchemeBase.exportMacro(Sym("quasiquote"), makeErMacroTransformer(async ([x, r
   };
   return expand_qq(x.cdr.car, 1);
 }))
-libSchemeBase.exportMacro(Sym("unquote"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("unquote"), new JsErMacroTransformer(async (x, rename, compare) => {
   throw new BiwaError("unquote(,) must be inside quasiquote(`)");
 }))
-libSchemeBase.exportMacro(Sym("unquote-splicing"), makeErMacroTransformer(([x, rename, compare]) => {
+libSchemeBase.exportMacro(Sym("unquote-splicing"), new JsErMacroTransformer(async (x, rename, compare) => {
   throw new BiwaError("unquote-splicing(,@) must be inside quasiquote(`)");
 }))
 

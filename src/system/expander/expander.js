@@ -165,7 +165,7 @@ class Expander {
   }
 
   async _expandMacro(macro, form, env) {
-    return await macro.transform(form, env, macro.environment, this);
+    return await macro.transformer.transform(form, this, env, macro.environment);
   }
 
   /** Called when loading a library from file (or something)

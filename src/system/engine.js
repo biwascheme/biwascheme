@@ -69,14 +69,15 @@ class Engine {
     return intp.evaluate_vmcode(vmcode); //TODO: this should return Promise
   }
 
-  // Invoke a procedure
-  // If proc is a JS function, args must be an array of Scheme values
-  // If proc is a Scheme function, args must be a list of Scheme values
+  // Invoke a procedure 
+  // `args` must be an array of Scheme values
   async invoke(proc, args) {
     if (isFunction(proc)) {
       return proc(args, this);
     } else {
-      return this.evalExpandedForm(Cons(proc, args))
+      const intp = new Interpreter();
+      intp.on_error = (e) => { throw e };
+      return intp.invoke_closure(proc, args);
     }
   }
 
