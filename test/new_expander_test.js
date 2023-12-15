@@ -95,8 +95,24 @@ test('Exporting a macro', async () => {
                (,(rename write) ',(cdr form))))))))
   `);
   let result = await engine.run(`
-    (import (scheme base)(assert))
+    (import (scheme base) (assert)) ; You don't need (scheme write) to use the macro.
     (assert-equal (+ 1 2) 4)
   `);
   expect(written).toEqual(["failed: ", "((+ 1 2) 4)"]);
+});
+
+test('Avoid name collision', async () => {
+  written = [];
+  const engine = new Engine();
+  let result = await engine.run(`
+    (import (scheme base) (scheme cxr) (scheme write) (biwascheme er-macro))
+    (define-syntax days
+      (er-macro-transformer
+        (lambda (form rename compare)
+          \`(,(rename list) 1 5 25))))
+    ; It should work properly even if the name 'list' is overridden
+    (let ((list '()))
+      (days))
+  `);
+  expect(to_write(result)).toEqual("(1 5 25)");
 });
