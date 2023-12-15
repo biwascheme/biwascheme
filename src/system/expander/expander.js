@@ -8,6 +8,23 @@ import { isSyntacticClosure, isIdentifier } from "./syntactic_closure.js"
 import { isMacro } from "./macro.js"
 import { Environment } from "./environment.js"
 
+// Debug log
+var lv = 0;
+var lastDec = false;
+function DEBUG(from, to=null) {
+  return; // Comment out this to enable
+
+  if (to === null) {
+    console.log("  ".repeat(lv), "--", to_write(from))
+    lv += 1;
+    lastDec = false;
+  } else {
+    lv -= 1;
+    lastDec = true;
+    console.log("  ".repeat(lv), "=>", to_write(to))
+  }
+}
+
 class Expander {
   constructor(engine) {
     this.engine = engine;
@@ -81,6 +98,7 @@ class Expander {
   }
 
   async expand(form, env=this.engine.currentToplevelEnvironment) {
+    DEBUG(form);
     let ret;
     if (isIdentifier(form)) {
       ret = this._expandIdentifier(form, env);
@@ -116,7 +134,7 @@ class Expander {
     else {
       throw new BiwaError("expand: invalid expression", form);
     }
-    //console.log("---", to_write(form), "\n ->", to_write(ret));
+    DEBUG(form, ret);
     return ret;
   }
 
@@ -147,7 +165,7 @@ class Expander {
   }
 
   async _expandMacro(macro, form, env) {
-    return await macro.transform(form, env, macro.environment, this);
+    return await macro.transformer.transform(form, this, env, macro.environment);
   }
 
   /** Called when loading a library from file (or something)

@@ -6,7 +6,15 @@ import { Engine } from "../src/system/engine.js";
 import { List } from "../src/system/pair.js";
 import { Sym } from "../src/system/symbol.js";
 import { to_write } from "../src/system/_writer.js";
+import { Port } from "../src/system/port.js";
 import "../src/library/r6rs_lib.js"
+
+let written = [];
+Port.current_output = new Port.CustomOutput(
+  function (str) {
+    written.push(str);
+  }
+);
 
 test('Evaluating scheme program', async () => {
   const engine = new Engine();
@@ -56,6 +64,7 @@ test('Library local name', async () => {
 });
 
 test('ER macro', async () => {
+  written = [];
   const engine = new Engine();
   let result = await engine.run(`
     (import (scheme base) (scheme cxr) (scheme write) (biwascheme er-macro))
@@ -64,13 +73,14 @@ test('ER macro', async () => {
         (lambda (form rename compare)
           \`(unless (equal? ,(cadr form) ,(caddr form))
             (display "failed: ")
-            ',(cdr form)))))
+            (write ',(cdr form))))))
     (assert-equal (+ 1 2) 4)
   `);
-  expect(to_write(result)).toEqual("((+ 1 2) 4)");
+  expect(written).toEqual(["failed: ", "((+ 1 2) 4)"]);
 });
 
 test('Exporting a macro', async () => {
+  written = [];
   const engine = new Engine();
   await engine.defineLibrary(List(Sym("assert")), `
    (define-library (assert)
@@ -88,5 +98,5 @@ test('Exporting a macro', async () => {
     (import (scheme base)(assert))
     (assert-equal (+ 1 2) 4)
   `);
-  expect(to_write(result)).toEqual("((+ 1 2) 4)");
+  expect(written).toEqual(["failed: ", "((+ 1 2) 4)"]);
 });

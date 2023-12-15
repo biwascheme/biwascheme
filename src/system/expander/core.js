@@ -7,8 +7,8 @@ import { Sym } from "../symbol.js"
 import { inspect, to_write } from "../_writer.js"
 import { Bug, BiwaError } from "../error.js"
 import { isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
-import { makeErMacroTransformer } from "./macro_transformer.js"
 import { libBiwaschemeErMacro } from "../../lib/biwascheme/er-macro.js"
+import { NativeMacroTransformer } from "./macro_transformer.js"
 import { Macro } from "./macro.js"
 import { Engine } from "../engine.js"
 
@@ -16,16 +16,9 @@ import { Engine } from "../engine.js"
 // @return { Macro } A macro transformer bound with `env`
 async function interpretTransformerSpec(xp, spec, env, metaEnv)
 {
-  if (isIdentifier(spec.car)) {
-    if (await xp.identifierEquals(spec.car, env, Sym("syntax-rules"), metaEnv)) {
-      return new Macro("(syntax-rules)", env, interpretSyntaxRules(spec));
-    } else if (await xp.identifierEquals(spec.car, env, Sym("er-macro-transformer"), libBiwaschemeErMacro.environment)) {
-      const expanded = xp.expand(spec.cadr())
-      const proc = await xp.engine.evalExpandedForm(expanded);
-      return new Macro("(er-macro-transformer)", env, proc);
-    }
-  }
-  throw new BiwaError("unknown macro transformer spec", spec);
+  const expanded = xp.expand(spec.cadr())
+  const proc = await xp.engine.evalExpandedForm(expanded);
+  return new Macro("(unnamed)", env, proc);
 }
 
 // `begin`
@@ -81,8 +74,10 @@ const expandDefineSyntax = async ([form, xp, env, metaEnv]) => {
       if (!isIdentifier(keyword)) {
         throw new BiwaError("malformed define-syntax", form);
       }
-      const expander = await interpretTransformerSpec(xp, transformerSpec, env, metaEnv);
-      env.installExpander(keyword, expander);
+      const expanded = await xp.expand(transformerSpec);
+      const expander = await xp.engine.evalExpandedForm(expanded);
+      const macro = new Macro(keyword.toString(), env, expander);
+      env.installExpander(keyword, macro);
       return List(Sym("begin"));
     default:
       throw new BiwaError("malformed define-syntax", form);
@@ -187,21 +182,24 @@ function _spliceDefinition(def) {
 
 // `let-syntax`
 const expandLetSyntax = async ([form, xp, env, metaEnv]) => {
+    console.log("expandLetSyntax", to_write(form))
   const err = new BiwaError("malformed let-syntax", form);
   const l = form.to_array();
   if (l.length < 3) throw err;
-  const bindings = form.cdr.car;
+  const bindings = form.cdr.car.to_array();
   const body = form.cdr.cdr;
 
   const newEnv = env.clone();
   for (let pair of bindings) {
-    const [keyword, transformerSpec] = pair;
-    const expander = await interpretTransformerSpec(transformerSpec, env, metaEnv);
-    newEnv.installExpander(keyword, expander);
+    const [keyword, transformerSpec] = pair.to_array();
+    const expander = await interpretTransformerSpec(xp, transformerSpec, env, metaEnv);
+    const keyword_ = await xp.expand(keyword);
+    newEnv.installExpander(keyword_, expander);
   }
 
   const _lambda = metaEnv.makeIdentifier(Sym('lambda'));
-  return xp.expand(List(Cons(_lambda, Cons(List(), body)), newEnv));
+  return xp.engine.withToplevelEnvironment(newEnv, () => 
+    xp.expand(List(Cons(_lambda, Cons(List(), body))), newEnv));
 };
 
 // `letrec-syntax`
@@ -215,7 +213,7 @@ const expandLetRecSyntax = async ([form, xp, env, metaEnv]) => {
   const newEnv = env.clone();
   for (let pair of bindings) {
     const [keyword, transformerSpec] = pair;
-    const expander = await interpretTransformerSpec(transformerSpec, newEnv, metaEnv);
+    const expander = await interpretTransformerSpec(xp, transformerSpec, newEnv, metaEnv);
     newEnv.installExpander(keyword, expander);
   }
 
@@ -257,15 +255,15 @@ const expandSet = async ([form, xp]) => {
 
 // Install core expanders into `lib`
 const installCore = (lib) => {
-  lib.exportCoreSyntax(Sym("begin"), expandBegin);
-  lib.exportCoreSyntax(Sym("call/cc"), expandCallCc);
-  lib.exportCoreSyntax(Sym("define"), expandDefine);
-  lib.exportCoreSyntax(Sym("define-syntax"), expandDefineSyntax);
-  lib.exportCoreSyntax(Sym("if"), expandIf);
-  lib.exportCoreSyntax(Sym("lambda"), expandLambda);
-  lib.exportCoreSyntax(Sym("let-syntax"), expandLetSyntax);
-  lib.exportCoreSyntax(Sym("letrec-syntax"), expandLetRecSyntax);
-  lib.exportCoreSyntax(Sym("quote"), expandQuote);
-  lib.exportCoreSyntax(Sym("set!"), expandSet);
+  lib.exportCoreSyntax(Sym("begin"), new NativeMacroTransformer(expandBegin));
+  lib.exportCoreSyntax(Sym("call/cc"), new NativeMacroTransformer(expandCallCc));
+  lib.exportCoreSyntax(Sym("define"), new NativeMacroTransformer(expandDefine));
+  lib.exportCoreSyntax(Sym("define-syntax"), new NativeMacroTransformer(expandDefineSyntax));
+  lib.exportCoreSyntax(Sym("if"), new NativeMacroTransformer(expandIf));
+  lib.exportCoreSyntax(Sym("lambda"), new NativeMacroTransformer(expandLambda));
+  lib.exportCoreSyntax(Sym("let-syntax"), new NativeMacroTransformer(expandLetSyntax));
+  lib.exportCoreSyntax(Sym("letrec-syntax"), new NativeMacroTransformer(expandLetRecSyntax));
+  lib.exportCoreSyntax(Sym("quote"), new NativeMacroTransformer(expandQuote));
+  lib.exportCoreSyntax(Sym("set!"), new NativeMacroTransformer(expandSet));
 };
 export { installCore };
