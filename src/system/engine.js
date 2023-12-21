@@ -10,7 +10,12 @@ import Parser from "./parser.js";
 import { Environment } from "./expander/environment.js"
 import { Expander } from "./expander/expander.js"
 import { Library } from "./expander/library.js"
-import { stdLibraries } from "./libraries.js"
+import { Libraries, stdLibraries } from "./libraries.js"
+
+/**
+ * A Scheme value.
+ * @typedef {(Pair|Sym|number|string)} Form
+ **/
 
 class Engine {
   constructor() {
