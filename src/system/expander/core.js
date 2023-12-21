@@ -144,7 +144,7 @@ function _expandDefinitionBodyInLambda(body) {
 
 // Splice internal defines enclosed with `begin`
 function _spliceDefinitionInLambda(body) {
-  const definitions = [];
+  let definitions = [];
   const rest = [];
   for (const form of body.to_array()) {
     if (rest.length > 0 || !_isDefinition(form)) {
@@ -170,7 +170,7 @@ function _isDefinition(form) {
 }
 
 // Removes `begin`. Returns an array of define/define-record-type
-function _spliceDefinition(def) {
+function _spliceDefinition(form) {
   if (form.car === Sym("define") ||
       form.car === Sym("define-record-type")) {
     return [form];
