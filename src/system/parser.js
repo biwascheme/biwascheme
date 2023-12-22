@@ -5,7 +5,7 @@ import { BiwaError, Bug } from "./error.js"
 import { Pair, List } from "./pair.js"
 import { Sym } from "./symbol.js"
 import { isSymbol, isString } from "./_types.js"
-import { Complex } from "./number.js"
+import { Complex, Rational } from "./number.js"
 
 // Raised when input is not terminated
 class Unterminated extends BiwaError {}
@@ -141,21 +141,6 @@ class Parser {
     const v = this.getObject();
     if (v === Parser.EOS) throw new Unterminated(msg);
     return v;
-  }
-
-  // Skip whitespaces
-  _skipWhitespace() {
-    while (this.i < this.txt.length) {
-      switch (this.txt[i]) {
-        case " ":
-        case "\t":
-        case "\n":
-          i++;
-          break;
-        default:
-          return;
-      }
-    }
   }
 
   // Skip whitespace, comment and directive

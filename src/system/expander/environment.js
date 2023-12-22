@@ -14,7 +14,7 @@ import { isMacro } from "./macro.js"
  * @param {Identifier} x
  */
 function to_key(x) {
-  if (isSymbol(x)) {
+  if (x instanceof BiwaSymbol) {
     return x.name;
   } else if (isIdentifier(x)) {
     const form = unwrapSyntax(x);
