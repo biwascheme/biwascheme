@@ -46,9 +46,9 @@ class Library {
       case Sym("cond-expand"):
         return this._interpretCondExpand(decl.cdr);
       case Sym("include"):
-        TODO
+        throw "TODO"
       case Sym("include-library-declarations"):
-        TODO
+        throw "TODO"
       default:
         throw new BiwaError("interpretLibraryDeclaration: unknown decl.car", decl);
     }
@@ -101,7 +101,7 @@ class Library {
   }
 
   static _interpretCondExpand(clauses) {
-    TODO
+    throw "TODO"
   }
 
   to_write() {

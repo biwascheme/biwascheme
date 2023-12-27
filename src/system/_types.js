@@ -4,7 +4,14 @@
 import { nil, undef } from "../header.js"
 import { BiwaSymbol } from "./symbol.js"
 import { Port } from "./port.js"
-import { isClosure } from "./closure.js"
+import { Closure, isClosure } from "./closure.js"
+
+/**
+ * An S-expression.
+ * @typedef {(Pair|BiwaSymbol|number|string)} Form
+ * A Scheme procedure.
+ * @typedef {function|Closure} Procedure
+ **/
 
 const isNil = function(obj){
   return (obj === nil);

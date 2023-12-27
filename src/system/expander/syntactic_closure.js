@@ -1,6 +1,15 @@
 import { to_write } from "../_writer.js";
 import { isSymbol, isVector } from "../_types.js"
 import { Cons, isPair } from "../pair.js"
+import { BiwaSymbol } from "../symbol.js"
+
+/**
+ * An identifier type.
+ * (Specifically this definition is wider than actual because syntactic closures whose
+ * form is not a symbol are not considered identifiers. However this would be helpful to
+ * prevent simple bugs)
+ * @typedef {(BiwaSymbol|SyntacticClosure)} Identifier
+ **/
 
 class SyntacticClosure {
   constructor(env, freeNames, form) {

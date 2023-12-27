@@ -5,13 +5,15 @@ import { BiwaError, Bug } from "../error.js"
 import { Cons, isPair, isList } from "../pair.js"
 import { Sym, BiwaSymbol } from "../symbol.js"
 import { SyntacticClosure, isSyntacticClosure, isIdentifier, unwrapSyntax } from "./syntactic_closure.js"
-import { isMacro } from "./macro.js"
-
-/** @typedef {BiwaSymbol | SyntacticClosure} Identifier */
+import { Macro, isMacro } from "./macro.js"
+import { Library } from "./library.js"
+/** @typedef {import("./syntactic_closure.js").Identifier} Identifier */
+/** @typedef {import("../_types.js").Form} Form */
 
 /**
  * Create unique string from an identifier
  * @param {Identifier} x
+ * @returns {string}
  */
 function to_key(x) {
   if (x instanceof BiwaSymbol) {
@@ -35,6 +37,7 @@ class Environment {
    * @param {?string} name
    * @param {?string} prefix (pass `null` when specifying renamer)
    * @param {?(BiwaSymbol) => BiwaSymbol} renamer
+   * @returns {Environment}
    */
   static makeToplevelEnvironment(name, prefix = null, renamer = null) {
     if (prefix !== null) {
@@ -52,43 +55,71 @@ class Environment {
     this.id = (++lastId); 
     this.name = name; // String (optional; may be `""`)
     this.base = base; // Enclosing `Environment`. `null` if this is toplevel
+    /** @type {Map<string, any>} */
     this.frame = frame; // Key-value pair (A js `Map`)
     // `null` or js function `(BiwaSymbol) => BiwaSymbol`
     this.renamer = renamer;
   }
 
+  /**
+   * Returns debug string
+   * @returns {string}
+   */
   toString() {
     return `#<Environment ${this.name}>`
   }
 
+  /**
+   * Returns if this contains the key
+   * @param {Identifier} key
+   * @returns {boolean}
+   */
   has(key) {
     return this.frame.has(to_key(key));
   }
 
-  // Get the value bound to `key`
+  /**
+   * Get the value bound to `key`
+   * @param {Identifier} key
+   * @returns {BiwaSymbol|Macro}
+   */
   get(key) {
     return this.frame.get(to_key(key));
   }
 
-  // Set the value bound to `key`
+  /**
+   * Set the value bound to `key`
+   * @param {Identifier} key
+   * @param {BiwaSymbol|Macro} value
+   */
   set(key, value) {
     this.frame.set(to_key(key), value);
   }
 
-  // Returns the enclosing environment. `null` if this is toplevel
+  /**
+   * Returns the enclosing environment. `null` if this is toplevel
+   * @returns {?Environment}
+   */
   enclosingEnvironment() {
     return this.base;
   }
 
-  // Returns whether this is toplevel environment
+  /*
+   * Returns whether this is toplevel environment
+   * @returns {boolean}
+   */
   isToplevel() {
     return this.enclosingEnvironment() === null;
   }
 
-  // Get the value bound to `id`
-  // Lookup outer environment if not found
-  // Returns `#f` if not found in toplevel environment
-  // original: assq-environment
+  /**
+   * Get the value bound to `id`
+   * Lookup outer environment if not found
+   * Returns `#f` if not found in toplevel environment
+   * original: assq-environment
+   * @param {Identifier} id
+   * @returns {any|false}
+   */
   assq(id) {
     let ret;
     if (this.has(id)) {
@@ -109,7 +140,11 @@ class Environment {
     return ret;
   }
 
-  // assq-environment + set-cdr!
+  /**
+   * assq-environment + set-cdr!
+   * @param {Identifier} id
+   * @param {Macro} expander
+   */
   update(id, expander) {
     if (this.get(id)) {
       this.set(id, expander);
@@ -127,6 +162,11 @@ class Environment {
     }
   }
 
+  /**
+   * Register a binding
+   * @param {Identifier} id
+   * @param {any} name
+   */
   installToplevelBinding(id, name) {
     if (!this.isToplevel()) {
       throw new Bug("installToplevelBinding: not a toplevel env")
@@ -134,18 +174,28 @@ class Environment {
     this.set(id, name);
   }
 
-  // Create a syntactic closure form `this` and `form`
+  /** Create a syntactic closure from `this` and `form`
+   * @param {Form} form
+   * @returns {SyntacticClosure}
+   */
   closeSyntax(form) {
     return new SyntacticClosure(this, [], form);
   }
 
-  // Create an identifier in this environment
+  /**
+   * Create an identifier in this environment
+   * @param {BiwaSymbol} id
+   * @returns {SyntacticClosure}
+   */
   makeIdentifier(id) {
     return this.closeSyntax(id);
   }
 
-  // Destructively add `id` to this environment
-  // original: `extend-environment!`
+  /**
+   * Destructively add `id` to this environment
+   * original: `extend-environment!`
+   * @param {Identifier} id
+   */
   extend(id) {
     if (this.isToplevel() && isSymbol(id)) return;
     if (this.get(id)) {
@@ -157,8 +207,8 @@ class Environment {
 
   /* Create an enviroment by adding `ids` to this enviroment
    * original: `extend-enviroment`
-   * @param {ids} [Identifier]
-   * @return Environment
+   * @param {Array<Identifier>} ids
+   * @returns {Environment}
    */
   extended(ids) {
     const newEnv = new Environment("", this);
@@ -166,18 +216,30 @@ class Environment {
     return newEnv;
   }
 
+  /**
+   * Returns deep copy of self
+   * @returns {Environment}
+   */
   clone() {
     return this.extended([]);
   }
 
-  // Bind `expander` to a `keyword`.
-  // Error if `keyword` is already bound
+  /**
+   * Bind `expander` to a `keyword`.
+   * Error if `keyword` is already bound
+   * @param {BiwaSymbol} keyword
+   * @param {Macro} expander
+   */
   installExpander(keyword, expander) {
     if (!isSymbol(keyword)) throw new Bug(`expected a symbol but got ${inspect(keyword)}`)
     this.extend(keyword);
     this.update(keyword, expander);
   }
 
+  /**
+   * Import names from a library
+   * @param {Library} lib
+   */
   importLibrary(lib) {
     this._installNameMap(lib.nameMap());
   }
@@ -197,7 +259,7 @@ class Environment {
       case Sym("only"):
       case Sym("except"):
       case Sym("rename"):
-        TODO
+        throw "TODO"
       default:
         return engine.getLibrary(spec).nameMap();
     }
