@@ -1,0 +1,14 @@
+// Configuration for static type check
+// Usage:
+//   - Install typescript (npm install -g typescript)
+//   - tsc -b tsconfig.json
+{
+  "compilerOptions": {
+    "module": "node16",
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/**/*", "src/deps"]
+}

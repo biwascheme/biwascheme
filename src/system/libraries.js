@@ -60,4 +60,4 @@ stdLibraries.add(libSchemeRepl);
 stdLibraries.add(libSchemeTime);
 stdLibraries.add(libBiwaschemeErMacro); 
 
-export { stdLibraries };
+export { Libraries, stdLibraries };

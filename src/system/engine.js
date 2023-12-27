@@ -10,7 +10,10 @@ import Parser from "./parser.js";
 import { Environment } from "./expander/environment.js"
 import { Expander } from "./expander/expander.js"
 import { Library } from "./expander/library.js"
-import { stdLibraries } from "./libraries.js"
+import { Libraries, stdLibraries } from "./libraries.js"
+/** @typedef {import("./_types.js").Form} Form */
+/** @typedef {import("./_types.js").Procedure} Procedure */
+/** @typedef {Pair} List */
 
 class Engine {
   constructor() {
@@ -24,14 +27,18 @@ class Engine {
     this.vm = {};
   }
 
-  // Get the library specified with `spec`
-  // Error if not loaded to this engine
+  /** Get the library specified with `spec`
+   * Error if not loaded to this engine
+   * @param {Pair} spec
+   * @returns {Library}
+   */
   getLibrary(spec) {
     return this.libraries.get(spec);
   }
 
   /** Compile a Scheme program and execute it
    * @param {String} scmTxt
+   * @returns {Promise<any>}
    */
   async run(scmTxt) {
     const parser = new Parser(scmTxt);
@@ -44,14 +51,17 @@ class Engine {
   }
 
   /** Compile a Scheme program and execute it
-   * @param {List<Form>} forms
+   * @param {List} forms
+   * @returns {Promise<any>}
    */
   async executeScm(forms) {
     const expanded = await this.expandToplevelProgram(forms);
     return this.evalExpandedForm(expanded);
   }
 
-   /** @param {List<Form>} forms
+  /** 
+   * @param {List} forms
+   * @returns {Promise<any>}
    */
   async evalExpandedForms(forms) {
     let ret = undef;
@@ -61,6 +71,10 @@ class Engine {
     return ret;
   }
 
+  /** 
+   * @param {Form} form
+   * @returns {Promise<any>}
+   */
   async evalExpandedForm(form)
   {
     const vmcode = this.compiler.run(form);
@@ -69,10 +83,13 @@ class Engine {
     return intp.evaluate_vmcode(vmcode); //TODO: this should return Promise
   }
 
-  // Invoke a procedure 
-  // `args` must be an array of Scheme values
+  /** Invoke a procedure 
+   * @param {Procedure} proc
+   * @param {Array<any>} args An array of Scheme values
+   * @returns {Promise<any>}
+   */
   async invoke(proc, args) {
-    if (isFunction(proc)) {
+    if (typeof proc === "function") {
       return proc(args, this);
     } else {
       const intp = new Interpreter();
@@ -81,6 +98,10 @@ class Engine {
     }
   }
 
+  /** 
+   * @param {List} forms
+   * @returns {Promise<Form>}
+   */
   async expandToplevelProgram(forms) {
     const topEnv = Environment.makeToplevelEnvironment("user", "user:");
     return this.withToplevelEnvironment(topEnv, async () => {
@@ -98,6 +119,11 @@ class Engine {
     });
   }
 
+  /**
+   * @param {Environment} env
+   * @param {function} jsThunk
+   * @returns {Promise<any>}
+   */
   async withToplevelEnvironment(env, jsThunk) {
     const origEnv = this.currentToplevelEnvironment;
     this.currentToplevelEnvironment = env;

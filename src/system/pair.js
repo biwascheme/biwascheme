@@ -230,13 +230,18 @@ const array_to_list_ = function(ary, deep) {
   return list;
 }
 
-// Shallow: List(1, 2, [3]) == (list 1 2 (vector 3 4))
+/** Shallow: List(1, 2, [3]) == (list 1 2 (vector 3 4))
+ * @returns {Pair}
+ */
 const List = function() {
   var ary = Array.from(arguments);
   return array_to_list_(ary, false);
 };
 
-// Shallow: array_to_list(1, 2, [3]) == (list 1 2 (vector 3 4))
+/** Shallow: array_to_list(1, 2, [3]) == (list 1 2 (vector 3 4))
+ * @param {Array} ary
+ * @returns {Pair}
+ */
 const array_to_list = function(ary) {
   return array_to_list_(ary, false);
 };

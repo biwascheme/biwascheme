@@ -1,5 +1,6 @@
 import { TopEnv, CoreEnv, nil, undef } from "../header.js"
 import { isSymbol } from "./_types.js"
+import { to_write } from "./_writer.js"
 import { BiwaError, Bug } from "./error.js"
 import { Pair, List, isPair, array_to_list } from "./pair.js"
 import BiwaSet from "./set.js"
@@ -475,17 +476,18 @@ class Compiler {
 
     // Handle internal defines
     var tbody = Compiler.transform_internal_define(body);
+    let cbody;
     if(isPair(tbody) &&
        isSymbol(tbody.car) &&
        tbody.car.name == "letrec*"){
       // The body has internal defines.
       // Expand letrec* macro
-      var cbody = Compiler.expand(tbody);
+      cbody = Compiler.expand(tbody);
     }
     else{
       // The body has no internal defines.
       // Just wrap the list with begin 
-      var cbody = new Pair(Sym("begin"), x.cdr.cdr);
+      cbody = new Pair(Sym("begin"), x.cdr.cdr);
     }
 
     var dotpos = this.find_dot_pos(vars);

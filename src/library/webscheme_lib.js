@@ -10,6 +10,7 @@ import Interpreter  from "../system/interpreter.js"
 import { Pair, alist_to_js_obj } from "../system/pair.js"
 import Pause from "../system/pause.js"
 import { Port } from "../system/port.js"
+import { Values } from "../system/values.js"
 import { BiwaSymbol, Sym } from "../system/symbol.js"
 
 // To use webscheme_lib, jQuery must be loaded beforehand

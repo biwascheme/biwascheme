@@ -50,7 +50,7 @@ const json2sexp = function(json){
     return array_to_list(json.map(json2sexp));
   case typeof(json) == "object":
     var ls = nil;
-    for(key in json){
+    for(const key in json){
       ls = new Pair(new Pair(key, json2sexp(json[key])),
              ls);
     }

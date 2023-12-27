@@ -2,11 +2,15 @@ import { undef, nil } from "../../header.js"
 import { isSymbol, isVector } from "../_types.js"
 import { to_write, inspect } from "../_writer.js"
 import { BiwaError, Bug } from "../error.js"
-import { Cons, List, isPair, isList, array_to_list, mapAsync } from "../pair.js"
-import { Sym } from "../symbol.js"
-import { isSyntacticClosure, isIdentifier } from "./syntactic_closure.js"
-import { isMacro } from "./macro.js"
+import { Pair, Cons, List, isPair, isList, array_to_list, mapAsync } from "../pair.js"
+import { BiwaSymbol, Sym } from "../symbol.js"
+import { SyntacticClosure, isSyntacticClosure, isIdentifier } from "./syntactic_closure.js"
+import { Macro, isMacro } from "./macro.js"
 import { Environment } from "./environment.js"
+import { Library } from "./library.js"
+/** @typedef {import("./syntactic_closure.js").Identifier} Identifier */
+/** @typedef {import("../_types.js").Form} Form */
+/** @typedef {Pair} List */
 
 // Debug log
 var lv = 0;
@@ -32,7 +36,8 @@ class Expander {
 
   /** 
    * Expand toplevel forms (eg. user program, library body, etc.)
-   * @param {List<Form>} forms
+   * @param {List} forms
+   * @returns {Promise<Form>}
    */
   async expandToplevel(forms) {
     const expandedForms = await forms.mapAsync(x => this.expand(x));
@@ -52,7 +57,7 @@ class Expander {
   /**
    * Merge nested `begin` i.e. `(begin (begin ...`
    * @param {Form} form
-   * @return {Array<Form>}
+   * @returns {Array<Form>}
    */
   _flattenBegin(form) {
     if (isPair(form) && form.car === Sym("begin")) {
@@ -63,6 +68,11 @@ class Expander {
     }
   }
 
+  /**
+   * @param {Form} form
+   * @param {boolean} allowDefinition
+   * @returns {Form}
+   */
   _postExpand(form, allowDefinition) {
     switch (true) {
       case isSymbol(form):
@@ -87,7 +97,7 @@ class Expander {
         return List(Sym("define"), form.cdr.car,
           this._postExpand(form.cdr.cdr.car, false));
       case Sym("define-record-type"):
-        TODO
+        throw "TODO"
       case Sym("lambda"):
         return Cons(Sym("lambda"),
                  Cons(form.cdr.car,
@@ -97,6 +107,11 @@ class Expander {
     }
   }
 
+  /**
+   * @param {Form} form
+   * @param {Environment} env
+   * @retuns {Promise<form>}
+   */
   async expand(form, env=this.engine.currentToplevelEnvironment) {
     DEBUG(form);
     let ret;
@@ -138,6 +153,11 @@ class Expander {
     return ret;
   }
 
+  /**
+   * @param {Form} form
+   * @param {Environment} env
+   * @returns {Promise<boolean>}
+   */
   async isMoreMacroUse(form, env) {
     if (!isPair(form)) return false;
     if (!isList(form)) return false;
@@ -148,15 +168,25 @@ class Expander {
     return true;
   }
 
+  /**
+   * @param {Identifier} id
+   * @param {Environment} env
+   * @returns {BiwaSymbol|Macro}
+   */
   _expandIdentifier(id, env) {
     const found = env.assq(id);
     if (found) return found;
-    if (!isSyntacticClosure(id)) {
+    if (!(id instanceof SyntacticClosure)) {
       throw new BiwaError("_expandIdentifier: id not in env", id);
     }
     return this._expandIdentifier(id.form, id.environment);
   }
 
+  /**
+   * @param {SyntacticClosure} sc
+   * @param {Environment} env
+   * @retuns {Promise<form>}
+   */
   async _expandSyntacticClosure(sc, env) {
     const frame = new Map();
     sc.freeNames.forEach(async id => frame[id] = await this.expand(id, env));
@@ -164,14 +194,20 @@ class Expander {
     return this.expand(sc.form, newEnv);
   }
 
+  /**
+   * @param {Macro} macro
+   * @param {Form} form
+   * @param {Environment} env
+   * @retuns {Promise<form>}
+   */
   async _expandMacro(macro, form, env) {
     return await macro.transformer.transform(form, this, env, macro.environment);
   }
 
   /** Called when loading a library from file (or something)
-   * @param {form} Original program
-   * @param {lib} Library
-   * @return [string] The expanded Scheme program and a Library
+   * @param {Form} form Original program
+   * @param {Library} lib
+   * @return {Promise<Form>} The expanded Scheme program and a Library
    */
   async expandLibrary(form, lib) {
     const spec = form.cdr.car;
@@ -182,7 +218,13 @@ class Expander {
     });
   }
 
-  // Returns whether `id1` in `env1` and `id2` in `id2` is the same identifier
+  /** Returns whether `id1` in `env1` and `id2` in `id2` is the same identifier
+   * @param {Identifier} id1
+   * @param {Environment} env1
+   * @param {Identifier} id2
+   * @param {Environment} env2
+   * @return {Promise<boolean>}
+   */
   async identifierEquals(id1, env1, id2, env2) {
     if (!isIdentifier(id1) || !isIdentifier(id2)) return false;
 

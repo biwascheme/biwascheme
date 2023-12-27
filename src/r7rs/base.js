@@ -4,8 +4,8 @@ import { Library, isLibrary } from "../system/expander/library.js"
 import { isSymbol } from "../system/_types.js"
 import { inspect, to_write } from "../system/_writer.js"
 import { BiwaError } from "../system/error.js"
-import { List, Cons, Pair, isPair, isList } from "../system/pair.js"
-import { Sym } from "../system/symbol.js"
+import { List, Cons, Pair, isPair, isList, array_to_list } from "../system/pair.js"
+import { Sym, gensym } from "../system/symbol.js"
 import { JsErMacroTransformer } from "../system/expander/macro_transformer.js"
 import { installCore } from "../system/expander/core.js"
 
@@ -125,6 +125,7 @@ libSchemeBase.exportMacro(Sym("or"), new JsErMacroTransformer(async (x, rename, 
   //todo: check improper list
 
   var objs = x.cdr.to_array()
+  /** @type {Pair|boolean} */
   var f = false;
   for(let i=objs.length-1; i>=0; i--)
     f = List(rename(Sym("if")), objs[i], objs[i], f);
