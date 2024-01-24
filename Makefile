@@ -15,9 +15,9 @@ browser_test:
 # Website
 #
 
-index.html: website/_header.html index_.html website/_footer.html
+index.html: website/_header.html website/index_.html website/_footer.html
 	sed -e  "s/@VERSION@/`node -e 'console.log(require("./package.json").version)'`/g" website/_header.html > $@
-	sed -e  "s/@VERSION@/`node -e 'console.log(require("./package.json").version)'`/g" index_.html >> $@
+	sed -e  "s/@VERSION@/`node -e 'console.log(require("./package.json").version)'`/g" website/index_.html >> $@
 	sed -e  "s/@VERSION@/`node -e 'console.log(require("./package.json").version)'`/g" website/_footer.html >> $@
 
 website: index.html doc/**/*.md
