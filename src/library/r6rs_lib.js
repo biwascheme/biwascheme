@@ -20,7 +20,7 @@ import { Port, eof } from "../system/port.js"
 import { BiwaPromise } from "../system/promise.js"
 import { Record, isRecord, assert_record, assert_record_td, assert_record_cd } from "../system/record.js"
 import { BiwaSymbol, Sym, gensym } from "../system/symbol.js"
-import Values from "../system/values.js"
+import { Values } from "../system/values.js"
 
 ///
 /// R6RS Base library

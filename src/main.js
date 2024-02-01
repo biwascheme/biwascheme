@@ -24,7 +24,7 @@ import { Record, isRecord, isRecordTD, isRecordCD } from "./system/record.js"
 import BiwaSet from "./system/set.js"
 import { BiwaSymbol, Sym, gensym } from "./system/symbol.js"
 import Syntax from "./system/syntax.js"
-import Values from "./system/values.js"
+import { Values } from "./system/values.js"
 import VMCode from "./system/vmcode.js"
 
 import "./library/extra_lib.js"
