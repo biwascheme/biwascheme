@@ -6,7 +6,6 @@ import { to_write } from "./_writer.js"
 
 class BiwaError extends Error {
   constructor(msg, form=null){
-    super(msg)
     const info = (form === null ? "" : `: ${to_write(form)}`);
     const message = `${msg}${info}`;
     super(message);
