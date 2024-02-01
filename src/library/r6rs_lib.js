@@ -6,7 +6,7 @@ import { define_libfunc, alias_libfunc, define_syntax, define_scmfunc,
          assert_function, assert_closure, assert_procedure, assert_date, assert, deprecate,
          parse_fraction, parse_integer, parse_float  } from "./infra.js"; 
 import { eq, eqv, equal } from "../system/_equality.js"
-import { to_write, to_display, inspect, write_shared, write_simple, write_ss } from "../system/_writer.js"
+import { to_write, to_display, inspect, write_shared, write_simple } from "../system/_writer.js"
 import { isNil, isSymbol, isVector, isProcedure, lt } from "../system/_types.js"
 import Call from "../system/call.js"
 import { Char } from "../system/char.js"
@@ -43,20 +43,20 @@ define_syntax("cond", function(x){
   var clauses = x.cdr;
   if(!(clauses instanceof Pair) || clauses === nil){
     throw new BiwaError("malformed cond: cond needs list but got " +
-                    write_ss(clauses));
+                    write_shared(clauses));
   }
   // TODO: assert that clauses is a proper list
 
   var ret = null;
   clauses.to_array().reverse().forEach(function(clause){
     if(!(clause instanceof Pair)){
-      throw new BiwaError("bad clause in cond: " + write_ss(clause));
+      throw new BiwaError("bad clause in cond: " + write_shared(clause));
     }
 
     if(clause.car === Sym("else")){
       if(ret !== null){
         throw new BiwaError("'else' clause of cond followed by more clauses: " +
-                        write_ss(clauses));
+                        write_shared(clauses));
       }
       else if(clause.cdr === nil){
         // pattern A: (else)
@@ -134,7 +134,7 @@ define_syntax("case", function(x){
         }
         else{
           throw new BiwaError("case: 'else' clause followed by more clauses: " +
-                          write_ss(clauses));
+                          write_shared(clauses));
         }
       }
       else{
@@ -3438,7 +3438,7 @@ define_syntax("delay", function(x){
   }
   if (x.cdr.cdr !== nil) {
     throw new BiwaError("malformed delay: too many arguments: "+
-                    write_ss(x));
+                    write_shared(x));
   }
   var expr = x.cdr.car;
   // Expand into call of internal function
@@ -3458,7 +3458,7 @@ define_syntax("delay-force", function(x){
   }
   if (x.cdr.cdr !== nil) {
     throw new BiwaError("malformed delay-force: too many arguments: "+
-                    write_ss(x));
+                    write_shared(x));
   }
   var expr = x.cdr.car;
   // Expand into call of internal function
