@@ -15,4 +15,4 @@ class Values {
   }
 }
 
-export default Values;
+export { Values };
