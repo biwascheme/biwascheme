@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "name": "biwascheme",
     "description": "A practical Scheme interpreter written in JavaScript",
     "version": "0.8.0",
