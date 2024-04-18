@@ -2,6 +2,7 @@ import { nil } from "../../src/header.js"
 import { Pair, List } from "../../src/system/pair.js"
 import { Sym } from "../../src/system/symbol.js"
 import { Char } from "../../src/system/char.js"
+import { to_write } from "../../src/system/_writer.js"
 import Parser from "../../src/system/parser.js"
 
 function parse(txt) {
@@ -103,7 +104,7 @@ describe("Parser", () => {
 
   describe("lists", () => {
     test("number list", () => {
-      expect(parse("(1 2)")).toBe(List(1, 2));
+      expect(to_write(parse("(1 2)"))).toBe("(1 2)");
     })
 
     test("Unterminated list", () => {
