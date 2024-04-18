@@ -1,5 +1,5 @@
 import { nil } from "../../src/header.js"
-import { Pair } from "../../src/system/pair.js"
+import { Pair, List } from "../../src/system/pair.js"
 import { Sym } from "../../src/system/symbol.js"
 import { Char } from "../../src/system/char.js"
 import Parser from "../../src/system/parser.js"
@@ -9,10 +9,6 @@ function parse(txt) {
 }
 
 describe("Parser (errneous)", () => {
-  test("Unterminated list", () => {
-    expect(() => parse("(1 2")).toThrow(Parser.Unterminated);
-  })
-
   test("Extra closing paren", () => {
     const p = new Parser("(display 10))");
     expect(p.getObject()).toBeInstanceOf(Pair);
@@ -27,6 +23,12 @@ describe("Parser", () => {
 
   test("nil", () => {
     expect(parse("()")).toBe(nil);
+  })
+
+  describe("numbers", () => {
+    test("integer", () => {
+      expect(parse("1")).toBe(1);
+    })
   })
 
   describe("symbols", () => {
@@ -96,6 +98,16 @@ describe("Parser", () => {
 
     test("unknown name", () => {
       expect(() => parse("#\\foo")).toThrow(Parser.Invalid)
+    })
+  })
+
+  describe("lists", () => {
+    test("number list", () => {
+      expect(parse("(1 2)")).toBe(List(1, 2));
+    })
+
+    test("Unterminated list", () => {
+      expect(() => parse("(1 2")).toThrow(Parser.Unterminated);
     })
   })
 })

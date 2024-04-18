@@ -1,5 +1,5 @@
 import { nil } from "../header.js"
-import { inspect } from "./_writer.js"
+import { inspect, to_write } from "./_writer.js"
 import { Char } from "./char.js"
 import { BiwaError, Bug } from "./error.js"
 import { Pair, List } from "./pair.js"
@@ -406,6 +406,8 @@ class Parser {
     const [a, rest] = this._parseRealNumber(base, tok);
     if (a === null) {
       return null;
+    } else if (rest === "") {
+      return a;
     }
     const c = rest[0];
     if (c == "@") {
@@ -421,7 +423,6 @@ class Parser {
         return new Complex(a, b);
       }
     }
-    // Was not a complex number.
     return null;
   }
 
@@ -442,22 +443,29 @@ class Parser {
     if (s.match(/^\+/)) {      s = s.substring(1); }
     else if (s.match(/^\-/)) { s = s.substring(1); sign = -1; }
 
+    // Handle deciaml of the form `.123`
+    if (base == 10 && s[0] == ".") {
+      const mm = tok.match(/^\.(\d+)([eE][+-]?\d+)?$/)
+      if (mm) {
+        return [parseFloat("0"+mm[0]), tok.substring(mm[0].length)];
+      } else {
+        return [null, tok];
+      }
+    }
+
     // Get the first number part
     let a = 0;
-    const mm = this.match(DIGITS[base]);
+    const mm = s.match(DIGITS[base]);
     if (mm) {
       s = s.substring(mm[0].length);
       a = parseInt(mm[0], base) * sign;
-    } else if (base == 10 && this.txt[this.i] == ".") {
-      // May be a decimal of the form `.123`. Continue parsing
     } else {
       return [null, tok];
     }
-
     // Parse rational
     if (s[0] == "/") {
       s = s.substring(1);
-      const mmm = this.match(DIGITS[base]);
+      const mmm = s.match(DIGITS[base]);
       if (mmm) {
         s = s.substring(mmm[0]);
         const b = parseInt(mmm[0], base);
