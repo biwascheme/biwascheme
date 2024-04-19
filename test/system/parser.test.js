@@ -2,6 +2,7 @@ import { nil } from "../../src/header.js"
 import { Pair, List } from "../../src/system/pair.js"
 import { Sym } from "../../src/system/symbol.js"
 import { Char } from "../../src/system/char.js"
+import { Complex, Rational } from "../../src/system/number.js"
 import { to_write } from "../../src/system/_writer.js"
 import Parser from "../../src/system/parser.js"
 
@@ -26,9 +27,30 @@ describe("Parser", () => {
     expect(parse("()")).toBe(nil);
   })
 
+  test("boolean", () => {
+    expect(parse("#(#t #true #f #false)")).toEqual([true, true, false, false]);
+  })
+
   describe("numbers", () => {
     test("integer", () => {
       expect(parse("1")).toBe(1);
+    })
+
+    test("decimal", () => {
+      expect(parse("1.2")).toBe(1.2);
+      expect(parse(".2")).toBe(0.2);
+    })
+
+    test("rational", () => {
+      expect(parse("1/2")).toEqual(new Rational(1, 2));
+    })
+
+    test("polar complex", () => {
+      expect(parse("1@2")).toEqual(Complex.from_polar(1, 2));
+    })
+
+    test("ortho complex", () => {
+      expect(parse("-1+2i")).toEqual(new Complex(-1, 2));
     })
   })
 
@@ -37,12 +59,20 @@ describe("Parser", () => {
       expect(parse("foo")).toBe(Sym("foo"));
     })
 
-    test("starts with number", () => {
+    test("starts with integer", () => {
       expect(parse("1+")).toBe(Sym("1+"));
+    })
+
+    test("starts with decimal", () => {
+      expect(parse(".1+")).toBe(Sym(".1+"));
     })
 
     test("whitespace", () => {
       expect(parse('| |')).toBe(Sym(' '));
+    })
+
+    test("newline", () => {
+      expect(parse('|a\nb|')).toBe(Sym('a\nb'));
     })
   })
 
@@ -109,6 +139,28 @@ describe("Parser", () => {
 
     test("Unterminated list", () => {
       expect(() => parse("(1 2")).toThrow(Parser.Unterminated);
+    })
+  })
+
+  describe("quotes", () => {
+    test("quoted symbol", () => {
+      expect(to_write(parse("'foo"))).toBe("(quote foo)");
+    })
+
+    test("quoted number", () => {
+      expect(to_write(parse("'1"))).toBe("(quote 1)");
+    })
+
+    test("double quoted", () => {
+      expect(to_write(parse("''foo"))).toBe("(quote (quote foo))");
+    })
+
+    test("unterminated quote", () => {
+      expect(() => parse("''")).toThrow(Parser.Unterminated);
+    })
+
+    test("quasiquote", () => {
+      expect(to_write(parse("`(,foo ,@bar)"))).toBe("(quasiquote ((unquote foo) (unquote-splicing bar)))");
     })
   })
 })
