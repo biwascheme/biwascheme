@@ -447,7 +447,7 @@ class Parser {
 
     // Handle deciaml of the form `.123`
     if (base == 10 && s[0] == ".") {
-      const mm = tok.match(/^\.(\d+)([eE][+-]?\d+)?$/)
+      const mm = tok.match(/^\.(\d+)([eE][+-]?\d+)?/)
       if (mm) {
         return [parseFloat("0"+mm[0]), tok.substring(mm[0].length)];
       } else {

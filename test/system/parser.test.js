@@ -52,6 +52,14 @@ describe("Parser", () => {
     test("ortho complex", () => {
       expect(parse("-1+2i")).toEqual(new Complex(-1, 2));
     })
+
+    test("rational in complex", () => {
+      expect(parse("1/2+3/4i")).toEqual(new Complex(new Rational(1, 2), new Rational(3, 4)));
+    })
+
+    test("decimal in complex", () => {
+      expect(parse(".2+2.3i")).toEqual(new Complex(0.2, 2.3));
+    })
   })
 
   describe("symbols", () => {
