@@ -173,31 +173,7 @@ class Parser {
         break;
       case "#":
         this.i++;
-        const c2 = this.txt[this.i];
-        switch (c2) {
-          case "(":
-            this.i++;
-            tok = "#(";
-            break;
-          case "\\":
-            this.i++;
-            tok = "#\\" + this._getCharToken();
-            break;
-          default:
-            const m = this.match(ID_REXP);
-            if (m) {
-              this.i += m[0].length;
-              tok = "#" + m[0];
-            } else if (c2 === undefined) {
-              // Program ends with an `#` (invalid)
-              tok = "#";
-            } else {
-              // Invalid symbol after `#`
-              this.i++;
-              tok = "#" + c2;
-            }
-            break;
-        }
+        tok = this._getSharpToken();
         break;
       default:
         const m = this.match(ID_REXP);
@@ -211,6 +187,32 @@ class Parser {
         break;
     }
     return tok;
+  }
+
+  // Get the possible part after `#`
+  _getSharpToken() {
+    const c2 = this.txt[this.i];
+    switch (c2) {
+      case "(":
+        this.i++;
+        return "#(";
+      case "\\":
+        this.i++;
+        return "#\\" + this._getCharToken();
+      default:
+        const m = this.match(ID_REXP);
+        if (m) {
+          this.i += m[0].length;
+          return "#" + m[0];
+        } else if (c2 === undefined) {
+          // Program ends with an `#` (invalid)
+          return "#";
+        } else {
+          // Invalid symbol after `#`
+          this.i++;
+          return "#" + c2;
+        }
+    }
   }
 
   // Get the possible part after `#\`
