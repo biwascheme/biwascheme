@@ -23,6 +23,34 @@ describe("Parser", () => {
     expect(parse("")).toBe(Parser.EOS);
   })
 
+  describe("atmosphere", () => {
+    test("tab", () => {
+      expect(parse("#(1\t2)")).toEqual([1, 2]);
+    })
+
+    test("line comment", () => {
+      expect(parse("#(1; comment\n 2)")).toEqual([1, 2]);
+    })
+
+    test("block comment", () => {
+      expect(parse("#(1 #| comment |# 2)")).toEqual([1, 2]);
+    })
+
+    test("sexp comment", () => {
+      expect(parse("#(1 #;() 2)")).toEqual([1, 2]);
+    })
+  })
+
+  describe("case directive", () => {
+    test("fold to no-fold", () => {
+      expect(parse("#( #!fold-case A #!no-fold-case B)")).toEqual([Sym("a"), Sym("B")]);
+    })
+
+    test("no-fold to fold", () => {
+      expect(parse("#( #!no-fold-case A #!fold-case B)")).toEqual([Sym("A"), Sym("b")]);
+    })
+  })
+
   test("nil", () => {
     expect(parse("()")).toBe(nil);
   })
