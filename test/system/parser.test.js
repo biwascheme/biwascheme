@@ -67,6 +67,10 @@ describe("Parser", () => {
       expect(parse(".1+")).toBe(Sym(".1+"));
     })
 
+    test("starts with rational", () => {
+      expect(parse("1/2+")).toBe(Sym("1/2+"));
+    })
+
     test("whitespace", () => {
       expect(parse('| |')).toBe(Sym(' '));
     })

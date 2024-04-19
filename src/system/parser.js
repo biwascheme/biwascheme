@@ -430,6 +430,8 @@ class Parser {
   // Returns the number and the rest of the string.
   // Returns [null, tok] if not a number.
   _parseRealNumber(base, tok) {
+    if (tok === "") return [null, tok];
+
     // inf or nan
     const m = tok.match(/^(\+|-)(inf.0|nan.0)/);
     if (m) {
@@ -467,7 +469,7 @@ class Parser {
       s = s.substring(1);
       const mmm = s.match(DIGITS[base]);
       if (mmm) {
-        s = s.substring(mmm[0]);
+        s = s.substring(mmm[0].length);
         const b = parseInt(mmm[0], base);
         return [new Rational(a, b), s];
       } else {
