@@ -182,6 +182,10 @@ describe("Parser", () => {
     })
   })
 
+  test("vector", () => {
+    expect(parse("#(1 2)")).toEqual([1, 2]);
+  })
+
   describe("quotes", () => {
     test("quoted symbol", () => {
       expect(to_write(parse("'foo"))).toBe("(quote foo)");
@@ -202,5 +206,9 @@ describe("Parser", () => {
     test("quasiquote", () => {
       expect(to_write(parse("`(,foo ,@bar)"))).toBe("(quasiquote ((unquote foo) (unquote-splicing bar)))");
     })
+  })
+
+  test("datum label", () => {
+    expect(parse("#(#0=123 #0#)")).toEqual([123, 123]);
   })
 })

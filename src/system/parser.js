@@ -133,7 +133,7 @@ class Parser {
           break;
       }
     }
-    //console.log("getObject", inspect(ret))
+    //onsole.log("getObject", inspect(ret))
     return ret;
   }
 
@@ -192,27 +192,31 @@ class Parser {
   // Get the possible part after `#`
   _getSharpToken() {
     const c2 = this.txt[this.i];
-    switch (c2) {
-      case "(":
-        this.i++;
-        return "#(";
-      case "\\":
-        this.i++;
-        return "#\\" + this._getCharToken();
-      default:
-        const m = this.match(ID_REXP);
-        if (m) {
-          this.i += m[0].length;
-          return "#" + m[0];
-        } else if (c2 === undefined) {
-          // Program ends with an `#` (invalid)
-          return "#";
-        } else {
-          // Invalid symbol after `#`
-          this.i++;
-          return "#" + c2;
-        }
+    if (c2 === undefined) {
+      // Program ends with an `#` (invalid)
+      return "#";
     }
+    if (c2 === "(") {
+      this.i++;
+      return "#(";
+    }
+    if (c2 === "\\") {
+      this.i++;
+      return "#\\" + this._getCharToken();
+    } 
+    let m = this.match(/^(\d+)[=#]/); // Datum label
+    if (m) {
+      this.i += m[0].length;
+      return "#" + m[0];
+    }
+    m = this.match(ID_REXP);
+    if (m) {
+      this.i += m[0].length;
+      return "#" + m[0];
+    }
+    // Invalid symbol after `#`
+    this.i++;
+    return "#" + c2;
   }
 
   // Get the possible part after `#\`
@@ -328,9 +332,9 @@ class Parser {
             return this._parseChar(tok);
           case tok.startsWith("#u8"):
             throw new BiwaError("bytevectors are not supported yet", this.rest(-1));
-          case tok.match(/^#[eibodx]/):
+          case /^#[eibodx]/.test(tok):
             return this._parsePrefixedNumber(tok);
-          case tok.match(/^#\d/):
+          case /^#\d/.test(tok):
             return this._parseDatumLabel(tok);
           default:
             throw new Invalid("unknown #-syntax", tok);
@@ -510,7 +514,7 @@ class Parser {
         }
       }
     } else {
-      throw new BiwaError("unknown #-syntax", tok);
+      throw new BiwaError("[BUG] not a datum label", tok);
     }
   }
 
