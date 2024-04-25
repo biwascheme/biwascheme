@@ -1,5 +1,5 @@
 import { nil } from "../header.js"
-import { inspect } from "./_writer.js"
+import { inspect, to_write } from "./_writer.js"
 import { Char } from "./char.js"
 import { BiwaError, Bug } from "./error.js"
 import { Pair, List } from "./pair.js"
@@ -11,6 +11,13 @@ import { Complex, Rational } from "./number.js"
 class Unterminated extends BiwaError {}
 // Raised when input contains extraneous `)`, etc.
 class Unbalanced extends BiwaError {}
+// Raised for invalid char literal, etc.
+class Invalid extends BiwaError {}
+
+// Matches first word-like stuff i.e. characters not space and
+// not symbols that are not allowed for an identifier.
+// TODO: is there other non-id symbols in Unicode?
+const ID_REXP = /^[^\s\t\n\(\)\[\]\{\}\"\'\`\,\;\|]+/
 
 // Allowed digits in each base
 const DIGITS = {
@@ -39,10 +46,6 @@ const NAMED_CHARS = {
   space: " ",
   tab: "\t",
 }
-const NAMED_CHARS_REXP = new RegExp(
-  "^(" + 
-  Object.keys(NAMED_CHARS).join("|") + 
-  ")\\b");
 
 // Escape sequences like `\n`, `\t`
 const ESCAPE_SEQUENCES = {
@@ -86,14 +89,12 @@ class Parser {
     if (this.done()) {
       ret = Parser.EOS;
     } else {
-      switch (this.txt[this.i]) {
-        case "#":
-          this.i++;
-          ret = this._parseSharp();
-          break;
+      const tok = this._getToken();
+      switch (tok) {
         case "(":
         case "[":
         case "{":
+          this.i--; // Unget the first paren
           ret = this._parseList();
           break;
         case '"':
@@ -106,34 +107,33 @@ class Parser {
         case ")":
         case "]":
         case "}":
-          throw new Unbalanced(`found extraneous '${this.txt[this.i]}'`);
+          throw new Unbalanced(`found extraneous '${tok}'`);
           break;
 
         // Aliases
         case "'":
-          this.i++;
           ret = this._parseQuote("quote");
           break;
         case "`":
-          this.i++;
           ret = this._parseQuote("quasiquote");
           break;
         case ",":
-          this.i++;
-          if (this.txt[this.i] == "@") {
-            this.i++;
-            ret = this._parseQuote("unquote-splicing");
-          } else {
-            ret = this._parseQuote("unquote");
-          }
+          ret = this._parseQuote("unquote");
+          break;
+        case ",@":
+          ret = this._parseQuote("unquote-splicing");
           break;
 
         default:
-          ret = this._parseDecimalNumberOrIdentifier();
+          if (tok[0] == "#") {
+            ret = this._parseSharp(tok);
+          } else {
+            ret = this._parseDecimalNumberOrIdentifier(tok);
+          }
           break;
       }
     }
-    //console.log("getObject", inspect(ret))
+    //onsole.log("getObject", inspect(ret))
     return ret;
   }
 
@@ -142,6 +142,98 @@ class Parser {
     if (v === Parser.EOS) throw new Unterminated(msg);
     return v;
   }
+
+  // Returns current token and proceeds the cursor.
+  _getToken() {
+    const c = this.txt[this.i];
+    if (c === undefined) throw new Bug("EOS must be handled beforehand")
+    let tok;
+    switch (c) {
+      case "(":
+      case "[":
+      case "{":
+      case ")":
+      case "]":
+      case "}":
+      case "'":
+      case "`":
+      case '"':
+      case "|":
+        this.i++;
+        tok = c;
+        break;
+      case ",":
+        this.i++;
+        if (this.txt[this.i] == "@") {
+          this.i++;
+          tok = ",@";
+        } else {
+          tok = ",";
+        }
+        break;
+      case "#":
+        this.i++;
+        tok = this._getSharpToken();
+        break;
+      default:
+        const m = this.match(ID_REXP);
+        if (m) {
+          this.i += m[0].length;
+          tok = m[0];
+        } else {
+          this.i++;
+          tok = c;
+        }
+        break;
+    }
+    return tok;
+  }
+
+  // Get the possible part after `#`
+  _getSharpToken() {
+    const c2 = this.txt[this.i];
+    if (c2 === undefined) {
+      // Program ends with an `#` (invalid)
+      return "#";
+    }
+    if (c2 === "(") {
+      this.i++;
+      return "#(";
+    }
+    if (c2 === "\\") {
+      this.i++;
+      return "#\\" + this._getCharToken();
+    } 
+    let m = this.match(/^(\d+)[=#]/); // Datum label
+    if (m) {
+      this.i += m[0].length;
+      return "#" + m[0];
+    }
+    m = this.match(ID_REXP);
+    if (m) {
+      this.i += m[0].length;
+      return "#" + m[0];
+    }
+    // Invalid symbol after `#`
+    this.i++;
+    return "#" + c2;
+  }
+
+  // Get the possible part after `#\`
+  _getCharToken() {
+    if (this.done()) {
+      throw new Unterminated("got EOS on char literal", this.rest(-2));
+    }
+    const m = this.match(/^(\w+)/);
+    if (m) {
+      return m[0];
+    } else {
+      const c = this.txt[this.i];
+      this.i++;
+      return c;
+    }
+  }
+
 
   // Skip whitespace, comment and directive
   // Note: calling this method may change parser state (`this.foldCase`).
@@ -223,71 +315,53 @@ class Parser {
   }
 
   // Parse stuffs starting with `#` (except those parsed with _skipAtmosphere)
-  _parseSharp() {
-    switch (this.txt[this.i]) {
-      case "t":
-        if (this.match(/^true/)) {
-          this.i += "true".length;
-        } else {
-          this.i++;
-        }
+  _parseSharp(tok) {
+    if (!tok.startsWith("#")) throw new Bug("not a sharp");
+    switch (tok) {
+      case "#t":
+      case "#true":
         return true;
-      case "f":
-        if (this.match(/^false/)) {
-          this.i += "false".length;
-        } else {
-          this.i++;
-        }
+      case "#f":
+      case "#false":
         return false;
-      case "\\":
-        this.i++;
-        return this._parseChar();
-      case "(":
-        this.i++;
+      case "#(":
         return this._parseVector();
-      case "u":
-        if (this.match(/^u8\(/)) {
-          throw new BiwaError("bytevectors are not supported yet", this.rest(-1));
-        } else {
-          break;
-        }
-      case "e":
-      case "i":
-      case "b":
-      case "o":
-      case "d":
-      case "x":
-        this.i--; // Unget `#`
-        return this._parsePrefixedNumber();
       default:
-        if (this.match(/^\d/)) {
-          return this._parseDatumLabel();
-        } else {
-          break;
+        switch (true) {
+          case tok.startsWith("#\\"):
+            return this._parseChar(tok);
+          case tok.startsWith("#u8"):
+            throw new BiwaError("bytevectors are not supported yet", this.rest(-1));
+          case /^#[eibodx]/.test(tok):
+            return this._parsePrefixedNumber(tok);
+          case /^#\d/.test(tok):
+            return this._parseDatumLabel(tok);
+          default:
+            throw new Invalid("unknown #-syntax", tok);
         }
     }
-    throw new BiwaError("unknown #-syntax", this.rest(-1));
   }
 
-  // Parse a character literal after `#\`
-  _parseChar() {
-    let m = this.match(NAMED_CHARS_REXP);
-    if (m) {
-      this.i += m[0].length;
-      return Char.get(NAMED_CHARS[m[1]]);
-    }
-    m = this.match(/^x([a-zA-Z0-9]+)/);
-    if (m) {
-      this.i += m[0].length;
-      return Char.get(String.fromCharCode(parseInt(m[1], 16)));
-    }
-    if (this.done()) {
-      throw new Unterminated("got EOS on char literal", this.rest(-2));
-    } else {
-      const c = this.txt[this.i];
-      this.i++;
+  // Parse a character literal (begins with `#\`)
+  _parseChar(tok) {
+    if (!tok.startsWith("#\\")) throw new Bug("not a char");
+    const body = tok.substring(2);
+    // Named char?
+    let c = NAMED_CHARS[body];
+    if (c) {
       return Char.get(c);
     }
+    // Specified by code?
+    let m = /^x([a-zA-Z0-9]+)$/.exec(body);
+    if (m) {
+      return Char.get(String.fromCharCode(parseInt(m[1], 16)));
+    }
+    // A character?
+    if (body.length == 1) {
+      return Char.get(body);
+    }
+    // Otherwise
+    throw new Invalid(`Invalid char literal: ${tok}`);
   }
 
   // Parse a vector expression after `#(`
@@ -312,138 +386,135 @@ class Parser {
   }
 
   // Parse a number prefixed with `#i`, `#b`, etc.
-  _parsePrefixedNumber() {
+  // Throws error if not a prefixed number.
+  _parsePrefixedNumber(tok) {
     let base = 10; // Decimal is the default
-    if (this.match(/^#[iIeE]/)) this.i += 2; // Exactness is not supported.
-    if      (this.match(/^#[bB]/)) { base = 2; this.i += 2 }
-    else if (this.match(/^#[oO]/)) { base = 8; this.i += 2 }
-    else if (this.match(/^#[dD]/)) { base = 10; this.i += 2 }
-    else if (this.match(/^#[xX]/)) { base = 16; this.i += 2 }
-    if (this.match(/^#[iIeE]/)) this.i += 2; // Exactness is not supported.
+    let s = tok;
+    if (s.match(/^#[iIeE]/)) s = s.substring(2); // Exactness is not supported.
+    if      (s.match(/^#[bB]/)) { base = 2;  s = s.substring(2); }
+    else if (s.match(/^#[oO]/)) { base = 8;  s = s.substring(2); }
+    else if (s.match(/^#[dD]/)) { base = 10; s = s.substring(2); }
+    else if (s.match(/^#[xX]/)) { base = 16; s = s.substring(2); }
+    if (s.match(/^#[iIeE]/)) s = s.substring(2); // Exactness is not supported.
 
-    return this._parseComplexNumber(base);
+    const v = this._parseComplexNumber(base, s);
+    if (v === null) {
+      // Extraneous char after number prefix (like `#dfoo`)
+      throw new Invalid(`invalid number format: %{tok}`);
+    } else {
+      return v;
+    }
   }
 
-  // Parse a (possibly) complex number
-  _parseComplexNumber(base) {
-    const a = this._parseRealNumber(base);
-    const c = this.txt[this.i];
-    if (c == "@") {
-      this.i++;
-      return this._parsePolarComplexNumber(a, base);
-    } else if (c == "+" || c == "-") {
-      this.i--; // Unget the sign
-      return this._parseOrthoComplexNumber(a, base);
-    } else {
-      // Was not a complex number.
+  // Parse a complex (or real) number.
+  // Returns null if not a number.
+  _parseComplexNumber(base, tok) {
+    const [a, rest] = this._parseRealNumber(base, tok);
+    if (a === null) {
+      return null;
+    } else if (rest === "") {
       return a;
     }
-  }
-
-  // Parse a complex number of the form `a@b`
-  _parsePolarComplexNumber(a, base) {
-    const b = this._parseRealNumber(base);
-    return Complex.from_polar(a, b);
-  }
-
-  // Parse a complex number of the form `a+bi`
-  _parseOrthoComplexNumber(a, base) {
-    const b = this._parseRealNumber(base);
-    if (this.match(/^[iI]/)) {
-      this.i++;
-      return new Complex(a, b)
-    } else {
-      throw new BiwaError("invalid complex number format (missing `i`)", this.rest())
+    const c = rest[0];
+    if (c == "@") {
+      // Polar complex number? (eg. `1@2`)
+      const [b, rest2] = this._parseRealNumber(base, rest.substring(1));
+      if (b !== null && rest2 === "") {
+        return Complex.from_polar(a, b);
+      }
+    } else if (c == "+" || c == "-") {
+      // Ortho complex number? (eg. `1+2i`)
+      const [b, rest2] = this._parseRealNumber(base, rest);
+      if (b !== null && rest2.match(/^[iI]$/)) {
+        return new Complex(a, b);
+      }
     }
+    return null;
   }
 
-  // Parse a real number in base 2, 8, or 16
-  // If `maybeSymbol` is true, returns a consumed string intead of throwing error
-  // when it is not a number.
-  _parseRealNumber(base, maybeSymbol=false) {
-    if (maybeSymbol && base != 10) throw new Bug("base must be 10 if maybeSymbol");
-    let asSym = "";
+  // Parse a real (or rational) number at the head of `tok`.
+  // Returns the number and the rest of the string.
+  // Returns [null, tok] if not a number.
+  _parseRealNumber(base, tok) {
+    if (tok === "") return [null, tok];
 
-    // Check if it is inf or nan
-    const m = this.match(/^(\+|-)(inf.0|nan.0)/);
+    // inf or nan
+    const m = tok.match(/^(\+|-)(inf.0|nan.0)/);
     if (m) {
-      this.i += "+inf.0".length;
-      return (m[2] == "inf.0" ? Infinity : NaN) * (m[1] == "+" ? 1 : -1);
+      const v = (m[2] == "inf.0" ? Infinity : NaN) * (m[1] == "+" ? 1 : -1);
+      return [v, tok.substring(m[0].length)];
     }
 
+    // Handle the sign in case this is a number
+    let s = tok;
     let sign = 1;
-    if (this.match(/^\+/)) {      this.i++; asSym += "+"; }
-    else if (this.match(/^\-/)) { this.i++; asSym += "-"; sign = -1; }
+    if (s.match(/^\+/)) {      s = s.substring(1); }
+    else if (s.match(/^\-/)) { s = s.substring(1); sign = -1; }
 
-    let a = null;
-    const mm = this.match(DIGITS[base]);
-    if (mm) {
-      this.i += mm[0].length;
-      asSym += mm[0];
-      a = parseInt(mm[0], base) * sign;
-    } else if (base == 10 && this.txt[this.i] == ".") {
-      // May be a decimal of the form `.123`. Continue parsing
-    } else if (maybeSymbol) {
-      // Continue parsing.
-    } else {
-      throw new BiwaError("invalid char in number literal", this.rest());
+    // Handle deciaml of the form `.123`
+    if (base == 10 && s[0] == ".") {
+      const mm = tok.match(/^\.(\d+)([eE][+-]?\d+)?/)
+      if (mm) {
+        return [parseFloat("0"+mm[0]), tok.substring(mm[0].length)];
+      } else {
+        return [null, tok];
+      }
     }
 
+    // Get the first number part
+    let a = 0;
+    const mm = s.match(DIGITS[base]);
+    if (mm) {
+      s = s.substring(mm[0].length);
+      a = parseInt(mm[0], base) * sign;
+    } else {
+      return [null, tok];
+    }
     // Parse rational
-    if (this.txt[this.i] == "/") {
-      this.i++;
-      const mmm = this.match(DIGITS[base]);
+    if (s[0] == "/") {
+      s = s.substring(1);
+      const mmm = s.match(DIGITS[base]);
       if (mmm) {
-        this.i += mmm[0].length;
+        s = s.substring(mmm[0].length);
         const b = parseInt(mmm[0], base);
-        return new Rational(a, b);
-      } else if (maybeSymbol) {
-        asSym += "/";
+        return [new Rational(a, b), s];
       } else {
-        throw new BiwaError("invalid char in rational number literal", this.rest());
+        return [null, tok];
       }
     }
 
     // Was not a rational. Check if it is a decimal
     if (base == 10) {
       // Try matching form the beginning
-      this.i -= asSym.length;
-      const mmm = this.match(/^[+-]?(\d+\.\d*|\.?\d+)([eE][+-]?\d+)?/)
+      const mmm = tok.match(/^[+-]?(\d+\.\d*|\.?\d+)([eE][+-]?\d+)?/)
       if (mmm) {
-        this.i += mmm[0].length;
-        return parseFloat(mmm[0]);
-      } else {
-        // Was not a decimal either. Put back the cursor
-        this.i += asSym.length;
+        return [parseFloat(mmm[0]), tok.substring(mmm[0].length)];
       }
     }
 
-    if (maybeSymbol) {
-      return asSym;
-    } else {
-      throw new BiwaError(`invalid chars in number literal (${asSym})`, this.rest());
-    }
+    return [null, tok];
   }
 
   // Parse a datum label definition (`#0=`) or reference (`#0#`).
-  _parseDatumLabel() {
-    const m = this.match(/^(\d+)(=|#)/);
+  _parseDatumLabel(tok) {
+    const m = tok.match(/^#(\d+)(=|#)$/);
     if (m) {
-      this.i += m[0].length;
       const id = parseInt(m[1]);
       if (m[2] == "=") {
+        // Definition
         const v = this._getObjectOrThrowUnterminated("got EOS for labelled datum");
         this.labelledData[id] = v;
         return v;
       } else {
+        // Reference
         if (this.labelledData.hasOwnProperty(id)) {
           return this.labelledData[id];
         } else {
-          throw new BiwaError("undefined datum reference", this.rest(-1));
+          throw new BiwaError("undefined datum reference", tok);
         }
       }
     } else {
-      throw new BiwaError("unknown #-syntax", this.rest(-1));
+      throw new BiwaError("[BUG] not a datum label", tok);
     }
   }
 
@@ -493,9 +564,9 @@ class Parser {
     throw new Unterminated("found EOS in list", this.rest());
   }
 
-  // Parse a string literal (`"..."`)
+  // Parse a string literal after the first `"`
   _parseString() {
-    const m = this.match(/^"((\\"|[^"])*)"/);
+    const m = this.match(/^((\\"|[^"])*)"/);
     if (m) {
       this.i += m[0].length;
       const s = m[1].replaceAll(/\\\s*\n\s*/g, "");
@@ -505,9 +576,9 @@ class Parser {
     }
   }
 
-  // Parse a symbol enclosed with `|`
+  // Parse a symbol enclosed with `|` after the first `|`
   _parseEnclosedSymbol() {
-    const m = this.match(/^\|((\\\||[^\|])*)\|/);
+    const m = this.match(/^((\\\||[^\|])*)\|/);
     if (m) {
       this.i += m[0].length;
       return Sym(this._replaceEscapedChars(m[1]));
@@ -524,23 +595,12 @@ class Parser {
   }
 
   // Parse a number or an identifier.
-  _parseDecimalNumberOrIdentifier() {
-    const c = this.txt[this.i];
-    if (c == "#") throw new Bug("#-syntax must be parsed beforehand")
-    if (c === undefined) throw new Bug("EOS must be handled beforehand")
+  _parseDecimalNumberOrIdentifier(tok) {
+    if (tok === "") throw new Bug("empty string given")
 
-    let v = this._parseRealNumber(10, true);
-    if (isString(v)) {
-      // Read the rest of this identifier
-      const m = this.match(/^[^\s)}\]]+/);
-      if (m) {
-        this.i += m[0].length;
-        v += m[0];
-      }
-      if (this.foldCase) {
-        v = v.toLowerCase();
-      }
-      return Sym(v);
+    const v = this._parseComplexNumber(10, tok);
+    if (v === null) {
+      return Sym(this.foldCase ? tok.toLowerCase() : tok);
     } else {
       return v;
     }
