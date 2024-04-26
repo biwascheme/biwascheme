@@ -139,6 +139,10 @@ describe("Parser", () => {
       expect(parse("#\\a")).toBe(Char.get("a"));
     })
 
+    test("multibyte", () => {
+      expect(parse("#\\あ")).toBe(Char.get("あ"));
+    })
+
     test("number", () => {
       expect(parse("#\\1")).toBe(Char.get("1"));
     })
