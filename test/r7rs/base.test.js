@@ -1,5 +1,12 @@
 import { ev } from "../helper.js"
 
+describe('6.6 Characters', () => {
+  test('char<?', function(){
+    ev("(char<? #\\a #\\z)").toBe(true);
+    ev("(char<? #\\z #\\Z)").toBe(false);
+  })
+})
+
 describe('11.5 Equivalence predicates', () => {
   test('eqv?', function(){
     ev("(eqv? 'a 'a)").toBe(true);

@@ -226,6 +226,7 @@ class Parser {
     }
     const m = this.match(/^(\w+)/);
     if (m) {
+      this.i += m[0].length;
       return m[0];
     } else {
       const c = this.txt[this.i];
