@@ -30,6 +30,9 @@ describe('4.2.8 Quasiquotation', () => {
   test('not a list', () => {
     ew("`(,1 ,@2)").toBe("(1 . 2)");
   })
+  test('bug #346', () => {
+    ew("(define l '(x y)) ``(,@,@l ,@,@l)").toBe("(quasiquote ((unquote-splicing x y) (unquote-splicing x y)))");
+  })
 })
 
 describe('6.6 Characters', () => {
