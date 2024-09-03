@@ -1349,100 +1349,88 @@ define_libfunc("dynamic-wind", 3, 3, function(ar, intp) {
 //        11.17  Quasiquotation
 // `() is expanded to `cons` and `append`.
 // `#() is expanded to `vector` and `vector-append`.
-var expand_qq = function(f, lv){
-  if(f instanceof BiwaSymbol || f === nil){
-    return List(Sym("quote"), f);
-  }
-  else if(f instanceof Pair){
-    var car = f.car;
-    if(car instanceof Pair && car.car === Sym("unquote-splicing")){
-      if(lv == 1) {
-        if (f.cdr === nil) {
-          return f.car.cdr.car;
-        } else {
-          return List(Sym("append"),
-                      f.car.cdr.car,
-                      expand_qq(f.cdr, lv));
-        }
-      }
-      else
-        return List(Sym("cons"),
-                    List(Sym("list"),
-                         List(Sym("quote"), Sym("unquote-splicing")),
-                         expand_qq(f.car.cdr.car, lv-1)),
-                    expand_qq(f.cdr, lv));
-    }
-    else if(car === Sym("unquote")){
-      if(lv == 1)
-        return f.cdr.car;
-      else
-        return List(Sym("list"),
-                    List(Sym("quote"), Sym("unquote")),
-                    expand_qq(f.cdr.car, lv-1));
-    }
-    else if(car === Sym("quasiquote"))
-      return List(Sym("list"),
-                  List(Sym("quote"), Sym("quasiquote")),
-                  expand_qq(f.cdr.car, lv+1));
-    else
+const expandQuasiquote = function(x, depth){
+  if (x instanceof Pair) {
+    if (x.car === Sym("quasiquote")) {
       return List(Sym("cons"),
-                  expand_qq(f.car, lv),
-                  expand_qq(f.cdr, lv));
+                  List(Sym("quote"), Sym("quasiquote")),
+                  expandQuasiquote(x.cdr, depth+1));
+    } else if (x.car === Sym("unquote") ||
+               x.car === Sym("unquote-splicing")) {
+      if (depth > 0) {
+        return List(Sym("cons"),
+                    List(Sym("quote"), x.car),
+                    expandQuasiquote(x.cdr, depth-1));
+      } else if (x.car === Sym("unquote") &&
+                 x.cdr instanceof Pair && // Check if it has only one argument
+                 x.cdr.cdr === nil) {
+        return x.cdr.car;
+      } else {
+        throw new BiwaError("invalid use of quasiquote");
+      }
+    } else {
+      // Use `append` because there may be a `,@` in the list
+      return List(Sym("append"),
+               expandQqList(x.car, depth),
+               expandQuasiquote(x.cdr, depth));
+    }
+  } else if (x instanceof Array) {
+    const l = array_to_list(x);
+    return List(Sym("list->vector"),
+             List(Sym("append"),
+               expandQqList(l.car, depth),
+               expandQuasiquote(l.cdr, depth)));
+  } else {
+    return List(Sym("quote"), x);
   }
-  else if(f instanceof Array){
-    var vecs = [[]];
-    for(var i=0; i<f.length; i++){
-      if(f[i] instanceof Pair && f[i].car === Sym("unquote-splicing")) {
-        if (lv == 1) {
-          var item = List(Sym("list->vector"), f[i].cdr.car);
-          item["splicing"] = true;
-          vecs.push(item);
-          vecs.push([]);
-        }
-        else {
-          var item = List(Sym("cons"),
-                       List(Sym("list"),
-                            List(Sym("quote"), Sym("unquote-splicing")),
-                            expand_qq(f[i].car.cdr.car, lv-1)),
-                       expand_qq(f[i].cdr, lv));
-          vecs[vecs.length-1].push(item);
-        }
-      }
-      else {
-        // Expand other things as the same as if they are in a list quasiquote
-        vecs[vecs.length-1].push(expand_qq(f[i], lv));
-      }
-    }
-
-    var vectors = vecs.map(function(vec){
-      if (vec["splicing"]) {
-        return vec;
-      }
-      else {
-        return Cons(Sym("vector"),
-                    array_to_list(vec));
-      }
-    });
-    if (vectors.length == 1) {
-       return Cons(Sym("vector"),
-                   array_to_list(vecs[0]));
-    }
-    else {
-      return Cons(Sym("vector-append"),
-                  array_to_list(vectors));
-    }
-  }
-  else
-    return f;
 }
+
+// Auxiliary function for expandQuasiquote
+// Expands an item in a list context
+const expandQqList = function(x, depth){
+  if (x instanceof Pair) {
+    if (x.car === Sym("quasiquote")) {
+      return List(Sym("list"),
+               List(Sym("cons"),
+                    List(Sym("quasiquote"), x.car),
+                    expandQuasiquote(x.cdr, depth+1)));
+    } else if (x.car === Sym("unquote") ||
+               x.car === Sym("unquote-splicing")) {
+      if (depth > 0) {
+        return List(Sym("list"),
+                 List(Sym("cons"),
+                      List(Sym("quote"), x.car),
+                      expandQuasiquote(x.cdr, depth-1)));
+      } else if (x.car === Sym("unquote")) {
+        return Cons(Sym("list"), x.cdr);
+      } else { // i.e. x.car === Sym("unquote-splicing")
+        return Cons(Sym("append"), x.cdr);
+      }
+    } else {
+      return List(Sym("list"),
+               List(Sym("append"),
+                 expandQqList(x.car, depth),
+                 expandQuasiquote(x.cdr, depth)));
+    }
+  } else if (x instanceof Array) {
+    const l = array_to_list(x);
+    return List(Sym("list"),
+             List(Sym("list->vector"),
+               List(Sym("append"),
+                 expandQqList(l.car, depth),
+                 expandQuasiquote(l.cdr, depth))));
+  } else {
+    return List(Sym("quote"),
+             List(x));
+  }
+}
+
 define_syntax("quasiquote", function(x){
-  return expand_qq(x.cdr.car, 1);
+  return expandQuasiquote(x.cdr.car, 0);
 })
-//unquote
 define_syntax("unquote", function(x){
   throw new BiwaError("unquote(,) must be inside quasiquote(`)");
 })
-//unquote-splicing
 define_syntax("unquote-splicing", function(x){
   throw new BiwaError("unquote-splicing(,@) must be inside quasiquote(`)");
 })

@@ -31,7 +31,12 @@ describe('4.2.8 Quasiquotation', () => {
     ew("`(,1 ,@2)").toBe("(1 . 2)");
   })
   test('bug #346', () => {
-    ew("(define l '(x y)) ``(,@,@l ,@,@l)").toBe("(quasiquote ((unquote-splicing x y) (unquote-splicing x y)))");
+    ew("(define l '(x y)) ``(,@,@l ,@,@l)").toBe(
+      "(quasiquote ((unquote-splicing x y) (unquote-splicing x y)))");
+    ew("(define x '(1 2)) \
+        (define y '(3 4)) \
+        (quasiquote ((unquote-splicing x y) (unquote-splicing x y)))")
+    .toBe("(1 2 3 4 1 2 3 4)");
   })
 })
 
