@@ -1368,6 +1368,8 @@ const expandQuasiquote = function(x, depth){
       } else {
         throw new BiwaError("invalid use of quasiquote");
       }
+    } else if (x.cdr === nil) {
+      return expandQqList(x.car, depth);
     } else {
       // Use `append` because there may be a `,@` in the list
       return List(Sym("append"),
