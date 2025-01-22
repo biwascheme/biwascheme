@@ -407,8 +407,12 @@ define_libfunc("integer?", 1, 1, function(ar){
 //(rational-valued? obj)    procedure
 //(integer-valued? obj)    procedure
 //
-//(exact? z)    procedure
-//(inexact? z)    procedure
+define_libfunc("exact?", 1, 1, function(ar){
+  return false;
+});
+define_libfunc("inexact?", 1, 1, function(ar){
+  return isNumber(ar[0]);
+});
 
 //                11.7.4.2  Generic conversions
 //

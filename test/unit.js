@@ -728,6 +728,16 @@ describe('11.7 Arithmetic', {
     ev("(integer? (make-rectangular 2 0))").should_be(true);
     //ev("(integer? 2/1)").should_be(true);
     ev("(integer? 2.0)").should_be(true);
+
+    // Only inexact numbers are supported.
+    ev("(exact? 2)").should_be(false);
+    ev("(inexact? 2)").should_be(true);
+    ev("(exact? 2.0)").should_be(false);
+    ev("(inexact? 2.0)").should_be(true);
+    ev("(exact? (make-polar 1 2))").should_be(false);
+    ev("(inexact? (make-polar 1 2))").should_be(true);
+    ev("(exact? 'a)").should_be(false);
+    ev("(inexact? 'a)").should_be(false);
   },
   '= < > <= >=' : function(){
     ev("(= 1 1 1)").should_be(true);
