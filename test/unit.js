@@ -508,6 +508,9 @@ describe('11.2 Definitions', {
   'function define (empty optional args)' : function(){
     ew("(define (f x y . z) z) (f 3 4)").should_be("()");
   },
+  '#361: inner variable shadows outer one with the same name and is `set!`' : function(){
+    ev("(((lambda (x) (set! x 11) (lambda (x) (+ x 22))) 99) 33)").should_be(55);
+  },
   'internal define' : function(){
     ew("(define a 1) (define b 2) \
         (define (x) (define a 3) (define b 4) (list a b)) \
