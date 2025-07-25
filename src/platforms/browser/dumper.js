@@ -130,12 +130,13 @@ class Dumper {
       this.closures.push(cls);
     }
 
-    var c = [...cls];
-    var body = c.shift && c.shift();
+    const body = cls.body;
     return [
-      "c", cls_num, " <span class='dump_closure'>free vars :</span> ",
-      this.dump_obj(c), " <span class='dump_closure'>body :</span> ",
-      truncate(this.dump_obj(body), 100)
+      "c", cls_num,
+      " <span class='dump_closure'>free vars :</span> ", this.dump_obj(cls.freevars),
+      " <span class='dump_closure'>dotpos :</span> ", cls.dotpos,
+      " <span class='dump_closure'>expected_args :</span> ", cls.expected_args,
+      " <span class='dump_closure'>body :</span> ", truncate(this.dump_obj(body), 100)
     ].join("");
   }
 

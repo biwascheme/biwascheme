@@ -495,9 +495,16 @@ class Compiler {
     var free = this.find_free(cbody, to_set(proper), f); //free variables
     var sets = this.find_sets(cbody, to_set(proper));    //local variables
 
+    // When shadowing happens, the outer one should be removed from `s`
+    // eg.
+    //   (lambda (x) (set! x 0)   // This `x` is set
+    //     (lambda (x) ...        // but this one is not
+    const filtered_s = s.set_minus(to_set(proper));
+    const new_s = sets.set_union(filtered_s.set_intersect(free));
+
     var do_body = this.compile(cbody,
                     [to_set(proper), free],
-                    sets.set_union(s.set_intersect(free)),
+                    new_s,
                     f.set_union(to_set(proper)),
                     ["return"]);
     var do_close = ["close",
