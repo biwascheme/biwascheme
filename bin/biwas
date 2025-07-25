@@ -11,6 +11,7 @@ function Options(argv){
   var parser = new optparse.OptionParser([
     //[      '--encoding', 'Specify encoding (default: utf8)'],
     ['-e', '--eval CODE', 'Evaluate the given string'],
+    ['-d', '--debug CODE', 'Compile the sexp and print IL'],
     ['-v', '--version', 'Show version'],
     ['-h', '--help', 'Show this message']
   ]);
@@ -25,6 +26,10 @@ function Options(argv){
 
   parser.on('eval', function(name, value) {
     opts.code = value;
+  });
+
+  parser.on('debug', function(name, value) {
+    opts.debugee = value
   });
 
   parser.on('version', function() {
@@ -100,13 +105,23 @@ function repl(){
   rl.prompt();
 }
 
+function show_ir(debugee) {
+  const parser = new BiwaScheme.Parser(debugee);
+  const compiler = new BiwaScheme.Compiler();
+  const expr = parser.getObject();
+  const expr2 = BiwaScheme.Compiler.expand(expr);
+  const vmcode = compiler.run(expr2);
+  console.log(JSON.stringify(vmcode.il));
+}
+
 function main(){
   var opts = new Options(process.argv.slice(2));
 
   if (opts.code) {
     BiwaScheme.run(opts.code, {no_print: true});
-  }
-  else {
+  } else if (opts.debugee) {
+    show_ir(opts.debugee);
+  } else {
     if(opts.args.length >= 1){
       var src = require('fs').readFileSync(opts.args[0], 'utf8');
       BiwaScheme.run(src);
@@ -118,4 +133,3 @@ function main(){
 }
 
 main();
-
