@@ -23,8 +23,13 @@
 (sack-add-routing *sack*
   #/(\.html|\.js|\.css|\.scm)/
   (lambda (req)
-    (file->string (build-path *httpd-document-root*
-                              (string-drop (base-path-of req) 1)))))
+     (cons
+       (file->string (build-path *httpd-document-root*
+                              (string-drop (base-path-of req) 1)))
+       (cond ((rxmatch #/\.js/ (ref req 'path)) "text/javascript")
+             ((rxmatch #/\.css/ (ref req 'path)) "text/css")
+             ((rxmatch #/\.scm/ (ref req 'path)) "text/scheme")
+             (else "text/html")))))
 
 (sack-add-routing *sack*
   #/^\/reload$/
