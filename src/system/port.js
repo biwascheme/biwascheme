@@ -7,6 +7,8 @@ import Pause from "./pause.js"
 // (eof-object)
 const eof = new Object;
 
+eof.to_write = function() { return "#<eof>"; }
+
 class Port {
   constructor(is_in, is_out){
     this.is_open = true;
