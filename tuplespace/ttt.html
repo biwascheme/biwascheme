@@ -19,7 +19,10 @@
 
   <div id="bs-console"></div>
 
-  <script src="../lib/biwascheme.js">
+  <script src="../release/biwascheme-0.7.0.js"></script>
+  <script type="text/biwascheme">
+  (js-load "custom_biwa_lib.js" "BiwaScheme.CoreEnv['ts-init']")
+
   ;;; global variables
   (define *x* 1)
   (define *y* 1)

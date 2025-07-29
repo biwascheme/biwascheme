@@ -30,8 +30,8 @@ Requirements
 
 * Gauche (http://practical-scheme.net/gauche/)
   * eg. '$ brew install gauche' on Mac with Homebrew
-* ../lib/biwascheme.js
-  * type 'make' to rebuild it
+* ../release/biwascheme-0.7.0.js
+  * TODO: Update this demo to work with newest biwascheme
 
 Demo1: chat
 -----------
@@ -40,8 +40,8 @@ Demo1: chat
 
   $ gosh chat_server.scm
 
-2. Open http://localhost:9999/chat.html in two browsers
-  (or open http://localhost:9999/chats.html , which emulates
+2. Open http://localhost:9999/tuplespace/chat.html in two browsers
+  (or open http://localhost:9999/tuplespace/chats.html , which emulates
   three clients in a browser)
 
 3. Post some message and it will displayed immediately on
@@ -54,8 +54,8 @@ Demo2: Tic Tac Toe
 
   $ gosh ttt_server.scm
 
-2. Open http://localhost:9999/ttt.html in two browsers
-  (or open http://localhost:9999/ttts.html in a browser)
+2. Open http://localhost:9999/tuplespace/ttt.html in two browsers
+  (or open http://localhost:9999/tuplespace/ttts.html in a browser)
 
 3. Choose a cell and click the button.
 

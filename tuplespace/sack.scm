@@ -62,12 +62,13 @@
 
 (define (print-log level obj)
   (if (>= log-level level)
-    (log-format (format "~,,,,50a~%" obj))))
-
+      (log-format (format "~,,,,50a~%" obj))
+      (flush)))
 (define (log-error obj) (print-log 1 obj))
 (define (log-connection obj) (print-log 2 obj))
 (define (log-info obj) (print-log 3 obj))
 (define (log-debug obj) (print-log 4 obj))
+
 
 ;;;
 ;;; dispatch
@@ -113,12 +114,15 @@
 ;;; http
 ;;;
 
-(define (httpd-send-responce text port)
+(define (httpd-send-responce text port . headers)
   (log-connection "200 OK")
+  (log-info headers)
   (display 
     (string-append 
       #`"HTTP/1.0 200 OK\r\nServer: ,|server-name|\r\n"
-      #`"Content-type: text/html\r\n"
+      #`"Content-type: "
+      (if (null? headers) "text/html" (car headers))
+      #`"\r\n"
       #`"Content-Length: ,(string-size text)\r\n"
       #`"Cache-Control: no-cache\r\n"
       #`"\r\n"
@@ -157,9 +161,12 @@
               (try
                 (let loop ((cont httpd-dispatch))
                   (let1 res (cont req)
-                    (if (string? res)
-                      (httpd-send cs res)
-                      (loop res))))
+			(cond ((string? res)
+			       (httpd-send cs res))
+			      ((pair? res)
+			       (httpd-send cs (car res) (cdr res)))
+			      (else
+			       (loop res)))))
                 (rescue e 
                         (log-error #`"My handler: ,(slot-ref e 'message)")
                         (print (ref e 'message))
@@ -168,9 +175,11 @@
               (socket-close cs)
               (thread-terminate! (current-thread)))))))))
 
-(define (httpd-send cs res)
+(define (httpd-send cs res . headers)
   (let1 out (socket-output-port cs)
-    (httpd-send-responce res out)
+	(if (null? headers)
+	    (httpd-send-responce res out)
+	    (httpd-send-responce res out (car headers)))
     (log-debug "connection end.")))
 
 (define (httpd-main nport)
