@@ -28,13 +28,7 @@
 <ol>
 <li>Edit CHANGELOG.md</li>
 <li>Edit package.json</li>
-<li>Build</li>
-</ol>
-<ul>
-<li>$ npm run build</li>
-</ul>
-<ol>
-<li>Create release/biwascheme-x.y.z.js</li>
+<li>Create release/biwascheme-x.y.z.js by</li>
 </ol>
 <ul>
 <li>$ npm run prepare-release</li>
@@ -43,6 +37,7 @@
 <li>Rebuild website</li>
 </ol>
 <ul>
+<li>Delete <code>type: &quot;module&quot;</code> from package.json</li>
 <li>$ make website -B</li>
 </ul>
 <ol>
@@ -76,7 +71,9 @@
 </li>
 </ul>
 <ol>
-<li><code>git add</code> changed files and <code>npm run release</code></li>
+<li>Readd <code>type: &quot;module&quot;</code> to package.json</li>
+<li><code>git add</code> changed files and <code>npm login</code> and <code>npm run release</code></li>
+<li><code>npm publish</code> (requires 2FA)</li>
 <li>Make a release on <a href="https://github.com/biwascheme/biwascheme/releases">github</a></li>
 </ol>
     </div>

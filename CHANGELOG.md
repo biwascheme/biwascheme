@@ -1,6 +1,19 @@
+# BiwaScheme ChangeLog
+
+## 2025-09-02 v0.8.2
+
+- feat: better text representation of eof object (#368)
+- feat: exact? and inexact? (#358)
+- feat: multi-value unquote (#349)
+- feat: BiwaScheme.Rational.isInteger (#319)
+- fix: bug of nested lambda (#367)
+- fix: tuplespace demo (#366)
+- fix: parsing bugs (#326, #343, #344, #345)
+- misc. fixes (#338)
+
 ## 2023-03-31 v0.8.0
 
-## Important notice
+### Important notice
 
 A GPL violation was found in BiwaScheme prior to version 0.8.0. When I began
 this project  in 2007, I created `BiwaScheme.Parser` by largely copying the
@@ -12,7 +25,11 @@ making it increasingly difficult to fix bugs or adding new features.
 BiwaScheme v0.8.0 has a new parser implementation written from scratch
 that is more R7RS compliant and fixes several known bugs.
 
-## Other changes
+### Another notice
+
+`release/biwascheme-0.8.0(-min).js` has wrong `VERSION` value (set to 0.7.5.)
+
+### Other changes
 
 - feat: Parser is replaced with a new implementation. (#309 #310 #311 #312)
 - fix: Calling `sleep` causes an error (#292)

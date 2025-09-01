@@ -2,11 +2,10 @@
 
 1. Edit CHANGELOG.md
 1. Edit package.json
-1. Build
-  - $ npm run build
-1. Create release/biwascheme-x.y.z.js
+1. Create release/biwascheme-x.y.z.js by
   - $ npm run prepare-release
 1. Rebuild website
+  - Delete `type: "module"` from package.json
   - $ make website -B
 1. Make sure it is working:
   - run tests
@@ -26,5 +25,7 @@
     - `$ npm pack`
     - `$ npm install -g biwascheme-x.y.z.tgz`
     - `$ biwas -v`
-1. `git add` changed files and `npm run release`
+1. Readd `type: "module"` to package.json
+1. `git add` changed files and `npm login` and `npm run release`
+1. `npm publish` (requires 2FA)
 1. Make a release on [github](https://github.com/biwascheme/biwascheme/releases)
