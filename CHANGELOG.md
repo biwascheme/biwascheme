@@ -1,6 +1,6 @@
 # BiwaScheme ChangeLog
 
-## 2025-09-02 v0.8.2
+## 2025-09-02 v0.8.3
 
 - feat: better text representation of eof object (#368)
 - feat: exact? and inexact? (#358)
