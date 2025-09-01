@@ -1,4 +1,4 @@
-<!-- NOTE: index.html is generated from index_.html -->
+<!-- NOTE: index.html is generated from website/index_.html -->
 
       <h2>About</h2>
 
@@ -6,11 +6,53 @@
 
       <h2>Try it now</h2>
 
+      <div style="margin-bottom: 10px;">
+        <label for="version-selector">Version: </label>
+        <select id="version-selector" onchange="switchVersion()">
+          <option value="release">Latest Release (@VERSION@)</option>
+          <option value="head">Git HEAD (development)</option>
+        </select>
+      </div>
+      <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const isHead = urlParams.get('version') === 'head';
+        
+        if (isHead) {
+          document.write('<script src="/src/main-browser.js" type="module"><\/script>');
+          document.write('<script src="/src/deps/jquery.js"><\/script>');
+        } else {
+          document.write('<script src="/release/biwascheme-@VERSION@-min.js" type="text/javascript"><\/script>');
+        }
+        
+        window.addEventListener('DOMContentLoaded', function() {
+          if (isHead) {
+            document.getElementById('version-selector').value = 'head';
+          }
+        });
+        
+        function switchVersion() {
+          const selector = document.getElementById('version-selector');
+          if (selector.value === 'head') {
+            window.location.href = window.location.pathname + '?version=head';
+          } else {
+            window.location.href = window.location.pathname;
+          }
+        }
+      </script>
+
       <div id="term"></div>
+      <link href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css" rel="stylesheet"/>
+      <link href="/website/css/prism-coy.css" rel="stylesheet" type="text/css"></link>
+      <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-scheme.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/prism.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/js-polyfills/keyboard.js"></script>
+      <script src="/website/js/biwascheme_terminal.js" type="text/javascript"></script>
 
       <h2>Download</h2>
 
-      <ul>
+      <ul id="download-links">
         <li><a href="/release/biwascheme-@VERSION@.js">biwascheme-@VERSION@.js</a></li>
         <li><a href="/release/biwascheme-@VERSION@-min.js">biwascheme-@VERSION@-min.js</a></li>
       </ul>
@@ -20,8 +62,9 @@
       </p>
 
       <h2>Example</h2>
-
-      <pre><code><font color='purple'>&lt;script src="biwascheme.js"&gt;</font>
+      
+      <pre><code><font color='purple'>&lt;script src="biwascheme.js"&gt;&lt;/script&gt;
+&lt;script type="text/biwascheme"&gt;</font>
   (<font color='blue'>console-log</font> <font color='red'>"Hello, world!"</font>)
 <font color='purple'>&lt;/script&gt;</font></code></pre>
 
@@ -52,9 +95,6 @@
       <h2>Links</h2>
 
       <ul>
-        <li>
-          <a href="https://repl.it/languages/scheme">repl.it</a> - Online interactive environment for programming languages
-        </li>
         <li>
           <a href="http://blog.klipse.tech/scheme/2016/09/11/scheme-tutorial-1.html">Interactive overview of Scheme's semantics</a> - Interactive Scheme tutorial using <a href="https://github.com/viebel/klipse">klipse</a>
         </li>
