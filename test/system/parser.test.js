@@ -60,6 +60,22 @@ describe("Parser", () => {
   })
 
   describe("numbers", () => {
+    test("sharp", () => {
+      expect(parse("#b100")).toBe(4);
+      expect(parse("#B100")).toBe(4);
+      expect(parse("#d100")).toBe(100);
+      expect(parse("#D100")).toBe(100);
+      expect(parse("#o77")).toBe(63);
+      expect(parse("#O77")).toBe(63);
+      expect(parse("#xFF")).toBe(255);
+      expect(parse("#XFF")).toBe(255);
+
+      expect(parse("#ib100")).toBe(4);
+      expect(parse("#EB100")).toBe(4);
+      expect(parse("#bI100")).toBe(4);
+      expect(parse("#Be100")).toBe(4);
+    })
+
     test("integer", () => {
       expect(parse("1")).toBe(1);
     })

@@ -333,7 +333,7 @@ class Parser {
             return this._parseChar(tok);
           case tok.startsWith("#u8"):
             throw new BiwaError("bytevectors are not supported yet", this.rest(-1));
-          case /^#[eibodx]/.test(tok):
+          case /^#[eibodx]/i.test(tok):
             return this._parsePrefixedNumber(tok);
           case /^#\d/.test(tok):
             return this._parseDatumLabel(tok);
@@ -389,19 +389,21 @@ class Parser {
   // Parse a number prefixed with `#i`, `#b`, etc.
   // Throws error if not a prefixed number.
   _parsePrefixedNumber(tok) {
+    if (!tok.startsWith("#")) throw new Bug("not a sharp");
+    let s = tok.substring(1);
+
     let base = 10; // Decimal is the default
-    let s = tok;
-    if (s.match(/^#[iIeE]/)) s = s.substring(2); // Exactness is not supported.
-    if      (s.match(/^#[bB]/)) { base = 2;  s = s.substring(2); }
-    else if (s.match(/^#[oO]/)) { base = 8;  s = s.substring(2); }
-    else if (s.match(/^#[dD]/)) { base = 10; s = s.substring(2); }
-    else if (s.match(/^#[xX]/)) { base = 16; s = s.substring(2); }
-    if (s.match(/^#[iIeE]/)) s = s.substring(2); // Exactness is not supported.
+    if (s.match(/^[iIeE]/)) s = s.substring(1); // Exactness is not supported.
+    if      (s.match(/^[bB]/)) { base = 2;  s = s.substring(1); }
+    else if (s.match(/^[oO]/)) { base = 8;  s = s.substring(1); }
+    else if (s.match(/^[dD]/)) { base = 10; s = s.substring(1); }
+    else if (s.match(/^[xX]/)) { base = 16; s = s.substring(1); }
+    if (s.match(/^[iIeE]/)) s = s.substring(1); // Exactness is not supported.
 
     const v = this._parseComplexNumber(base, s);
     if (v === null) {
       // Extraneous char after number prefix (like `#dfoo`)
-      throw new Invalid(`invalid number format: %{tok}`);
+      throw new Invalid(`invalid number format: ${tok}`);
     } else {
       return v;
     }
@@ -411,6 +413,7 @@ class Parser {
   // Returns null if not a number.
   _parseComplexNumber(base, tok) {
     const [a, rest] = this._parseRealNumber(base, tok);
+
     if (a === null) {
       return null;
     } else if (rest === "") {
@@ -430,7 +433,7 @@ class Parser {
         return new Complex(a, b);
       }
     }
-    return null;
+    return [a, rest];
   }
 
   // Parse a real (or rational) number at the head of `tok`.
@@ -483,7 +486,6 @@ class Parser {
         return [null, tok];
       }
     }
-
     // Was not a rational. Check if it is a decimal
     if (base == 10) {
       // Try matching form the beginning
@@ -493,7 +495,7 @@ class Parser {
       }
     }
 
-    return [null, tok];
+    return [a, s];
   }
 
   // Parse a datum label definition (`#0=`) or reference (`#0#`).
