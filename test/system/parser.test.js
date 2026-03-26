@@ -36,8 +36,20 @@ describe("Parser", () => {
       expect(parse("#(1 #| comment |# 2)")).toEqual([1, 2]);
     })
 
+    test("nested block comment", () => {
+      expect(parse("#(#| #| inner |# outer |# 1)")).toEqual([1]);
+    })
+
+    test("unterminated block comment", () => {
+      expect(() => parse("#| oops")).toThrow(Parser.Unterminated);
+    })
+
     test("sexp comment", () => {
       expect(parse("#(1 #;() 2)")).toEqual([1, 2]);
+    })
+
+    test("multiple sexp comments", () => {
+      expect(parse("#(#;1 #;2 3)")).toEqual([3]);
     })
   })
 
@@ -60,13 +72,64 @@ describe("Parser", () => {
   })
 
   describe("numbers", () => {
+    test("sharp", () => {
+      expect(parse("#b100")).toBe(4);
+      expect(parse("#B100")).toBe(4);
+      expect(parse("#d100")).toBe(100);
+      expect(parse("#D100")).toBe(100);
+      expect(parse("#o77")).toBe(63);
+      expect(parse("#O77")).toBe(63);
+      expect(parse("#xFF")).toBe(255);
+      expect(parse("#XFF")).toBe(255);
+
+      expect(parse("#ib100")).toBe(4);
+      expect(parse("#EB100")).toBe(4);
+      expect(parse("#bI100")).toBe(4);
+      expect(parse("#Be100")).toBe(4);
+    })
+
+    test("negative with base prefix", () => {
+      expect(parse("#b-100")).toBe(-4);
+      expect(parse("#x-FF")).toBe(-255);
+    })
+
+    test("exactness prefix is silently stripped", () => {
+      expect(parse("#e1")).toBe(1);
+      expect(parse("#i1")).toBe(1);
+    })
+
+    test("invalid number after prefix", () => {
+      expect(() => parse("#dfoo")).toThrow();
+    })
+
     test("integer", () => {
       expect(parse("1")).toBe(1);
+    })
+
+    test("negative", () => {
+      expect(parse("-1")).toBe(-1);
+      expect(parse("-1.5")).toBe(-1.5);
+      expect(parse("-1/2")).toEqual(new Rational(-1, 2));
+    })
+
+    test("positive sign", () => {
+      expect(parse("+1")).toBe(1);
     })
 
     test("decimal", () => {
       expect(parse("1.2")).toBe(1.2);
       expect(parse(".2")).toBe(0.2);
+    })
+
+    test("exponent", () => {
+      expect(parse("1e10")).toBe(1e10);
+      expect(parse("1.5e-3")).toBe(1.5e-3);
+    })
+
+    test("special floats", () => {
+      expect(parse("+inf.0")).toBe(Infinity);
+      expect(parse("-inf.0")).toBe(-Infinity);
+      expect(parse("+nan.0")).toBeNaN();
     })
 
     test("rational", () => {
@@ -96,15 +159,15 @@ describe("Parser", () => {
     })
 
     test("starts with integer", () => {
-      expect(parse("1+")).toBe(Sym("1+"));
+      expect(to_write(parse("(1+ 2)"))).toBe("(1+ 2)");
     })
 
     test("starts with decimal", () => {
-      expect(parse(".1+")).toBe(Sym(".1+"));
+      expect(to_write(parse("(.1+ 2)"))).toBe("(.1+ 2)");
     })
 
     test("starts with rational", () => {
-      expect(parse("1/2+")).toBe(Sym("1/2+"));
+      expect(to_write(parse("(1/2+ 3)"))).toBe("(1/2+ 3)");
     })
 
     test("whitespace", () => {
@@ -131,6 +194,29 @@ describe("Parser", () => {
 
     test("newline", () => {
       expect(parse('"hello\nworld"')).toBe("hello\nworld");
+    })
+
+    test("escape sequences", () => {
+      expect(parse('"\\n"')).toBe("\n");
+      expect(parse('"\\t"')).toBe("\t");
+      expect(parse('"\\a"')).toBe("\x07");
+      expect(parse('"\\r"')).toBe("\x0D");
+    })
+
+    test("hex escape", () => {
+      expect(parse('"\\x41;"')).toBe("A");
+    })
+
+    test("escaped double quote", () => {
+      expect(parse('"say \\"hi\\""')).toBe('say "hi"');
+    })
+
+    test("line continuation", () => {
+      expect(parse('"hello\\\n  world"')).toBe("helloworld");
+    })
+
+    test("unterminated", () => {
+      expect(() => parse('"hello')).toThrow(Parser.Unterminated);
     })
   })
 
@@ -171,14 +257,50 @@ describe("Parser", () => {
       expect(parse("#\\newline")).toBe(Char.get("\n"));
     })
 
+    test("named: alarm/backspace/null/space/return", () => {
+      expect(parse("#\\alarm")).toBe(Char.get("\x07"));
+      expect(parse("#\\backspace")).toBe(Char.get("\x08"));
+      expect(parse("#\\null")).toBe(Char.get("\x00"));
+      expect(parse("#\\space")).toBe(Char.get(" "));
+      expect(parse("#\\return")).toBe(Char.get("\x0D"));
+    })
+
+    test("hex char", () => {
+      expect(parse("#\\x41")).toBe(Char.get("A"));
+    })
+
     test("unknown name", () => {
       expect(() => parse("#\\foo")).toThrow(Parser.Invalid)
+    })
+
+    test("unterminated", () => {
+      expect(() => parse("#\\")).toThrow(Parser.Unterminated);
     })
   })
 
   describe("lists", () => {
     test("number list", () => {
       expect(to_write(parse("(1 2)"))).toBe("(1 2)");
+    })
+
+    test("dotted pair", () => {
+      expect(to_write(parse("(1 . 2)"))).toBe("(1 . 2)");
+    })
+
+    test("bracket alternative", () => {
+      expect(to_write(parse("[1 2]"))).toBe("(1 2)");
+    })
+
+    test("dot before first element", () => {
+      expect(() => parse("(. 2)")).toThrow();
+    })
+
+    test("multiple elements after dot", () => {
+      expect(() => parse("(1 . 2 3)")).toThrow();
+    })
+
+    test("mismatched parens", () => {
+      expect(() => parse("(1 2]")).toThrow();
     })
 
     test("Unterminated list", () => {
@@ -212,7 +334,47 @@ describe("Parser", () => {
     })
   })
 
-  test("datum label", () => {
-    expect(parse("#(#0=123 #0#)")).toEqual([123, 123]);
+  describe("datum label", () => {
+    test("basic", () => {
+      expect(parse("#(#0=123 #0#)")).toEqual([123, 123]);
+    })
+
+    test("multi-digit label", () => {
+      expect(parse("#(#10=foo #10#)")).toEqual([Sym("foo"), Sym("foo")]);
+    })
+
+    test("undefined reference", () => {
+      expect(() => parse("#0#")).toThrow();
+    })
+  })
+
+  describe("quotes", () => {
+    test("unquote", () => {
+      expect(to_write(parse(",foo"))).toBe("(unquote foo)");
+    })
+
+    test("unquote-splicing", () => {
+      expect(to_write(parse(",@foo"))).toBe("(unquote-splicing foo)");
+    })
+  })
+
+  describe("enclosed symbol", () => {
+    test("escaped pipe", () => {
+      expect(parse("|a\\|b|")).toBe(Sym("a|b"));
+    })
+
+    test("unterminated", () => {
+      expect(() => parse("|foo")).toThrow(Parser.Unterminated);
+    })
+  })
+
+  describe("Parser.parse", () => {
+    test("multiple expressions", () => {
+      expect(Parser.parse("1 2 3")).toEqual([1, 2, 3]);
+    })
+
+    test("empty input", () => {
+      expect(Parser.parse("")).toEqual([]);
+    })
   })
 })
