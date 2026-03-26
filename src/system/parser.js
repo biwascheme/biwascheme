@@ -433,7 +433,8 @@ class Parser {
         return new Complex(a, b);
       }
     }
-    return [a, rest];
+    // Unknown char followed; this is not a number but a symbol
+    return null;
   }
 
   // Parse a real (or rational) number at the head of `tok`.
@@ -648,5 +649,7 @@ Parser.parse = txt => {
 };
 
 Parser.Unterminated = Unterminated;
-  
+Parser.Unbalanced = Unbalanced;
+Parser.Invalid = Invalid;
+
 export default Parser;
