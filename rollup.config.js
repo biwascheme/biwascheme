@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import prettier from "rollup-plugin-prettier";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import replace from "@rollup/plugin-replace";
 import child_process from "child_process";
 import package_json from "./package.json"
