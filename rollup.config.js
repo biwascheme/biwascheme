@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
-import prettier from "rollup-plugin-prettier";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import replace from "@rollup/plugin-replace";
 import child_process from "child_process";
 import package_json from "./package.json"
@@ -25,7 +24,7 @@ let replaceVersion = () =>
 
 export default [
   {
-    plugins: [prettier({ parser: "babel" }), replaceVersion()],
+    plugins: [replaceVersion()],
     input: "src/main-node.js",
     output: [
       {
@@ -38,7 +37,7 @@ export default [
   },
   {
     input: "src/main-browser.js",
-    plugins: [prettier({ parser: "babel" }), replaceVersion()],
+    plugins: [replaceVersion()],
     output: [
       {
         file: "release/biwascheme.js",
